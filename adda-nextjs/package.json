@@ -2,7 +2,7 @@
   "name": "adda-edu-az",
   "version": "1.0.0",
   "private": true,
-  "description": "Azərbaycan Dövlət Dəniz Akademiyası — Rəqəmsal Platforma",
+  "description": "Az\u0259rbaycan D\u00f6vl\u0259t D\u0259niz Akademiyas\u0131 \u2014 R\u0259q\u0259msal Platforma",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +12,8 @@
   "dependencies": {
     "next": "^15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "cobe": "0.6.4"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

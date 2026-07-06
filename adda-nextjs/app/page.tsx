@@ -1,17 +1,136 @@
 'use client';
 
 import { useEffect } from 'react';
+import createGlobe, { type Marker } from 'cobe';
 import './home.css';
 
-// Bridge (Mərhələ 0): orijinal statik HTML olduğu kimi render + vanilla JS inject.
-// Mərhələ 1/B-də sections/* komponentləri ilə əvəzlənəcək.
+// Bridge (Merhele 0): orijinal statik HTML render + qalan vanilla JS inject.
+// Qlobus artiq bundle-dan (cobe npm) isleyir - CDN/modul yukleme asililigi yoxdur.
 const SCRIPTS: { src: string; module?: boolean }[] = [
   { src: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js' },
   { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js' },
-  { src: '/home/globe.mjs?v=2', module: true },
   { src: '/home/socialx.mjs', module: true },
   { src: '/home/ui.js' },
 ];
+
+// ADDA qlobus (cobe) - #ixStage/#ixGlobe uzerinde, onRender ile animasiya.
+function initGlobe(): () => void {
+  const stage = document.getElementById('ixStage');
+  const canvas = document.getElementById('ixGlobe') as HTMLCanvasElement | null;
+  if (!stage || !canvas) { console.warn('[globe] stage/canvas tapilmadi'); return () => {}; }
+
+  const MARKERS: Marker[] = [
+    { location: [40.4093, 49.8671], size: 0.09 },
+    { location: [41.0082, 28.9784], size: 0.045 },
+    { location: [43.2141, 27.9147], size: 0.04 },
+    { location: [54.5189, 18.5305], size: 0.04 },
+    { location: [51.9244, 4.4777], size: 0.045 },
+    { location: [50.9097, -1.4044], size: 0.04 },
+    { location: [35.6762, 139.6503], size: 0.05 },
+    { location: [31.2304, 121.4737], size: 0.045 },
+    { location: [31.2001, 29.9187], size: 0.04 },
+    { location: [44.1598, 28.6348], size: 0.04 },
+  ];
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const THETA = 0.24;
+  const SPEED = reduced ? 0 : 0.0032;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  let globe: ReturnType<typeof createGlobe> | null = null;
+  let phi = 0;
+  let w = 0;
+  const drag = {
+    on: null as null | { x: number; y: number },
+    off: { phi: 0, theta: 0 },
+    base: { phi: 0, theta: 0 },
+    v: { phi: 0, theta: 0 },
+    last: null as null | { x: number; y: number; t: number },
+  };
+
+  const build = () => {
+    w = stage.offsetWidth;
+    if (!w) return;
+    if (globe) globe.destroy();
+    try {
+      globe = createGlobe(canvas, {
+        devicePixelRatio: dpr,
+        width: w * dpr,
+        height: w * dpr,
+        phi: 0,
+        theta: THETA,
+        dark: 1,
+        diffuse: 1.6,
+        mapSamples: 14000,
+        mapBrightness: 5.5,
+        baseColor: [0.16, 0.32, 0.46],
+        markerColor: [0.86, 0.72, 0.44],
+        glowColor: [0.05, 0.11, 0.17],
+        opacity: 0.85,
+        markers: MARKERS,
+        onRender: (state) => {
+          if (!drag.on) {
+            phi += SPEED;
+            if (Math.abs(drag.v.phi) > 1e-4 || Math.abs(drag.v.theta) > 1e-4) {
+              drag.base.phi += drag.v.phi; drag.base.theta += drag.v.theta;
+              drag.v.phi *= 0.94; drag.v.theta *= 0.94;
+            }
+            if (drag.base.theta < -0.4) drag.base.theta += (-0.4 - drag.base.theta) * 0.1;
+            if (drag.base.theta > 0.4) drag.base.theta += (0.4 - drag.base.theta) * 0.1;
+          }
+          state.phi = phi + drag.base.phi + drag.off.phi;
+          state.theta = THETA + drag.base.theta + drag.off.theta;
+          state.width = w * dpr;
+          state.height = w * dpr;
+        },
+      });
+      requestAnimationFrame(() => stage.classList.add('is-live'));
+    } catch (err) {
+      console.error('[globe] createGlobe xetasi:', err);
+    }
+  };
+
+  const onDown = (e: PointerEvent) => {
+    drag.on = { x: e.clientX, y: e.clientY };
+    drag.last = { x: e.clientX, y: e.clientY, t: Date.now() };
+    canvas.style.cursor = 'grabbing';
+  };
+  const onMove = (e: PointerEvent) => {
+    if (!drag.on || !drag.last) return;
+    drag.off.phi = (e.clientX - drag.on.x) / 280;
+    drag.off.theta = (e.clientY - drag.on.y) / 900;
+    const now = Date.now(); const dt = Math.max(now - drag.last.t, 1); const cap = 0.15;
+    drag.v.phi = Math.max(-cap, Math.min(cap, ((e.clientX - drag.last.x) / dt) * 0.3));
+    drag.v.theta = Math.max(-cap, Math.min(cap, ((e.clientY - drag.last.y) / dt) * 0.08));
+    drag.last = { x: e.clientX, y: e.clientY, t: now };
+  };
+  const onUp = () => {
+    if (drag.on) { drag.base.phi += drag.off.phi; drag.base.theta += drag.off.theta; drag.off.phi = 0; drag.off.theta = 0; }
+    drag.on = null;
+    canvas.style.cursor = 'grab';
+  };
+  canvas.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointermove', onMove, { passive: true });
+  window.addEventListener('pointerup', onUp, { passive: true });
+
+  let ro: ResizeObserver | null = null;
+  if (stage.offsetWidth > 0) build();
+  else { ro = new ResizeObserver((en) => { if (en[0].contentRect.width > 0) { ro?.disconnect(); build(); } }); ro.observe(stage); }
+
+  let rT: ReturnType<typeof setTimeout>;
+  const onResize = () => { clearTimeout(rT); rT = setTimeout(() => { if (Math.abs(stage.offsetWidth - w) > 80) build(); }, 220); };
+  window.addEventListener('resize', onResize);
+
+  return () => {
+    if (globe) globe.destroy();
+    ro?.disconnect();
+    canvas.removeEventListener('pointerdown', onDown);
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('resize', onResize);
+    stage.classList.remove('is-live');
+  };
+}
 
 export default function HomePage() {
   useEffect(() => {
@@ -42,6 +161,8 @@ export default function HomePage() {
       injected.forEach((el) => el.remove());
     };
   }, []);
+
+  useEffect(initGlobe, []);
 
   return <div dangerouslySetInnerHTML={{ __html: MARKUP }} />;
 }
