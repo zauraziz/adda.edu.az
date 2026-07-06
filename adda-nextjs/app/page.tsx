@@ -13,24 +13,33 @@ const SCRIPTS: { src: string; module?: boolean }[] = [
   { src: '/home/ui.js' },
 ];
 
-// ADDA qlobus (cobe) - #ixStage/#ixGlobe uzerinde, onRender ile animasiya.
+// ADDA qlobus (cobe) - onRender animasiya + seher marker-lerinde hover tooltip.
+type City = { name: string; lat: number; lng: number; size: number };
+const CITIES: City[] = [
+  { name: 'Bakı', lat: 40.4093, lng: 49.8671, size: 0.09 },
+  { name: 'İstanbul', lat: 41.0082, lng: 28.9784, size: 0.045 },
+  { name: 'Varna', lat: 43.2141, lng: 27.9147, size: 0.04 },
+  { name: 'Gdynia', lat: 54.5189, lng: 18.5305, size: 0.04 },
+  { name: 'Rotterdam', lat: 51.9244, lng: 4.4777, size: 0.045 },
+  { name: 'Sautgempton', lat: 50.9097, lng: -1.4044, size: 0.04 },
+  { name: 'Tokio', lat: 35.6762, lng: 139.6503, size: 0.05 },
+  { name: 'Şanxay', lat: 31.2304, lng: 121.4737, size: 0.045 },
+  { name: 'İsgəndəriyyə', lat: 31.2001, lng: 29.9187, size: 0.04 },
+  { name: 'Konstansa', lat: 44.1598, lng: 28.6348, size: 0.04 },
+];
+
 function initGlobe(): () => void {
   const stage = document.getElementById('ixStage');
   const canvas = document.getElementById('ixGlobe') as HTMLCanvasElement | null;
   if (!stage || !canvas) { console.warn('[globe] stage/canvas tapilmadi'); return () => {}; }
 
-  const MARKERS: Marker[] = [
-    { location: [40.4093, 49.8671], size: 0.09 },
-    { location: [41.0082, 28.9784], size: 0.045 },
-    { location: [43.2141, 27.9147], size: 0.04 },
-    { location: [54.5189, 18.5305], size: 0.04 },
-    { location: [51.9244, 4.4777], size: 0.045 },
-    { location: [50.9097, -1.4044], size: 0.04 },
-    { location: [35.6762, 139.6503], size: 0.05 },
-    { location: [31.2304, 121.4737], size: 0.045 },
-    { location: [31.2001, 29.9187], size: 0.04 },
-    { location: [44.1598, 28.6348], size: 0.04 },
-  ];
+  const DEG = Math.PI / 180;
+  const MARKERS: Marker[] = CITIES.map((ct) => ({ location: [ct.lat, ct.lng], size: ct.size }));
+  // cobe-nin baza 3B movqeyi (firlanmadan evvel) - U() formulu ile eyni.
+  const bp = CITIES.map((ct) => {
+    const lat = ct.lat * DEG, L = ct.lng * DEG - Math.PI, S = Math.cos(lat);
+    return { x: -S * Math.cos(L), y: Math.sin(lat), z: S * Math.sin(L) };
+  });
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const THETA = 0.24;
@@ -40,12 +49,62 @@ function initGlobe(): () => void {
   let globe: ReturnType<typeof createGlobe> | null = null;
   let phi = 0;
   let w = 0;
+  let curTheta = THETA;
+  let hoverIdx = -1;
+  const scr = CITIES.map(() => ({ vis: false, x: 0, y: 0 }));
   const drag = {
     on: null as null | { x: number; y: number },
     off: { phi: 0, theta: 0 },
     base: { phi: 0, theta: 0 },
     v: { phi: 0, theta: 0 },
     last: null as null | { x: number; y: number; t: number },
+  };
+
+  // Tooltip elementi
+  const tip = document.createElement('div');
+  tip.setAttribute('role', 'tooltip');
+  tip.style.position = 'absolute';
+  tip.style.left = '0';
+  tip.style.top = '0';
+  tip.style.transform = 'translate(-50%, -145%)';
+  tip.style.padding = '5px 11px';
+  tip.style.borderRadius = '8px';
+  tip.style.pointerEvents = 'none';
+  tip.style.fontWeight = '700';
+  tip.style.fontSize = '12.5px';
+  tip.style.lineHeight = '1.2';
+  tip.style.fontFamily = 'var(--nav-font, system-ui, sans-serif)';
+  tip.style.letterSpacing = '.3px';
+  tip.style.color = '#0B1B2B';
+  tip.style.background = 'linear-gradient(180deg,#EBD9A8,#C9A961)';
+  tip.style.boxShadow = '0 8px 22px rgba(0,0,0,.42)';
+  tip.style.whiteSpace = 'nowrap';
+  tip.style.opacity = '0';
+  tip.style.transition = 'opacity .16s ease';
+  tip.style.zIndex = '5';
+  stage.appendChild(tip);
+  const showTip = (i: number) => {
+    tip.textContent = CITIES[i].name;
+    tip.style.left = scr[i].x + 'px';
+    tip.style.top = scr[i].y + 'px';
+    tip.style.opacity = '1';
+  };
+  const hideTip = () => { tip.style.opacity = '0'; };
+
+  // Her marker-in 2B ekran movqeyi - cobe shader-inin L(theta,phi) firlanmasi ile.
+  const project = () => {
+    const c = Math.cos(curTheta), e = Math.sin(curTheta);
+    const ph = phi + drag.base.phi + drag.off.phi;
+    const d = Math.cos(ph), f = Math.sin(ph);
+    for (let i = 0; i < bp.length; i++) {
+      const s = bp[i];
+      const hx = d * s.x + f * s.z;
+      const hy = f * e * s.x + c * s.y - d * e * s.z;
+      const hz = -f * c * s.x + e * s.y + d * c * s.z;
+      scr[i].vis = hz > 0.03;
+      scr[i].x = ((0.8 * hx) + 1) / 2 * w;
+      scr[i].y = (1 - (0.8 * hy)) / 2 * w;
+    }
   };
 
   const build = () => {
@@ -69,7 +128,8 @@ function initGlobe(): () => void {
         opacity: 0.85,
         markers: MARKERS,
         onRender: (state) => {
-          if (!drag.on) {
+          const frozen = drag.on || hoverIdx >= 0;
+          if (!frozen) {
             phi += SPEED;
             if (Math.abs(drag.v.phi) > 1e-4 || Math.abs(drag.v.theta) > 1e-4) {
               drag.base.phi += drag.v.phi; drag.base.theta += drag.v.theta;
@@ -78,10 +138,13 @@ function initGlobe(): () => void {
             if (drag.base.theta < -0.4) drag.base.theta += (-0.4 - drag.base.theta) * 0.1;
             if (drag.base.theta > 0.4) drag.base.theta += (0.4 - drag.base.theta) * 0.1;
           }
+          curTheta = THETA + drag.base.theta + drag.off.theta;
           state.phi = phi + drag.base.phi + drag.off.phi;
-          state.theta = THETA + drag.base.theta + drag.off.theta;
+          state.theta = curTheta;
           state.width = w * dpr;
           state.height = w * dpr;
+          project();
+          if (hoverIdx >= 0) { if (scr[hoverIdx].vis) showTip(hoverIdx); else { hoverIdx = -1; hideTip(); } }
         },
       });
       requestAnimationFrame(() => stage.classList.add('is-live'));
@@ -90,28 +153,51 @@ function initGlobe(): () => void {
     }
   };
 
+  const pick = (mx: number, my: number) => {
+    let best = -1, bestD = 26 * 26;
+    for (let i = 0; i < scr.length; i++) {
+      if (!scr[i].vis) continue;
+      const dx = scr[i].x - mx, dy = scr[i].y - my, dd = dx * dx + dy * dy;
+      if (dd < bestD) { bestD = dd; best = i; }
+    }
+    return best;
+  };
+
   const onDown = (e: PointerEvent) => {
     drag.on = { x: e.clientX, y: e.clientY };
     drag.last = { x: e.clientX, y: e.clientY, t: Date.now() };
     canvas.style.cursor = 'grabbing';
   };
   const onMove = (e: PointerEvent) => {
-    if (!drag.on || !drag.last) return;
-    drag.off.phi = (e.clientX - drag.on.x) / 280;
-    drag.off.theta = (e.clientY - drag.on.y) / 900;
-    const now = Date.now(); const dt = Math.max(now - drag.last.t, 1); const cap = 0.15;
-    drag.v.phi = Math.max(-cap, Math.min(cap, ((e.clientX - drag.last.x) / dt) * 0.3));
-    drag.v.theta = Math.max(-cap, Math.min(cap, ((e.clientY - drag.last.y) / dt) * 0.08));
-    drag.last = { x: e.clientX, y: e.clientY, t: now };
+    if (drag.on && drag.last) {
+      drag.off.phi = (e.clientX - drag.on.x) / 280;
+      drag.off.theta = (e.clientY - drag.on.y) / 900;
+      const now = Date.now(); const dt = Math.max(now - drag.last.t, 1); const cap = 0.15;
+      drag.v.phi = Math.max(-cap, Math.min(cap, ((e.clientX - drag.last.x) / dt) * 0.3));
+      drag.v.theta = Math.max(-cap, Math.min(cap, ((e.clientY - drag.last.y) / dt) * 0.08));
+      drag.last = { x: e.clientX, y: e.clientY, t: now };
+      return;
+    }
+    const r = canvas.getBoundingClientRect();
+    const idx = pick(e.clientX - r.left, e.clientY - r.top);
+    if (idx !== hoverIdx) {
+      hoverIdx = idx;
+      if (idx >= 0) { showTip(idx); canvas.style.cursor = 'pointer'; }
+      else { hideTip(); canvas.style.cursor = 'grab'; }
+    } else if (idx >= 0) {
+      showTip(idx);
+    }
   };
   const onUp = () => {
     if (drag.on) { drag.base.phi += drag.off.phi; drag.base.theta += drag.off.theta; drag.off.phi = 0; drag.off.theta = 0; }
     drag.on = null;
     canvas.style.cursor = 'grab';
   };
+  const onLeave = () => { if (hoverIdx >= 0) { hoverIdx = -1; hideTip(); } };
   canvas.addEventListener('pointerdown', onDown);
   window.addEventListener('pointermove', onMove, { passive: true });
   window.addEventListener('pointerup', onUp, { passive: true });
+  canvas.addEventListener('pointerleave', onLeave);
 
   let ro: ResizeObserver | null = null;
   if (stage.offsetWidth > 0) build();
@@ -127,7 +213,9 @@ function initGlobe(): () => void {
     canvas.removeEventListener('pointerdown', onDown);
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('pointerup', onUp);
+    canvas.removeEventListener('pointerleave', onLeave);
     window.removeEventListener('resize', onResize);
+    tip.remove();
     stage.classList.remove('is-live');
   };
 }
