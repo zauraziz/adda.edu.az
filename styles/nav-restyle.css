@@ -1,0 +1,148 @@
+/* ═══════════════════════════════════════════════════════════════
+   ADDA NAVIGATION RESTYLE v2 — DESIGN.md uyğunluğu
+   Palitra: Navy #0B3D5C  ·  Gold #C9A961
+   Tipoqrafiya: Fraunces (brend) · Manrope (UI)
+   QAYDA: HTML strukturu toxunulmazdır. Bütün class adları,
+   ölçülər (82px header, 40px utility, 520px mega menu) və
+   JS asılılıqları (.scrolled, .open, burger top:82px) qorunub.
+   Next.js miqrasiyası: bu blok 1:1 TopBar/Navbar.module.css olur.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Nav Design Tokens (mövcud :root-a əlavə, köhnə tokenlərə toxunulmur) ── */
+:root{
+  --navy-900:#071E2E; --navy-800:#0B3D5C; --navy-700:#0E4D73;
+  --navy-600:#12608F; --navy-500:#1A7AB5; --navy-400:#3D9AD4;
+  --navy-100:#E8F4FD; --navy-50:#F0F8FF;
+  --gold-600:#A68942; --gold-500:#C9A961; --gold-400:#D4BB7C;
+  --gold-300:#E0CE9D; --gold-100:#F5EDDA;
+  --nav-ease:cubic-bezier(0.16,1,0.3,1);
+  --nav-dur-fast:180ms; --nav-dur:280ms; --nav-dur-slow:380ms;
+  --nav-font:'Manrope','Inter',sans-serif;
+  --nav-sh-sm:0 1px 3px rgba(11,61,92,.08),0 1px 2px rgba(11,61,92,.05);
+  --nav-sh-lg:0 12px 32px -6px rgba(11,61,92,.18);
+  --nav-sh-xl:0 24px 56px -8px rgba(7,30,46,.26);
+  --nav-sh-2xl:0 32px 72px -12px rgba(7,30,46,.34);
+  --nav-sh-gold:0 6px 18px rgba(201,169,97,.28);
+}
+
+/* ── GOV BANNER — rəsmi tünd zolaq (utility-dən aydın ayrılır) ── */
+.gov-banner{background:var(--navy-900);border-bottom:1px solid rgba(255,255,255,.07);padding:7px 0;position:relative;z-index:95}
+.gov-banner-inner{max-width:1240px;margin:0 auto;padding:0 40px;display:flex;align-items:center;gap:8px}
+.gov-banner i{font-size:13px;color:var(--gold-500);flex-shrink:0}
+.gov-banner p{font-size:11.5px;color:rgba(255,255,255,.72);font-weight:400;font-family:var(--nav-font)}
+
+/* ── UTILITY ── */
+.utility{background:#F7FAFC;border-bottom:1px solid #E3ECF2;position:relative;z-index:95}
+.utility-inner{max-width:1240px;margin:0 auto;padding:0 40px;height:40px;display:flex;align-items:center;justify-content:space-between}
+.utility-left{display:flex;gap:24px}
+.utility-left a{font-size:12px;color:#33566B;text-decoration:none;display:flex;align-items:center;gap:6px;font-weight:500;font-family:var(--nav-font);transition:color var(--nav-dur-fast) var(--nav-ease)}
+.utility-left a:hover{color:var(--navy-800)}
+.utility-left i{font-size:13px;color:var(--navy-600);transition:transform var(--nav-dur-fast) var(--nav-ease)}
+.utility-left a:hover i{transform:translateY(-1px)}
+.utility-right{display:flex;align-items:center;gap:4px}
+.lang-group{display:flex;gap:2px;margin-right:12px}
+.lang-group a{font-size:11.5px;font-weight:700;color:#33566B;text-decoration:none;padding:3px 9px;border-radius:5px;font-family:var(--nav-font);letter-spacing:.04em;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.lang-group a.active{color:var(--navy-900);background:linear-gradient(135deg,var(--gold-500),var(--gold-600));box-shadow:0 2px 8px rgba(201,169,97,.3)}
+.lang-group a:hover:not(.active){color:var(--navy-800);background:rgba(11,61,92,.08)}
+.util-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#33566B;cursor:pointer;border-radius:6px;border:none;background:none;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.util-icon:hover{color:var(--navy-800);background:rgba(11,61,92,.09);transform:translateY(-1px)}
+.util-icon i{font-size:16px}
+
+/* ── INFOFOR (Bunlar üçün) ── */
+.infofor{position:relative;height:100%;display:flex;align-items:center;margin-right:6px}
+.infofor-btn{display:flex;align-items:center;gap:7px;background:var(--navy-800);color:#fff;border:none;font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer;font-family:var(--nav-font);letter-spacing:.02em;transition:all var(--nav-dur-fast) var(--nav-ease);box-shadow:var(--nav-sh-sm)}
+.infofor-btn:hover{background:var(--navy-900);transform:translateY(-1px);box-shadow:var(--nav-sh-lg)}
+.infofor-btn .chev{transition:transform var(--nav-dur) var(--nav-ease)}
+.infofor.open .infofor-btn .chev{transform:rotate(180deg)}
+.infofor-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:266px;background:var(--navy-800);border-radius:12px;box-shadow:var(--nav-sh-2xl);padding:8px;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity var(--nav-dur) var(--nav-ease),transform var(--nav-dur) var(--nav-ease),visibility var(--nav-dur);z-index:120;border:1px solid rgba(255,255,255,.06)}
+.infofor.open .infofor-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.infofor-menu::before{content:'';position:absolute;top:-6px;right:24px;width:12px;height:12px;background:var(--navy-800);transform:rotate(45deg)}
+.infofor-menu a{display:flex;align-items:center;gap:12px;padding:11px 14px;color:rgba(255,255,255,.85);text-decoration:none;font-size:13.5px;font-weight:500;border-radius:9px;font-family:var(--nav-font);transition:all var(--nav-dur-fast) var(--nav-ease)}
+.infofor-menu a:hover{background:rgba(255,255,255,.1);color:#fff;padding-left:18px}
+.infofor-menu a .if-ic{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.infofor-menu a:hover .if-ic{background:var(--gold-500);color:var(--navy-900)}
+.infofor-menu a .if-ic svg{display:block}
+.infofor-menu a .if-tx{line-height:1.25}
+.infofor-menu a .if-tx b{display:block;font-weight:600;font-size:13px}
+.infofor-menu a .if-tx small{font-size:10.5px;color:rgba(255,255,255,.5);font-weight:400}
+.infofor-menu a:hover .if-tx small{color:var(--gold-300)}
+
+/* ════ HEADER — DESIGN.md navy gradient ════ */
+.hero-wrap{position:relative}
+header{position:relative;z-index:90;background:linear-gradient(100deg,var(--navy-800) 0%,var(--navy-700) 55%,var(--navy-600) 100%);box-shadow:0 2px 0 rgba(255,255,255,.06) inset,0 6px 24px rgba(11,61,92,.2)}
+header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--gold-500) 50%,transparent 100%);opacity:.85;pointer-events:none}
+header.scrolled{position:fixed;top:0;left:0;right:0;animation:navDown .35s var(--nav-ease);box-shadow:0 10px 32px rgba(7,30,46,.38)}
+@keyframes navDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.header-inner{max-width:1240px;margin:0 auto;padding:0 40px;height:82px;display:flex;align-items:center}
+
+/* ── BRAND ── */
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none;margin-right:44px}
+.brand-emblem{width:50px;height:50px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.brand-emblem img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.28));transition:transform var(--nav-dur-slow) var(--nav-ease)}
+.brand:hover .brand-emblem img{transform:scale(1.05)}
+.brand-divider{width:1px;height:38px;background:linear-gradient(180deg,transparent,rgba(201,169,97,.55),transparent)}
+.brand-text{line-height:1.2}
+.brand-text .b-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:#fff;letter-spacing:1.5px;display:block}
+.brand-text .b-full{font-size:9.5px;color:rgba(255,255,255,.62);font-weight:500;letter-spacing:.4px;display:block;max-width:200px;text-transform:uppercase;font-family:var(--nav-font)}
+
+/* ── MAINNAV ── */
+.mainnav{display:flex;align-items:center;height:100%;margin-left:auto}
+.nav-item{position:relative;height:100%;display:flex;align-items:center}
+.mainnav>.nav-item>a{font-size:13.5px;font-weight:500;color:rgba(255,255,255,.92);text-decoration:none;padding:0 15px;height:100%;display:flex;align-items:center;position:relative;white-space:nowrap;cursor:pointer;font-family:var(--nav-font);transition:color var(--nav-dur-fast) var(--nav-ease),background var(--nav-dur-fast) var(--nav-ease)}
+.mainnav>.nav-item>a:hover{color:#fff;background:rgba(255,255,255,.07)}
+.mainnav>.nav-item>a::after{content:'';position:absolute;bottom:0;left:15px;right:15px;height:3px;background:linear-gradient(90deg,var(--gold-400),var(--gold-500));transform:scaleX(0);transform-origin:center;transition:transform var(--nav-dur) var(--nav-ease);border-radius:3px 3px 0 0}
+.mainnav>.nav-item:hover>a::after,.mainnav>.nav-item>a.active::after{transform:scaleX(1)}
+.mainnav .nav-item>a.active{color:#fff}
+
+/* ── DROPDOWN ── */
+.dropdown{position:absolute;top:100%;left:0;background:#fff;min-width:222px;border-radius:0 0 12px 12px;box-shadow:var(--nav-sh-xl);padding:8px 0;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity var(--nav-dur) var(--nav-ease),transform var(--nav-dur) var(--nav-ease),visibility var(--nav-dur);border-top:3px solid var(--gold-500)}
+.nav-item:hover .dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.dropdown a{display:block;padding:11px 22px;font-size:13.5px;color:var(--ink);text-decoration:none;font-weight:500;font-family:var(--nav-font);position:relative;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.dropdown a:hover{background:var(--navy-50);color:var(--navy-700);padding-left:27px}
+.dropdown a::before{content:'';position:absolute;left:14px;top:50%;width:5px;height:5px;border-radius:50%;background:var(--gold-500);transform:translateY(-50%) scale(0);transition:transform var(--nav-dur-fast) var(--nav-ease)}
+.dropdown a:hover::before{transform:translateY(-50%) scale(1)}
+
+/* ── NAV-PORTAL (E-Akademiya — gold CTA) ── */
+.nav-portal{background:linear-gradient(135deg,var(--gold-500),var(--gold-600));border:1px solid rgba(255,255,255,.18);color:var(--navy-900);font-size:13.5px;font-weight:700;text-decoration:none;height:42px;padding:0 22px;border-radius:8px;margin-left:18px;display:flex;align-items:center;gap:8px;align-self:center;font-family:var(--nav-font);letter-spacing:.01em;box-shadow:var(--nav-sh-gold);transition:all var(--nav-dur) var(--nav-ease)}
+.nav-portal:hover{background:linear-gradient(135deg,var(--gold-400),var(--gold-500));color:var(--navy-900);transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,169,97,.4)}
+
+/* ── E-AKADEMİYA mega menu ── */
+.nav-item.eacad{position:relative}
+.nav-item.eacad .nav-portal{cursor:pointer}
+.ea-chev{margin-left:2px;transition:transform var(--nav-dur) var(--nav-ease)}
+.nav-item.eacad:hover .ea-chev{transform:rotate(180deg)}
+.eacad-menu{position:absolute;top:calc(100% + 14px);right:0;width:520px;background:#fff;border-radius:14px;box-shadow:var(--nav-sh-2xl);padding:22px;opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity var(--nav-dur-slow) var(--nav-ease),transform var(--nav-dur-slow) var(--nav-ease),visibility var(--nav-dur-slow);z-index:130;border-top:3px solid var(--gold-500)}
+.nav-item.eacad:hover .eacad-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.eacad-menu::before{content:'';position:absolute;top:-9px;right:40px;width:16px;height:16px;background:#fff;transform:rotate(45deg);border-top:3px solid var(--gold-500);border-left:3px solid transparent}
+.eacad-head{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--navy-100)}
+.eacad-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--navy-800);display:block}
+.eacad-sub{font-size:11.5px;color:var(--ink-soft);font-weight:400;font-family:var(--nav-font)}
+.eacad-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.eacad-card{display:flex;align-items:center;gap:13px;padding:12px 13px;border-radius:10px;text-decoration:none;border:1px solid transparent;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.eacad-card:hover{background:var(--navy-50);border-color:var(--navy-100);transform:translateY(-2px);box-shadow:var(--nav-sh-sm)}
+.eacad-card .ea-ic{width:40px;height:40px;border-radius:9px;background:var(--gold-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold-600);transition:all var(--nav-dur-fast) var(--nav-ease)}
+.eacad-card:hover .ea-ic{background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);box-shadow:var(--nav-sh-gold)}
+.eacad-card .ea-tx{line-height:1.3}
+.eacad-card .ea-tx b{display:block;font-size:13.5px;font-weight:600;color:var(--navy-800);font-family:var(--nav-font)}
+.eacad-card .ea-tx small{font-size:11px;color:var(--ink-soft);font-weight:400;font-family:var(--nav-font)}
+
+/* ── BURGER + mobil menyu düzəlişi ── */
+.burger{display:none;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;margin-left:auto;padding:8px;border-radius:8px;transition:background var(--nav-dur-fast) var(--nav-ease)}
+.burger:hover{background:rgba(255,255,255,.12)}
+@media(max-width:980px){
+  /* JS inline stil köhnə teal qradiyenti inject edir — CSS-only override */
+  .mainnav[style]{background:linear-gradient(100deg,var(--navy-900) 0%,var(--navy-700) 100%)!important}
+  .mainnav[style]>.nav-item{width:100%;height:auto}
+  .mainnav[style]>.nav-item>a{width:100%;padding:14px 12px;border-radius:10px}
+  .mainnav[style]>.nav-item>a::after{display:none}
+  .mainnav[style] .nav-portal{margin:14px 4px 4px;justify-content:center}
+}
+
+/* ── ƏLÇATANLIQ: focus-visible (WCAG 2.1 AA) ── */
+.mainnav a:focus-visible,.nav-portal:focus-visible,.burger:focus-visible,.infofor-btn:focus-visible{outline:2px solid var(--gold-400);outline-offset:2px;border-radius:6px}
+.utility-left a:focus-visible,.lang-group a:focus-visible,.util-icon:focus-visible,.dropdown a:focus-visible,.eacad-card:focus-visible,.infofor-menu a:focus-visible{outline:2px solid var(--navy-500);outline-offset:2px;border-radius:6px}
+
+/* ── Reduced motion (yalnız nav sahəsi) ── */
+@media(prefers-reduced-motion:reduce){
+  .gov-banner *,.utility *,#siteHeader,#siteHeader *{transition:none!important;animation:none!important}
+}

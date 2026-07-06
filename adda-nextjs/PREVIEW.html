@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADDA — Azərbaycan Dövlət Dəniz Akademiyası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+--navy-900:#071E2E;--navy-800:#0B3D5C;--navy-700:#0E4D73;--navy-600:#12608F;--navy-500:#1A7AB5;--navy-400:#3D9AD4;--navy-100:#E8F4FD;--navy-50:#F0F8FF;
+--gold-600:#A68942;--gold-500:#C9A961;--gold-400:#D4BB7C;--gold-300:#E0CE9D;--gold-100:#F5EDDA;
+--gray-900:#111827;--gray-700:#374151;--gray-500:#6B7280;--gray-300:#D1D5DB;--gray-200:#E5E7EB;--gray-100:#F3F4F6;--gray-50:#F9FAFB;--white:#FFFFFF;
+--gradient-hero:linear-gradient(135deg,#0B3D5C 0%,#12608F 50%,#0E4D73 100%);
+--gradient-navy:linear-gradient(180deg,#0B3D5C 0%,#071E2E 100%);
+--gradient-gold:linear-gradient(135deg,#C9A961 0%,#A68942 100%);
+--gradient-card:linear-gradient(145deg,rgba(11,61,92,0.03) 0%,rgba(201,169,97,0.05) 100%);
+--font-display:'Fraunces',serif;--font-body:'Manrope',sans-serif;
+--text-xs:clamp(0.694rem,0.66rem + 0.17vw,0.75rem);--text-sm:clamp(0.833rem,0.78rem + 0.27vw,0.875rem);--text-base:clamp(0.938rem,0.88rem + 0.29vw,1rem);--text-lg:clamp(1.063rem,0.98rem + 0.42vw,1.125rem);--text-xl:clamp(1.25rem,1.12rem + 0.65vw,1.5rem);--text-2xl:clamp(1.5rem,1.3rem + 1vw,1.875rem);--text-3xl:clamp(1.875rem,1.56rem + 1.57vw,2.25rem);--text-4xl:clamp(2.25rem,1.8rem + 2.25vw,3rem);--text-5xl:clamp(2.75rem,2rem + 3.75vw,3.75rem);
+--leading-tight:1.15;--leading-snug:1.3;--leading-normal:1.6;--leading-relaxed:1.75;
+--tracking-tight:-0.025em;--tracking-wide:0.05em;--tracking-wider:0.1em;
+--space-1:0.25rem;--space-2:0.5rem;--space-3:0.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;--space-20:5rem;--space-24:6rem;
+--section-gap:clamp(3rem,2rem + 5vw,6rem);
+--shadow-sm:0 1px 3px rgba(11,61,92,0.06),0 1px 2px rgba(11,61,92,0.04);--shadow-md:0 4px 6px -1px rgba(11,61,92,0.07),0 2px 4px -1px rgba(11,61,92,0.04);--shadow-lg:0 10px 15px -3px rgba(11,61,92,0.08),0 4px 6px -2px rgba(11,61,92,0.03);--shadow-xl:0 20px 25px -5px rgba(11,61,92,0.08),0 10px 10px -5px rgba(11,61,92,0.02);--shadow-2xl:0 25px 50px -12px rgba(11,61,92,0.18);--shadow-gold:0 4px 14px rgba(201,169,97,0.15);--shadow-card-hover:0 20px 40px -12px rgba(11,61,92,0.15),0 0 0 1px rgba(11,61,92,0.05);
+--radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1rem;--radius-2xl:1.5rem;--radius-full:9999px;
+--ease-out:cubic-bezier(0.16,1,0.3,1);--dur-fast:150ms;--dur-normal:250ms;--dur-slow:400ms;--dur-slower:600ms;
+--container-max:1280px;--container-padding:clamp(1rem,0.5rem + 2.5vw,2rem);--nav-height:72px;--topbar-height:36px;
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}
+body{font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-normal);color:var(--gray-900);background:var(--white);overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+h1,h2,h3,h4{font-family:var(--font-display);line-height:var(--leading-tight);letter-spacing:var(--tracking-tight)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--navy-400);outline-offset:2px;border-radius:var(--radius-sm)}
+::selection{background:var(--navy-800);color:#fff}
+.container{width:100%;max-width:var(--container-max);margin-inline:auto;padding-inline:var(--container-padding)}
+/* photo placeholder helper */
+.ph{background-size:cover;background-position:center;position:relative}
+.ph::after{content:attr(data-l);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.35);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+
+/* ── TopBar ── */
+.topbar{background:var(--navy-800);color:#fff;font-size:var(--text-xs);height:var(--topbar-height);display:flex;align-items:center;position:relative;z-index:1001}
+.topbar .inner{width:100%;max-width:var(--container-max);margin-inline:auto;padding-inline:var(--container-padding);display:flex;align-items:center;justify-content:space-between}
+.tb-left{display:flex;gap:var(--space-5)}
+.tb-link{display:flex;align-items:center;gap:var(--space-2);color:rgba(255,255,255,.8);transition:color var(--dur-fast) var(--ease-out)}
+.tb-link:hover{color:var(--gold-400)}
+.tb-right{display:flex;align-items:center;gap:var(--space-5)}
+.lang{display:flex;gap:var(--space-1);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-full);padding:2px}
+.lang button{border:none;background:none;color:rgba(255,255,255,.6);font-weight:600;font-size:var(--text-xs);padding:2px 8px;border-radius:var(--radius-full);letter-spacing:var(--tracking-wide);transition:all var(--dur-fast) var(--ease-out)}
+.lang button:hover{color:#fff}
+.lang .active{background:var(--gold-500);color:var(--navy-900)}
+.tb-social{display:flex;gap:var(--space-3)}
+.tb-social a{color:rgba(255,255,255,.6);transition:color var(--dur-fast) var(--ease-out)}
+.tb-social a:hover{color:var(--gold-400)}
+@media(max-width:768px){.tb-left{display:none}}
+
+/* ── Navbar ── */
+.nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);height:var(--nav-height);display:flex;align-items:center;transition:box-shadow var(--dur-normal) var(--ease-out)}
+.nav.scrolled{box-shadow:var(--shadow-sm)}
+.nav .inner{width:100%;max-width:var(--container-max);margin-inline:auto;padding-inline:var(--container-padding);display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:var(--space-3);flex-shrink:0}
+.logo-txt{display:flex;flex-direction:column}
+.logo-title{font-family:var(--font-display);font-weight:700;font-size:1.25rem;color:var(--navy-800);line-height:1.1;letter-spacing:var(--tracking-wide)}
+.logo-sub{font-size:var(--text-xs);color:var(--gray-500);font-weight:500;letter-spacing:var(--tracking-wide)}
+.dnav{display:none}
+@media(min-width:1024px){.dnav{display:block}}
+.dnav ul{display:flex;align-items:center;gap:var(--space-1)}
+.dnav li{position:relative}
+.dnav a{display:flex;align-items:center;gap:var(--space-1);padding:var(--space-2) var(--space-3);font-size:var(--text-sm);font-weight:500;color:var(--gray-700);border-radius:var(--radius-md);transition:all var(--dur-fast) var(--ease-out);white-space:nowrap}
+.dnav a:hover{color:var(--navy-800);background:var(--navy-50)}
+.dnav .chev{transition:transform var(--dur-fast) var(--ease-out)}
+.dnav li:hover .chev{transform:rotate(180deg)}
+.dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%);min-width:200px;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-xl);padding:var(--space-2);opacity:0;visibility:hidden;transition:all var(--dur-fast) var(--ease-out)}
+.dnav li:hover .dropdown{opacity:1;visibility:visible}
+.dropdown a{display:block;padding:var(--space-2) var(--space-3);font-size:var(--text-sm)}
+.nav-actions{display:flex;align-items:center;gap:var(--space-3)}
+.nav-cta{display:none;padding:var(--space-2) var(--space-5);background:var(--gradient-gold);color:var(--navy-900);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-md);box-shadow:var(--shadow-gold);letter-spacing:var(--tracking-wide);transition:all var(--dur-fast) var(--ease-out)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,169,97,.25)}
+@media(min-width:1024px){.nav-cta{display:inline-flex}}
+.burger{display:flex;flex-direction:column;justify-content:center;align-items:center;width:44px;height:44px;gap:5px;background:none;border:none}
+@media(min-width:1024px){.burger{display:none}}
+.burger span{display:block;width:22px;height:2px;background:var(--navy-800);border-radius:2px;transition:all var(--dur-normal) var(--ease-out)}
+.burger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-overlay{position:fixed;inset:0;top:var(--nav-height);background:#fff;z-index:999;padding:var(--space-6) var(--container-padding);transform:translateX(100%);transition:transform var(--dur-slow) var(--ease-out);overflow-y:auto}
+.mobile-overlay.open{transform:translateX(0)}
+.mobile-overlay a{display:block;padding:var(--space-4) var(--space-2);font-size:var(--text-lg);font-weight:500;color:var(--gray-900);border-bottom:1px solid var(--gray-100)}
+.m-cta{margin-top:var(--space-6);text-align:center;padding:var(--space-4);background:var(--gradient-gold);color:var(--navy-900)!important;font-weight:700;border-radius:var(--radius-lg);border:none!important}
+
+/* ── Hero ── */
+.hero{position:relative;height:clamp(500px,70vh,720px);display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0B3D5C,#12608F,#0E4D73)}
+.hero-bg::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 25% 30%,rgba(26,122,181,.4),transparent 50%),radial-gradient(circle at 75% 60%,rgba(7,30,46,.6),transparent 60%);animation:heroFloat 20s ease-in-out infinite}
+@keyframes heroFloat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,30,46,.2) 0%,rgba(7,30,46,.55) 50%,rgba(7,30,46,.88) 100%)}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:var(--container-max);margin-inline:auto;padding-inline:var(--container-padding);padding-bottom:var(--space-12);display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-8)}
+.hero-content{max-width:680px;animation:fadeUp var(--dur-slow) var(--ease-out)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow-hero{display:inline-block;font-size:var(--text-xs);font-weight:700;letter-spacing:var(--tracking-wider);text-transform:uppercase;color:var(--gold-400);margin-bottom:var(--space-4);padding:var(--space-1) var(--space-3);border:1px solid rgba(201,169,97,.3);border-radius:var(--radius-full);background:rgba(201,169,97,.08)}
+.hero h1{font-size:var(--text-5xl);font-weight:700;color:#fff;line-height:var(--leading-tight);margin-bottom:var(--space-5)}
+.hero h1 span{display:block}
+.hero-sub{font-size:var(--text-lg);color:rgba(255,255,255,.8);line-height:var(--leading-normal);max-width:540px;margin-bottom:var(--space-8)}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:var(--space-4)}
+.btn-gold{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);background:var(--gradient-gold);color:var(--navy-900);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-md);box-shadow:var(--shadow-gold);letter-spacing:var(--tracking-wide);transition:all var(--dur-fast) var(--ease-out)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,169,97,.3)}
+.btn-gold svg{transition:transform var(--dur-fast) var(--ease-out)}
+.btn-gold:hover svg{transform:translateX(3px)}
+.btn-ghost{display:inline-flex;align-items:center;padding:var(--space-3) var(--space-6);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:var(--text-sm);border-radius:var(--radius-md);transition:all var(--dur-fast) var(--ease-out)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5)}
+.hero-controls{display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-4)}
+.dots{display:flex;gap:var(--space-2)}
+.dot{width:32px;height:3px;border:none;background:rgba(255,255,255,.3);border-radius:2px;position:relative;overflow:hidden;transition:background var(--dur-fast) var(--ease-out)}
+.dot.active{background:rgba(255,255,255,.2)}
+.dot.active::after{content:'';position:absolute;inset:0;background:var(--gold-500);border-radius:2px;animation:prog 6s linear;transform-origin:left}
+@keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.arrows{display:flex;gap:var(--space-2)}
+.arrow{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.05);border-radius:var(--radius-md);color:#fff;transition:all var(--dur-fast) var(--ease-out)}
+.arrow:hover{background:rgba(255,255,255,.15)}
+@media(max-width:768px){.hero{height:clamp(420px,60vh,560px)}.hero-inner{flex-direction:column;align-items:flex-start}.hero-controls{flex-direction:row;width:100%;justify-content:space-between;align-items:center}}
+
+/* ── Glass Dock ── */
+.dock{position:relative;z-index:10;margin-top:calc(-1 * var(--space-12));padding-bottom:var(--section-gap)}
+.dock-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-4)}
+.dock-card{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-4);background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);transition:all var(--dur-normal) var(--ease-out);position:relative;overflow:hidden;text-align:center}
+.dock-card::before{content:'';position:absolute;inset:0;background:var(--gradient-card);opacity:0;transition:opacity var(--dur-normal) var(--ease-out)}
+.dock-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-card-hover);border-color:var(--navy-100)}
+.dock-card:hover::before{opacity:1}
+.dock-icon{font-size:2rem;position:relative;z-index:1}
+.dock-label{font-size:var(--text-sm);font-weight:600;color:var(--gray-900);position:relative;z-index:1}
+@media(max-width:1024px){.dock-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.dock-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Section header ── */
+.sec{padding:var(--section-gap) 0}
+.sec-gray{background:var(--gray-50)}
+.sec-white{background:#fff}
+.eyebrow{display:block;font-size:var(--text-xs);font-weight:700;letter-spacing:var(--tracking-wider);text-transform:uppercase;color:var(--gold-600);margin-bottom:var(--space-3)}
+.sec-head{text-align:center;margin-bottom:var(--space-12)}
+.sec-head h2{font-size:var(--text-3xl);font-weight:700;color:var(--navy-800)}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-6)}
+.stat{text-align:center;padding:var(--space-8) var(--space-4);background:#fff;border-radius:var(--radius-xl);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);transition:all var(--dur-normal) var(--ease-out)}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-val{display:block;font-family:var(--font-display);font-size:var(--text-4xl);font-weight:800;color:var(--navy-800);line-height:1;margin-bottom:var(--space-2)}
+.stat-val .suf{color:var(--gold-500)}
+.stat-label{font-size:var(--text-sm);color:var(--gray-500);font-weight:500}
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.stats-grid{grid-template-columns:1fr 1fr;gap:var(--space-3)}}
+
+/* ── News ── */
+.news-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--space-10);gap:var(--space-6);flex-wrap:wrap}
+.news-head h2{font-size:var(--text-3xl);font-weight:700;color:var(--navy-800)}
+.view-all{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:600;color:var(--navy-600);transition:all var(--dur-fast) var(--ease-out);white-space:nowrap}
+.view-all:hover{color:var(--navy-800);gap:var(--space-3)}
+.news-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--space-6)}
+.feat-card{display:flex;flex-direction:column;border-radius:var(--radius-xl);overflow:hidden;background:#fff;border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);transition:all var(--dur-normal) var(--ease-out)}
+.feat-card:hover{box-shadow:var(--shadow-card-hover);transform:translateY(-2px)}
+.feat-img{aspect-ratio:16/9;background:linear-gradient(135deg,#0E4D73,#1A7AB5)}
+.feat-body{padding:var(--space-6)}
+.meta{display:flex;align-items:center;gap:var(--space-3)}
+.cat{font-size:var(--text-xs);font-weight:700;letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--navy-600);padding:2px var(--space-2);background:var(--navy-50);border-radius:var(--radius-sm)}
+.date{font-size:var(--text-xs);color:var(--gray-500);font-weight:500}
+.feat-card h3{font-size:var(--text-2xl);font-weight:600;color:var(--navy-800);margin:var(--space-3) 0;line-height:var(--leading-snug);transition:color var(--dur-fast) var(--ease-out)}
+.feat-card:hover h3{color:var(--navy-600)}
+.feat-card p{font-size:var(--text-base);color:var(--gray-500);line-height:var(--leading-normal)}
+.side-cards{display:flex;flex-direction:column;gap:var(--space-4)}
+.mini-card{display:flex;gap:var(--space-4);padding:var(--space-3);border-radius:var(--radius-lg);border:1px solid var(--gray-200);background:#fff;transition:all var(--dur-normal) var(--ease-out)}
+.mini-card:hover{box-shadow:var(--shadow-md);border-color:var(--navy-100);transform:translateX(2px)}
+.mini-img{flex-shrink:0;width:96px;height:96px;border-radius:var(--radius-md);background:linear-gradient(135deg,#0B3D5C,#12608F)}
+.mini-body{display:flex;flex-direction:column;justify-content:center}
+.mini-card h3{font-family:var(--font-display);font-size:var(--text-base);font-weight:600;color:var(--navy-800);line-height:var(--leading-snug);margin-top:var(--space-2)}
+@media(max-width:900px){.news-grid{grid-template-columns:1fr}}
+
+/* ── Academy 4.0 ── */
+.a40{position:relative;padding:var(--section-gap) 0;background:var(--gradient-navy);color:#fff;overflow:hidden}
+.a40-pattern{position:absolute;inset:0;background-image:radial-gradient(circle at 20% 30%,rgba(26,122,181,.15) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(201,169,97,.1) 0%,transparent 40%)}
+.a40-inner{position:relative;z-index:1}
+.a40-head{text-align:center;max-width:680px;margin:0 auto var(--space-16)}
+.a40-head .eyebrow{color:var(--gold-400)}
+.a40-head h2{font-size:var(--text-4xl);font-weight:700;color:#fff;margin-bottom:var(--space-5)}
+.a40-head p{font-size:var(--text-lg);color:rgba(255,255,255,.7);line-height:var(--leading-normal)}
+.a40-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-6);margin-bottom:var(--space-12)}
+.a40-card{padding:var(--space-8) var(--space-6);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-xl);transition:all var(--dur-normal) var(--ease-out)}
+.a40-card:hover{background:rgba(255,255,255,.07);border-color:rgba(201,169,97,.3);transform:translateY(-4px)}
+.a40-icon{width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--gradient-gold);color:var(--navy-900);border-radius:var(--radius-lg);margin-bottom:var(--space-5);box-shadow:var(--shadow-gold)}
+.a40-card h3{font-size:var(--text-xl);font-weight:600;color:#fff;margin-bottom:var(--space-3)}
+.a40-card p{font-size:var(--text-sm);color:rgba(255,255,255,.65);line-height:var(--leading-normal)}
+.a40-cta{text-align:center}
+@media(max-width:1024px){.a40-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.a40-grid{grid-template-columns:1fr}}
+
+/* ── Partnership ── */
+.pt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-6)}
+.pt-card{position:relative;display:flex;flex-direction:column;padding:var(--space-8);background:var(--gradient-hero);border-radius:var(--radius-2xl);color:#fff;overflow:hidden;transition:all var(--dur-normal) var(--ease-out);box-shadow:var(--shadow-lg)}
+.pt-card::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(201,169,97,.2) 0%,transparent 70%);border-radius:50%;transition:transform var(--dur-slow) var(--ease-out)}
+.pt-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-2xl)}
+.pt-card:hover::before{transform:scale(1.5)}
+.pt-top{display:flex;align-items:baseline;gap:var(--space-2);margin-bottom:var(--space-5);position:relative;z-index:1}
+.pt-stat{font-family:var(--font-display);font-size:var(--text-5xl);font-weight:800;color:var(--gold-400);line-height:1}
+.pt-stat-label{font-size:var(--text-sm);color:rgba(255,255,255,.6);font-weight:500}
+.pt-card h3{font-size:var(--text-xl);font-weight:600;color:#fff;margin-bottom:var(--space-3);position:relative;z-index:1}
+.pt-card p{font-size:var(--text-sm);color:rgba(255,255,255,.7);line-height:var(--leading-normal);margin-bottom:var(--space-6);flex-grow:1;position:relative;z-index:1}
+.pt-link{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:600;color:var(--gold-400);position:relative;z-index:1;transition:gap var(--dur-fast) var(--ease-out)}
+.pt-card:hover .pt-link{gap:var(--space-3)}
+@media(max-width:900px){.pt-grid{grid-template-columns:1fr;max-width:480px;margin-inline:auto}}
+
+/* ── Partner Logos ── */
+.logos{padding:var(--space-16) 0;background:#fff;border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)}
+.logos-label{text-align:center;font-size:var(--text-sm);font-weight:500;color:var(--gray-500);margin-bottom:var(--space-10);letter-spacing:var(--tracking-wide)}
+.logo-strip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:var(--space-10)}
+.plogo{display:flex;flex-direction:column;align-items:center;gap:var(--space-2);opacity:.55;filter:grayscale(1);transition:all var(--dur-normal) var(--ease-out);max-width:140px;text-align:center}
+.plogo:hover{opacity:1;filter:grayscale(0);transform:translateY(-2px)}
+.plogo-mark{width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:var(--navy-50);border:1px solid var(--navy-100);border-radius:var(--radius-lg);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);color:var(--navy-700)}
+.plogo-name{font-size:var(--text-xs);color:var(--gray-500);font-weight:500;line-height:var(--leading-snug)}
+@media(max-width:768px){.logo-strip{gap:var(--space-6)}.plogo-name{display:none}}
+
+/* ── Career ── */
+.career-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-16);align-items:center}
+.career-img-col{position:relative}
+.career-img{aspect-ratio:4/5;border-radius:var(--radius-2xl);background:linear-gradient(135deg,#0E4D73,#1A7AB5);box-shadow:var(--shadow-xl)}
+.float-card{position:absolute;bottom:var(--space-8);right:calc(-1 * var(--space-6));background:#fff;padding:var(--space-5) var(--space-6);border-radius:var(--radius-xl);box-shadow:var(--shadow-2xl);display:flex;flex-direction:column;border:1px solid var(--gray-100)}
+.float-stat{font-family:var(--font-display);font-size:var(--text-4xl);font-weight:800;color:var(--navy-800);line-height:1}
+.float-label{font-size:var(--text-sm);color:var(--gray-500);font-weight:500;max-width:140px;margin-top:var(--space-1)}
+.career-content h2{font-size:var(--text-4xl);font-weight:700;color:var(--navy-800);margin-bottom:var(--space-4)}
+.career-intro{font-size:var(--text-lg);color:var(--gray-500);line-height:var(--leading-normal);margin-bottom:var(--space-8)}
+.career-features{display:flex;flex-direction:column;gap:var(--space-5);margin-bottom:var(--space-8)}
+.cfeat{display:flex;gap:var(--space-4)}
+.cfeat-icon{flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--navy-50);color:var(--navy-700);border-radius:var(--radius-lg)}
+.cfeat h3{font-size:var(--text-lg);font-weight:600;color:var(--navy-800);margin-bottom:var(--space-1)}
+.cfeat p{font-size:var(--text-sm);color:var(--gray-500);line-height:var(--leading-normal)}
+.btn-navy{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);background:var(--navy-800);color:#fff;font-weight:600;font-size:var(--text-sm);border-radius:var(--radius-md);transition:all var(--dur-fast) var(--ease-out)}
+.btn-navy:hover{background:var(--navy-700);transform:translateY(-1px)}
+.btn-navy svg{transition:transform var(--dur-fast) var(--ease-out)}
+.btn-navy:hover svg{transform:translateX(3px)}
+@media(max-width:900px){.career-grid{grid-template-columns:1fr;gap:var(--space-12)}.career-img-col{max-width:440px}.float-card{right:var(--space-6)}}
+
+/* ── FAQ ── */
+.faq-wrap{max-width:820px;margin-inline:auto;padding-inline:var(--container-padding)}
+.faq-list{display:flex;flex-direction:column;gap:var(--space-3)}
+.faq-item{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;transition:all var(--dur-normal) var(--ease-out)}
+.faq-item.open{border-color:var(--navy-100);box-shadow:var(--shadow-md)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;width:100%;padding:var(--space-5) var(--space-6);background:none;border:none;text-align:left;font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--navy-800);gap:var(--space-4);transition:color var(--dur-fast) var(--ease-out)}
+.faq-q:hover{color:var(--navy-600)}
+.faq-icon{flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--navy-50);border-radius:var(--radius-md);color:var(--navy-700);transition:all var(--dur-normal) var(--ease-out)}
+.faq-item.open .faq-icon{background:var(--navy-800);color:#fff;transform:rotate(135deg)}
+.faq-a-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dur-normal) var(--ease-out)}
+.faq-item.open .faq-a-wrap{grid-template-rows:1fr}
+.faq-a-inner{overflow:hidden}
+.faq-a{padding:0 var(--space-6) var(--space-5);font-size:var(--text-base);color:var(--gray-600);line-height:var(--leading-relaxed)}
+.faq-footer{text-align:center;margin-top:var(--space-10);color:var(--gray-500)}
+.faq-footer a{display:inline-block;margin-top:var(--space-2);font-weight:600;color:var(--navy-600)}
+.faq-footer a:hover{color:var(--navy-800);text-decoration:underline;text-underline-offset:3px}
+
+/* ── Footer ── */
+.footer{background:var(--navy-900);color:rgba(255,255,255,.7)}
+.footer-main{padding:var(--space-20) 0 var(--space-16)}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1.4fr;gap:var(--space-10)}
+.footer-brand{max-width:320px}
+.footer-logo{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5)}
+.footer-logo-title{display:block;font-family:var(--font-display);font-weight:700;font-size:1.375rem;color:#fff;line-height:1.1;letter-spacing:var(--tracking-wide)}
+.footer-logo-sub{display:block;font-size:var(--text-xs);color:rgba(255,255,255,.5);font-weight:500}
+.footer-brand-text{font-size:var(--text-sm);line-height:var(--leading-relaxed);margin-bottom:var(--space-6);color:rgba(255,255,255,.6)}
+.footer-contact{display:flex;flex-direction:column;gap:var(--space-3)}
+.fc-item{display:flex;align-items:center;gap:var(--space-3);font-size:var(--text-sm);color:rgba(255,255,255,.7);transition:color var(--dur-fast) var(--ease-out)}
+a.fc-item:hover{color:var(--gold-400)}
+.fc-item svg{flex-shrink:0;color:var(--gold-500)}
+.footer-col h3{font-size:var(--text-base);font-weight:600;color:#fff;margin-bottom:var(--space-5)}
+.footer-links{display:flex;flex-direction:column;gap:var(--space-3)}
+.footer-links a{font-size:var(--text-sm);color:rgba(255,255,255,.6);transition:all var(--dur-fast) var(--ease-out)}
+.footer-links a:hover{color:var(--gold-400);padding-left:var(--space-1)}
+.footer-map{border-radius:var(--radius-lg);overflow:hidden;border:1px solid rgba(255,255,255,.1);aspect-ratio:16/10;background:var(--navy-800)}
+.footer-map iframe{width:100%;height:100%;border:none;filter:grayscale(.3) invert(.9) hue-rotate(180deg)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:var(--space-6) 0}
+.footer-bottom-inner{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
+.copyright{font-size:var(--text-xs);color:rgba(255,255,255,.5)}
+.footer-social{display:flex;gap:var(--space-3)}
+.footer-social a{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-md);color:rgba(255,255,255,.6);transition:all var(--dur-fast) var(--ease-out)}
+.footer-social a:hover{color:var(--gold-400);border-color:rgba(201,169,97,.4);transform:translateY(-2px)}
+@media(max-width:1100px){.footer-grid{grid-template-columns:1fr 1fr;gap:var(--space-10) var(--space-8)}.footer-brand{grid-column:1/-1;max-width:100%}.footer-map-col{grid-column:1/-1}.footer-map{max-width:480px}}
+@media(max-width:560px){.footer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- TopBar -->
+<div class="topbar">
+  <div class="inner">
+    <div class="tb-left">
+      <a href="tel:+994124935927" class="tb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>+994 12 493 59 27</span></a>
+      <a href="mailto:info@adda.edu.az" class="tb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span>info@adda.edu.az</span></a>
+    </div>
+    <div class="tb-right">
+      <div class="lang"><button class="active">AZ</button><button>RU</button><button>EN</button></div>
+      <div class="tb-social">
+        <a href="#" aria-label="Facebook"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<header class="nav" id="nav">
+  <div class="inner">
+    <a href="#" class="logo" aria-label="ADDA Ana Səhifə">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#0B3D5C" stroke-width="2"/><path d="M12 28L20 10L28 28" stroke="#0B3D5C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 23H25.5" stroke="#C9A961" stroke-width="2" stroke-linecap="round"/></svg>
+      <div class="logo-txt"><span class="logo-title">ADDA</span><span class="logo-sub">Dəniz Akademiyası</span></div>
+    </a>
+    <nav class="dnav" aria-label="Əsas naviqasiya">
+      <ul>
+        <li><a href="#">Haqqımızda <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
+          <div class="dropdown"><a href="#">Tariximiz</a><a href="#">Missiya və Vizyon</a><a href="#">Rəhbərlik</a><a href="#">Struktur</a></div>
+        </li>
+        <li><a href="#">Təhsil <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
+          <div class="dropdown"><a href="#">Bakalavr</a><a href="#">Magistratura</a><a href="#">Doktorantura</a></div>
+        </li>
+        <li><a href="#">Elm</a></li>
+        <li><a href="#">Beynəlxalq əlaqələr</a></li>
+        <li><a href="#">Tələbə həyatı</a></li>
+        <li><a href="#">Karyera</a></li>
+        <li><a href="#">Əlaqə</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a href="#" class="nav-cta">Qəbul 2026</a>
+      <button class="burger" id="burger" aria-label="Menyunu aç"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mobile-overlay" id="mobileOverlay">
+  <a href="#">Haqqımızda</a><a href="#">Təhsil</a><a href="#">Elm</a><a href="#">Beynəlxalq əlaqələr</a><a href="#">Tələbə həyatı</a><a href="#">Karyera</a><a href="#">Əlaqə</a>
+  <a href="#" class="m-cta">Qəbul 2026</a>
+</div>
+
+<main>
+<!-- Hero -->
+<section class="hero" id="hero" aria-roledescription="carousel">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-inner">
+    <div class="hero-content" id="heroContent">
+      <span class="eyebrow-hero" id="heroEyebrow">1881-ci ildən bəri</span>
+      <h1 id="heroTitle"><span>Dənizçilik təhsilinin</span><span>liderinə xoş gəlmisiniz</span></h1>
+      <p class="hero-sub" id="heroSub">Xəzər-Qara dəniz regionunun ən qabaqcıl dəniz akademiyası olaraq gələcəyin peşəkarlarını yetişdiririk.</p>
+      <div class="hero-ctas">
+        <a href="#" class="btn-gold" id="heroCta">Qəbul 2026 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a href="#" class="btn-ghost" id="heroCta2">Akademiya haqqında</a>
+      </div>
+    </div>
+    <div class="hero-controls">
+      <div class="dots" id="dots">
+        <button class="dot active" data-i="0" aria-label="Slayd 1"></button>
+        <button class="dot" data-i="1" aria-label="Slayd 2"></button>
+        <button class="dot" data-i="2" aria-label="Slayd 3"></button>
+      </div>
+      <div class="arrows">
+        <button class="arrow" id="prevBtn" aria-label="Əvvəlki slayd"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="arrow" id="nextBtn" aria-label="Növbəti slayd"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Glass Dock -->
+<section class="dock" aria-label="Sürətli keçidlər">
+  <div class="container">
+    <div class="dock-grid">
+      <a href="#" class="dock-card"><span class="dock-icon">🎓</span><span class="dock-label">Qəbul</span></a>
+      <a href="#" class="dock-card"><span class="dock-icon">📚</span><span class="dock-label">Kitabxana</span></a>
+      <a href="#" class="dock-card"><span class="dock-icon">🧪</span><span class="dock-label">Elmi jurnal</span></a>
+      <a href="#" class="dock-card"><span class="dock-icon">📋</span><span class="dock-label">E-Tələbə</span></a>
+      <a href="#" class="dock-card"><span class="dock-icon">🌐</span><span class="dock-label">Virtual tur</span></a>
+      <a href="#" class="dock-card"><span class="dock-icon">📞</span><span class="dock-label">Əlaqə</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="sec sec-gray" aria-label="Rəqəmlərlə ADDA">
+  <div class="container">
+    <div class="sec-head"><span class="eyebrow">Rəqəmlərlə</span><h2>ADDA bir baxışda</h2></div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat"><span class="stat-val" data-target="143" data-suf="+">0</span><span class="stat-label">İllik tarix</span></div>
+      <div class="stat"><span class="stat-val" data-target="5000" data-suf="+">0</span><span class="stat-label">Tələbə</span></div>
+      <div class="stat"><span class="stat-val" data-target="350" data-suf="+">0</span><span class="stat-label">Professor-müəllim heyəti</span></div>
+      <div class="stat"><span class="stat-val" data-target="45" data-suf="+">0</span><span class="stat-label">Beynəlxalq tərəfdaş</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- News -->
+<section class="sec sec-white" aria-label="Xəbərlər">
+  <div class="container">
+    <div class="news-head">
+      <div><span class="eyebrow">Son yeniliklər</span><h2>Xəbərlər və hadisələr</h2></div>
+      <a href="#" class="view-all">Bütün xəbərlər <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="news-grid">
+      <a href="#" class="feat-card">
+        <div class="feat-img ph" data-l="Konfrans şəkli"></div>
+        <div class="feat-body">
+          <div class="meta"><span class="cat">Konfrans</span><time class="date">28 İyun 2026</time></div>
+          <h3>Beynəlxalq Dənizçilik Konfransı 2026 başa çatdı</h3>
+          <p>Akademiyamızda keçirilən konfransda 15 ölkədən 200+ nümayəndə iştirak etdi.</p>
+        </div>
+      </a>
+      <div class="side-cards">
+        <a href="#" class="mini-card"><div class="mini-img ph" data-l=""></div><div class="mini-body"><div class="meta"><span class="cat">Əməkdaşlıq</span><time class="date">25 İyun</time></div><h3>WMU ilə yeni müqavilə imzalandı</h3></div></a>
+        <a href="#" class="mini-card"><div class="mini-img ph" data-l=""></div><div class="mini-body"><div class="meta"><span class="cat">Elm</span><time class="date">20 İyun</time></div><h3>Dəniz ekologiyası üzrə yeni tədqiqat</h3></div></a>
+        <a href="#" class="mini-card"><div class="mini-img ph" data-l=""></div><div class="mini-body"><div class="meta"><span class="cat">Tələbə</span><time class="date">18 İyun</time></div><h3>Tələbələrimiz beynəlxalq yarışda qalib gəldi</h3></div></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Academy 4.0 -->
+<section class="a40" aria-label="Akademiya 4.0">
+  <div class="a40-pattern"></div>
+  <div class="container a40-inner">
+    <div class="a40-head">
+      <span class="eyebrow">Rəqəmsal transformasiya</span>
+      <h2>Akademiya 4.0</h2>
+      <p>Ənənəvi dənizçilik təhsilini müasir texnologiyalarla birləşdirən rəqəmsal ekosistem. Gələcəyin dənizçiləri bugünün innovasiyaları ilə yetişir.</p>
+    </div>
+    <div class="a40-grid">
+      <div class="a40-card"><div class="a40-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><h3>Rəqəmsal Kampus</h3><p>Buludda yerləşən inteqrasiya olunmuş təhsil idarəetmə sistemi.</p></div>
+      <div class="a40-card"><div class="a40-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h3>Simulyasiya Mərkəzi</h3><p>Tam missiya körpü və maşın dairəsi simulyatorları.</p></div>
+      <div class="a40-card"><div class="a40-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><h3>Qlobal Şəbəkə</h3><p>45+ beynəlxalq tərəfdaşla real-vaxt əməkdaşlıq platforması.</p></div>
+      <div class="a40-card"><div class="a40-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>AI Assistent</h3><p>Tələbələr üçün 24/7 süni intellekt dəstək sistemi.</p></div>
+    </div>
+    <div class="a40-cta"><a href="#" class="btn-gold">Ətraflı məlumat <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+  </div>
+</section>
+
+<!-- Partnership -->
+<section class="sec sec-gray" aria-label="Beynəlxalq tərəfdaşlıq">
+  <div class="container">
+    <div class="sec-head"><span class="eyebrow">Beynəlxalq əlaqələr</span><h2>Qlobal tərəfdaşlıq</h2></div>
+    <div class="pt-grid">
+      <a href="#" class="pt-card"><div class="pt-top"><span class="pt-stat">12</span><span class="pt-stat-label">ölkə</span></div><h3>Tələbə Mübadiləsi</h3><p>Erasmus+ və ikitərəfli müqavilələr çərçivəsində beynəlxalq mobillik imkanları.</p><span class="pt-link">Ətraflı <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a href="#" class="pt-card"><div class="pt-top"><span class="pt-stat">5</span><span class="pt-stat-label">proqram</span></div><h3>Birgə Diplomlar</h3><p>Aparıcı Avropa universitetləri ilə ikili diplom proqramları.</p><span class="pt-link">Ətraflı <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a href="#" class="pt-card"><div class="pt-top"><span class="pt-stat">30+</span><span class="pt-stat-label">layihə</span></div><h3>Elmi Əməkdaşlıq</h3><p>Beynəlxalq tədqiqat layihələri və akademik nəşrlər.</p><span class="pt-link">Ətraflı <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<!-- Partner Logos -->
+<section class="logos" aria-label="Tərəfdaş qurumlar">
+  <div class="container">
+    <p class="logos-label">Etibarlı beynəlxalq tərəfdaşlarımız</p>
+    <div class="logo-strip">
+      <div class="plogo"><div class="plogo-mark">WMU</div><span class="plogo-name">World Maritime University</span></div>
+      <div class="plogo"><div class="plogo-mark">IMO</div><span class="plogo-name">International Maritime Organization</span></div>
+      <div class="plogo"><div class="plogo-mark">IAMU</div><span class="plogo-name">Int. Association of Maritime Universities</span></div>
+      <div class="plogo"><div class="plogo-mark">Ply</div><span class="plogo-name">University of Plymouth</span></div>
+      <div class="plogo"><div class="plogo-mark">MMA</div><span class="plogo-name">Massachusetts Maritime Academy</span></div>
+      <div class="plogo"><div class="plogo-mark">ITMO</div><span class="plogo-name">ITMO University</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Career -->
+<section class="sec sec-white" aria-label="Karyera mərkəzi">
+  <div class="container">
+    <div class="career-grid">
+      <div class="career-img-col">
+        <div class="career-img ph" data-l="Karyera mərkəzi şəkli"></div>
+        <div class="float-card"><span class="float-stat">94%</span><span class="float-label">məzun işlə təmin olunur</span></div>
+      </div>
+      <div class="career-content">
+        <span class="eyebrow">Karyera mərkəzi</span>
+        <h2>Peşəkar gələcəyə hazırlıq</h2>
+        <p class="career-intro">Tələbələrimizin uğurlu karyerası bizim prioritetimizdir. Karyera mərkəzimiz təhsil müddətindən başlayaraq məzuniyyətdən sonra da dəstək göstərir.</p>
+        <div class="career-features">
+          <div class="cfeat"><div class="cfeat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></div><div><h3>Karyera Məsləhəti</h3><p>Fərdi karyera planlaması və peşəkar inkişaf dəstəyi.</p></div></div>
+          <div class="cfeat"><div class="cfeat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div><h3>İş Yerləşdirmə</h3><p>Aparıcı dənizçilik şirkətləri ilə birbaşa əlaqə.</p></div></div>
+          <div class="cfeat"><div class="cfeat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><h3>Təcrübə Proqramları</h3><p>Gəmilərdə və liman infrastrukturunda praktik təcrübə.</p></div></div>
+        </div>
+        <a href="#" class="btn-navy">Karyera mərkəzinə keç <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec sec-gray" aria-label="Tez-tez verilən suallar">
+  <div class="faq-wrap">
+    <div class="sec-head"><span class="eyebrow">Kömək mərkəzi</span><h2>Tez-tez verilən suallar</h2></div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item open"><button class="faq-q" aria-expanded="true"><span>Qəbul üçün hansı sənədlər tələb olunur?</span><span class="faq-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button><div class="faq-a-wrap"><div class="faq-a-inner"><p class="faq-a">Bakalavr səviyyəsinə qəbul üçün tam orta təhsil haqqında sənəd, DİM buraxılış imtahanı nəticələri, tibbi arayış və şəxsiyyət vəsiqəsinin surəti tələb olunur. Dənizçilik ixtisasları üçün əlavə tibbi komissiya keçmək lazımdır.</p></div></div></div>
+      <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Beynəlxalq tələbələr üçün hansı proqramlar mövcuddur?</span><span class="faq-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button><div class="faq-a-wrap"><div class="faq-a-inner"><p class="faq-a">Akademiyamız Erasmus+ və ikitərəfli müqavilələr çərçivəsində beynəlxalq tələbə mübadiləsi proqramları təklif edir. İngilis dilində tədris olunan bir sıra magistr proqramları da mövcuddur.</p></div></div></div>
+      <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>STCW sertifikatları akademiyada verilirmi?</span><span class="faq-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button><div class="faq-a-wrap"><div class="faq-a-inner"><p class="faq-a">Bəli, ADDA IMO və STCW konvensiyalarına tam uyğun olaraq bütün zəruri dənizçilik sertifikatlarını verir. Simulyasiya mərkəzimiz beynəlxalq standartlara cavab verir.</p></div></div></div>
+      <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Təhsil haqqı və təqaüd imkanları nələrdir?</span><span class="faq-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button><div class="faq-a-wrap"><div class="faq-a-inner"><p class="faq-a">Dövlət sifarişi əsasında qəbul olan tələbələr üçün təhsil ödənişsizdir və təqaüd təyin olunur. Ödənişli təhsil formaları üçün müxtəlif güzəşt və təqaüd proqramları mövcuddur.</p></div></div></div>
+      <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Tələbələr üçün yataqxana təmin olunurmu?</span><span class="faq-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button><div class="faq-a-wrap"><div class="faq-a-inner"><p class="faq-a">Bəli, akademiyanın müasir yataqxana kompleksi var. Yerlər ilk növbədə region tələbələrinə və beynəlxalq mübadilə iştirakçılarına ayrılır.</p></div></div></div>
+    </div>
+    <div class="faq-footer"><p>Sualınıza cavab tapmadınız?</p><a href="#">Bizimlə əlaqə saxlayın</a></div>
+  </div>
+</section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <svg width="44" height="44" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#C9A961" stroke-width="2"/><path d="M12 28L20 10L28 28" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 23H25.5" stroke="#C9A961" stroke-width="2" stroke-linecap="round"/></svg>
+            <div><span class="footer-logo-title">ADDA</span><span class="footer-logo-sub">Dəniz Akademiyası</span></div>
+          </div>
+          <p class="footer-brand-text">1881-ci ildən bəri dənizçilik təhsilinin lideri. Xəzər-Qara dəniz regionunun ən qabaqcıl dəniz akademiyası.</p>
+          <div class="footer-contact">
+            <a href="tel:+994124935927" class="fc-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+994 12 493 59 27</a>
+            <a href="mailto:info@adda.edu.az" class="fc-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>info@adda.edu.az</a>
+            <span class="fc-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>Z.Əliyeva küç. 18, Bakı, AZ1000</span>
+          </div>
+        </div>
+        <div class="footer-col"><h3>Akademiya</h3><div class="footer-links"><a href="#">Tariximiz</a><a href="#">Missiya və Vizyon</a><a href="#">Rəhbərlik</a><a href="#">Akkreditasiyalar</a></div></div>
+        <div class="footer-col"><h3>Təhsil</h3><div class="footer-links"><a href="#">Bakalavr</a><a href="#">Magistratura</a><a href="#">Doktorantura</a><a href="#">Qəbul 2026</a></div></div>
+        <div class="footer-col"><h3>Resurslar</h3><div class="footer-links"><a href="#">Kitabxana</a><a href="#">Elmi jurnal</a><a href="#">E-Tələbə</a><a href="#">Virtual tur</a></div></div>
+        <div class="footer-col footer-map-col"><h3>Bizi tapın</h3><div class="footer-map"><iframe title="ADDA yerləşməsi" src="https://www.openstreetmap.org/export/embed.html?bbox=49.82%2C40.36%2C49.86%2C40.38&layer=mapnik&marker=40.3699%2C49.8372" loading="lazy"></iframe></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-inner">
+        <p class="copyright">© 2026 Azərbaycan Dövlət Dəniz Akademiyası. Bütün hüquqlar qorunur.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17zM10 15l5-3-5-3z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
+
+// Mobile menu
+const burger=document.getElementById('burger'),overlay=document.getElementById('mobileOverlay');
+burger.addEventListener('click',()=>{burger.classList.toggle('open');overlay.classList.toggle('open');document.body.style.overflow=overlay.classList.contains('open')?'hidden':''});
+
+// Hero slider
+const slides=[
+  {eyebrow:'1881-ci ildən bəri',title:['Dənizçilik təhsilinin','liderinə xoş gəlmisiniz'],sub:'Xəzər-Qara dəniz regionunun ən qabaqcıl dəniz akademiyası olaraq gələcəyin peşəkarlarını yetişdiririk.',cta:'Qəbul 2026',cta2:'Akademiya haqqında',bg:'linear-gradient(135deg,#0B3D5C,#12608F,#0E4D73)'},
+  {eyebrow:'Akademiya 4.0',title:['Rəqəmsal transformasiya','dövründə təhsil'],sub:'Son texnologiyalarla təchiz olunmuş simulyasiya laboratoriyaları və rəqəmsal kampus infrastrukturumuz.',cta:'Proqramları kəşf et',cta2:'Virtual tur',bg:'linear-gradient(135deg,#0E4D73,#1A7AB5,#12608F)'},
+  {eyebrow:'Beynəlxalq standartlar',title:['IMO və STCW','standartlarına uyğunluq'],sub:'45+ beynəlxalq tərəfdaşla birlikdə qlobal dənizçilik ekosisteminə inteqrasiya.',cta:'Tərəfdaşlarımız',cta2:'Akkreditasiyalar',bg:'linear-gradient(135deg,#071E2E,#0B3D5C,#0E4D73)'}
+];
+let cur=0,timer;
+const heroBg=document.querySelector('.hero-bg'),content=document.getElementById('heroContent');
+function render(i){
+  const s=slides[i];
+  heroBg.style.background=s.bg;
+  document.getElementById('heroEyebrow').textContent=s.eyebrow;
+  document.getElementById('heroTitle').innerHTML=s.title.map(l=>'<span>'+l+'</span>').join('');
+  document.getElementById('heroSub').textContent=s.sub;
+  document.getElementById('heroCta').innerHTML=s.cta+' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+  document.getElementById('heroCta2').textContent=s.cta2;
+  content.style.animation='none';content.offsetHeight;content.style.animation='';
+  document.querySelectorAll('.dot').forEach((d,di)=>d.classList.toggle('active',di===i));
+}
+function go(i){cur=(i+slides.length)%slides.length;render(cur);reset()}
+function reset(){clearInterval(timer);timer=setInterval(()=>go(cur+1),6000)}
+document.getElementById('nextBtn').addEventListener('click',()=>go(cur+1));
+document.getElementById('prevBtn').addEventListener('click',()=>go(cur-1));
+document.querySelectorAll('.dot').forEach(d=>d.addEventListener('click',()=>go(+d.dataset.i)));
+const heroEl=document.getElementById('hero');
+heroEl.addEventListener('mouseenter',()=>clearInterval(timer));
+heroEl.addEventListener('mouseleave',reset);
+reset();
+
+// Stats counter
+const statsGrid=document.getElementById('statsGrid');
+let counted=false;
+function countUp(){
+  if(counted)return;counted=true;
+  document.querySelectorAll('.stat-val').forEach(el=>{
+    const target=+el.dataset.target,suf=el.dataset.suf||'';let n=0;const step=target/120;
+    const t=setInterval(()=>{n+=step;if(n>=target){el.innerHTML=target.toLocaleString('az-AZ')+'<span class="suf">'+suf+'</span>';clearInterval(t)}else{el.innerHTML=Math.floor(n).toLocaleString('az-AZ')+'<span class="suf">'+suf+'</span>'}},16);
+  });
+}
+new IntersectionObserver((e)=>{if(e[0].isIntersecting)countUp()},{threshold:.3}).observe(statsGrid);
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.closest('.faq-item'),wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-q').setAttribute('aria-expanded','false')});
+    if(!wasOpen){item.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  });
+});
+</script>
+</body>
+</html>

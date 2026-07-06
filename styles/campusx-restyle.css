@@ -1,0 +1,99 @@
+/* ── ADDA-DA YAŞAM — kampus bento (dünya təcrübəsi · 2031) ── */
+.campusx{padding:92px 0 84px;background:linear-gradient(180deg,#FFFFFF 0%,#F2F8FD 18%,#F2F8FD 82%,#FFFFFF 100%)}
+.cl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.cl-intro{grid-column:span 2;display:flex;flex-direction:column;justify-content:center;padding:6px 8px 10px 2px}
+.cl-eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--nav-font);font-size:13px;font-weight:800;letter-spacing:2.4px;color:var(--gold-600);text-transform:uppercase;margin-bottom:14px}
+.cl-eyebrow::before{content:'';width:26px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--gold-500),var(--gold-600))}
+.cl-title{font-family:'Fraunces',serif;font-size:clamp(27px,2.8vw,37px);font-weight:600;color:var(--navy-800);letter-spacing:-.5px;line-height:1.14;margin-bottom:14px}
+.cl-title em{font-style:italic;font-weight:500;color:var(--gold-600)}
+.cl-lead{font-family:var(--nav-font);font-size:14.5px;color:#3C5665;line-height:1.75;margin-bottom:24px;max-width:420px}
+.cl-cta{display:flex;gap:12px;flex-wrap:wrap}
+.cl-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--nav-font);font-size:13.5px;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);box-shadow:var(--nav-sh-gold);transition:all var(--nav-dur) var(--nav-ease);white-space:nowrap}
+.cl-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,169,97,.4)}
+.cl-btn svg{transition:transform var(--nav-dur-fast) var(--nav-ease)}
+.cl-btn:hover svg{transform:translateX(3px)}
+.cl-btn--ghost{background:transparent;color:var(--navy-800);border:1.5px solid rgba(11,61,92,.28);box-shadow:none}
+.cl-btn--ghost:hover{background:#fff;color:var(--navy-900);border-color:var(--navy-500);box-shadow:var(--nav-sh-sm)}
+.cl-btn--ghost svg{transition:none}
+.cl-btn--ghost:hover svg{transform:none}
+
+/* Kartlar */
+.cl-card{position:relative;border-radius:20px;overflow:hidden;text-decoration:none;transition:transform var(--nav-dur) var(--nav-ease),box-shadow var(--nav-dur) var(--nav-ease)}
+.cl-card:hover{transform:translateY(-5px);box-shadow:var(--nav-sh-xl)}
+.cl-photo{background-size:cover;background-position:center;display:flex;align-items:flex-end;min-height:250px}
+.cl-ov{position:absolute;inset:0;background:linear-gradient(186deg,rgba(7,30,46,.04) 34%,rgba(7,30,46,.9) 97%);transition:box-shadow var(--nav-dur) var(--nav-ease);border-radius:inherit}
+.cl-photo:hover .cl-ov{box-shadow:inset 0 0 0 1.5px rgba(201,169,97,.4)}
+.cl-tx{position:relative;z-index:2;padding:20px 22px;color:#fff;width:100%}
+.cl-chip{display:inline-block;font-family:var(--nav-font);font-size:9.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;border:1px solid rgba(255,255,255,.28);padding:5px 11px;border-radius:7px;margin-bottom:10px}
+.cl-chip--gold{background:var(--gold-100);color:var(--gold-600);border:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.cl-chip--future{background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);border:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.cl-name{display:block;font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:-.2px;line-height:1.2;margin-bottom:6px}
+.cl-feat .cl-name{font-size:26px}
+.cl-name--ink{color:var(--navy-800)}
+.cl-note{display:block;font-family:var(--nav-font);font-size:12.5px;color:rgba(255,255,255,.78);line-height:1.55;max-width:340px}
+
+/* Klublar — CSS ticker */
+.cl-clubs{background:#fff;border:1px solid var(--line);padding:20px 0 22px}
+.cl-clubs-head{display:flex;justify-content:space-between;align-items:center;padding:0 22px;margin-bottom:8px}
+.cl-clubs .cl-name--ink{padding:0 22px;margin-bottom:16px}
+.cl-stat{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--gold-600)}
+.cl-ticker{overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.cl-track{display:flex;align-items:center;gap:22px;width:max-content;animation:clTick 30s linear infinite}
+.cl-clubs:hover .cl-track{animation-play-state:paused}
+.cl-track span{font-family:var(--nav-font);font-size:13px;font-weight:600;color:#41637A;white-space:nowrap}
+.cl-track i{width:5px;height:5px;border-radius:50%;background:var(--gold-500);flex-shrink:0}
+@keyframes clTick{to{transform:translateX(-50%)}}
+
+/* İnnovasiya — 2031 kartı */
+.cl-innov{background:linear-gradient(155deg,var(--navy-900) 0%,var(--navy-800) 70%,#0D4166 100%);padding:24px 24px 22px;color:#fff}
+.cl-innov::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(212,187,124,.06) 0 1px,transparent 1px 64px),repeating-linear-gradient(0deg,rgba(232,244,253,.05) 0 1px,transparent 1px 64px);-webkit-mask-image:linear-gradient(115deg,transparent 42%,#000);mask-image:linear-gradient(115deg,transparent 42%,#000);pointer-events:none;border-radius:inherit}
+.cl-innov .cl-name{color:#fff;position:relative}
+.cl-innov-p{font-family:var(--nav-font);font-size:12.5px;color:rgba(232,244,253,.7);line-height:1.65;margin:2px 0 16px;position:relative}
+.cl-il{list-style:none;display:flex;flex-direction:column;gap:9px;position:relative}
+.cl-il li{font-family:var(--nav-font);font-size:12.5px;font-weight:600;color:rgba(255,255,255,.88);display:flex;align-items:center;gap:10px}
+.cl-il li::before{content:'';width:16px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold-500),var(--gold-600))}
+
+/* Mini kartlar */
+.cl-mini{background:#fff;border:1px solid var(--line);padding:22px 22px 20px;display:flex;flex-direction:column;align-items:flex-start}
+.cl-mini:hover{border-color:var(--navy-100);background:#FDFEFF}
+.cl-mic{width:42px;height:42px;border-radius:11px;background:var(--gold-100);color:var(--gold-600);display:flex;align-items:center;justify-content:center;margin-bottom:14px;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.cl-mini:hover .cl-mic{background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);box-shadow:var(--nav-sh-gold)}
+.cl-mini .cl-name--ink{font-size:17px;margin-bottom:7px}
+.cl-mini-p{font-family:var(--nav-font);font-size:12.5px;color:#4A6472;line-height:1.65}
+.cl-b{color:var(--navy-800);font-weight:800}
+
+/* Desktop bento (12 sütun) */
+@media(min-width:1101px){
+  .cl-grid{grid-template-columns:repeat(12,1fr);grid-auto-rows:148px}
+  .cl-intro{grid-area:1/1/3/5;padding-right:18px}
+  .cl-feat{grid-area:1/5/3/10}
+  .cl-sport{grid-area:1/10/3/13}
+  .cl-clubs{grid-area:3/1/4/6}
+  .cl-living{grid-area:3/6/4/9;min-height:0}
+  .cl-innov{grid-area:3/9/5/13}
+  .cl-well{grid-area:4/1/5/4}
+  .cl-events{grid-area:4/4/5/6}
+  .cl-global{grid-area:4/6/5/9}
+  .cl-photo{min-height:0}
+  .cl-living .cl-note{display:none}
+  .cl-events .cl-mini-p,.cl-well .cl-mini-p{-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+}
+@media(max-width:1100px){
+  .cl-feat,.cl-clubs{grid-column:span 2}
+  .cl-innov{grid-column:span 2}
+}
+@media(max-width:640px){
+  .cl-grid{grid-template-columns:1fr}
+  .cl-intro,.cl-feat,.cl-clubs,.cl-innov{grid-column:span 1}
+  .cl-photo{min-height:230px}
+  .campusx{padding:72px 0 64px}
+}
+
+/* Əlçatanlıq və motion */
+.cl-btn:focus-visible,.cl-card:focus-visible{outline:2px solid var(--navy-500);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){
+  .cl-track{animation:none!important;flex-wrap:wrap;width:auto;padding:0 22px}
+  .cl-ticker{mask-image:none;-webkit-mask-image:none}
+  .cl-card,.cl-btn{transition:none!important}
+}
+
