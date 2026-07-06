@@ -14,9 +14,9 @@ const SCRIPTS: { src: string; module?: boolean }[] = [
 ];
 
 // ADDA qlobus (cobe) - onRender animasiya + seher marker-lerinde hover tooltip.
-type City = { name: string; lat: number; lng: number; size: number };
+type City = { name: string; lat: number; lng: number; size: number; home?: boolean };
 const CITIES: City[] = [
-  { name: 'Bakı', lat: 40.4093, lng: 49.8671, size: 0.09 },
+  { name: 'Bakı', lat: 40.4093, lng: 49.8671, size: 0.09, home: true },
   { name: 'İstanbul', lat: 41.0082, lng: 28.9784, size: 0.045 },
   { name: 'Varna', lat: 43.2141, lng: 27.9147, size: 0.04 },
   { name: 'Gdynia', lat: 54.5189, lng: 18.5305, size: 0.04 },
@@ -34,7 +34,13 @@ function initGlobe(): () => void {
   if (!stage || !canvas) { console.warn('[globe] stage/canvas tapilmadi'); return () => {}; }
 
   const DEG = Math.PI / 180;
-  const MARKERS: Marker[] = CITIES.map((ct) => ({ location: [ct.lat, ct.lng], size: ct.size }));
+  const GOLD: [number, number, number] = [0.86, 0.72, 0.44];
+  const BLUE: [number, number, number] = [0.40, 0.66, 0.94];
+  const MARKERS: Marker[] = CITIES.map((ct) => ({
+    location: [ct.lat, ct.lng],
+    size: ct.size,
+    color: ct.home ? GOLD : BLUE,
+  }));
   // cobe-nin baza 3B movqeyi (firlanmadan evvel) - U() formulu ile eyni.
   const bp = CITIES.map((ct) => {
     const lat = ct.lat * DEG, L = ct.lng * DEG - Math.PI, S = Math.cos(lat);
