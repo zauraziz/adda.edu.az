@@ -8,7 +8,7 @@ import './home.css';
 const SCRIPTS: { src: string; module?: boolean }[] = [
   { src: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js' },
   { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js' },
-  { src: '/home/globe.mjs', module: true },
+  { src: '/home/globe.mjs?v=2', module: true },
   { src: '/home/socialx.mjs', module: true },
   { src: '/home/ui.js' },
 ];
