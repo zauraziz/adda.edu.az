@@ -1,54 +1,4 @@
-<!-- 6. BEYNƏLXALQ ƏMƏKDAŞLIQ VƏ NÜFUZ — interaktiv qlobus (cobe) -->
-<section class="intlx" id="beynelxalq">
-  <div class="container">
-    <div class="ix-grid">
-
-      <div class="ix-tx">
-        <div class="ix-eyebrow">Beynəlxalq əməkdaşlıq və nüfuz</div>
-        <h2 class="ix-title">Bakıdan <em>dünyaya</em> uzanan şəbəkə</h2>
-        <p class="ix-lead">ADDA 5 qitədə 47-dən çox universitet, dənizçilik akademiyası və beynəlxalq qurumla əməkdaşlıq edir. IAMU üzvlüyü, Erasmus+ mobillik proqramları və TURMARIN regional şəbəkəsi tələbələrimizə qlobal təhsil trayektoriyası açır — məzunlarımız dünya donanmalarında, beynəlxalq limanlarda və IMO strukturlarında çalışırlar.</p>
-        <div class="ix-stats">
-          <div class="ix-stat"><b>47+</b><span>Tərəfdaş qurum</span></div>
-          <div class="ix-stat"><b>5</b><span>Qitə</span></div>
-          <div class="ix-stat"><b>20+</b><span>Mübadilə istiqaməti</span></div>
-        </div>
-        <div class="ix-cta">
-          <a href="#" class="ix-btn">Partnyorluq təklifi <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-          <a href="#" class="ix-btn ix-btn--ghost">Mübadilə proqramları</a>
-        </div>
-      </div>
-
-      <div class="ix-globe-wrap">
-        <div class="ix-stage" id="ixStage">
-          <div class="ix-static" aria-hidden="true"></div>
-          <canvas id="ixGlobe" aria-label="İnteraktiv qlobus — tərəfdaş şəhərlər"></canvas>
-        </div>
-        <div class="ix-hint">
-          <span class="ix-drag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 4 12 9 18"/><polyline points="15 6 20 12 15 18"/></svg> Sürüşdür və fırlat</span>
-          <span class="ix-leg"><i class="ix-dot ix-dot--home"></i> Bakı</span>
-          <span class="ix-leg"><i class="ix-dot"></i> Tərəfdaş şəhər</span>
-        </div>
-        <p class="ix-cities">İstanbul · Varna · Gdynia · Rotterdam · Sautgempton · Tokio · Şanxay · İsgəndəriyyə · Konstansa</p>
-      </div>
-
-    </div>
-
-    <div class="ix-orgs">
-      <span class="ix-orgs-label">Etibar şəbəkəsi</span>
-      <div class="ix-chiprow">
-        <span class="ix-org"><i class="ti ti-anchor"></i> IMO</span>
-        <span class="ix-org"><i class="ti ti-world"></i> IAMU</span>
-        <span class="ix-org"><i class="ti ti-shield-check"></i> EMSA</span>
-        <span class="ix-org"><i class="ti ti-certificate"></i> STCW</span>
-        <span class="ix-org"><i class="ti ti-school"></i> Erasmus+</span>
-        <span class="ix-org"><i class="ti ti-ship"></i> TURMARIN</span>
-        <span class="ix-org"><i class="ti ti-building-bank"></i> ASCO</span>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-  /* ═ ADDA Globe — cobe vanilla portu (React komponentinin birbaşa ekvivalenti)
+/* ═ ADDA Globe — cobe vanilla portu (React komponentinin birbaşa ekvivalenti)
      · yalnız bu bölməyə aiddir, mövcud skriptlərə toxunmur
      · CDN alınmasa .ix-static CSS qlobusu qalır (graceful fallback)        */
   (async () => {
@@ -141,5 +91,3 @@
       rT = setTimeout(() => { if (Math.abs(stage.offsetWidth - w) > 80) build(); }, 220);
     });
   })();
-  </script>
-</section>
