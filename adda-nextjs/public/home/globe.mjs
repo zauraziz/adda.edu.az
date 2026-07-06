@@ -7,10 +7,14 @@
     if (!stage || !canvas) return;
     let createGlobe;
     try {
-      ({ default: createGlobe } = await import('https://esm.sh/cobe@0.6.4'));
-    } catch (e1) {
-      try { ({ default: createGlobe } = await import('https://unpkg.com/cobe@0.6.4/dist/index.esm.js')); }
-      catch (e2) { return; } /* fallback sferası qalır */
+      /* yerli (öz origin) bundle — etibarlı, CDN-siz */
+      ({ default: createGlobe } = await import('./cobe.js'));
+    } catch (e0) {
+      try { ({ default: createGlobe } = await import('https://esm.sh/cobe@0.6.4')); }
+      catch (e1) {
+        try { ({ default: createGlobe } = await import('https://unpkg.com/cobe@0.6.4/dist/index.esm.js')); }
+        catch (e2) { return; } /* fallback sferası qalır */
+      }
     }
 
     const MARKERS = [
