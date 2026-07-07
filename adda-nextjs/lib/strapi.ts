@@ -109,6 +109,27 @@ export async function getPrograms(locale: Locale = 'az'): Promise<Program[]> {
   return json.data ?? [];
 }
 
+/** Ana səhifə xəbər kartı üçün sadələşdirilmiş forma (şəkil URL-i mütləqləşdirilmiş). */
+export interface NewsItem {
+  title: string;
+  category: Article['category'];
+  date: string | null;
+  image: string | null;
+  slug: string;
+}
+
+/** Ana səhifə üçün son xəbərlər — server tərəfdə mütləq şəkil URL-i ilə. */
+export async function getHomeNews(locale: Locale = 'az', limit = 4): Promise<NewsItem[]> {
+  const articles = await getArticles(locale, limit);
+  return articles.map((a) => ({
+    title: a.title,
+    category: a.category,
+    date: a.newsDate ?? a.publishedAt,
+    image: mediaUrl(a.cover),
+    slug: a.slug,
+  }));
+}
+
 /** Slug ilə səhifə. */
 export async function getPageBySlug(slug: string, locale: Locale = 'az'): Promise<PageDoc | null> {
   const json = await strapiFetch<StrapiList<PageDoc>>('/pages', {
