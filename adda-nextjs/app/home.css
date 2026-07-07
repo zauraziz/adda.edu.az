@@ -974,3 +974,22 @@ footer{background:var(--navy2);color:#fff;padding:0}
   .ftx-form button{justify-content:center}
   .ftx-org-list{gap:14px 22px}
 }
+
+/* ═══════ 3-səviyyəli mega naviqasiya (HSE üslubu · ADDA dizaynı) ═══════ */
+#siteHeader{position:relative}
+.nav-mega{position:static}
+.mainnav>.nav-mega>a{gap:5px;padding:0 12px;font-size:13px}
+.mega-chev{transition:transform var(--nav-dur) var(--nav-ease);opacity:.65;flex-shrink:0}
+.nav-mega:hover .mega-chev{transform:rotate(180deg);opacity:1}
+.mega{position:absolute;left:0;right:0;top:100%;background:#fff;border-top:3px solid var(--gold-500);box-shadow:var(--nav-sh-xl);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity var(--nav-dur) var(--nav-ease),transform var(--nav-dur) var(--nav-ease),visibility var(--nav-dur);z-index:200}
+.nav-mega:hover .mega{opacity:1;visibility:visible;transform:translateY(0)}
+.mega-inner{max-width:1240px;margin:0 auto;padding:34px 40px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:28px 44px}
+.mega-col{min-width:0}
+.mega-h{font-family:'Fraunces',serif;font-size:13.5px;font-weight:600;color:var(--navy-900);letter-spacing:.2px;line-height:1.3;margin:0 0 11px;padding-bottom:9px;border-bottom:1px solid rgba(11,61,92,.12)}
+.mega-col a{display:block;padding:6.5px 8px 6.5px 14px;font-size:12.8px;line-height:1.35;color:var(--ink);text-decoration:none;font-family:var(--nav-font);font-weight:500;position:relative;border-radius:7px;transition:color var(--nav-dur-fast) var(--nav-ease),padding var(--nav-dur-fast) var(--nav-ease),background var(--nav-dur-fast) var(--nav-ease)}
+.mega-col a::before{content:'';position:absolute;left:3px;top:50%;width:5px;height:5px;border-radius:50%;background:var(--gold-500);transform:translateY(-50%) scale(0);transition:transform var(--nav-dur-fast) var(--nav-ease)}
+.mega-col a:hover{color:var(--navy-700);background:var(--navy-50);padding-left:19px}
+.mega-col a:hover::before{transform:translateY(-50%) scale(1)}
+.mega-col a:focus-visible{outline:2px solid var(--navy-500);outline-offset:2px;border-radius:6px}
+@media(max-width:1180px){ .mainnav>.nav-mega>a{padding:0 9px;font-size:12.5px} }
+@media(max-width:980px){ .mega{display:none} }
