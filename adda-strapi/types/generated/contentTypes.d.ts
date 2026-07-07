@@ -441,6 +441,215 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
+  collectionName: 'articles';
+  info: {
+    description: 'Akademiya x\u0259b\u0259rl\u0259ri v\u0259 elanlar\u0131';
+    displayName: 'X\u0259b\u0259r';
+    pluralName: 'articles';
+    singularName: 'article';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    category: Schema.Attribute.Enumeration<['xeber', 'elan', 'tedbir', 'elm']> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'xeber'>;
+    cover: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    excerpt: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::article.article'
+    >;
+    newsDate: Schema.Attribute.Date &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPagePage extends Struct.CollectionTypeSchema {
+  collectionName: 'pages';
+  info: {
+    description: 'Statik s\u0259hif\u0259l\u0259r (Haqq\u0131m\u0131zda, v\u0259 s.)';
+    displayName: 'S\u0259hif\u0259';
+    pluralName: 'pages';
+    singularName: 'page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seoDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 180;
+      }>;
+    slug: Schema.Attribute.UID<'title'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
+  collectionName: 'programs';
+  info: {
+    description: 'T\u0259hsil ixtisaslar\u0131 / proqramlar\u0131';
+    displayName: '\u0130xtisas';
+    pluralName: 'programs';
+    singularName: 'program';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    degree: Schema.Attribute.Enumeration<['bachelor', 'master', 'phd']> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'bachelor'>;
+    description: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    durationYears: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    faculty: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::program.program'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -952,6 +1161,9 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::article.article': ApiArticleArticle;
+      'api::page.page': ApiPagePage;
+      'api::program.program': ApiProgramProgram;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

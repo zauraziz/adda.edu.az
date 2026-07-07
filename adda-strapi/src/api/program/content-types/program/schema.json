@@ -1,0 +1,77 @@
+{
+  "kind": "collectionType",
+  "collectionName": "programs",
+  "info": {
+    "singularName": "program",
+    "pluralName": "programs",
+    "displayName": "İxtisas",
+    "description": "Təhsil ixtisasları / proqramları"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "degree": {
+      "type": "enumeration",
+      "enum": [
+        "bachelor",
+        "master",
+        "phd"
+      ],
+      "default": "bachelor",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "durationYears": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "faculty": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
