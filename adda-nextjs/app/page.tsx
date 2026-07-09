@@ -1,15 +1,13 @@
 import HomeClient from './HomeClient';
-import { getHomeNews, type NewsItem } from '@/lib/strapi';
+import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
 
-// Ana səhifə — Server Component. Xəbərləri Strapi-dən çəkir (ISR, hər 60 san yenilənir).
+// Ana səhifə — Server Component. Xəbərləri + menyunu Strapi-dən çəkir (ISR).
 export const revalidate = 60;
 
 export default async function Page() {
-  let news: NewsItem[] = [];
-  try {
-    news = await getHomeNews('az', 4);
-  } catch (err) {
-    console.error('[home] Strapi xeber cekilmedi:', err);
-  }
-  return <HomeClient news={news} />;
+  const [news, menu] = await Promise.all([
+    getHomeNews('az', 4).catch(() => [] as NewsItem[]),
+    getMenu('az').catch(() => null as SiteMenu | null),
+  ]);
+  return <HomeClient news={news} menu={menu} />;
 }

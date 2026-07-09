@@ -140,4 +140,50 @@ export async function getPageBySlug(slug: string, locale: Locale = 'az'): Promis
   return json.data?.[0] ?? null;
 }
 
+
+/** ── Menyu (Strapi single-type "Menyu") ── */
+export interface MenuLink { label: string; url: string; }
+export interface MenuGroup { title: string; links: MenuLink[]; }
+export interface MenuCategory { label: string; order: number; url: string; groups: MenuGroup[]; }
+export interface MenuQuick { label: string; url: string; icon: string; }
+export interface MenuPortalCard { label: string; description: string; url: string; icon: string; }
+export interface MenuPortal { title: string; subtitle: string; cards: MenuPortalCard[]; }
+export interface MenuFooterCol { title: string; links: MenuLink[]; }
+export interface SiteMenu {
+  esasMenyu: MenuCategory[];
+  ustMenyu: MenuCategory[];
+  eAkademiya: MenuPortal | null;
+  istifadeciQruplari: MenuLink[];
+  suretliKecidler: MenuQuick[];
+  footerMenyusu: MenuFooterCol[];
+}
+
+/** Bütün saytın menyusunu CMS-dən çəkir (dərin populate ilə). */
+export async function getMenu(locale: Locale = 'az'): Promise<SiteMenu | null> {
+  try {
+    const json = await strapiFetch<{ data: Partial<SiteMenu> | null }>('/menu', {
+      locale,
+      'populate[esasMenyu][populate][groups][populate][links]': true,
+      'populate[ustMenyu][populate][groups][populate][links]': true,
+      'populate[eAkademiya][populate][cards]': true,
+      'populate[istifadeciQruplari]': true,
+      'populate[suretliKecidler]': true,
+      'populate[footerMenyusu][populate][links]': true,
+    });
+    const d = json.data;
+    if (!d) return null;
+    return {
+      esasMenyu: (d.esasMenyu ?? []) as MenuCategory[],
+      ustMenyu: (d.ustMenyu ?? []) as MenuCategory[],
+      eAkademiya: (d.eAkademiya ?? null) as MenuPortal | null,
+      istifadeciQruplari: (d.istifadeciQruplari ?? []) as MenuLink[],
+      suretliKecidler: (d.suretliKecidler ?? []) as MenuQuick[],
+      footerMenyusu: (d.footerMenyusu ?? []) as MenuFooterCol[],
+    };
+  } catch (err) {
+    console.error('[menu] Strapi menyu cekilmedi:', (err as Error).message);
+    return null;
+  }
+}
+
 export { STRAPI_URL };

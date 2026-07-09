@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import createGlobe, { type Marker } from 'cobe';
 import './home.css';
-import type { NewsItem } from '@/lib/strapi';
+import type { NewsItem, SiteMenu, MenuCategory, MenuFooterCol, MenuLink, MenuQuick, MenuPortal, MenuPortalCard } from '@/lib/strapi';
 
 // Bridge (Merhele 0): orijinal statik HTML render + qalan vanilla JS inject.
 // Qlobus artiq bundle-dan (cobe npm) isleyir - CDN/modul yukleme asililigi yoxdur.
@@ -334,7 +334,130 @@ const FALLBACK_CARDS = `        <a href="#" class="nx-card nx-a" style="backgrou
         </a>
       `;
 
-export default function HomeClient({ news }: { news: NewsItem[] }) {
+
+// ── Menyu (CMS) ──────────────────────────────────────────────────────
+function escM(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+const MEGA_CHEV_H = '<svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+function buildMainNav(cats: MenuCategory[]): string {
+  return cats
+    .slice()
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((c, i) => {
+      const active = i === 0 ? ' class="active"' : '';
+      const groups = c.groups ?? [];
+      if (groups.length === 0) {
+        return `<div class="nav-item"><a href="${escM(c.url || '#')}"${active}>${escM(c.label)}</a></div>`;
+      }
+      const cols = groups
+        .map((g) => {
+          const links = (g.links ?? []).map((l) => `<a href="${escM(l.url || '#')}">${escM(l.label)}</a>`).join('');
+          return `<div class="mega-col"><div class="mega-h">${escM(g.title)}</div>${links}</div>`;
+        })
+        .join('');
+      return `<div class="nav-item nav-mega"><a href="${escM(c.url || '#')}"${active}>${escM(c.label)} ${MEGA_CHEV_H}</a><div class="mega"><div class="mega-inner">${cols}</div></div></div>`;
+    })
+    .join('\n        ');
+}
+
+function buildFooterCols(cols: MenuFooterCol[]): string {
+  return cols
+    .map((col) => {
+      const links = (col.links ?? []).map((l) => `<a href="${escM(l.url || '#')}">${escM(l.label)}</a>`).join('');
+      return `<div class="foot-col"><h4>${escM(col.title)}</h4>${links}</div>`;
+    })
+    .join('\n        ');
+}
+
+const FALLBACK_MAINNAV = `<div class="nav-item nav-mega"><a href="#" class="active">Akademiya <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Akademik irs və missiya</div><a href="#">Akademiya haqqında</a><a href="#">Akademiyanın tarixi</a><a href="#">Sabiq rektorlarımız</a><a href="#">ADDA Qəhrəmanları</a><a href="#">Fəxri doktorlarımız</a><a href="#">Fəxri məzunlar</a><a href="#">ADDA reytinqlərdə</a><a href="#">Rəqəmlər və faktlar</a></div><div class="mega-col"><div class="mega-h">Rəhbərlik və idarəetmə</div><a href="#">Rektor</a><a href="#">Rəhbərlik</a><a href="#">Elmi Şura</a><a href="#">Himayəçilər Şurası</a><a href="#">Təşkilati struktur</a></div><div class="mega-col"><div class="mega-h">Hüquqi baza, etika və keyfiyyət</div><a href="#">Təhsil müəssisəsi haqqında</a><a href="#">Normativ-hüquqi sənədlər</a><a href="#">Akademik dürüstlük bəyannaməsi</a><a href="#">ADDA etika kodeksi</a><a href="#">Keyfiyyətin monitorinqi</a><a href="#">Dayanıqlı inkişaf</a></div><div class="mega-col"><div class="mega-h">Heyət</div><a href="#">Professor-müəllim heyəti</a><a href="#">Təlimçi-texniki heyət</a><a href="#">İnzibati heyət</a></div><div class="mega-col"><div class="mega-h">Təminat</div><a href="#">Satınalmalar</a><a href="#">Binalar və infrastruktur</a><a href="#">Yataqxana</a><a href="#">Təlim-Tədris Mərkəzi</a><a href="#">Tədris gəmisi</a><a href="#">Kollec</a></div><div class="mega-col"><div class="mega-h">Kommunikasiya</div><a href="#">Vətəndaşların müraciəti</a><a href="#">Əlaqə</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Qəbul <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Akademik səviyyələr üzrə qəbul</div><a href="#">Bakalavriat</a><a href="#">Subbakalavr</a><a href="#">Əcnəbi tələbələr</a><a href="#">Magistratura</a><a href="#">Doktorantura</a></div><div class="mega-col"><div class="mega-h">Əlavə təhsil</div><a href="#">Təkrar ali təhsil</a><a href="#">İxtisasartırma</a><a href="#">Təkmilləşdirmə</a><a href="#">Sertifikatlar</a></div><div class="mega-col"><div class="mega-h">Əcnəbi tələbə qəbulu</div><a href="#">Əcnəbi tələbələrin qəbulu</a><a href="#">Viza və miqrasiya dəstəyi</a></div><div class="mega-col"><div class="mega-h">Faydalı məlumatlar və keçidlər</div><a href="#">Qeydiyyat xidməti</a><a href="#">Təhsil haqqı və güzəştlər</a><a href="#">Onlayn qeydiyyat</a><a href="#">Açıq qapı günləri</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Təhsil <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Rəqəmsal Akademiya</div><a href="#">LMS Portalı</a><a href="#">E-Tədris resursları</a></div><div class="mega-col"><div class="mega-h">Proqramların kataloqu</div><a href="#">Bakalavriat</a><a href="#">Magistratura</a><a href="#">Doktorantura</a><a href="#">Əlavə təhsil</a></div><div class="mega-col"><div class="mega-h">Təhsil standartları</div><a href="#">Dənizçilik qanunvericiliyi</a><a href="#">Beynəlxalq standartlar (IMO/STCW)</a></div><div class="mega-col"><div class="mega-h">Keyfiyyətin qiymətləndirilməsi</div><a href="#">Yerli və beynəlxalq akkreditasiya</a><a href="#">Tələbə sorğuları</a><a href="#">Qaynar xətt və təkliflər</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Elm və innovasiya <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Elmi idarəetmə və strategiya</div><a href="#">Elmi siyasət</a><a href="#">Tədris-Metodiki Şura</a><a href="#">Rəqəmlər və faktlar</a></div><div class="mega-col"><div class="mega-h">Tədqiqat mərkəzləri</div><a href="#">Tədqiqat mərkəzləri və laboratoriyalar</a></div><div class="mega-col"><div class="mega-h">Elmi nəşrlər və kitabxana</div><a href="#">ADDA-nın Elmi Jurnalı</a><a href="#">Əməkdaşların nəşrləri</a><a href="#">E-Kitabxana</a><a href="#">Konvensiyalar fondu</a><a href="#">Tərəfdaş kitabxanalar</a></div><div class="mega-col"><div class="mega-h">Doktorantura və elmi kadrlar</div><a href="#">Doktorantura</a><a href="#">Dissertasiya şuraları</a><a href="#">Gənc alimlərin platforması</a></div><div class="mega-col"><div class="mega-h">Qrantlar, müsabiqələr və tədbirlər</div><a href="#">Qrantlar</a><a href="#">Mükafatlar</a><a href="#">Elmi tədbirlər təqvimi</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Məzunlar <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Məzun mərkəzi</div><a href="#">Məzunlar assosiasiyası</a><a href="#">Regional və beynəlxalq nümayəndəliklər</a><a href="#">Mentorluq proqramı</a><a href="#">Məzunlar-işəgötürənlər şəbəkəsi</a></div><div class="mega-col"><div class="mega-h">Karyera və inkişaf</div><a href="#">Vakansiyalar</a><a href="#">Məzunlar üçün təkmilləşdirmə</a><a href="#">Karyera hekayələri</a><a href="#">Elm-təhsil-istehsalat platforması</a><a href="#">Diskussiya klubu</a><a href="#">Karyera sərgisi</a></div><div class="mega-col"><div class="mega-h">Tədbirlər və layihələr</div><a href="#">Məzun günü</a><a href="#">Peşəkar görüşlər</a><a href="#">İnkişafa dəstək təşəbbüsləri</a><a href="#">Məzun kartı</a><a href="#">Məzunların rəyləri</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Tələbə həyatı <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Tələbə təşkilatları</div><a href="#">Tələbə Gənclər Təşkilatı (TGK)</a><a href="#">Tələbə Həmkarlar İttifaqı (THİK)</a><a href="#">Tələbə Elmi Cəmiyyəti (TEC)</a><a href="#">Könüllülük hərəkatı</a></div><div class="mega-col"><div class="mega-h">Yaşayış və rifah</div><a href="#">Tələbə yataqxanası</a><a href="#">Onlayn müraciət və yerləşdirmə</a><a href="#">Sosial təminat və maddi yardım</a><a href="#">Təqaüd proqramları</a><a href="#">Psixoloji dəstək xidməti</a><a href="#">Tibb xidməti</a></div><div class="mega-col"><div class="mega-h">Yaradıcılıq, idman və asudə vaxt</div><a href="#">İdman klubları</a><a href="#">Mədəniyyət və yaradıcılıq dərnəkləri</a><a href="#">İntellektual oyun klubları</a></div><div class="mega-col"><div class="mega-h">Media və kommunikasiya</div><a href="#">Sosial media elçiləri</a><a href="#">Tədbirlər təqvimi</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Karyera <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Karyera Mərkəzi</div><a href="#">Karyera Mərkəzi haqqında</a><a href="#">Karyera bələdçisi</a><a href="#">Fərdi konsultasiyalar</a><a href="#">Tələbə portfolioları</a></div><div class="mega-col"><div class="mega-h">İş və təcrübə imkanları</div><a href="#">Vakansiyalar</a><a href="#">Təcrübə proqramları</a><a href="#">Könüllü təcrübəçilik</a></div><div class="mega-col"><div class="mega-h">İstehsalat ilə əlaqələr</div><a href="#">Korporativ tərəfdaşlar</a><a href="#">Sərgilər və forumlar</a></div><div class="mega-col"><div class="mega-h">Bacarıqların inkişafı</div><a href="#">Soft Skills təlimləri</a><a href="#">Sertifikatlaşdırma dəstəyi</a><a href="#">Master-klaslar</a></div></div></div></div>
+        <div class="nav-item nav-mega"><a href="#" class="">Beynəlxalq əlaqələr <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Akademik tərəfdaşlıq və ikili diplom</div><a href="#">İkili diplom layihələri</a><a href="#">Akademik tərəfdaşlar</a></div><div class="mega-col"><div class="mega-h">Mobillik proqramları</div><a href="#">Erasmus+ və Mevlana</a><a href="#">Müəllim mübadiləsi</a><a href="#">Yay məktəbləri</a></div><div class="mega-col"><div class="mega-h">Beynəlxalq assosiasiyalar</div><a href="#">IAMU</a><a href="#">IMO</a><a href="#">BSAMI</a><a href="#">Digər təşkilatlar</a></div><div class="mega-col"><div class="mega-h">Xarici gəmiçilik şirkətləri</div><a href="#">Kadet proqramları</a><a href="#">Məzunların işlə təminatı</a></div><div class="mega-col"><div class="mega-h">Beynəlxalq elmi araşdırmalar</div><a href="#">Birgə elmi konfranslar</a><a href="#">Qrant layihələri</a></div></div></div></div>`;
+const FALLBACK_FOOTER = `        <div class="foot-col">
+          <h4>Akademiya</h4>
+          <a href="#">Haqqımızda</a><a href="#">Rəhbərlik</a><a href="#">Struktur</a><a href="#">Tarix</a><a href="#">Akkreditasiya</a>
+        </div>
+        <div class="foot-col">
+          <h4>Qəbul</h4>
+          <a href="#">Bakalavr qəbulu</a><a href="#">Magistratura qəbulu</a><a href="#">Onlayn müraciət</a><a href="#">Qəbul şərtləri</a>
+        </div>
+        <div class="foot-col">
+          <h4>Təhsil</h4>
+          <a href="#">Bakalavriat</a><a href="#">Magistratura</a><a href="#">Qiyabi təhsil</a><a href="#">İxtisaslar</a><a href="#">E-Akademiya</a>
+        </div>
+        <div class="foot-col">
+          <h4>Universitet</h4>
+          <a href="#">Elm və innovasiya</a><a href="#">Tələbə həyatı</a><a href="#beynelxalq">Beynəlxalq əməkdaşlıq</a><a href="#xeberler">Xəbərlər</a><a href="#kampus">Kampus</a>
+        </div>
+      `;
+
+
+// ── Üst menyu / infofor / E-Akademiya / quicknav (CMS) ──
+const UST_ICONS: Record<string, string> = {
+  'ADDA Məzunları': 'users', 'Məzunlar': 'users', 'Karyera': 'briefcase',
+  'Kollec': 'building-bank', 'FAQ': 'help-circle', 'Əlaqə': 'mail',
+};
+function buildUstMenu(cats: MenuCategory[]): string {
+  return cats.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((c) => `<a href="${escM(c.url || '#')}"><i class="ti ti-${UST_ICONS[c.label] || 'point'}"></i> ${escM(c.label)}</a>`)
+    .join('\n      ');
+}
+function buildInfofor(items: MenuLink[]): string {
+  return items.map((l) => `<a href="${escM(l.url || '#')}"><span class="if-ic"><i class="ti ti-user"></i></span><span class="if-tx"><b>${escM(l.label)}</b></span></a>`).join('\n          ');
+}
+function buildEacadHead(p: MenuPortal): string {
+  return `<span class="eacad-title">${escM(p.title || 'E-Akademiya')}</span>\n              <span class="eacad-sub">${escM(p.subtitle || '')}</span>`;
+}
+function buildEacadCards(cards: MenuPortalCard[]): string {
+  return cards.map((c) => `<a href="${escM(c.url || '#')}" class="eacad-card"><span class="ea-ic"><i class="ti ti-${escM(c.icon || 'circle')}"></i></span><span class="ea-tx"><b>${escM(c.label)}</b><small>${escM(c.description || '')}</small></span></a>`).join('\n              ');
+}
+function buildQuicknav(items: MenuQuick[]): string {
+  return items.map((q) => `<a href="${escM(q.url || '#')}" class="qnav-item"><i class="ti ti-${escM(q.icon || 'point')}"></i> ${escM(q.label)}</a>`).join('\n    ');
+}
+
+const FALLBACK_UST = `
+      <a href="#"><i class="ti ti-users"></i> Məzunlar</a>
+      <a href="#"><i class="ti ti-building-bank"></i> Kollec</a>
+      <a href="#"><i class="ti ti-help-circle"></i> FAQ</a>
+      <a href="#"><i class="ti ti-mail"></i> Əlaqə</a>
+    `;
+const FALLBACK_INFOFOR = `
+          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span class="if-tx"><b>Abituriyentlər</b><small>Potensial tələbələr və valideynlər</small></span></a>
+          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="if-tx"><b>Cari tələbələr</b><small>Təhsil alan tələbələr</small></span></a>
+          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span><span class="if-tx"><b>Məzunlar</b><small>Akademiya məzunları</small></span></a>
+          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5z"/><path d="M2 7v10l10 5 10-5V7"/><line x1="12" y1="12" x2="12" y2="22"/></svg></span><span class="if-tx"><b>Akademik heyət</b><small>Müəllim və tədqiqatçılar</small></span></a>
+          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><line x1="9" y1="9" x2="9" y2="9.01"/><line x1="9" y1="13" x2="9" y2="13.01"/></svg></span><span class="if-tx"><b>Sənaye tərəfdaşları</b><small>Biznes və əməkdaşlıq</small></span></a>
+          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="if-tx"><b>Beynəlxalq istifadəçilər</b><small>International users</small></span></a>
+        `;
+const FALLBACK_EACAD_HEAD = `
+              <span class="eacad-title">E-Akademiya platforması</span>
+              <span class="eacad-sub">Rəqəmsal təhsil ekosistemi</span>
+            `;
+const FALLBACK_EACAD_CARDS = `
+              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="ea-tx"><b>Tələbə kabineti</b><small>ADDA Lider sistemi</small></span></a>
+              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg></span><span class="ea-tx"><b>Müəllim kabineti</b><small>Tədris idarəetməsi</small></span></a>
+              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span class="ea-tx"><b>Elektron jurnal</b><small>Qiymət və davamiyyət</small></span></a>
+              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="ea-tx"><b>Dərs cədvəli</b><small>Cari semestr</small></span></a>
+              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="ea-tx"><b>E-Kitabxana</b><small>Elektron resurslar</small></span></a>
+              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg></span><span class="ea-tx"><b>Sertifikatlar</b><small>STCW & Təlim mərkəzi</small></span></a>
+            `;
+const FALLBACK_QUICKNAV = `
+    <a href="#" class="qnav-item"><i class="ti ti-dashboard"></i> Müəllim kabineti</a>
+    <a href="#" class="qnav-item"><i class="ti ti-users"></i> Tələbə kabineti</a>
+    <a href="#" class="qnav-item"><i class="ti ti-compass"></i> İxtisaslar</a>
+    <a href="#" class="qnav-item"><i class="ti ti-school"></i> Fakültələr</a>
+    <a href="#" class="qnav-item"><i class="ti ti-building"></i> Kafedralar</a>
+    <a href="#" class="qnav-item"><i class="ti ti-certificate"></i> Təlimlər</a>
+    <a href="#" class="qnav-item"><i class="ti ti-briefcase"></i> Karyera</a>
+  `;
+
+export default function HomeClient({ news, menu }: { news: NewsItem[]; menu: SiteMenu | null }) {
   useEffect(() => {
     document.querySelectorAll('script[data-adda-home]').forEach((el) => el.remove());
     let cancelled = false;
@@ -368,7 +491,22 @@ export default function HomeClient({ news }: { news: NewsItem[] }) {
   useEffect(initNewsletter, []);
 
   const cards = news.length ? buildNewsCards(news) : FALLBACK_CARDS;
-  const markup = MARKUP.replace('{{NEWS_CARDS}}', cards);
+  const mainNav = menu && menu.esasMenyu.length ? buildMainNav(menu.esasMenyu) : FALLBACK_MAINNAV;
+  const footerCols = menu && menu.footerMenyusu.length ? buildFooterCols(menu.footerMenyusu) : FALLBACK_FOOTER;
+  const ustMenu = menu && menu.ustMenyu.length ? buildUstMenu(menu.ustMenyu) : FALLBACK_UST;
+  const infofor = menu && menu.istifadeciQruplari.length ? buildInfofor(menu.istifadeciQruplari) : FALLBACK_INFOFOR;
+  const eacadHead = menu && menu.eAkademiya ? buildEacadHead(menu.eAkademiya) : FALLBACK_EACAD_HEAD;
+  const eacadCards = menu && menu.eAkademiya && menu.eAkademiya.cards.length ? buildEacadCards(menu.eAkademiya.cards) : FALLBACK_EACAD_CARDS;
+  const quicknav = menu && menu.suretliKecidler.length ? buildQuicknav(menu.suretliKecidler) : FALLBACK_QUICKNAV;
+  const markup = MARKUP
+    .replace('{{NEWS_CARDS}}', cards)
+    .replace('{{MAINNAV}}', mainNav)
+    .replace('{{FOOTER_COLS}}', footerCols)
+    .replace('{{UST_MENU}}', ustMenu)
+    .replace('{{INFOFOR}}', infofor)
+    .replace('{{EACAD_HEAD}}', eacadHead)
+    .replace('{{EACAD_CARDS}}', eacadCards)
+    .replace('{{QUICKNAV}}', quicknav);
   return <div dangerouslySetInnerHTML={{ __html: markup }} />;
 }
 
@@ -383,12 +521,7 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
 <!-- Utility -->
 <div class="utility">
   <div class="utility-inner">
-    <div class="utility-left">
-      <a href="#"><i class="ti ti-users"></i> Məzunlar</a>
-      <a href="#"><i class="ti ti-building-bank"></i> Kollec</a>
-      <a href="#"><i class="ti ti-help-circle"></i> FAQ</a>
-      <a href="#"><i class="ti ti-mail"></i> Əlaqə</a>
-    </div>
+    <div class="utility-left">{{UST_MENU}}</div>
     <div class="utility-right">
       <div class="infofor" id="infofor">
         <button class="infofor-btn" id="infoforBtn">
@@ -396,14 +529,7 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
           Bunlar üçün
           <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="infofor-menu">
-          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span class="if-tx"><b>Abituriyentlər</b><small>Potensial tələbələr və valideynlər</small></span></a>
-          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="if-tx"><b>Cari tələbələr</b><small>Təhsil alan tələbələr</small></span></a>
-          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span><span class="if-tx"><b>Məzunlar</b><small>Akademiya məzunları</small></span></a>
-          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5z"/><path d="M2 7v10l10 5 10-5V7"/><line x1="12" y1="12" x2="12" y2="22"/></svg></span><span class="if-tx"><b>Akademik heyət</b><small>Müəllim və tədqiqatçılar</small></span></a>
-          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><line x1="9" y1="9" x2="9" y2="9.01"/><line x1="9" y1="13" x2="9" y2="13.01"/></svg></span><span class="if-tx"><b>Sənaye tərəfdaşları</b><small>Biznes və əməkdaşlıq</small></span></a>
-          <a href="#"><span class="if-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="if-tx"><b>Beynəlxalq istifadəçilər</b><small>International users</small></span></a>
-        </div>
+        <div class="infofor-menu">{{INFOFOR}}</div>
       </div>
       <div class="lang-group">
         <a href="#" class="active">AZ</a><a href="#">EN</a><a href="#">RU</a>
@@ -428,14 +554,7 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
         </div>
       </a>
       <nav class="mainnav">
-        <div class="nav-item nav-mega"><a href="#" class="active">Akademiya <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Akademik irs və missiya</div><a href="#">Akademiya haqqında</a><a href="#">Akademiyanın tarixi</a><a href="#">Sabiq rektorlarımız</a><a href="#">ADDA Qəhrəmanları</a><a href="#">Fəxri doktorlarımız</a><a href="#">Fəxri məzunlar</a><a href="#">ADDA reytinqlərdə</a><a href="#">Rəqəmlər və faktlar</a></div><div class="mega-col"><div class="mega-h">Rəhbərlik və idarəetmə</div><a href="#">Rektor</a><a href="#">Rəhbərlik</a><a href="#">Elmi Şura</a><a href="#">Himayəçilər Şurası</a><a href="#">Təşkilati struktur</a></div><div class="mega-col"><div class="mega-h">Hüquqi baza, etika və keyfiyyət</div><a href="#">Təhsil müəssisəsi haqqında</a><a href="#">Normativ-hüquqi sənədlər</a><a href="#">Akademik dürüstlük bəyannaməsi</a><a href="#">ADDA etika kodeksi</a><a href="#">Keyfiyyətin monitorinqi</a><a href="#">Dayanıqlı inkişaf</a></div><div class="mega-col"><div class="mega-h">Heyət</div><a href="#">Professor-müəllim heyəti</a><a href="#">Təlimçi-texniki heyət</a><a href="#">İnzibati heyət</a></div><div class="mega-col"><div class="mega-h">Təminat</div><a href="#">Satınalmalar</a><a href="#">Binalar və infrastruktur</a><a href="#">Yataqxana</a><a href="#">Təlim-Tədris Mərkəzi</a><a href="#">Tədris gəmisi</a><a href="#">Kollec</a></div><div class="mega-col"><div class="mega-h">Kommunikasiya</div><a href="#">Vətəndaşların müraciəti</a><a href="#">Əlaqə</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Qəbul <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Akademik səviyyələr üzrə qəbul</div><a href="#">Bakalavriat</a><a href="#">Subbakalavr</a><a href="#">Əcnəbi tələbələr</a><a href="#">Magistratura</a><a href="#">Doktorantura</a></div><div class="mega-col"><div class="mega-h">Əlavə təhsil</div><a href="#">Təkrar ali təhsil</a><a href="#">İxtisasartırma</a><a href="#">Təkmilləşdirmə</a><a href="#">Sertifikatlar</a></div><div class="mega-col"><div class="mega-h">Əcnəbi tələbə qəbulu</div><a href="#">Əcnəbi tələbələrin qəbulu</a><a href="#">Viza və miqrasiya dəstəyi</a></div><div class="mega-col"><div class="mega-h">Faydalı məlumatlar və keçidlər</div><a href="#">Qeydiyyat xidməti</a><a href="#">Təhsil haqqı və güzəştlər</a><a href="#">Onlayn qeydiyyat</a><a href="#">Açıq qapı günləri</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Təhsil <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Rəqəmsal Akademiya</div><a href="#">LMS Portalı</a><a href="#">E-Tədris resursları</a></div><div class="mega-col"><div class="mega-h">Proqramların kataloqu</div><a href="#">Bakalavriat</a><a href="#">Magistratura</a><a href="#">Doktorantura</a><a href="#">Əlavə təhsil</a></div><div class="mega-col"><div class="mega-h">Təhsil standartları</div><a href="#">Dənizçilik qanunvericiliyi</a><a href="#">Beynəlxalq standartlar (IMO/STCW)</a></div><div class="mega-col"><div class="mega-h">Keyfiyyətin qiymətləndirilməsi</div><a href="#">Yerli və beynəlxalq akkreditasiya</a><a href="#">Tələbə sorğuları</a><a href="#">Qaynar xətt və təkliflər</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Elm və innovasiya <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Elmi idarəetmə və strategiya</div><a href="#">Elmi siyasət</a><a href="#">Tədris-Metodiki Şura</a><a href="#">Rəqəmlər və faktlar</a></div><div class="mega-col"><div class="mega-h">Tədqiqat mərkəzləri</div><a href="#">Tədqiqat mərkəzləri və laboratoriyalar</a></div><div class="mega-col"><div class="mega-h">Elmi nəşrlər və kitabxana</div><a href="#">ADDA-nın Elmi Jurnalı</a><a href="#">Əməkdaşların nəşrləri</a><a href="#">E-Kitabxana</a><a href="#">Konvensiyalar fondu</a><a href="#">Tərəfdaş kitabxanalar</a></div><div class="mega-col"><div class="mega-h">Doktorantura və elmi kadrlar</div><a href="#">Doktorantura</a><a href="#">Dissertasiya şuraları</a><a href="#">Gənc alimlərin platforması</a></div><div class="mega-col"><div class="mega-h">Qrantlar, müsabiqələr və tədbirlər</div><a href="#">Qrantlar</a><a href="#">Mükafatlar</a><a href="#">Elmi tədbirlər təqvimi</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Məzunlar <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Məzun mərkəzi</div><a href="#">Məzunlar assosiasiyası</a><a href="#">Regional və beynəlxalq nümayəndəliklər</a><a href="#">Mentorluq proqramı</a><a href="#">Məzunlar-işəgötürənlər şəbəkəsi</a></div><div class="mega-col"><div class="mega-h">Karyera və inkişaf</div><a href="#">Vakansiyalar</a><a href="#">Məzunlar üçün təkmilləşdirmə</a><a href="#">Karyera hekayələri</a><a href="#">Elm-təhsil-istehsalat platforması</a><a href="#">Diskussiya klubu</a><a href="#">Karyera sərgisi</a></div><div class="mega-col"><div class="mega-h">Tədbirlər və layihələr</div><a href="#">Məzun günü</a><a href="#">Peşəkar görüşlər</a><a href="#">İnkişafa dəstək təşəbbüsləri</a><a href="#">Məzun kartı</a><a href="#">Məzunların rəyləri</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Tələbə həyatı <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Tələbə təşkilatları</div><a href="#">Tələbə Gənclər Təşkilatı (TGK)</a><a href="#">Tələbə Həmkarlar İttifaqı (THİK)</a><a href="#">Tələbə Elmi Cəmiyyəti (TEC)</a><a href="#">Könüllülük hərəkatı</a></div><div class="mega-col"><div class="mega-h">Yaşayış və rifah</div><a href="#">Tələbə yataqxanası</a><a href="#">Onlayn müraciət və yerləşdirmə</a><a href="#">Sosial təminat və maddi yardım</a><a href="#">Təqaüd proqramları</a><a href="#">Psixoloji dəstək xidməti</a><a href="#">Tibb xidməti</a></div><div class="mega-col"><div class="mega-h">Yaradıcılıq, idman və asudə vaxt</div><a href="#">İdman klubları</a><a href="#">Mədəniyyət və yaradıcılıq dərnəkləri</a><a href="#">İntellektual oyun klubları</a></div><div class="mega-col"><div class="mega-h">Media və kommunikasiya</div><a href="#">Sosial media elçiləri</a><a href="#">Tədbirlər təqvimi</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Karyera <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Karyera Mərkəzi</div><a href="#">Karyera Mərkəzi haqqında</a><a href="#">Karyera bələdçisi</a><a href="#">Fərdi konsultasiyalar</a><a href="#">Tələbə portfolioları</a></div><div class="mega-col"><div class="mega-h">İş və təcrübə imkanları</div><a href="#">Vakansiyalar</a><a href="#">Təcrübə proqramları</a><a href="#">Könüllü təcrübəçilik</a></div><div class="mega-col"><div class="mega-h">İstehsalat ilə əlaqələr</div><a href="#">Korporativ tərəfdaşlar</a><a href="#">Sərgilər və forumlar</a></div><div class="mega-col"><div class="mega-h">Bacarıqların inkişafı</div><a href="#">Soft Skills təlimləri</a><a href="#">Sertifikatlaşdırma dəstəyi</a><a href="#">Master-klaslar</a></div></div></div></div>
-        <div class="nav-item nav-mega"><a href="#" class="">Beynəlxalq əlaqələr <svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a><div class="mega"><div class="mega-inner"><div class="mega-col"><div class="mega-h">Akademik tərəfdaşlıq və ikili diplom</div><a href="#">İkili diplom layihələri</a><a href="#">Akademik tərəfdaşlar</a></div><div class="mega-col"><div class="mega-h">Mobillik proqramları</div><a href="#">Erasmus+ və Mevlana</a><a href="#">Müəllim mübadiləsi</a><a href="#">Yay məktəbləri</a></div><div class="mega-col"><div class="mega-h">Beynəlxalq assosiasiyalar</div><a href="#">IAMU</a><a href="#">IMO</a><a href="#">BSAMI</a><a href="#">Digər təşkilatlar</a></div><div class="mega-col"><div class="mega-h">Xarici gəmiçilik şirkətləri</div><a href="#">Kadet proqramları</a><a href="#">Məzunların işlə təminatı</a></div><div class="mega-col"><div class="mega-h">Beynəlxalq elmi araşdırmalar</div><a href="#">Birgə elmi konfranslar</a><a href="#">Qrant layihələri</a></div></div></div></div>
+        {{MAINNAV}}
         <div class="nav-item eacad">
           <a href="#" class="nav-portal">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -443,18 +562,8 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
             <svg class="ea-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </a>
           <div class="eacad-menu">
-            <div class="eacad-head">
-              <span class="eacad-title">E-Akademiya platforması</span>
-              <span class="eacad-sub">Rəqəmsal təhsil ekosistemi</span>
-            </div>
-            <div class="eacad-grid">
-              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="ea-tx"><b>Tələbə kabineti</b><small>ADDA Lider sistemi</small></span></a>
-              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg></span><span class="ea-tx"><b>Müəllim kabineti</b><small>Tədris idarəetməsi</small></span></a>
-              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span class="ea-tx"><b>Elektron jurnal</b><small>Qiymət və davamiyyət</small></span></a>
-              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="ea-tx"><b>Dərs cədvəli</b><small>Cari semestr</small></span></a>
-              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="ea-tx"><b>E-Kitabxana</b><small>Elektron resurslar</small></span></a>
-              <a href="#" class="eacad-card"><span class="ea-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg></span><span class="ea-tx"><b>Sertifikatlar</b><small>STCW & Təlim mərkəzi</small></span></a>
-            </div>
+            <div class="eacad-head">{{EACAD_HEAD}}</div>
+            <div class="eacad-grid">{{EACAD_CARDS}}</div>
           </div>
         </div>
       </nav>
@@ -523,15 +632,7 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
 
 <!-- ════ QUICKNAV — Sürətli keçidlər ════ -->
 <nav class="quicknav" aria-label="Sürətli keçidlər">
-  <div class="quicknav-inner">
-    <a href="#" class="qnav-item"><i class="ti ti-dashboard"></i> Müəllim kabineti</a>
-    <a href="#" class="qnav-item"><i class="ti ti-users"></i> Tələbə kabineti</a>
-    <a href="#" class="qnav-item"><i class="ti ti-compass"></i> İxtisaslar</a>
-    <a href="#" class="qnav-item"><i class="ti ti-school"></i> Fakültələr</a>
-    <a href="#" class="qnav-item"><i class="ti ti-building"></i> Kafedralar</a>
-    <a href="#" class="qnav-item"><i class="ti ti-certificate"></i> Təlimlər</a>
-    <a href="#" class="qnav-item"><i class="ti ti-briefcase"></i> Karyera</a>
-  </div>
+  <div class="quicknav-inner">{{QUICKNAV}}</div>
 </nav>
 
 <!-- 2. SPOTLIGHT — Niyə məhz ADDA? (abituriyent + beynəlxalq tələbə dəyər təklifi) -->
@@ -1022,22 +1123,7 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
         </div>
       </div>
       <nav class="ftx-cols" aria-label="Sayt bölmələri">
-        <div class="foot-col">
-          <h4>Akademiya</h4>
-          <a href="#">Haqqımızda</a><a href="#">Rəhbərlik</a><a href="#">Struktur</a><a href="#">Tarix</a><a href="#">Akkreditasiya</a>
-        </div>
-        <div class="foot-col">
-          <h4>Qəbul</h4>
-          <a href="#">Bakalavr qəbulu</a><a href="#">Magistratura qəbulu</a><a href="#">Onlayn müraciət</a><a href="#">Qəbul şərtləri</a>
-        </div>
-        <div class="foot-col">
-          <h4>Təhsil</h4>
-          <a href="#">Bakalavriat</a><a href="#">Magistratura</a><a href="#">Qiyabi təhsil</a><a href="#">İxtisaslar</a><a href="#">E-Akademiya</a>
-        </div>
-        <div class="foot-col">
-          <h4>Universitet</h4>
-          <a href="#">Elm və innovasiya</a><a href="#">Tələbə həyatı</a><a href="#beynelxalq">Beynəlxalq əməkdaşlıq</a><a href="#xeberler">Xəbərlər</a><a href="#kampus">Kampus</a>
-        </div>
+        {{FOOTER_COLS}}
       </nav>
     </div>
 
