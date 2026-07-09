@@ -521,6 +521,66 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiMenuCategoryMenuCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'menu_categories';
+  info: {
+    description: 'Ust naviqasiya kateqoriyalari';
+    displayName: 'Menyu Kateqoriyasi';
+    pluralName: 'menu-categories';
+    singularName: 'menu-category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    groups: Schema.Attribute.Component<'nav.group', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::menu-category.menu-category'
+    >;
+    order: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'#'>;
+  };
+}
+
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
@@ -647,6 +707,65 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiQuickLinkQuickLink extends Struct.CollectionTypeSchema {
+  collectionName: 'quick_links';
+  info: {
+    description: 'Top bar / suretli kecid linkleri';
+    displayName: 'Suretli Kecid';
+    pluralName: 'quick-links';
+    singularName: 'quick-link';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    icon: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::quick-link.quick-link'
+    >;
+    order: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'#'>;
   };
 }
 
@@ -1162,8 +1281,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::article.article': ApiArticleArticle;
+      'api::menu-category.menu-category': ApiMenuCategoryMenuCategory;
       'api::page.page': ApiPagePage;
       'api::program.program': ApiProgramProgram;
+      'api::quick-link.quick-link': ApiQuickLinkQuickLink;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

@@ -1,0 +1,9 @@
+{
+  "collectionName": "components_nav_groups",
+  "info": { "displayName": "Group", "icon": "bulletList" },
+  "options": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "links": { "type": "component", "repeatable": true, "component": "nav.link" }
+  }
+}

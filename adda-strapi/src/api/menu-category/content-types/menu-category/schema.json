@@ -1,0 +1,13 @@
+{
+  "kind": "collectionType",
+  "collectionName": "menu_categories",
+  "info": { "singularName": "menu-category", "pluralName": "menu-categories", "displayName": "Menyu Kateqoriyasi", "description": "Ust naviqasiya kateqoriyalari" },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": { "i18n": { "localized": true } },
+  "attributes": {
+    "label": { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "order": { "type": "integer", "default": 0, "pluginOptions": { "i18n": { "localized": false } } },
+    "url": { "type": "string", "default": "#", "pluginOptions": { "i18n": { "localized": true } } },
+    "groups": { "type": "component", "repeatable": true, "component": "nav.group", "pluginOptions": { "i18n": { "localized": true } } }
+  }
+}

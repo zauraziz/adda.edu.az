@@ -1,0 +1,13 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quick_links",
+  "info": { "singularName": "quick-link", "pluralName": "quick-links", "displayName": "Suretli Kecid", "description": "Top bar / suretli kecid linkleri" },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": { "i18n": { "localized": true } },
+  "attributes": {
+    "label": { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "url": { "type": "string", "default": "#", "pluginOptions": { "i18n": { "localized": false } } },
+    "icon": { "type": "string", "pluginOptions": { "i18n": { "localized": false } } },
+    "order": { "type": "integer", "default": 0, "pluginOptions": { "i18n": { "localized": false } } }
+  }
+}
