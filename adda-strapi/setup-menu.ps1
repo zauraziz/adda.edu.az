@@ -1,3 +1,264 @@
+﻿# ADDA — 'Menyu' modeli (yenilenmis struktur). adda-strapi icinde islet.
+$ErrorActionPreference = 'Stop'
+$enc = New-Object System.Text.UTF8Encoding $false
+function W($rel, $text) { $full = Join-Path $PWD $rel; New-Item -ItemType Directory -Force -Path (Split-Path $full) | Out-Null; [System.IO.File]::WriteAllText($full, $text, $enc) }
+
+Remove-Item -Recurse -Force src\api\menu-category, src\api\quick-link, src\api\seed, src\seed -ErrorAction SilentlyContinue
+
+W 'src\components\nav\link.json' @'
+{
+  "collectionName": "components_nav_links",
+  "info": {
+    "displayName": "Link",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "default": "#"
+    }
+  }
+}
+'@
+
+W 'src\components\nav\group.json' @'
+{
+  "collectionName": "components_nav_groups",
+  "info": {
+    "displayName": "Qrup",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.link"
+    }
+  }
+}
+'@
+
+W 'src\components\nav\category.json' @'
+{
+  "collectionName": "components_nav_categorys",
+  "info": {
+    "displayName": "Əsas menyu kateqoriyası",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "url": {
+      "type": "string",
+      "default": "#"
+    },
+    "groups": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.group"
+    }
+  }
+}
+'@
+
+W 'src\components\nav\quicklink.json' @'
+{
+  "collectionName": "components_nav_quicklinks",
+  "info": {
+    "displayName": "Sürətli keçid",
+    "icon": "bolt"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "default": "#"
+    },
+    "icon": {
+      "type": "string"
+    }
+  }
+}
+'@
+
+W 'src\components\nav\portalcard.json' @'
+{
+  "collectionName": "components_nav_portalcards",
+  "info": {
+    "displayName": "Panel kartı",
+    "icon": "layoutGrid"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string",
+      "default": "#"
+    },
+    "icon": {
+      "type": "string"
+    }
+  }
+}
+'@
+
+W 'src\components\nav\portal.json' @'
+{
+  "collectionName": "components_nav_portals",
+  "info": {
+    "displayName": "E-Akademiya paneli",
+    "icon": "dashboard"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "cards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.portalcard"
+    }
+  }
+}
+'@
+
+W 'src\components\nav\footercol.json' @'
+{
+  "collectionName": "components_nav_footercols",
+  "info": {
+    "displayName": "Footer sütunu",
+    "icon": "layoutColumns"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.link"
+    }
+  }
+}
+'@
+
+W 'src\api\menu\content-types\menu\schema.json' @'
+{
+  "kind": "singleType",
+  "collectionName": "menus",
+  "info": {
+    "singularName": "menu",
+    "pluralName": "menus",
+    "displayName": "Menyu",
+    "description": "Saytın bütün menyuları — Əsas, Üst, E-Akademiya, İstifadəçi qrupları, Sürətli keçidlər, Footer"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "esasMenyu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.category",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "ustMenyu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.category",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "eAkademiya": {
+      "type": "component",
+      "repeatable": false,
+      "component": "nav.portal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "istifadeciQruplari": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.link",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "suretliKecidler": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.quicklink",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "footerMenyusu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.footercol",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
+'@
+
+W 'src\index.ts' @'
 import type { Core } from '@strapi/strapi';
 
 /**
@@ -1035,3 +1296,13 @@ export default {
     }
   },
 };
+
+'@
+
+W 'src\api\menu\controllers\menu.ts' "import { factories } from '@strapi/strapi';`r`n`r`nexport default factories.createCoreController('api::menu.menu');`r`n"
+W 'src\api\menu\routes\menu.ts'      "import { factories } from '@strapi/strapi';`r`n`r`nexport default factories.createCoreRouter('api::menu.menu');`r`n"
+W 'src\api\menu\services\menu.ts'    "import { factories } from '@strapi/strapi';`r`n`r`nexport default factories.createCoreService('api::menu.menu');`r`n"
+
+Write-Host ''
+Write-Host 'Menyu modeli yenilendi (esas 6 kat + ust 5 kat + seed) OK' -ForegroundColor Green
+Write-Host 'Indi: npm run develop'

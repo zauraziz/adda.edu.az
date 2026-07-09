@@ -1,8 +1,8 @@
 {
-  "collectionName": "components_nav_links",
+  "collectionName": "components_nav_quicklinks",
   "info": {
-    "displayName": "Link",
-    "icon": "link"
+    "displayName": "Sürətli keçid",
+    "icon": "bolt"
   },
   "options": {},
   "attributes": {
@@ -13,6 +13,9 @@
     "url": {
       "type": "string",
       "default": "#"
+    },
+    "icon": {
+      "type": "string"
     }
   }
 }

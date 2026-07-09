@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_nav_portals",
+  "info": {
+    "displayName": "E-Akademiya paneli",
+    "icon": "dashboard"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "cards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.portalcard"
+    }
+  }
+}

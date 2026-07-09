@@ -1,8 +1,8 @@
 {
-  "collectionName": "components_nav_groups",
+  "collectionName": "components_nav_footercols",
   "info": {
-    "displayName": "Qrup",
-    "icon": "bulletList"
+    "displayName": "Footer sütunu",
+    "icon": "layoutColumns"
   },
   "options": {},
   "attributes": {

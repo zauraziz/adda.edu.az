@@ -1,0 +1,80 @@
+{
+  "kind": "singleType",
+  "collectionName": "menus",
+  "info": {
+    "singularName": "menu",
+    "pluralName": "menus",
+    "displayName": "Menyu",
+    "description": "Saytın bütün menyuları — Əsas, Üst, E-Akademiya, İstifadəçi qrupları, Sürətli keçidlər, Footer"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "esasMenyu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.category",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "ustMenyu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.category",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "eAkademiya": {
+      "type": "component",
+      "repeatable": false,
+      "component": "nav.portal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "istifadeciQruplari": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.link",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "suretliKecidler": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.quicklink",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "footerMenyusu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.footercol",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
