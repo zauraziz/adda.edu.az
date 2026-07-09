@@ -1,5 +1,13 @@
 import type { Core } from '@strapi/strapi';
 
+// Meilisearch "adda" indeksi üçün ortaq parametrlər
+const SEARCH_SETTINGS = {
+  searchableAttributes: ['title', 'excerpt'],
+  filterableAttributes: ['locale', 'contentType', 'category'],
+  displayedAttributes: ['id', 'documentId', 'title', 'slug', 'excerpt', 'category', 'contentType', 'locale'],
+  rankingRules: ['words', 'typo', 'proximity', 'attribute', 'sort', 'exactness'],
+};
+
 const allowedMediaTypes = [
   'image/*',
   'video/*',
@@ -22,7 +30,7 @@ const deniedExecutableTypes = [
   'application/x-mach-binary',
 ];
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => ({
+const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => (({
   'users-permissions': {
     config: {
       jwtManagement: 'refresh',
@@ -39,6 +47,63 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       },
     },
   },
-});
+  meilisearch: {
+    config: {
+      host: env('MEILISEARCH_HOST', ''),
+      apiKey: env('MEILISEARCH_ADMIN_KEY', ''),
+      article: {
+        indexName: 'adda',
+        entriesQuery: { locale: '*', status: 'published' },
+        settings: SEARCH_SETTINGS,
+        transformEntry({ entry }: { entry: Record<string, any> }) {
+          return {
+            id: entry.id,
+            documentId: entry.documentId,
+            title: entry.title,
+            slug: entry.slug,
+            excerpt: entry.excerpt || '',
+            category: entry.category || '',
+            contentType: 'article',
+            locale: entry.locale,
+          };
+        },
+      },
+      program: {
+        indexName: 'adda',
+        entriesQuery: { locale: '*', status: 'published' },
+        settings: SEARCH_SETTINGS,
+        transformEntry({ entry }: { entry: Record<string, any> }) {
+          return {
+            id: entry.id,
+            documentId: entry.documentId,
+            title: entry.title,
+            slug: entry.slug,
+            excerpt: entry.description || '',
+            category: entry.degree || '',
+            contentType: 'program',
+            locale: entry.locale,
+          };
+        },
+      },
+      page: {
+        indexName: 'adda',
+        entriesQuery: { locale: '*', status: 'published' },
+        settings: SEARCH_SETTINGS,
+        transformEntry({ entry }: { entry: Record<string, any> }) {
+          return {
+            id: entry.id,
+            documentId: entry.documentId,
+            title: entry.title,
+            slug: entry.slug,
+            excerpt: entry.seoDescription || '',
+            category: '',
+            contentType: 'page',
+            locale: entry.locale,
+          };
+        },
+      },
+    },
+  },
+}) as Core.Config.Plugin);
 
 export default config;
