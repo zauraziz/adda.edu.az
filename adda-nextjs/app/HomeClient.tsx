@@ -457,6 +457,58 @@ const FALLBACK_QUICKNAV = `
     <a href="#" class="qnav-item"><i class="ti ti-briefcase"></i> Karyera</a>
   `;
 
+
+// ── Axtarış (Meilisearch, /api/search) ──
+function initSearch(): () => void {
+  const btn = document.querySelector('.util-icon[aria-label="Axtarış"]') as HTMLButtonElement | null;
+  const modal = document.getElementById('searchModal');
+  const input = document.getElementById('searchInput') as HTMLInputElement | null;
+  const results = document.getElementById('searchResults');
+  if (!btn || !modal || !input || !results) return () => {};
+
+  const open = () => { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); setTimeout(() => input.focus(), 60); };
+  const close = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); };
+  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+  btn.addEventListener('click', open);
+  modal.querySelectorAll('[data-search-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', onKey);
+
+  const TYPE_LABEL: Record<string, string> = { article: 'Xəbər', program: 'İxtisas', page: 'Səhifə' };
+  type Hit = { title?: string; excerpt?: string; contentType?: string };
+  const render = (hits: Hit[]) => {
+    if (!hits.length) { results.innerHTML = '<div class="search-empty">Nəticə tapılmadı</div>'; return; }
+    results.innerHTML = hits
+      .map((h) => `<a href="#" class="search-hit"><span class="sh-type">${escM(TYPE_LABEL[h.contentType || ''] || '')}</span><span class="sh-main"><b>${escM(h.title || '')}</b>${h.excerpt ? `<small>${escM(h.excerpt)}</small>` : ''}</span><i class="ti ti-arrow-up-right"></i></a>`)
+      .join('');
+  };
+
+  let timer: ReturnType<typeof setTimeout>;
+  let seq = 0;
+  const onInput = () => {
+    const q = input.value.trim();
+    clearTimeout(timer);
+    if (!q) { results.innerHTML = ''; return; }
+    results.innerHTML = '<div class="search-loading">Axtarılır…</div>';
+    const mine = ++seq;
+    timer = setTimeout(async () => {
+      try {
+        const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&locale=az`);
+        const data = await r.json();
+        if (mine === seq) render((data.hits || []) as Hit[]);
+      } catch {
+        if (mine === seq) results.innerHTML = '<div class="search-empty">Xəta baş verdi</div>';
+      }
+    }, 220);
+  };
+  input.addEventListener('input', onInput);
+
+  return () => {
+    btn.removeEventListener('click', open);
+    input.removeEventListener('input', onInput);
+    document.removeEventListener('keydown', onKey);
+  };
+}
+
 export default function HomeClient({ news, menu }: { news: NewsItem[]; menu: SiteMenu | null }) {
   useEffect(() => {
     document.querySelectorAll('script[data-adda-home]').forEach((el) => el.remove());
@@ -489,6 +541,7 @@ export default function HomeClient({ news, menu }: { news: NewsItem[]; menu: Sit
 
   useEffect(initGlobe, []);
   useEffect(initNewsletter, []);
+  useEffect(initSearch, []);
 
   const cards = news.length ? buildNewsCards(news) : FALLBACK_CARDS;
   const mainNav = menu && menu.esasMenyu.length ? buildMainNav(menu.esasMenyu) : FALLBACK_MAINNAV;
@@ -539,6 +592,18 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
       <button class="util-icon" id="fontUpBtn" aria-label="Şrift böyüt"><i class="ti ti-text-plus"></i></button>
       <button class="util-icon" id="fontDownBtn" aria-label="Şrift kiçilt"><i class="ti ti-text-minus"></i></button>
     </div>
+  </div>
+</div>
+
+<div class="search-modal" id="searchModal" aria-hidden="true">
+  <div class="search-backdrop" data-search-close></div>
+  <div class="search-box" role="dialog" aria-label="Axtarış">
+    <div class="search-field">
+      <i class="ti ti-search"></i>
+      <input type="text" id="searchInput" placeholder="Xəbər, ixtisas, səhifə axtar..." autocomplete="off" spellcheck="false">
+      <button class="search-close" data-search-close aria-label="Bağla"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
   </div>
 </div>
 
