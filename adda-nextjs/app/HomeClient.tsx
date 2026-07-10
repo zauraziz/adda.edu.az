@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import createGlobe, { type Marker } from 'cobe';
 import './home.css';
 import type { NewsItem, SiteMenu, MenuCategory, MenuFooterCol, MenuLink, MenuQuick, MenuPortal, MenuPortalCard } from '@/lib/strapi';
+import { translateStatic, type Locale } from '@/lib/i18n';
 
 // Bridge (Merhele 0): orijinal statik HTML render + qalan vanilla JS inject.
 // Qlobus artiq bundle-dan (cobe npm) isleyir - CDN/modul yukleme asililigi yoxdur.
@@ -482,6 +483,8 @@ function initSearch(): () => void {
       .join('');
   };
 
+  const pathLoc = window.location.pathname.split('/')[1];
+  const searchLocale = ['az', 'ru', 'en'].includes(pathLoc) ? pathLoc : 'az';
   let timer: ReturnType<typeof setTimeout>;
   let seq = 0;
   const onInput = () => {
@@ -492,7 +495,7 @@ function initSearch(): () => void {
     const mine = ++seq;
     timer = setTimeout(async () => {
       try {
-        const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&locale=az`);
+        const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&locale=${searchLocale}`);
         const data = await r.json();
         if (mine === seq) render((data.hits || []) as Hit[]);
       } catch {
@@ -509,7 +512,13 @@ function initSearch(): () => void {
   };
 }
 
-export default function HomeClient({ news, menu }: { news: NewsItem[]; menu: SiteMenu | null }) {
+
+function buildLangSwitch(locale: Locale): string {
+  const items: Array<[string, string]> = [['az', 'AZ'], ['en', 'EN'], ['ru', 'RU']];
+  return items.map(([l, label]) => `<a href="/${l}"${l === locale ? ' class="active"' : ''}>${label}</a>`).join('');
+}
+
+export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; menu: SiteMenu | null; locale: Locale }) {
   useEffect(() => {
     document.querySelectorAll('script[data-adda-home]').forEach((el) => el.remove());
     let cancelled = false;
@@ -551,7 +560,9 @@ export default function HomeClient({ news, menu }: { news: NewsItem[]; menu: Sit
   const eacadHead = menu && menu.eAkademiya ? buildEacadHead(menu.eAkademiya) : FALLBACK_EACAD_HEAD;
   const eacadCards = menu && menu.eAkademiya && menu.eAkademiya.cards.length ? buildEacadCards(menu.eAkademiya.cards) : FALLBACK_EACAD_CARDS;
   const quicknav = menu && menu.suretliKecidler.length ? buildQuicknav(menu.suretliKecidler) : FALLBACK_QUICKNAV;
-  const markup = MARKUP
+  const langSwitch = buildLangSwitch(locale);
+  const markup = translateStatic(MARKUP, locale)
+    .replace('{{LANG_SWITCH}}', langSwitch)
     .replace('{{NEWS_CARDS}}', cards)
     .replace('{{MAINNAV}}', mainNav)
     .replace('{{FOOTER_COLS}}', footerCols)
@@ -585,7 +596,7 @@ const MARKUP = `<!-- Gov Banner (FIX 1) -->
         <div class="infofor-menu">{{INFOFOR}}</div>
       </div>
       <div class="lang-group">
-        <a href="#" class="active">AZ</a><a href="#">EN</a><a href="#">RU</a>
+        {{LANG_SWITCH}}
       </div>
       <button class="util-icon" aria-label="Axtarış"><i class="ti ti-search"></i></button>
       <button class="util-icon" id="contrastBtn" aria-label="Kontrast"><i class="ti ti-contrast"></i></button>
