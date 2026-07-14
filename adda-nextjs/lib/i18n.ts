@@ -550,3 +550,16 @@ export function translateStatic(html: string, locale: Locale): string {
   }
   return html;
 }
+
+// tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi (eyni T lüğəti).
+// translateStatic string-replace edir; komponentlərə köçən bölmələr bunu istifadə edir
+// → alt-sətir mangling yoxdur. T-də olmayan sətir az qaytarılır (paritet).
+const TR_MAP: Map<string, readonly [string, string]> = new Map(
+  T.map(([az, ru, en]) => [az, [ru, en] as const])
+);
+export function tr(az: string, locale: Locale): string {
+  if (locale === 'az' || !az) return az;
+  const hit = TR_MAP.get(az);
+  if (!hit) return az;
+  return locale === 'ru' ? hit[0] : hit[1];
+}

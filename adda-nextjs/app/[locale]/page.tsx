@@ -1,4 +1,6 @@
+import '../home.css';
 import HomeClient from '../HomeClient';
+import SiteHeaderStack from '../_components/SiteHeaderStack';
 import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -15,5 +17,10 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     getHomeNews(locale, 4).catch(() => [] as NewsItem[]),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
-  return <HomeClient news={news} menu={menu} locale={locale} />;
+  return (
+    <>
+      <SiteHeaderStack menu={menu} locale={locale} />
+      <HomeClient news={news} menu={menu} locale={locale} />
+    </>
+  );
 }

@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import createGlobe, { type Marker } from 'cobe';
-import './home.css';
-import type { NewsItem, SiteMenu, MenuCategory, MenuFooterCol, MenuLink, MenuQuick, MenuPortal, MenuPortalCard } from '@/lib/strapi';
+import type { NewsItem, SiteMenu, MenuFooterCol, MenuQuick } from '@/lib/strapi';
 import { translateStatic, type Locale } from '@/lib/i18n';
+import { FALLBACK_MENU } from '@/lib/menu-fallback';
 
 // Bridge (Merhele 0): orijinal statik HTML render + qalan vanilla JS inject.
 // Qlobus artiq bundle-dan (cobe npm) isleyir - CDN/modul yukleme asililigi yoxdur.
@@ -348,37 +348,6 @@ const FALLBACK_CARDS = `        <a href="#" class="nx-card nx-a" style="backgrou
 function escM(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-const MEGA_CHEV_H = '<svg class="mega-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-const MG_ARROW = '<svg class="mgc" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
-const MEGA_CTA: Record<Locale, { eyebrow: string; btn: string; tx: string }> = {
-  az: { eyebrow: 'Bölmə', btn: 'Bölməyə keç', tx: 'Bu bölmənin bütün səhifələri, xidmətləri və sənədləri.' },
-  ru: { eyebrow: 'Раздел', btn: 'Перейти в раздел', tx: 'Все страницы, сервисы и документы этого раздела.' },
-  en: { eyebrow: 'Section', btn: 'Open section', tx: 'All pages, services and documents of this section.' },
-};
-
-function buildMainNav(cats: MenuCategory[], locale: Locale): string {
-  const cta = MEGA_CTA[locale];
-  return cats
-    .slice()
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    .map((c, i) => {
-      const active = i === 0 ? ' class="active"' : '';
-      const groups = c.groups ?? [];
-      if (groups.length === 0) {
-        return `<div class="nav-item"><a href="${escM(c.url || '#')}"${active}>${escM(c.label)}</a></div>`;
-      }
-      const gs = groups.map((g, gi) =>
-        `<button type="button" class="mg-item${gi === 0 ? ' active' : ''}" data-mi="${gi}"><span>${escM(g.title)}</span>${MG_ARROW}</button>`
-      ).join('');
-      const ps = groups.map((g, gi) => {
-        const links = (g.links ?? []).map((l) => `<a href="${escM(l.url || '#')}">${escM(l.label)}</a>`).join('');
-        return `<div class="mega-panel${gi === 0 ? ' active' : ''}" data-mp="${gi}"><div class="mp-title">${escM(g.title)}</div><div class="mp-links">${links}</div></div>`;
-      }).join('');
-      return `<div class="nav-item nav-mega"><a href="${escM(c.url || '#')}"${active}>${escM(c.label)} ${MEGA_CHEV_H}</a><div class="mega"><div class="mega-wrap"><nav class="mega-groups" aria-label="${escM(c.label)}">${gs}</nav><div class="mega-panels">${ps}</div><aside class="mega-cta"><div class="mc-card"><span class="mc-eyebrow">${cta.eyebrow}</span><span class="mc-name">${escM(c.label)}</span><a class="mc-btn" href="${escM(c.url || '#')}">${cta.btn} <span aria-hidden="true">→</span></a><p class="mc-tx">${cta.tx}</p></div></aside></div></div></div>`;
-    })
-    .join('\n        ');
-}
-
 function buildFooterCols(cols: MenuFooterCol[]): string {
   return cols
     .map((col) => {
@@ -388,39 +357,6 @@ function buildFooterCols(cols: MenuFooterCol[]): string {
     .join('\n        ');
 }
 
-// ── Üst menyu / infofor / E-Akademiya / quicknav (CMS) ──
-const UST_ICONS: Record<string, string> = {
-  'ADDA Məzunları': 'users', 'Məzunlar': 'users', 'Karyera': 'briefcase',
-  'Kollec': 'building-bank', 'FAQ': 'help-circle', 'Əlaqə': 'mail',
-};
-const UM_CHEV = '<svg class="um-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-
-function buildUstMenu(cats: MenuCategory[]): string {
-  return cats.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    .map((c) => {
-      const icon = `<i class="ti ti-${UST_ICONS[c.label] || 'point'}"></i>`;
-      const groups = c.groups ?? [];
-      if (!groups.length) {
-        return `<a href="${escM(c.url || '#')}">${icon} ${escM(c.label)}</a>`;
-      }
-      const cols = groups.map((g) => {
-        const links = (g.links ?? []).map((l) => `<a href="${escM(l.url || '#')}">${escM(l.label)}</a>`).join('');
-        return `<div class="um-g"><span class="um-h">${escM(g.title)}</span>${links}</div>`;
-      }).join('');
-      return `<div class="util-item"><a href="${escM(c.url || '#')}">${icon} ${escM(c.label)} ${UM_CHEV}</a><div class="util-menu">${cols}</div></div>`;
-    })
-    .join('\n      ');
-}
-
-function buildInfofor(items: MenuLink[]): string {
-  return items.map((l) => `<a href="${escM(l.url || '#')}"><span class="if-ic"><i class="ti ti-user"></i></span><span class="if-tx"><b>${escM(l.label)}</b></span></a>`).join('\n          ');
-}
-function buildEacadHead(p: MenuPortal): string {
-  return `<span class="eacad-title">${escM(p.title || 'E-Akademiya')}</span>\n              <span class="eacad-sub">${escM(p.subtitle || '')}</span>`;
-}
-function buildEacadCards(cards: MenuPortalCard[]): string {
-  return cards.map((c) => `<a href="${escM(c.url || '#')}" class="eacad-card"><span class="ea-ic"><i class="ti ti-${escM(c.icon || 'circle')}"></i></span><span class="ea-tx"><b>${escM(c.label)}</b><small>${escM(c.description || '')}</small></span></a>`).join('\n              ');
-}
 function buildQuicknav(items: MenuQuick[]): string {
   return items.map((q) => `<a href="${escM(q.url || '#')}" class="qnav-item"><i class="ti ti-${escM(q.icon || 'point')}"></i> ${escM(q.label)}</a>`).join('\n    ');
 }
@@ -510,96 +446,6 @@ function initMegaNav(): () => void {
   return () => off.forEach((f) => f());
 }
 
-// ── Fallback menyu datası (CMS əlçatmaz olduqda; seed ilə eynidir) ──
-const FB: SiteMenu = {
-  esasMenyu: [
-    { label: 'Akademiya', order: 1, url: '#', groups: [
-      { title: 'Akademik irs və missiya', links: [{label:'Akademiya haqqında',url:'#'},{label:'Akademiyanın tarixi',url:'#'},{label:'Sabiq rektorlarımız',url:'#'},{label:'ADDA Qəhrəmanları',url:'#'},{label:'Fəxri doktorlarımız',url:'#'},{label:'Fəxri məzunlar',url:'#'},{label:'ADDA reytinqlərdə',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
-      { title: 'Rəhbərlik və idarəetmə', links: [{label:'Rektor',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Elmi Şura',url:'#'},{label:'Himayəçilər Şurası',url:'#'},{label:'Təşkilati struktur',url:'#'}] },
-      { title: 'Hüquqi baza, etika və keyfiyyət', links: [{label:'Təhsil müəssisəsi haqqında',url:'#'},{label:'Normativ-hüquqi sənədlər',url:'#'},{label:'Akademik dürüstlük bəyannaməsi',url:'#'},{label:'ADDA etika kodeksi',url:'#'},{label:'Keyfiyyətin monitorinqi',url:'#'},{label:'Dayanıqlı inkişaf',url:'#'}] },
-      { title: 'Heyət', links: [{label:'Professor-müəllim heyəti',url:'#'},{label:'Təlimçi-texniki heyət',url:'#'},{label:'İnzibati heyət',url:'#'}] },
-      { title: 'Təminat', links: [{label:'Satınalmalar',url:'#'},{label:'Binalar və infrastruktur',url:'#'},{label:'Yataqxana',url:'#'},{label:'Təlim-Tədris Mərkəzi',url:'#'},{label:'Tədris gəmisi',url:'#'},{label:'Kollec',url:'#'}] },
-      { title: 'Kommunikasiya', links: [{label:'Vətəndaşların müraciəti',url:'#'},{label:'Əlaqə',url:'#'}] },
-    ]},
-    { label: 'Qəbul', order: 2, url: '#', groups: [
-      { title: 'Akademik səviyyələr üzrə qəbul', links: [{label:'Bakalavriat',url:'#'},{label:'Subbakalavr',url:'#'},{label:'Əcnəbi tələbələr',url:'#'},{label:'Magistratura',url:'#'},{label:'Doktorantura',url:'#'}] },
-      { title: 'Əlavə təhsil', links: [{label:'Təkrar ali təhsil',url:'#'},{label:'İxtisasartırma',url:'#'},{label:'Təkmilləşdirmə',url:'#'},{label:'Sertifikatlar',url:'#'}] },
-      { title: 'Əcnəbi tələbə qəbulu', links: [{label:'Əcnəbi tələbələrin qəbulu',url:'#'},{label:'Viza və miqrasiya dəstəyi',url:'#'}] },
-      { title: 'Faydalı məlumatlar və keçidlər', links: [{label:'Qeydiyyat xidməti',url:'#'},{label:'Təhsil haqqı və güzəştlər',url:'#'},{label:'Onlayn qeydiyyat',url:'#'},{label:'Açıq qapı günləri',url:'#'}] },
-    ]},
-    { label: 'Təhsil', order: 3, url: '#', groups: [
-      { title: 'Rəqəmsal Akademiya', links: [{label:'LMS Portalı',url:'#'},{label:'E-Tədris resursları',url:'#'}] },
-      { title: 'Proqramların kataloqu', links: [{label:'Bakalavriat',url:'#'},{label:'Magistratura',url:'#'},{label:'Doktorantura',url:'#'},{label:'Əlavə təhsil',url:'#'}] },
-      { title: 'Təhsil standartları', links: [{label:'Dənizçilik qanunvericilik sənədləri',url:'#'},{label:'Beynəlxalq standartlar (IMO/STCW)',url:'#'}] },
-      { title: 'Təhsilin keyfiyyətinin qiymətləndirilməsi', links: [{label:'Yerli və beynəlxalq akkreditasiya',url:'#'},{label:'Tələbə sorğuları',url:'#'},{label:'Qaynar xətt və təkliflər',url:'#'}] },
-    ]},
-    { label: 'Elm və innovasiya', order: 4, url: '#', groups: [
-      { title: 'Elmi idarəetmə və strategiya', links: [{label:'Elmi siyasət',url:'#'},{label:'Tədris-Metodiki Şura',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
-      { title: 'Elmi-tədqiqat mərkəzləri və laboratoriyalar', links: [{label:'Tədqiqat mərkəzləri və laboratoriyalar',url:'#'}] },
-      { title: 'Elmi nəşrlər və kitabxana', links: [{label:'ADDA-nın Elmi Jurnalı',url:'#'},{label:'Əməkdaşların nəşrləri',url:'#'},{label:'E-Kitabxana',url:'#'},{label:'Konvensiyalar və normativ sənədlər fondu',url:'#'},{label:'Tərəfdaş kitabxanalar və elmi bazalar',url:'#'}] },
-      { title: 'Doktorantura və elmi kadrların hazırlığı', links: [{label:'Doktorantura',url:'#'},{label:'Dissertasiya şuraları',url:'#'},{label:'Gənc alimlərin platforması',url:'#'}] },
-      { title: 'Qrantlar, müsabiqələr və tədbirlər', links: [{label:'Qrantlar',url:'#'},{label:'Mükafatlar',url:'#'},{label:'Elmi tədbirlər təqvimi',url:'#'},{label:'Beynəlxalq Dənizçilik Konfransları',url:'#'},{label:'Sahəvi seminarlar və təlimlər',url:'#'}] },
-    ]},
-    { label: 'Tələbə həyatı', order: 5, url: '#', groups: [
-      { title: 'Tələbə təşkilatları', links: [{label:'Tələbə Gənclər Təşkilatı (TGK)',url:'#'},{label:'Tələbə Həmkarlar İttifaqı (THİK)',url:'#'},{label:'Tələbə Elmi Cəmiyyəti (TEC)',url:'#'},{label:'Könüllülük hərəkatı',url:'#'}] },
-      { title: 'Yaşayış və rifah', links: [{label:'Tələbə yataqxanası',url:'#'},{label:'Onlayn müraciət və yerləşdirmə',url:'#'},{label:'Sosial təminat və maddi yardım',url:'#'},{label:'Təqaüd proqramları',url:'#'},{label:'Psixoloji dəstək xidməti',url:'#'},{label:'Tibb xidməti',url:'#'}] },
-      { title: 'Yaradıcılıq, idman və asudə vaxt', links: [{label:'İdman klubları',url:'#'},{label:'Mədəniyyət və yaradıcılıq dərnəkləri',url:'#'},{label:'İntellektual oyun klubları',url:'#'}] },
-      { title: 'Media və kommunikasiya', links: [{label:'Sosial media elçiləri',url:'#'},{label:'Tədbirlər təqvimi',url:'#'}] },
-    ]},
-    { label: 'Beynəlxalq əlaqələr', order: 6, url: '#', groups: [
-      { title: 'Akademik tərəfdaşlıq və ikili diplom', links: [{label:'İkili diplom layihələri',url:'#'},{label:'Akademik tərəfdaşlar',url:'#'}] },
-      { title: 'Mobillik proqramları', links: [{label:'Erasmus+ və Mevlana',url:'#'},{label:'Müəllim mübadiləsi',url:'#'},{label:'Yay məktəbləri',url:'#'}] },
-      { title: 'Beynəlxalq assosiasiyalar və təşkilatlar', links: [{label:'IAMU',url:'#'},{label:'IMO',url:'#'},{label:'BSAMI',url:'#'},{label:'Digər təşkilatlar',url:'#'}] },
-      { title: 'Xarici gəmiçilik şirkətləri', links: [{label:'Kadet proqramları',url:'#'},{label:'Məzunların işlə təminatı',url:'#'}] },
-      { title: 'Beynəlxalq elmi araşdırmalar', links: [{label:'Birgə elmi konfranslar',url:'#'},{label:'Qrant layihələri',url:'#'}] },
-    ]},
-  ],
-  ustMenyu: [
-    { label: 'ADDA Məzunları', order: 1, url: '#', groups: [
-      { title: 'Məzun mərkəzi', links: [{label:'Məzunlar assosiasiyası',url:'#'},{label:'Regional və beynəlxalq nümayəndəliklər',url:'#'},{label:'Məzunların mentorluq proqramı',url:'#'},{label:'Məzunlar-işəgötürənlər şəbəkəsi',url:'#'}] },
-      { title: 'Karyera və inkişaf', links: [{label:'Vakansiyalar',url:'#'},{label:'Məzunlar üçün təkmilləşdirmə',url:'#'},{label:'Karyera hekayələri',url:'#'},{label:'Elm-təhsil-istehsalat platforması',url:'#'},{label:'Diskussiya klubu',url:'#'},{label:'Karyera sərgisi',url:'#'}] },
-      { title: 'Tədbirlər və layihələr', links: [{label:'Məzun günü',url:'#'},{label:'Peşəkar görüşlər',url:'#'},{label:'İnkişafa dəstək təşəbbüsləri',url:'#'},{label:'Məzun kartı',url:'#'},{label:'Məzunların rəyləri',url:'#'}] },
-    ]},
-    { label: 'Karyera', order: 2, url: '#', groups: [
-      { title: 'Karyera Mərkəzi', links: [{label:'Karyera Mərkəzi haqqında',url:'#'},{label:'Karyera bələdçisi',url:'#'},{label:'Fərdi konsultasiyalar',url:'#'},{label:'Tələbə portfolioları',url:'#'}] },
-      { title: 'İş və təcrübə imkanları', links: [{label:'Vakansiyalar',url:'#'},{label:'Təcrübə proqramları',url:'#'},{label:'Könüllü təcrübəçilik',url:'#'}] },
-      { title: 'İstehsalat ilə əlaqələr', links: [{label:'Korporativ tərəfdaşlar',url:'#'},{label:'Sərgilər və forumlar',url:'#'}] },
-      { title: 'Bacarıqların inkişafı', links: [{label:'Soft Skills təlimləri',url:'#'},{label:'Sertifikatlaşdırma dəstəyi',url:'#'},{label:'Master-klaslar',url:'#'}] },
-    ]},
-    { label: 'Kollec', order: 3, url: '#', groups: [ { title: 'Kollec', links: [{label:'Fakültələr',url:'#'},{label:'Əlavə təhsil',url:'#'},{label:'İnfrastruktur',url:'#'}] } ] },
-    { label: 'FAQ', order: 4, url: '#', groups: [] },
-    { label: 'Əlaqə', order: 5, url: '#', groups: [] },
-  ],
-  eAkademiya: { title: 'E-Akademiya platforması', subtitle: 'Rəqəmsal təhsil ekosistemi', cards: [
-    { label: 'Tələbə kabineti', description: 'ADDA Lider sistemi', url: '#', icon: 'device-laptop' },
-    { label: 'Müəllim kabineti', description: 'Tədris idarəetməsi', url: '#', icon: 'chalkboard' },
-    { label: 'Elektron jurnal', description: 'Qiymət və davamiyyət', url: '#', icon: 'notebook' },
-    { label: 'Dərs cədvəli', description: 'Cari semestr', url: '#', icon: 'calendar' },
-    { label: 'E-Kitabxana', description: 'Elektron resurslar', url: '#', icon: 'books' },
-    { label: 'Sertifikatlar', description: 'STCW & Təlim mərkəzi', url: '#', icon: 'certificate' },
-  ]},
-  istifadeciQruplari: [
-    { label: 'Abituriyentlər', url: '#' }, { label: 'Tələbələr', url: '#' }, { label: 'Məzunlar', url: '#' },
-    { label: 'Əməkdaşlar', url: '#' }, { label: 'Beynəlxalq tələbələr', url: '#' }, { label: 'Valideynlər', url: '#' },
-  ],
-  suretliKecidler: [
-    { label: 'Tələbə kabineti', url: '#', icon: 'device-laptop' }, { label: 'Elektron jurnal', url: '#', icon: 'notebook' },
-    { label: 'E-Kitabxana', url: '#', icon: 'books' }, { label: 'Dərs cədvəli', url: '#', icon: 'calendar' },
-    { label: 'Karyera Mərkəzi', url: '#', icon: 'briefcase' }, { label: 'Əlaqə', url: '#', icon: 'mail' },
-  ],
-  footerMenyusu: [
-    { title: 'Akademiya', links: [{label:'Haqqımızda',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Struktur',url:'#'},{label:'Tarix',url:'#'},{label:'Akkreditasiya',url:'#'}] },
-    { title: 'Qəbul', links: [{label:'Bakalavr qəbulu',url:'#'},{label:'Magistratura qəbulu',url:'#'},{label:'Onlayn müraciət',url:'#'},{label:'Qəbul şərtləri',url:'#'}] },
-    { title: 'Təhsil', links: [{label:'Bakalavriat',url:'#'},{label:'Magistratura',url:'#'},{label:'Qiyabi təhsil',url:'#'},{label:'İxtisaslar',url:'#'},{label:'E-Akademiya',url:'#'}] },
-    { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'#'},{label:'Tələbə həyatı',url:'#'},{label:'Beynəlxalq əməkdaşlıq',url:'#'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
-  ],
-};
-
-function buildLangSwitch(locale: Locale): string {
-  const items: Array<[string, string]> = [['az', 'AZ'], ['en', 'EN'], ['ru', 'RU']];
-  return items.map(([l, label]) => `<a href="/${l}"${l === locale ? ' class="active"' : ''}>${label}</a>`).join('');
-}
-
 export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; menu: SiteMenu | null; locale: Locale }) {
   useEffect(() => {
     document.querySelectorAll('script[data-adda-home]').forEach((el) => el.remove());
@@ -635,97 +481,16 @@ export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; m
   useEffect(initSearch, []);
   useEffect(initMegaNav, []);
 
-  const esas = menu && menu.esasMenyu.length ? menu.esasMenyu : FB.esasMenyu;
-  const ust = menu && menu.ustMenyu.length ? menu.ustMenyu : FB.ustMenyu;
-  const eacad = (menu && menu.eAkademiya) || (FB.eAkademiya as MenuPortal);
-  const qruplar = menu && menu.istifadeciQruplari.length ? menu.istifadeciQruplari : FB.istifadeciQruplari;
-  const suretli = menu && menu.suretliKecidler.length ? menu.suretliKecidler : FB.suretliKecidler;
-  const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FB.footerMenyusu;
+  const suretli = menu && menu.suretliKecidler.length ? menu.suretliKecidler : FALLBACK_MENU.suretliKecidler;
+  const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;
   const markup = translateStatic(MARKUP, locale)
-    .replace('{{LANG_SWITCH}}', buildLangSwitch(locale))
     .replace('{{NEWS_CARDS}}', news.length ? buildNewsCards(news, locale) : FALLBACK_CARDS)
-    .replace('{{MAINNAV}}', buildMainNav(esas, locale))
     .replace('{{FOOTER_COLS}}', buildFooterCols(fcols))
-    .replace('{{UST_MENU}}', buildUstMenu(ust))
-    .replace('{{INFOFOR}}', buildInfofor(qruplar))
-    .replace('{{EACAD_HEAD}}', buildEacadHead(eacad))
-    .replace('{{EACAD_CARDS}}', buildEacadCards(eacad.cards ?? []))
     .replace('{{QUICKNAV}}', buildQuicknav(suretli));
   return <div dangerouslySetInnerHTML={{ __html: markup }} />;
 }
 
-const MARKUP = `<!-- Gov Banner (FIX 1) -->
-<div class="gov-banner">
-  <div class="gov-banner-inner">
-    <i class="ti ti-shield-check"></i>
-    <p>Azərbaycan Dövlət Dəniz Akademiyasının rəsmi internet portalı. Portal dövlət informasiya resurslarına dair müəyyən edilmiş tələblərə uyğun olaraq fəaliyyət göstərir.</p>
-  </div>
-</div>
-
-<!-- Utility -->
-<div class="utility">
-  <div class="utility-inner">
-    <div class="utility-left">{{UST_MENU}}</div>
-    <div class="utility-right">
-      <div class="infofor" id="infofor">
-        <button class="infofor-btn" id="infoforBtn">
-          <svg class="lead-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
-          Bunlar üçün
-          <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="infofor-menu">{{INFOFOR}}</div>
-      </div>
-      <div class="lang-group">
-        {{LANG_SWITCH}}
-      </div>
-      <button class="util-icon" aria-label="Axtarış"><i class="ti ti-search"></i></button>
-      <button class="util-icon" id="contrastBtn" aria-label="Kontrast"><i class="ti ti-contrast"></i></button>
-      <button class="util-icon" id="fontUpBtn" aria-label="Şrift böyüt"><i class="ti ti-text-plus"></i></button>
-      <button class="util-icon" id="fontDownBtn" aria-label="Şrift kiçilt"><i class="ti ti-text-minus"></i></button>
-    </div>
-  </div>
-</div>
-
-<div class="search-modal" id="searchModal" aria-hidden="true">
-  <div class="search-backdrop" data-search-close></div>
-  <div class="search-box" role="dialog" aria-label="Axtarış">
-    <div class="search-field">
-      <i class="ti ti-search"></i>
-      <input type="text" id="searchInput" placeholder="Xəbər, ixtisas, səhifə axtar..." autocomplete="off" spellcheck="false">
-      <button class="search-close" data-search-close aria-label="Bağla"><i class="ti ti-x"></i></button>
-    </div>
-    <div class="search-results" id="searchResults"></div>
-  </div>
-</div>
-
-<div class="hero-wrap">
-  <header id="siteHeader">
-    <div class="header-inner">
-      <a href="#" class="brand">
-        <div class="brand-emblem"><img src="/home/emblem.webp" alt="ADDA logo"></div>
-        <div class="brand-divider"></div>
-        <div class="brand-text">
-          <span class="b-name">ADDA</span>
-          <span class="b-full">Azərbaycan Dövlət Dəniz Akademiyası</span>
-        </div>
-      </a>
-      <nav class="mainnav">
-        {{MAINNAV}}
-        <div class="nav-item eacad">
-          <a href="#" class="nav-portal">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-            E-Akademiya
-            <svg class="ea-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </a>
-          <div class="eacad-menu">
-            <div class="eacad-head">{{EACAD_HEAD}}</div>
-            <div class="eacad-grid">{{EACAD_CARDS}}</div>
-          </div>
-        </div>
-      </nav>
-      <button class="burger" aria-label="Menyu"><i class="ti ti-menu-2"></i></button>
-    </div>
-  </header>
+const MARKUP = `<div class="hero-wrap">
 
   <!-- ════ HERO — Komanda körpüsü (ultra-modern · akademik + dənizçilik) ════ -->
   <section class="hero" id="hero">
