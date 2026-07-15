@@ -1,6 +1,7 @@
 import '../home.css';
 import HomeClient from '../HomeClient';
 import SiteHeaderStack from '../_components/SiteHeaderStack';
+import Hero from '../_components/Hero';
 import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -20,6 +21,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
+      <Hero locale={locale} />
       <HomeClient news={news} menu={menu} locale={locale} />
     </>
   );

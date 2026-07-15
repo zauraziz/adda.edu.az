@@ -456,6 +456,14 @@ const T: Array<[string, string, string]> = [
   ['Qəbul elanları, tədbirlər və akademiya yenilikləri — birbaşa e-poçtunuza.',
    'Объявления о приёме, события и новости академии — прямо на вашу почту.',
    'Admission announcements, events and academy news — straight to your inbox.'],
+  // ── Hero: kompozisiya sətirləri (alt-sətir əvəzləməsindən asılı olmasın) ──
+  ['Gələcəyin <em>dənizçiliyi</em>',
+   'Морское дело <em>будущего</em>',
+   'Seafaring <em>of the future</em>'],
+  // FIX: əvvəl 'Aşağı' alt-sətri əvəzlənib "Вниз sürüşdür" / "Scroll down sürüşdür" verirdi
+  ['Aşağı sürüşdür',
+   'Прокрутить вниз',
+   'Scroll down'],
   ['E-poçt ünvanınız',
    'Ваш адрес эл. почты',
    'Your email address'],
