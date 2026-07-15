@@ -8,6 +8,8 @@ import type {
 } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
 import { FALLBACK_MENU, FALLBACK_EACAD } from '@/lib/menu-fallback';
+import { SEARCH_UI } from '@/lib/search-ui';
+import HeaderIsland from './HeaderIsland';
 
 // ── Paylaşılan SVG-lər (orijinal markup ilə eyni) ──
 const MegaChevH = () => (
@@ -204,7 +206,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
           <div className="utility-left"><UtilityLeft cats={ust} locale={locale} /></div>
           <div className="utility-right">
             <div className="infofor" id="infofor">
-              <button className="infofor-btn" id="infoforBtn">
+              <button className="infofor-btn" id="infoforBtn" aria-expanded={false}>
                 <svg className="lead-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="7" r="4" /><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0-3-3.87" /></svg>
                 {tr('Bunlar üçün', locale)}
                 <svg className="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
@@ -212,7 +214,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
               <div className="infofor-menu"><Infofor items={qruplar} locale={locale} /></div>
             </div>
             <div className="lang-group"><LangSwitch locale={locale} /></div>
-            <button className="util-icon" aria-label="Axtarış"><i className="ti ti-search" /></button>
+            <button className="util-icon" data-search-open="" aria-label="Axtarış"><i className="ti ti-search" /></button>
             <button className="util-icon" id="contrastBtn" aria-label="Kontrast"><i className="ti ti-contrast" /></button>
             <button className="util-icon" id="fontUpBtn" aria-label="Şrift böyüt"><i className="ti ti-text-plus" /></button>
             <button className="util-icon" id="fontDownBtn" aria-label="Şrift kiçilt"><i className="ti ti-text-minus" /></button>
@@ -226,7 +228,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
         <div className="search-box" role="dialog" aria-label="Axtarış">
           <div className="search-field">
             <i className="ti ti-search" />
-            <input type="text" id="searchInput" placeholder="Xəbər, ixtisas, səhifə axtar..." autoComplete="off" spellCheck={false} />
+            <input type="text" id="searchInput" placeholder={SEARCH_UI[locale].ph} autoComplete="off" spellCheck={false} />
             <button className="search-close" data-search-close="" aria-label="Bağla"><i className="ti ti-x" /></button>
           </div>
           <div className="search-results" id="searchResults" />
@@ -248,9 +250,12 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
             <MainNav cats={esas} locale={locale} />
             <EacadMega eacad={eacad} locale={locale} />
           </nav>
-          <button className="burger" aria-label="Menyu"><i className="ti ti-menu-2" /></button>
+          <button className="burger" aria-label="Menyu" aria-expanded={false}><i className="ti ti-menu-2" /></button>
         </div>
       </header>
+
+      {/* Davranış: scrolled · şrift · kontrast · infofor · burger · meganav · axtarış */}
+      <HeaderIsland locale={locale} />
     </>
   );
 }

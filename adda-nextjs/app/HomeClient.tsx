@@ -362,90 +362,6 @@ function buildQuicknav(items: MenuQuick[], locale: Locale): string {
 }
 
 // ── Axtarış (Meilisearch, /api/search) ──
-function initSearch(): () => void {
-  const btn = document.querySelector('.util-icon[aria-label="Axtarış"]') as HTMLButtonElement | null;
-  const modal = document.getElementById('searchModal');
-  const input = document.getElementById('searchInput') as HTMLInputElement | null;
-  const results = document.getElementById('searchResults');
-  if (!btn || !modal || !input || !results) return () => {};
-
-  const pathLoc = window.location.pathname.split('/')[1];
-  const uiLoc = (['az', 'ru', 'en'].includes(pathLoc) ? pathLoc : 'az') as 'az' | 'ru' | 'en';
-  const SUI = {
-    az: { ph: 'Xəbər, ixtisas, səhifə axtar...', types: { article: 'Xəbər', program: 'İxtisas', page: 'Səhifə' }, empty: 'Nəticə tapılmadı', loading: 'Axtarılır…', error: 'Xəta baş verdi' },
-    ru: { ph: 'Поиск: новости, специальности, страницы...', types: { article: 'Новость', program: 'Специальность', page: 'Страница' }, empty: 'Ничего не найдено', loading: 'Идёт поиск…', error: 'Произошла ошибка' },
-    en: { ph: 'Search news, programmes, pages...', types: { article: 'News', program: 'Programme', page: 'Page' }, empty: 'No results found', loading: 'Searching…', error: 'Something went wrong' },
-  }[uiLoc];
-  input.placeholder = SUI.ph;
-
-  const open = () => { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); setTimeout(() => input.focus(), 60); };
-  const close = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); };
-  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
-  btn.addEventListener('click', open);
-  modal.querySelectorAll('[data-search-close]').forEach((el) => el.addEventListener('click', close));
-  document.addEventListener('keydown', onKey);
-
-  const TYPE_LABEL: Record<string, string> = SUI.types;
-  type Hit = { title?: string; excerpt?: string; contentType?: string };
-  const render = (hits: Hit[]) => {
-    if (!hits.length) { results.innerHTML = `<div class="search-empty">${SUI.empty}</div>`; return; }
-    results.innerHTML = hits
-      .map((h) => `<a href="#" class="search-hit"><span class="sh-type">${escM(TYPE_LABEL[h.contentType || ''] || '')}</span><span class="sh-main"><b>${escM(h.title || '')}</b>${h.excerpt ? `<small>${escM(h.excerpt)}</small>` : ''}</span><i class="ti ti-arrow-up-right"></i></a>`)
-      .join('');
-  };
-
-  let timer: ReturnType<typeof setTimeout>;
-  let seq = 0;
-  const onInput = () => {
-    const q = input.value.trim();
-    clearTimeout(timer);
-    if (!q) { results.innerHTML = ''; return; }
-    results.innerHTML = `<div class="search-loading">${SUI.loading}</div>`;
-    const mine = ++seq;
-    timer = setTimeout(async () => {
-      try {
-        const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&locale=${uiLoc}`);
-        const data = await r.json();
-        if (mine === seq) render((data.hits || []) as Hit[]);
-      } catch {
-        if (mine === seq) results.innerHTML = `<div class="search-empty">${SUI.error}</div>`;
-      }
-    }, 220);
-  };
-  input.addEventListener('input', onInput);
-
-  return () => {
-    btn.removeEventListener('click', open);
-    input.removeEventListener('input', onInput);
-    document.removeEventListener('keydown', onKey);
-  };
-}
-
-
-// ── Mega menyu drill-down (HSE üslubu) ──
-function initMegaNav(): () => void {
-  const megas = Array.from(document.querySelectorAll<HTMLElement>('.nav-mega'));
-  const off: Array<() => void> = [];
-  megas.forEach((m) => {
-    const items = Array.from(m.querySelectorAll<HTMLElement>('.mg-item'));
-    const panels = Array.from(m.querySelectorAll<HTMLElement>('.mega-panel'));
-    if (!items.length) return;
-    items.forEach((btn) => {
-      const act = () => {
-        const i = btn.getAttribute('data-mi');
-        items.forEach((b) => b.classList.toggle('active', b === btn));
-        panels.forEach((p) => p.classList.toggle('active', p.getAttribute('data-mp') === i));
-      };
-      const click = (e: Event) => { e.preventDefault(); act(); };
-      btn.addEventListener('mouseenter', act);
-      btn.addEventListener('focus', act);
-      btn.addEventListener('click', click);
-      off.push(() => { btn.removeEventListener('mouseenter', act); btn.removeEventListener('focus', act); btn.removeEventListener('click', click); });
-    });
-  });
-  return () => off.forEach((f) => f());
-}
-
 export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; menu: SiteMenu | null; locale: Locale }) {
   useEffect(() => {
     document.querySelectorAll('script[data-adda-home]').forEach((el) => el.remove());
@@ -478,8 +394,6 @@ export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; m
 
   useEffect(initGlobe, []);
   useEffect(initNewsletter, []);
-  useEffect(initSearch, []);
-  useEffect(initMegaNav, []);
 
   const suretli = menu && menu.suretliKecidler.length ? menu.suretliKecidler : FALLBACK_MENU.suretliKecidler;
   const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;

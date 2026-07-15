@@ -112,13 +112,10 @@ document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){go(cur+1);reset
   btn.addEventListener('mouseleave',()=>{gsap.to(btn,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'});gsap.to(arr,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'});});
 })();
 
-/* 4. HEADER / A11Y / COUNTERS / BURGER */
-const headerEl=document.getElementById('siteHeader');
-window.addEventListener('scroll',()=>{if(window.scrollY>120)headerEl.classList.add('scrolled');else headerEl.classList.remove('scrolled');});
-let scale=1;
-document.getElementById('fontUpBtn').onclick=()=>{scale=Math.min(1.3,scale+0.1);document.documentElement.style.setProperty('--fs-scale',scale);};
-document.getElementById('fontDownBtn').onclick=()=>{scale=Math.max(0.9,scale-0.1);document.documentElement.style.setProperty('--fs-scale',scale);};
-document.getElementById('contrastBtn').onclick=()=>document.body.classList.toggle('high-contrast');
+/* 4. SAYĞACLAR (statsec)
+   Qeyd: header/a11y (scrolled, şrift, kontrast), infofor və burger
+   Faza 1b-də app/_components/HeaderIsland.tsx-ə köçdü — burada TƏKRAR ETMƏ,
+   yoxsa listener-lər ikiqat bağlanar. */
 const nums=document.querySelectorAll('.statsec .num');let counted=false;
 function countUp(){if(counted)return;const sec=document.querySelector('.statsec');const r=sec.getBoundingClientRect();if(r.top<window.innerHeight&&r.bottom>0){counted=true;nums.forEach(n=>{const t=+n.dataset.target;const span=n.querySelector('span');let c=0;const step=t/60;const iv=setInterval(()=>{c+=step;if(c>=t){c=t;clearInterval(iv);}span.textContent=Math.round(c).toLocaleString('az');},25);});}}
 window.addEventListener('scroll',countUp);window.addEventListener('load',countUp);
@@ -130,15 +127,3 @@ document.querySelectorAll('.cal-d.ev').forEach(d=>d.addEventListener('click',()=
   document.querySelectorAll('.cal-d.ev').forEach(x=>x.classList.toggle('on',x===d));
   document.querySelectorAll('.cal-ev').forEach(ev=>ev.classList.toggle('on',ev.dataset.day===day));
 }));
-
-/* INFO FOR (Bunlar üçün) dropdown */
-(function(){
-  const wrap=document.getElementById('infofor');
-  const btn=document.getElementById('infoforBtn');
-  if(!wrap||!btn)return;
-  btn.addEventListener('click',e=>{e.stopPropagation();wrap.classList.toggle('open');});
-  document.addEventListener('click',e=>{if(!wrap.contains(e.target))wrap.classList.remove('open');});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')wrap.classList.remove('open');});
-})();
-
-document.querySelector('.burger').onclick=function(){const n=document.querySelector('.mainnav');const open=n.style.display==='flex';n.style.display=open?'none':'flex';if(!open){n.style.cssText+=';position:absolute;top:82px;left:0;right:0;background:linear-gradient(100deg,#053A52,#02546F);flex-direction:column;padding:16px;height:auto;z-index:200;box-shadow:0 20px 40px rgba(2,75,102,.3)';}};
