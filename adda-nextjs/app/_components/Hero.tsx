@@ -7,6 +7,7 @@
 import { tr, type Locale } from '@/lib/i18n';
 import { heroSlides } from '@/lib/hero-slides';
 import HeroSlider from './HeroSlider';
+import HeroFluid from './HeroFluid';
 
 export default function Hero({ locale }: { locale: Locale }) {
   return (
@@ -80,7 +81,8 @@ export default function Hero({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* Davranış: jaluzi slayder + mətn keçidi + magnit düymə */}
+      {/* Davranış: WebGL maye fon + jaluzi slayder + mətn keçidi + magnit düymə */}
+      <HeroFluid />
       <HeroSlider slides={heroSlides(locale)} />
     </div>
   );

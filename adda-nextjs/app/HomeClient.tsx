@@ -9,7 +9,6 @@ import { FALLBACK_MENU } from '@/lib/menu-fallback';
 // Bridge (Merhele 0): orijinal statik HTML render + qalan vanilla JS inject.
 // Qlobus artiq bundle-dan (cobe npm) isleyir - CDN/modul yukleme asililigi yoxdur.
 const SCRIPTS: { src: string; module?: boolean }[] = [
-  { src: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js' },
   { src: '/home/socialx.mjs', module: true },
   { src: '/home/ui.js' },
 ];
