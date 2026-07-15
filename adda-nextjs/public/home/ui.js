@@ -31,86 +31,10 @@
   }catch(e){hero.classList.add('no-webgl');canvas.remove();}
 })();
 
-/* 2. JALUZİ SLICES */
-const SLIDES=[
-  {img:'https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=82&w=1920&h=1080&fit=crop',
-   kicker:'Azərbaycan Dövlət Dəniz Akademiyası',
-   title:'Gələcəyin <em>dənizçiliyi</em>',
-   lead:'Firuzəyi üfüqlərə açılan rəqəmsal təhsil. Beynəlxalq STCW standartları, canlı simulyasiya mühiti və qlobal karyera trayektoriyası.',
-   cta:'Daxil ol'},
-  {img:'https://images.unsplash.com/photo-1641467613990-b74163e280e3?fm=jpg&q=82&w=1920&h=1080&fit=crop',
-   kicker:'Wärtsilä NTPRO təlim bazası',
-   title:'Simulyasiya <em>təcrübəsi</em>',
-   lead:'Kapitan körpüsü, GMDSS və mühərrik simulyatorlarında real ssenarilər. Nəzəriyyə deyil — yaşanan akademik təcrübə.',
-   cta:'Virtual tura başla'},
-  {img:'https://images.unsplash.com/photo-1751779057940-43cc385452f7?fm=jpg&q=82&w=1920&h=1080&fit=crop',
-   kicker:'47+ beynəlxalq tərəfdaş',
-   title:'Qlobal <em>üfüqlər</em>',
-   lead:'IAMU şəbəkəsi, mübadilə proqramları və dünya donanmalarına açılan karyera yolları.',
-   cta:'Tərəfdaşlara bax'}
-];
-const N=9, IMG_RATIO=16/9;
-const slicesRoot=document.getElementById('slices');
-const hero=document.getElementById('hero');
-const sliceEls=[],flippers=[];
-for(let i=0;i<N;i++){
-  const s=document.createElement('div');s.className='slice';
-  const f=document.createElement('div');f.className='flipper';
-  const fr=document.createElement('div');fr.className='face front';
-  const bk=document.createElement('div');bk.className='face back';
-  f.appendChild(fr);f.appendChild(bk);s.appendChild(f);slicesRoot.appendChild(s);
-  sliceEls.push({front:fr,back:bk});flippers.push(f);
-}
-let W=0,H=0,SW=0;
-function faceCSS(el,idx,i){
-  let bw,bh;
-  if(W/H>IMG_RATIO){bw=W;bh=W/IMG_RATIO;}else{bh=H;bw=H*IMG_RATIO;}
-  const px=-(i*SW)-(bw-W)/2, py=-(bh-H)/2;
-  el.style.backgroundImage="url('"+SLIDES[idx].img+"')";
-  el.style.backgroundBlendMode='normal';
-  el.style.backgroundSize=bw+"px "+bh+"px";
-  el.style.backgroundPosition=px+"px "+py+"px";
-}
-let cur=0,anim=false;
-function layout(){W=hero.clientWidth;H=hero.clientHeight;SW=W/N;sliceEls.forEach((s,i)=>{faceCSS(s.front,cur,i);});}
-layout();window.addEventListener('resize',layout);
-const gcKicker=document.getElementById('gcKicker'),gcTitle=document.getElementById('gcTitle'),gcLead=document.getElementById('gcLead'),gcCta=document.getElementById('gcCta');
-function swapText(n){
-  const items=document.querySelectorAll('.gc-anim');
-  if(window.gsap){
-    gsap.to(items,{y:14,opacity:0,duration:.26,stagger:.04,ease:'power2.in',onComplete:()=>{
-      gcKicker.textContent=SLIDES[n].kicker;gcTitle.innerHTML=SLIDES[n].title;gcLead.textContent=SLIDES[n].lead;gcCta.textContent=SLIDES[n].cta;
-      gsap.to(items,{y:0,opacity:1,duration:.42,stagger:.06,ease:'power3.out',delay:.22});
-    }});
-  }else{gcKicker.textContent=SLIDES[n].kicker;gcTitle.innerHTML=SLIDES[n].title;gcLead.textContent=SLIDES[n].lead;gcCta.textContent=SLIDES[n].cta;}
-}
-const numBtns=document.querySelectorAll('.numb');
-function updateNums(){numBtns.forEach(b=>b.classList.remove('active'));const a=numBtns[cur];void a.querySelector('.pb i').offsetWidth;a.classList.add('active');}
-const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-function go(n){
-  const next=(n+SLIDES.length)%SLIDES.length;
-  if(anim||next===cur)return;anim=true;
-  sliceEls.forEach((s,i)=>faceCSS(s.back,next,i));
-  swapText(next);
-  if(window.gsap&&!reduced){
-    gsap.to(flippers,{rotationY:180,duration:.92,ease:'power3.inOut',stagger:{each:.055,from:next>cur?'start':'end'},
-      onComplete:()=>{sliceEls.forEach((s,i)=>faceCSS(s.front,next,i));gsap.set(flippers,{rotationY:0});cur=next;anim=false;updateNums();}});
-  }else{sliceEls.forEach((s,i)=>faceCSS(s.front,next,i));cur=next;anim=false;updateNums();}
-}
-numBtns.forEach(b=>{b.addEventListener('mouseenter',()=>{go(+b.dataset.n);resetTimer();});b.addEventListener('click',()=>{go(+b.dataset.n);resetTimer();});});
-let timer=setInterval(()=>go(cur+1),5000);
-function resetTimer(){clearInterval(timer);timer=setInterval(()=>go(cur+1),5000);}
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){go(cur+1);resetTimer();}if(e.key==='ArrowLeft'){go(cur-1);resetTimer();}});
-
-/* 3. MAGNETIC BUTTON */
-(function(){
-  const btn=document.getElementById('btnMag'),arr=document.getElementById('magArr');
-  if(!window.gsap||!btn)return;
-  const xTo=gsap.quickTo(btn,'x',{duration:.4,ease:'power3'}),yTo=gsap.quickTo(btn,'y',{duration:.4,ease:'power3'});
-  const axTo=gsap.quickTo(arr,'x',{duration:.35,ease:'power3'}),ayTo=gsap.quickTo(arr,'y',{duration:.35,ease:'power3'});
-  btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;xTo(dx*.3);yTo(dy*.3);axTo(dx*.2);ayTo(dy*.2);});
-  btn.addEventListener('mouseleave',()=>{gsap.to(btn,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'});gsap.to(arr,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'});});
-})();
+/* 2-3. JALUZİ SLICES + MAGNETIC BUTTON
+   Faza 1 / Hero 2b-də app/_components/HeroSlider.tsx-ə köçdü
+   (SLIDES artıq dilə uyğun, gsap npm-dən dinamik import).
+   Burada TƏKRAR ETMƏ — ikiqat listener/slice yaranar. */
 
 /* 4. SAYĞACLAR (statsec)
    Qeyd: header/a11y (scrolled, şrift, kontrast), infofor və burger

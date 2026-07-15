@@ -5,6 +5,8 @@
 //   #btnMag · #magArr · .numb[data-n] · .gc-anim
 // Mətn tr() (exact-match) ilə — alt-sətir mangling yoxdur.
 import { tr, type Locale } from '@/lib/i18n';
+import { heroSlides } from '@/lib/hero-slides';
+import HeroSlider from './HeroSlider';
 
 export default function Hero({ locale }: { locale: Locale }) {
   return (
@@ -77,6 +79,9 @@ export default function Hero({ locale }: { locale: Locale }) {
           </svg>
         </div>
       </section>
+
+      {/* Davranış: jaluzi slayder + mətn keçidi + magnit düymə */}
+      <HeroSlider slides={heroSlides(locale)} />
     </div>
   );
 }

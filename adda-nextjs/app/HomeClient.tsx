@@ -10,7 +10,6 @@ import { FALLBACK_MENU } from '@/lib/menu-fallback';
 // Qlobus artiq bundle-dan (cobe npm) isleyir - CDN/modul yukleme asililigi yoxdur.
 const SCRIPTS: { src: string; module?: boolean }[] = [
   { src: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js' },
-  { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js' },
   { src: '/home/socialx.mjs', module: true },
   { src: '/home/ui.js' },
 ];
