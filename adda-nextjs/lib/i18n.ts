@@ -456,6 +456,10 @@ const T: Array<[string, string, string]> = [
   ['Qəbul elanları, tədbirlər və akademiya yenilikləri — birbaşa e-poçtunuza.',
    'Объявления о приёме, события и новости академии — прямо на вашу почту.',
    'Admission announcements, events and academy news — straight to your inbox.'],
+  // ── Quicknav: aria-label (əvvəl T-də yox idi → ru/en-də az qalırdı) ──
+  ['Sürətli keçidlər',
+   'Быстрые ссылки',
+   'Quick links'],
   // ── Hero: kompozisiya sətirləri (alt-sətir əvəzləməsindən asılı olmasın) ──
   ['Gələcəyin <em>dənizçiliyi</em>',
    'Морское дело <em>будущего</em>',

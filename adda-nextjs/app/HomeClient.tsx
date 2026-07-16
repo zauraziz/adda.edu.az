@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import createGlobe, { type Marker } from 'cobe';
-import type { NewsItem, SiteMenu, MenuFooterCol, MenuQuick } from '@/lib/strapi';
+import type { NewsItem, SiteMenu, MenuFooterCol } from '@/lib/strapi';
 import { translateStatic, tr, type Locale } from '@/lib/i18n';
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
 
@@ -355,9 +355,6 @@ function buildFooterCols(cols: MenuFooterCol[], locale: Locale): string {
     .join('\n        ');
 }
 
-function buildQuicknav(items: MenuQuick[], locale: Locale): string {
-  return items.map((q) => `<a href="${escM(q.url || '#')}" class="qnav-item"><i class="ti ti-${escM(q.icon || 'point')}"></i> ${escM(tr(q.label, locale))}</a>`).join('\n    ');
-}
 
 // ── Axtarış (Meilisearch, /api/search) ──
 export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; menu: SiteMenu | null; locale: Locale }) {
@@ -393,22 +390,14 @@ export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; m
   useEffect(initGlobe, []);
   useEffect(initNewsletter, []);
 
-  const suretli = menu && menu.suretliKecidler.length ? menu.suretliKecidler : FALLBACK_MENU.suretliKecidler;
   const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;
   const markup = translateStatic(MARKUP, locale)
     .replace('{{NEWS_CARDS}}', news.length ? buildNewsCards(news, locale) : FALLBACK_CARDS)
-    .replace('{{FOOTER_COLS}}', buildFooterCols(fcols, locale))
-    .replace('{{QUICKNAV}}', buildQuicknav(suretli, locale));
+    .replace('{{FOOTER_COLS}}', buildFooterCols(fcols, locale));
   return <div dangerouslySetInnerHTML={{ __html: markup }} />;
 }
 
-const MARKUP = `<!-- ════ QUICKNAV — Sürətli keçidlər ════ -->
-<nav class="quicknav" aria-label="Sürətli keçidlər">
-  <div class="quicknav-inner">{{QUICKNAV}}</div>
-</nav>
-
-<!-- 2. SPOTLIGHT — Niyə məhz ADDA? (abituriyent + beynəlxalq tələbə dəyər təklifi) -->
-<section class="spotlight" id="spotlight">
+const MARKUP = `<section class="spotlight" id="spotlight">
   <i class="ti ti-anchor spot-wm"></i>
   <div class="container">
     <div class="spot-rule"><h2>Niyə məhz ADDA?</h2></div>
