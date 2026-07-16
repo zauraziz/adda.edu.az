@@ -396,6 +396,36 @@ const T: Array<[string, string, string]> = [
   ['İstanbul · Varna · Gdynia · Rotterdam · Sautgempton · Tokio · Şanxay · İsgəndəriyyə · Konstansa',
    'Стамбул · Варна · Гдыня · Роттердам · Саутгемптон · Токио · Шанхай · Александрия · Констанца',
    'Istanbul · Varna · Gdynia · Rotterdam · Southampton · Tokyo · Shanghai · Alexandria · Constanța'],
+  // ── Qlobus tooltip-i üçün ayrı şəhər adları (əvvəl JS-də tərcüməsiz idi → ru/en-də az qalırdı).
+  // Dəyərlər YUXARIDAKI ix-cities sətrindən bir-bir çıxarılıb — yeni tərcümə uydurulmayıb.
+  // translateStatic longest-first işlədiyi üçün yuxarıdakı tam sətir əvvəl əvəzlənir (mangling yoxdur).
+  ['İstanbul',
+   'Стамбул',
+   'Istanbul'],
+  ['Varna',
+   'Варна',
+   'Varna'],
+  ['Gdynia',
+   'Гдыня',
+   'Gdynia'],
+  ['Rotterdam',
+   'Роттердам',
+   'Rotterdam'],
+  ['Sautgempton',
+   'Саутгемптон',
+   'Southampton'],
+  ['Tokio',
+   'Токио',
+   'Tokyo'],
+  ['Şanxay',
+   'Шанхай',
+   'Shanghai'],
+  ['İsgəndəriyyə',
+   'Александрия',
+   'Alexandria'],
+  ['Konstansa',
+   'Констанца',
+   'Constanța'],
   ['Etibar şəbəkəsi',
    'Сеть доверия',
    'Network of trust'],
@@ -490,6 +520,16 @@ const T: Array<[string, string, string]> = [
   ['Dənizə gedən yol <em>buradan</em> başlayır',
    'Путь в море <em>начинается</em> здесь',
    'The road to the sea <em>starts</em> here'],
+  // ── Intl: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
+  // Dəyərlər cari render nəticəsindən götürülüb (3 fraqmentin birləşməsi) — tərcümə dəyişmir.
+  ['Bakıdan <em>dünyaya</em> uzanan şəbəkə',
+   'Из Баку <em>в мир</em> тянется сеть',
+   'From Baku <em>to the world</em> — one growing network'],
+  // ── Intl: qlobus canvas aria-label — T-də YOX idi, ru/en-də azərbaycanca qalırdı.
+  // QARALAMA tərcümə (mövcud "Tərəfdaş şəhər" girişi ilə uzlaşdırılıb) — redaktə üçün açıqdır.
+  ['İnteraktiv qlobus — tərəfdaş şəhərlər',
+   'Интерактивный глобус — города-партнёры',
+   'Interactive globe — partner cities'],
   // ── Campus: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
   // Dəyərlər cari render nəticəsindən götürülüb (3 fraqmentin birləşməsi) — tərcümə dəyişmir.
   ['Təhsildən kənarda da <em>yaşam</em> buradadır',
