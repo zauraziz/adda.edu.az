@@ -6,6 +6,7 @@ import Quicknav from '../_components/Quicknav';
 import Spotlight from '../_components/Spotlight';
 import Stats from '../_components/Stats';
 import News from '../_components/News';
+import Campus from '../_components/Campus';
 import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -30,6 +31,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <Spotlight locale={locale} />
       <Stats locale={locale} />
       <News news={news} locale={locale} />
+      <Campus locale={locale} />
       <HomeClient news={news} menu={menu} locale={locale} />
     </>
   );

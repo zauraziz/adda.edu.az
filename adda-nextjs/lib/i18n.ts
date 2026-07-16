@@ -330,9 +330,12 @@ const T: Array<[string, string, string]> = [
   ['VR körpü sessiyaları',
    'VR-сессии на мостике',
    'VR bridge sessions'],
-  ['AI &amp; data klinikaları',
-   'AI &amp; data клиники',
-   'AI &amp; data clinics'],
+  // FIX: açar əvvəl xam HTML formasında idi (&amp;) — translateStatic üçün doğru idi,
+  // lakin JSX-də tr() nəticəsi React escape-indən keçib "&amp;amp;" verirdi.
+  // Dekod edildi: Campus.tsx JSX-i escape edərək eyni bayt-nəticəni yazır.
+  ['AI & data klinikaları',
+   'AI & data клиники',
+   'AI & data clinics'],
   ['3D emalatxana',
    '3D-мастерская',
    '3D workshop'],
@@ -487,6 +490,11 @@ const T: Array<[string, string, string]> = [
   ['Dənizə gedən yol <em>buradan</em> başlayır',
    'Путь в море <em>начинается</em> здесь',
    'The road to the sea <em>starts</em> here'],
+  // ── Campus: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
+  // Dəyərlər cari render nəticəsindən götürülüb (3 fraqmentin birləşməsi) — tərcümə dəyişmir.
+  ['Təhsildən kənarda da <em>yaşam</em> buradadır',
+   'И за пределами учёбы <em>жизнь</em> здесь',
+   'Beyond the classroom, <em>life</em> is here'],
   // ── Quicknav: aria-label (əvvəl T-də yox idi → ru/en-də az qalırdı) ──
   ['Sürətli keçidlər',
    'Быстрые ссылки',
