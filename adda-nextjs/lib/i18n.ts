@@ -456,6 +456,10 @@ const T: Array<[string, string, string]> = [
   ['Qəbul elanları, tədbirlər və akademiya yenilikləri — birbaşa e-poçtunuza.',
    'Объявления о приёме, события и новости академии — прямо на вашу почту.',
    'Admission announcements, events and academy news — straight to your inbox.'],
+  // ── Spotlight: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
+  ['Dənizə gedən yol <em>buradan</em> başlayır',
+   'Путь в море <em>начинается</em> здесь',
+   'The road to the sea <em>starts</em> here'],
   // ── Quicknav: aria-label (əvvəl T-də yox idi → ru/en-də az qalırdı) ──
   ['Sürətli keçidlər',
    'Быстрые ссылки',
