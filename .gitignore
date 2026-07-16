@@ -21,3 +21,6 @@ yarn-error.log*
 .DS_Store
 *.pem
 *.tsbuildinfo
+
+# catdirma skriptleri (repo koku) - commit olunmamalidir
+/*.ps1
