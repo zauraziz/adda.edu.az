@@ -1,5 +1,4 @@
 import '../home.css';
-import HomeClient from '../HomeClient';
 import SiteHeaderStack from '../_components/SiteHeaderStack';
 import Hero from '../_components/Hero';
 import Quicknav from '../_components/Quicknav';
@@ -10,6 +9,7 @@ import Campus from '../_components/Campus';
 import Intl from '../_components/Intl';
 import Social from '../_components/Social';
 import VQuote from '../_components/VQuote';
+import Footer from '../_components/Footer';
 import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <Intl locale={locale} />
       <Social locale={locale} />
       <VQuote locale={locale} />
-      <HomeClient news={news} menu={menu} locale={locale} />
+      <Footer menu={menu} locale={locale} />
     </>
   );
 }

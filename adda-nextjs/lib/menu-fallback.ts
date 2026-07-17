@@ -1,7 +1,7 @@
 import type { SiteMenu, MenuPortal } from './strapi';
 
 // Strapi əlçatan olmadıqda header + quicknav + footer üçün ehtiyat menyu (az).
-// SiteHeaderStack (server) və HomeClient (client) bu eyni mənbəni istifadə edir.
+// SiteHeaderStack, Quicknav və Footer (hamısı server) bu eyni mənbəni işlədir.
 export const FALLBACK_MENU: SiteMenu = {
   esasMenyu: [
     { label: 'Akademiya', order: 1, url: '#', groups: [

@@ -520,6 +520,35 @@ const T: Array<[string, string, string]> = [
   ['Dənizə gedən yol <em>buradan</em> başlayır',
    'Путь в море <em>начинается</em> здесь',
    'The road to the sea <em>starts</em> here'],
+  // ── Footer: T-də YOX idi → ru/en-də azərbaycanca qalırdı. QARALAMA tərcümələr.
+  // (a) aria-label / alt mətnləri
+  ['Sosial şəbəkələr',
+   'Социальные сети',
+   'Social media'],
+  ['Sayt bölmələri',
+   'Разделы сайта',
+   'Site sections'],
+  ['ADDA logo',
+   'Логотип ADDA',
+   'ADDA logo'],
+  // (b) newsletter formunun CLIENT mesajları — initNewsletter()-də locale
+  // parametri yox idi, ona görə /ru və /en-də də azərbaycanca görünürdü.
+  // İndi server tərəfdə tərcümə olunub NewsletterIsland-a prop kimi verilir.
+  ['Zəhmət olmasa düzgün e-poçt ünvanı daxil edin.',
+   'Пожалуйста, введите корректный адрес эл. почты.',
+   'Please enter a valid email address.'],
+  ['Göndərilir…',
+   'Отправка…',
+   'Sending…'],
+  ['Təşəkkürlər! Abunəliyiniz qeydə alındı.',
+   'Спасибо! Ваша подписка оформлена.',
+   'Thank you! Your subscription has been registered.'],
+  ['Xəta baş verdi. Bir az sonra yenidən cəhd edin.',
+   'Произошла ошибка. Повторите попытку позже.',
+   'Something went wrong. Please try again later.'],
+  ['Şəbəkə xətası. Yenidən cəhd edin.',
+   'Ошибка сети. Повторите попытку.',
+   'Network error. Please try again.'],
   // ── Social: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
   // Dəyərlər cari render nəticəsindən götürülüb — tərcümə dəyişmir.
   ['Kampusun nəbzi — <em>canlı yayımda</em>',
@@ -652,17 +681,12 @@ const T: Array<[string, string, string]> = [
    'International Admissions'],
 ];
 
-/** MARKUP-dakı statik az mətnləri aktiv dilə çevirir. */
-export function translateStatic(html: string, locale: Locale): string {
-  if (locale === 'az') return html;
-  const idx = locale === 'ru' ? 1 : 2;
-  const rows = [...T].sort((a, b) => b[0].length - a[0].length);
-  for (const row of rows) {
-    const to = row[idx];
-    if (to && html.includes(row[0])) html = html.split(row[0]).join(to);
-  }
-  return html;
-}
+// translateStatic() Faza 1 / Footer-də SİLİNDİ.
+// Səbəb: son istifadəçisi HomeClient.tsx idi, o da bu addımda tamamilə getdi.
+// Funksiya alt-sətir əvəzləməsi (html.split(az).join(ru)) edirdi və layihənin
+// ən davamlı baq mənbəyi idi — qısa açar uzun sətrin içinə düşürdü
+// (məs. 'Aşağı' → 'Вниз sürüşdür'; sx-cta-t-də qoşa tire). Artıq bütün mətnlər
+// tr() EXACT-match ilə keçir → mangling sinfi kökündən bağlandı (TT: açar-əsaslı lüğət).
 
 // ── Menyu etiketlərinin tərcüməsi (Menyu_tercume.xlsx) — 199 giriş, yalnız tr() üçün ──
 const MENU_T: Array<[string, string, string]> = [
