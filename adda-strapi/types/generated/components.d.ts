@@ -1,5 +1,19 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface EventSpeaker extends Struct.ComponentSchema {
+  collectionName: 'components_event_speakers';
+  info: {
+    displayName: 'M\u0259ruz\u0259\u00E7i';
+    icon: 'user';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    org: Schema.Attribute.String;
+    photo: Schema.Attribute.Media<'images'>;
+    role: Schema.Attribute.String;
+  };
+}
+
 export interface NavCategory extends Struct.ComponentSchema {
   collectionName: 'components_nav_categorys';
   info: {
@@ -93,6 +107,7 @@ export interface NavQuicklink extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'event.speaker': EventSpeaker;
       'nav.category': NavCategory;
       'nav.footercol': NavFootercol;
       'nav.group': NavGroup;

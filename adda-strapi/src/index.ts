@@ -6,6 +6,26 @@ import type { Core } from '@strapi/strapi';
  * ona görə create yerinə "boşdursa update/create" məntiqi işlədilir).
  */
 
+/**
+ * Public rol üçün oxu icazələri (find / findOne).
+ * Strapi 5-də icazə qeydinin MÖVCUDLUĞU = icazə verilmiş deməkdir (enabled sütunu yoxdur).
+ * Bu blok yalnız ƏLAVƏ edir — heç bir icazəni silmir və ya söndürmür.
+ */
+const PUBLIC_READ_UIDS = [
+  'api::announcement.announcement',
+  'api::article.article',
+  'api::department.department',
+  'api::document.document',
+  'api::event.event',
+  'api::faculty.faculty',
+  'api::menu.menu',
+  'api::page.page',
+  'api::person.person',
+  'api::program.program',
+  'api::tag.tag',
+  'api::unit.unit',
+];
+
 const SEED = {
   esasMenyu: [
       {
@@ -1010,6 +1030,42 @@ export default {
       }
     } catch (err) {
       strapi.log.warn('[seed] locale ensure skipped: ' + (err as Error).message);
+    }
+
+    // Public rol — oxu icazələri (find / findOne)
+    try {
+      const role = (await strapi.db
+        .query('plugin::users-permissions.role')
+        .findOne({ where: { type: 'public' } })) as { id: number } | null;
+      if (!role) {
+        strapi.log.warn('[seed] public rol tapilmadi, icazeler otuldu.');
+      } else {
+        const registry = strapi.contentTypes as unknown as Record<string, { kind?: string }>;
+        let added = 0;
+        for (const uid of PUBLIC_READ_UIDS) {
+          const ct = registry[uid];
+          if (!ct) {
+            strapi.log.warn('[seed] icaze: ' + uid + ' registrde yoxdur, otuldu.');
+            continue;
+          }
+          const actions = ct.kind === 'singleType' ? ['find'] : ['find', 'findOne'];
+          for (const a of actions) {
+            const action = uid + '.' + a;
+            const has = await strapi.db
+              .query('plugin::users-permissions.permission')
+              .findOne({ where: { action, role: role.id } });
+            if (!has) {
+              await strapi.db
+                .query('plugin::users-permissions.permission')
+                .create({ data: { action, role: role.id } });
+              added++;
+            }
+          }
+        }
+        strapi.log.info('[seed] public oxu icazeleri: ' + added + ' elave olundu.');
+      }
+    } catch (err) {
+      strapi.log.error('[seed] public icaze xetasi: ' + (err as Error).message);
     }
 
     // Menyu — boşdursa doldur

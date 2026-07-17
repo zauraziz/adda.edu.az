@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "articles",
+  "collectionName": "events",
   "info": {
-    "singularName": "article",
-    "pluralName": "articles",
-    "displayName": "Xəbər",
-    "description": "Akademiya xəbərləri və elanları"
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "Tədbir",
+    "description": "Konfrans, seminar, açıq dərs — fiziki / onlayn / hibrid"
   },
   "options": {
     "draftAndPublish": true
@@ -44,15 +44,6 @@
         }
       }
     },
-    "tldr": {
-      "type": "text",
-      "maxLength": 400,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
     "body": {
       "type": "richtext",
       "pluginOptions": {
@@ -64,7 +55,6 @@
     "cover": {
       "type": "media",
       "multiple": false,
-      "required": false,
       "allowedTypes": [
         "images"
       ],
@@ -74,47 +64,85 @@
         }
       }
     },
-    "gallery": {
-      "type": "media",
-      "multiple": true,
-      "required": false,
-      "allowedTypes": [
-        "images"
-      ],
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      }
-    },
-    "category": {
+    "format": {
       "type": "enumeration",
       "enum": [
-        "xeber",
-        "elan",
-        "tedbir",
-        "elm"
+        "fiziki",
+        "onlayn",
+        "hibrid"
       ],
-      "default": "xeber",
+      "default": "fiziki",
+      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       }
     },
-    "newsDate": {
-      "type": "date",
+    "startAt": {
+      "type": "datetime",
+      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       }
     },
-    "readingMinutes": {
-      "type": "integer",
+    "endAt": {
+      "type": "datetime",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "venueBuilding": {
+      "type": "string",
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    },
+    "venueRoom": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "onlineUrl": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "platform": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "speakers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "event.speaker",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "capacity": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
         }
       }
     },
@@ -122,7 +150,7 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::tag.tag",
-      "inversedBy": "articles"
+      "inversedBy": "events"
     },
     "visibility": {
       "type": "enumeration",
@@ -143,13 +171,13 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::faculty.faculty",
-      "inversedBy": "articles"
+      "inversedBy": "events"
     },
     "person": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::person.person",
-      "inversedBy": "articles"
+      "inversedBy": "events"
     },
     "showOnHome": {
       "type": "boolean",
