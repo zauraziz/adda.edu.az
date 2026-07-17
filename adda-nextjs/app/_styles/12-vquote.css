@@ -1,0 +1,17 @@
+/* Video quote */
+.vquote{position:relative;min-height:430px;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center}
+.vq-ov{position:absolute;inset:0;background:rgba(4,14,28,0.64)}
+.vq-in{position:relative;z-index:2;max-width:780px;text-align:center;padding:84px 30px;color:#fff}
+.vq-in blockquote{font-family:'Fraunces',serif;font-style:italic;font-size:27px;font-weight:400;line-height:1.55;margin-bottom:20px}
+.vq-attr{font-size:11px;font-weight:600;letter-spacing:2.8px;text-transform:uppercase;color:rgba(255,255,255,0.72);margin-bottom:36px}
+.vq-play{display:inline-flex;align-items:center;gap:15px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase}
+.vq-play .c{width:60px;height:60px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.72);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.vq-play:hover .c{background:var(--cyan);border-color:var(--cyan)}
+/* Responsive — yeni bloklar */
+@media(max-width:1100px){
+  .spot-grid{grid-template-columns:1fr;gap:38px}
+}
+@media(max-width:640px){
+  .vq-in blockquote{font-size:21px}
+  .statsec-grid{grid-template-columns:1fr!important}
+}

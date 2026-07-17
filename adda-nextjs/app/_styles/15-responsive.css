@@ -1,0 +1,22 @@
+/* ── RESPONSIVE ── */
+@media(max-width:980px){
+  .mainnav{display:none}.burger{display:block}
+  .hero{height:calc(100svh - 73px)}
+  .ql-grid{grid-template-columns:repeat(3,1fr)}
+  .prog-grid{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .container{padding:0 24px}
+  .scroll-ind{display:none}
+}
+@media(max-width:768px){
+  .hero-nums{left:20px;bottom:96px;gap:18px;padding:12px 18px}
+  .numb{font-size:18px}.numb.active{font-size:28px}.nums-hint{display:none}
+}
+@media(max-width:600px){
+  .ql-grid{grid-template-columns:repeat(2,1fr)}
+  .foot-top{grid-template-columns:1fr}.utility-left{display:none}
+  .cta-row{flex-direction:column;align-items:stretch}
+  .btn-mag{justify-content:space-between}
+  .brand-text .b-full{display:none}
+}
+@media(prefers-reduced-motion:reduce){.flipper{transition:none!important}.wlayer{animation:none!important}}

@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cyan:#00B4D8;
+  --cyan-deep:#0096C7;
+  --teal-deep:#0077A8;
+  --teal-ink:#024B66;
+  --aqua:#48CAE4;
+  --aqua-soft:#90E0EF;
+  --foam:#CAF0F8;
+  --silver:#E2EBF0;
+  --ink:#16262E;
+  --ink-soft:#3A5560;
+  --paper:#FAFDFE;
+  --line:#DCE7EC;
+  --header-1:#042E42;     /* deep teal — academic, NOT navy */
+  --header-2:#023F57;
+  --fs-scale:1;
+  --navy2:#0A2540;
+  --slate:#F8FAFC;
+}
+html{font-size:calc(16px * var(--fs-scale));scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5}
+body.high-contrast{filter:contrast(1.3)}
+.container{max-width:1240px;margin:0 auto;padding:0 40px}
+.serif{font-family:'Fraunces',Georgia,serif}
+/* ═══════════════════════════════════════════════════════════════
+   ADDA NAVIGATION RESTYLE v2 — DESIGN.md uyğunluğu
+   Palitra: Navy #0B3D5C  ·  Gold #C9A961
+   Tipoqrafiya: Fraunces (brend) · Manrope (UI)
+   QAYDA: HTML strukturu toxunulmazdır. Bütün class adları,
+   ölçülər (82px header, 40px utility, 520px mega menu) və
+   JS asılılıqları (.scrolled, .open, burger top:82px) qorunub.
+   Next.js miqrasiyası: bu blok 1:1 TopBar/Navbar.module.css olur.
+   ═══════════════════════════════════════════════════════════════ */
+/* ── Nav Design Tokens (mövcud :root-a əlavə, köhnə tokenlərə toxunulmur) ── */
+:root{
+  --navy-900:#071E2E; --navy-800:#0B3D5C; --navy-700:#0E4D73;
+  --navy-600:#12608F; --navy-500:#1A7AB5; --navy-400:#3D9AD4;
+  --navy-100:#E8F4FD; --navy-50:#F0F8FF;
+  --gold-600:#A68942; --gold-500:#C9A961; --gold-400:#D4BB7C;
+  --gold-300:#E0CE9D; --gold-100:#F5EDDA;
+  --nav-ease:cubic-bezier(0.16,1,0.3,1);
+  --nav-dur-fast:180ms; --nav-dur:280ms; --nav-dur-slow:380ms;
+  --nav-font:'Manrope','Inter',sans-serif;
+  --nav-sh-sm:0 1px 3px rgba(11,61,92,.08),0 1px 2px rgba(11,61,92,.05);
+  --nav-sh-lg:0 12px 32px -6px rgba(11,61,92,.18);
+  --nav-sh-xl:0 24px 56px -8px rgba(7,30,46,.26);
+  --nav-sh-2xl:0 32px 72px -12px rgba(7,30,46,.34);
+  --nav-sh-gold:0 6px 18px rgba(201,169,97,.28);
+}

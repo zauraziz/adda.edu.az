@@ -1,0 +1,41 @@
+/* ════ QUICKNAV — Sürətli keçidlər (referans strukturu · DESIGN.md tokenləri) ════ */
+.quicknav{background:var(--navy-50);border-bottom:1px solid #DBEAF5;overflow-x:auto;position:relative;z-index:20;scrollbar-width:none}
+.quicknav::-webkit-scrollbar{display:none}
+.quicknav-inner{max-width:1240px;margin:0 auto;padding:0 40px;display:flex;gap:0}
+.qnav-item{padding:18px 24px;font-size:13px;font-weight:500;color:#4A6472;text-decoration:none;display:flex;align-items:center;gap:8px;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;font-family:var(--nav-font);transition:color var(--nav-dur-fast) var(--nav-ease),border-color var(--nav-dur-fast) var(--nav-ease),background var(--nav-dur-fast) var(--nav-ease)}
+.qnav-item:hover{color:var(--navy-800);border-bottom-color:var(--navy-500);background:rgba(11,61,92,.03)}
+.qnav-item.active{color:var(--navy-800);border-bottom-color:var(--gold-500);font-weight:600}
+.qnav-item i{font-size:18px;color:var(--navy-600);transition:color var(--nav-dur-fast) var(--nav-ease)}
+.qnav-item:hover i{color:var(--gold-600)}
+.qnav-item:focus-visible{outline:2px solid var(--navy-500);outline-offset:-2px}
+@media(max-width:640px){.quicknav-inner{padding:0 20px}.qnav-item{padding:15px 16px;font-size:12.5px}}
+/* ── E-SERVICES ── */
+.eservices{background:#fff;position:relative;z-index:20;padding-top:64px}
+.eservices-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 16px 48px rgba(2,75,102,0.10);border:1px solid var(--line)}
+.eservice{padding:32px 28px;display:flex;flex-direction:column;gap:14px;text-decoration:none;border-right:1px solid var(--line);transition:all .25s;position:relative;overflow:hidden}
+.eservice:last-child{border-right:none}
+.eservice::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.eservice:hover{background:var(--paper)}
+.eservice:hover::before{transform:scaleX(1)}
+.eservice-icon{width:50px;height:50px;border-radius:14px;background:rgba(0,180,216,0.1);display:flex;align-items:center;justify-content:center;transition:all .25s}
+.eservice:hover .eservice-icon{background:var(--cyan)}
+.eservice-icon i{font-size:25px;color:var(--cyan-deep);transition:color .25s}
+.eservice:hover .eservice-icon i{color:#fff}
+.eservice h3{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--teal-ink);line-height:1.3}
+.eservice p{font-size:12.5px;color:var(--ink-soft);line-height:1.5;font-weight:400}
+.eservice .arrow{position:absolute;bottom:28px;right:28px;color:var(--cyan);opacity:0;transform:translateX(-6px);transition:all .25s}
+.eservice:hover .arrow{opacity:1;transform:translateX(0)}
+/* ── QUICK LINKS (modern compact, interactive) ── */
+.quicklinks{background:#fff;position:relative;z-index:20;padding:60px 0 76px}
+.ql-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.ql-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:22px 20px;background:#fff;border:1px solid var(--line);border-radius:6px;text-decoration:none;transition:all .3s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.ql-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--teal-deep),var(--cyan));opacity:0;transition:opacity .3s;z-index:0}
+.ql-card>*{position:relative;z-index:1}
+.ql-card:hover{transform:translateY(-6px);border-color:transparent;box-shadow:0 18px 40px rgba(2,75,102,0.22)}
+.ql-card:hover::before{opacity:1}
+.ql-ic{width:48px;height:48px;border-radius:6px;background:rgba(0,180,216,0.1);display:flex;align-items:center;justify-content:center;color:var(--cyan-deep);transition:all .3s}
+.ql-card:hover .ql-ic{background:rgba(255,255,255,0.2);color:#fff;transform:scale(1.05)}
+.ql-name{font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;color:var(--teal-ink);line-height:1.25;transition:color .3s}
+.ql-card:hover .ql-name{color:#fff}
+.ql-arr{position:absolute;top:20px;right:18px;color:var(--cyan);opacity:0;transform:translate(-6px,6px);transition:all .3s}
+.ql-card:hover .ql-arr{opacity:1;transform:translate(0,0);color:#fff}
