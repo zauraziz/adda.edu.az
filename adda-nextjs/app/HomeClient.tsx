@@ -71,17 +71,7 @@ export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; m
   return <div dangerouslySetInnerHTML={{ __html: markup }} />;
 }
 
-const MARKUP = `<!-- 9. VİDEO SİTAT (Image 6 üslubu) -->
-<section class="vquote" style="background-image:url('https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=80&w=2000&auto=format&fit=crop')">
-  <span class="vq-ov"></span>
-  <div class="vq-in">
-    <blockquote>"Dəniz insana üfüqün arxasında daha böyük bir dünyanın olduğunu öyrədir — biz o dünyaya gedən yolu öyrədirik."</blockquote>
-    <div class="vq-attr">Azərbaycan Dövlət Dəniz Akademiyası · 1996</div>
-    <a href="#" class="vq-play"><span class="c"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-left:2px"><polygon points="6 3 21 12 6 21 6 3"/></svg></span> ADDA-nı yaşa</a>
-  </div>
-</section>
-
-<!-- 8. Footer -->
+const MARKUP = `<!-- 8. Footer -->
 <footer>
   <div class="container">
 
