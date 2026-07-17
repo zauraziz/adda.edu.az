@@ -520,6 +520,25 @@ const T: Array<[string, string, string]> = [
   ['Dənizə gedən yol <em>buradan</em> başlayır',
    'Путь в море <em>начинается</em> здесь',
    'The road to the sea <em>starts</em> here'],
+  // ── Social: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
+  // Dəyərlər cari render nəticəsindən götürülüb — tərcümə dəyişmir.
+  ['Kampusun nəbzi — <em>canlı yayımda</em>',
+   'Пульс кампуса — <em>в прямом эфире</em>',
+   'The campus pulse — <em>live</em>'],
+  // ── Social: CTA (<em> + <br>) — BAQ DÜZƏLİŞİ, alt-sətir mangling-i idi.
+  // Fraqment tərcümələrinin içinə tire yazılmışdı ('Sən də'→en 'You too —',
+  // 'sabah bu kadrlarda ol'→ru '— завтра...'), markup-da isə onsuz da '—<br>' var idi:
+  //   ru render:  ...смотри</em> —<br>— завтра...   (QOŞA tire)
+  //   en render:  You too — ...watch</em> —<br>...  (tire İKİ yerdə)
+  // Tam-sətir girişi az-dakı tək tire quruluşunu üç dildə də bərpa edir.
+  ['Sən də <em>izlə</em> —<br>sabah bu kadrlarda ol',
+   'И ты <em>смотри</em> —<br>завтра будь в этих кадрах',
+   'You too <em>watch</em> —<br>and be in these frames tomorrow'],
+  // ── Social: karusel aria-label — T-də YOX idi, ru/en-də azərbaycanca qalırdı.
+  // QARALAMA tərcümə — redaktə üçün açıqdır.
+  ['Sosial paylaşımlar karuseli — sürüşdür',
+   'Карусель публикаций в соцсетях — прокрутите',
+   'Social posts carousel — scroll'],
   // ── Intl: <em>-li başlıq (alt-sətir əvəzləməsindən asılı olmasın) ──
   // Dəyərlər cari render nəticəsindən götürülüb (3 fraqmentin birləşməsi) — tərcümə dəyişmir.
   ['Bakıdan <em>dünyaya</em> uzanan şəbəkə',

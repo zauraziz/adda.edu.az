@@ -5,12 +5,6 @@ import type { NewsItem, SiteMenu, MenuFooterCol } from '@/lib/strapi';
 import { translateStatic, tr, type Locale } from '@/lib/i18n';
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
 
-// Bridge (Merhele 0): orijinal statik HTML render + qalan vanilla JS inject.
-// Qlobus Faza 1 / Intl-de app/_components/IntlGlobe.tsx-e kocdu (cobe dinamik import).
-const SCRIPTS: { src: string; module?: boolean }[] = [
-  { src: '/home/socialx.mjs', module: true },
-];
-
 // Footer abune formu: validasiya + /api/subscribe POST.
 function initNewsletter(): () => void {
   const form = document.getElementById('nlForm') as HTMLFormElement | null;
@@ -69,35 +63,6 @@ function buildFooterCols(cols: MenuFooterCol[], locale: Locale): string {
 
 // ── Axtarış (Meilisearch, /api/search) ──
 export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; menu: SiteMenu | null; locale: Locale }) {
-  useEffect(() => {
-    document.querySelectorAll('script[data-adda-home]').forEach((el) => el.remove());
-    let cancelled = false;
-    const injected: HTMLScriptElement[] = [];
-    const loadNext = (i: number) => {
-      if (cancelled) return;
-      if (i >= SCRIPTS.length) {
-        // Köhnə skriptlərin bəzisi window 'load'-da işə düşür (artıq baş verib) — sintetik dispatch.
-        if (document.readyState === 'complete') window.dispatchEvent(new Event('load'));
-        return;
-      }
-      const spec = SCRIPTS[i];
-      const s = document.createElement('script');
-      s.src = spec.src;
-      if (spec.module) s.type = 'module';
-      s.async = false;
-      s.dataset.addaHome = '1';
-      s.onload = () => loadNext(i + 1);
-      s.onerror = () => loadNext(i + 1);
-      document.body.appendChild(s);
-      injected.push(s);
-    };
-    loadNext(0);
-    return () => {
-      cancelled = true;
-      injected.forEach((el) => el.remove());
-    };
-  }, []);
-
   useEffect(initNewsletter, []);
 
   const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;
@@ -106,121 +71,7 @@ export default function HomeClient({ news, menu, locale }: { news: NewsItem[]; m
   return <div dangerouslySetInnerHTML={{ __html: markup }} />;
 }
 
-const MARKUP = `<!-- 7. ADDA SOSİAL ŞƏBƏKƏLƏRDƏ — scroll-x karusel (UGC divarı) -->
-<section class="socialx" id="sosial">
-  <div class="sx-space" id="sxSpace">
-    <div class="sx-sticky">
-
-      <div class="container sx-head">
-        <div class="sx-head-l">
-          <div class="sx-eyebrow">ADDA sosial şəbəkələrdə</div>
-          <h2 class="sx-title">Kampusun nəbzi — <em>canlı yayımda</em></h2>
-          <p class="sx-lead">Tələbələrimizin gözü ilə ADDA: dəniz klubundan yataqxana axşamlarına, simulyator sessiyalarından məzun gününə. İzlə, bəyən, sabah özün paylaş.</p>
-        </div>
-        <div class="sx-head-r">
-          <div class="sx-follow">
-            <a href="#" class="sx-fbtn" aria-label="Instagram"><i class="ti ti-brand-instagram"></i></a>
-            <a href="#" class="sx-fbtn" aria-label="TikTok"><i class="ti ti-brand-tiktok"></i></a>
-            <a href="#" class="sx-fbtn" aria-label="YouTube"><i class="ti ti-brand-youtube"></i></a>
-            <a href="#" class="sx-fbtn" aria-label="Facebook"><i class="ti ti-brand-facebook"></i></a>
-            <a href="#" class="sx-fbtn" aria-label="LinkedIn"><i class="ti ti-brand-linkedin"></i></a>
-          </div>
-          <div class="sx-tags"><span class="sx-tag">#ADDAlife</span><span class="sx-tag">#DənizçiOl</span><span class="sx-tag">#ADDA2026</span></div>
-        </div>
-      </div>
-
-      <div class="sx-viewport" id="sxViewport" tabindex="0" aria-label="Sosial paylaşımlar karuseli — sürüşdür">
-        <div class="sx-track" id="sxTrack">
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=78&w=700&h=960&fit=crop')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip"><i class="ti ti-brand-instagram"></i> @adda.official</span></span>
-            <span class="sx-body">
-              <span class="sx-cap">Dəniz klubunun yelkən məşqi — Xəzərdə ilk solo dövrə 🌊 <b>#ADDAlife</b></span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-heart"></i> 1,2K</span><span class="sx-mi"><i class="ti ti-message-circle"></i> 84</span></span>
-            </span>
-          </a>
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1641467613990-b74163e280e3?fm=jpg&q=78&w=700&h=960&fit=crop&crop=entropy')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip"><i class="ti ti-brand-tiktok"></i> @adda.students</span></span>
-            <span class="sx-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 21 12 6 21 6 3"/></svg></span>
-            <span class="sx-body">
-              <span class="sx-cap">POV: körpü simulyatorunda ilk gecə növbən ⚓ <b>#DənizçiOl</b></span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-heart"></i> 8,4K</span><span class="sx-mi"><i class="ti ti-share-3"></i> 612</span></span>
-            </span>
-          </a>
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1751779057940-43cc385452f7?fm=jpg&q=78&w=700&h=960&fit=crop&crop=left')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip"><i class="ti ti-brand-instagram"></i> @adda.official</span></span>
-            <span class="sx-body">
-              <span class="sx-cap">Beynəlxalq tələbə axşamı: 12 ölkə, bir süfrə 🌍</span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-heart"></i> 976</span><span class="sx-mi"><i class="ti ti-message-circle"></i> 41</span></span>
-            </span>
-          </a>
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=78&w=700&h=960&fit=crop&crop=right')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip sx-chip--yt"><i class="ti ti-brand-youtube"></i> ADDA TV</span></span>
-            <span class="sx-play sx-play--lg"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 21 12 6 21 6 3"/></svg></span>
-            <span class="sx-dur">4:37</span>
-            <span class="sx-body">
-              <span class="sx-cap">Bir gün kursantla: səhər sırasından axşam kitabxanasına</span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-eye"></i> 23K baxış</span></span>
-            </span>
-          </a>
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1641467613990-b74163e280e3?fm=jpg&q=78&w=700&h=960&fit=crop&crop=left')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip"><i class="ti ti-brand-facebook"></i> ADDA rəsmi</span></span>
-            <span class="sx-body">
-              <span class="sx-cap">Məzun günü 2026: 340 yeni zabit dənizə yola düşür 🎓</span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-heart"></i> 2,1K</span><span class="sx-mi"><i class="ti ti-share-3"></i> 388</span></span>
-            </span>
-          </a>
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1751779057940-43cc385452f7?fm=jpg&q=78&w=700&h=960&fit=crop&crop=right')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip"><i class="ti ti-brand-linkedin"></i> ADDA Careers</span></span>
-            <span class="sx-body">
-              <span class="sx-cap">Karyera sərgisində 28 gəmiçilik şirkəti kursantlarımızla görüşdü</span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-thumb-up"></i> 540</span><span class="sx-mi"><i class="ti ti-message-circle"></i> 37</span></span>
-            </span>
-          </a>
-
-          <a href="#" class="sx-card" style="background-image:url('https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=78&w=700&h=960&fit=crop&crop=top')">
-            <span class="sx-ov"></span>
-            <span class="sx-top"><span class="sx-chip"><i class="ti ti-brand-instagram"></i> @adda.sport</span></span>
-            <span class="sx-body">
-              <span class="sx-cap">Fakültələrarası üzgüçülük finalı — rekord qırıldı 🏊 <b>#ADDA2026</b></span>
-              <span class="sx-meta"><span class="sx-mi"><i class="ti ti-heart"></i> 1,7K</span><span class="sx-mi"><i class="ti ti-message-circle"></i> 96</span></span>
-            </span>
-          </a>
-
-          <div class="sx-card sx-card--cta">
-            <span class="sx-cta-t">Sən də <em>izlə</em> —<br>sabah bu kadrlarda ol</span>
-            <span class="sx-cta-icons">
-              <a href="#" aria-label="Instagram"><i class="ti ti-brand-instagram"></i></a>
-              <a href="#" aria-label="TikTok"><i class="ti ti-brand-tiktok"></i></a>
-              <a href="#" aria-label="YouTube"><i class="ti ti-brand-youtube"></i></a>
-              <a href="#" aria-label="Facebook"><i class="ti ti-brand-facebook"></i></a>
-              <a href="#" aria-label="LinkedIn"><i class="ti ti-brand-linkedin"></i></a>
-            </span>
-            <span class="sx-cta-tag">#ADDAlife</span>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="sx-progress" aria-hidden="true"><i id="sxBar"></i></div>
-    </div>
-  </div>
-
-  
-</section>
-
-<!-- 9. VİDEO SİTAT (Image 6 üslubu) -->
+const MARKUP = `<!-- 9. VİDEO SİTAT (Image 6 üslubu) -->
 <section class="vquote" style="background-image:url('https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=80&w=2000&auto=format&fit=crop')">
   <span class="vq-ov"></span>
   <div class="vq-in">

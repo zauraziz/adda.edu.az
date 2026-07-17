@@ -8,6 +8,7 @@ import Stats from '../_components/Stats';
 import News from '../_components/News';
 import Campus from '../_components/Campus';
 import Intl from '../_components/Intl';
+import Social from '../_components/Social';
 import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -34,6 +35,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <News news={news} locale={locale} />
       <Campus locale={locale} />
       <Intl locale={locale} />
+      <Social locale={locale} />
       <HomeClient news={news} menu={menu} locale={locale} />
     </>
   );
