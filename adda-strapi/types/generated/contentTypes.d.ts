@@ -1036,6 +1036,7 @@ export interface ApiFacultyFaculty extends Struct.CollectionTypeSchema {
         };
       }>;
     people: Schema.Attribute.Relation<'oneToMany', 'api::person.person'>;
+    programs: Schema.Attribute.Relation<'oneToMany', 'api::program.program'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'> &
       Schema.Attribute.Required &
@@ -1300,12 +1301,7 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
           localized: false;
         };
       }>;
-    faculty: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    faculty: Schema.Attribute.Relation<'manyToOne', 'api::faculty.faculty'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

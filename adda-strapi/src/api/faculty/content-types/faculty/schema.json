@@ -77,6 +77,12 @@
       "relation": "oneToMany",
       "target": "api::event.event",
       "mappedBy": "faculty"
+    },
+    "programs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::program.program",
+      "mappedBy": "faculty"
     }
   }
 }

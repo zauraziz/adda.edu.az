@@ -1028,6 +1028,7 @@ const REL_SYNC: Record<string, string[]> = {
   'api::article.article': ['faculty', 'person', 'tags'],
   'api::announcement.announcement': ['faculty', 'person', 'tags'],
   'api::event.event': ['faculty', 'person', 'tags'],
+  'api::program.program': ['faculty'],
   'api::person.person': ['faculty', 'department', 'unit'],
   'api::department.department': ['faculty', 'head'],
   'api::faculty.faculty': ['dean'],
