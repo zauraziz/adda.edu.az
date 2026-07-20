@@ -1068,6 +1068,31 @@ export default {
       strapi.log.error('[seed] public icaze xetasi: ' + (err as Error).message);
     }
 
+    // Backfill — sxem default-u KOHNE setirlere tetbiq olunmur.
+    // Olculdu (F2.1): Strapi-nin "default" deyeri yalniz TETBIQ qatindadir.
+    // Miqrasiya sutunu nullable elave edir, DB default-u qoymur ve movcud
+    // setirleri doldurmur -> F2.1-den evvelki yazilarda visibility=NULL qalir,
+    // F2.4 qlobal lenti (visibility=academy) onlari tamamile kesir.
+    // Idempotentdir: yalniz IS NULL olan setirlere toxunur.
+    try {
+      const backfill: Array<{ table: string; column: string; value: unknown }> = [
+        { table: 'articles', column: 'visibility', value: 'academy' },
+        { table: 'articles', column: 'show_on_home', value: false },
+        { table: 'articles', column: 'home_status', value: 'none' },
+      ];
+      const knex = strapi.db.connection;
+      for (const bf of backfill) {
+        if (!(await knex.schema.hasTable(bf.table))) continue;
+        if (!(await knex.schema.hasColumn(bf.table, bf.column))) continue;
+        const n = await knex(bf.table).whereNull(bf.column).update({ [bf.column]: bf.value });
+        if (n > 0) {
+          strapi.log.info('[seed] backfill ' + bf.table + '.' + bf.column + ' -> ' + n + ' setir');
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] backfill xetasi: ' + (err as Error).message);
+    }
+
     // Menyu — boşdursa doldur
     try {
       const uid = 'api::menu.menu';
