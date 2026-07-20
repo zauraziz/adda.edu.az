@@ -39,7 +39,7 @@ const EVENTS: Array<{ d: string; m: string; chip: string; title: string; place: 
   { d: '28', m: 'İyn', chip: 'İcma', title: 'Məzunlarla görüş axşamı', place: 'Akademiya həyəti', time: '17:00' },
 ];
 
-type Card = { image: string | null; chip: string; date: string; title: string };
+type Card = { image: string | null; chip: string; date: string; title: string; slug?: string };
 
 export default function News({ news, locale }: { news: NewsItem[]; locale: Locale }) {
   const slots = ['nx-a', 'nx-b', 'nx-c', 'nx-d'];
@@ -51,6 +51,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
         chip: CAT_LABELS[locale][n.category] ?? CAT_LABELS[locale].xeber,
         date: fmtDate(n.date, locale),
         title: n.title,
+        slug: n.slug,
       }))
     : FALLBACK_NEWS.map((f) => ({
         image: f.image,
@@ -68,7 +69,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
             <h2 className="nx-title" dangerouslySetInnerHTML={{ __html: tr('Xəbərlər, elanlar <em>və tədbirlər</em>', locale) }} />
           </div>
           <div className="nx-actions">
-            <a href="#" className="nx-btn">{tr('Bütün xəbərlər', locale) + ' '}<i className="ti ti-arrow-right" /></a>
+            <a href={'/' + locale + '/xeberler'} className="nx-btn">{tr('Bütün xəbərlər', locale) + ' '}<i className="ti ti-arrow-right" /></a>
             <a href="#" className="nx-btn nx-btn--ghost">{tr('Elan və tədbirlər', locale) + ' '}<i className="ti ti-arrow-right" /></a>
           </div>
         </div>
@@ -78,7 +79,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
             {cards.map((c, i) => (
               <a
                 key={i}
-                href="#"
+                href={c.slug ? '/' + locale + '/xeberler/' + c.slug : '/' + locale + '/xeberler'}
                 className={`nx-card ${slots[i]}`}
                 style={c.image ? { backgroundImage: `url('${c.image}')` } : { background: 'linear-gradient(135deg,#0B3D5C,#0a2f47)' }}
               >
