@@ -1014,8 +1014,79 @@ const SEED = {
 ],
 };
 
+/**
+ * F2.3 — Relation lokalizasiya sinxronu.
+ * Strapi relation-lari lokala gore KOCURMUR (F2.1-de olculdu): redaktor ru/en
+ * tercumesini yazib relation-a toxunmayanda yazi yetim qalir (faculty=NULL) ve
+ * ne qlobal, ne fakulte lentine dusur. Bu middleware az (esas lokal) relation-larini
+ * butun lokallar arasinda ayna edir:
+ *   - az yazilanda  -> movcud diger lokallara YAYILIR
+ *   - qeyri-az yazilanda -> az-dan CEKILIR
+ * Idempotent; rekursiya module-level inFlight Set ile bloklanir.
+ */
+const REL_SYNC: Record<string, string[]> = {
+  'api::article.article': ['faculty', 'person', 'tags'],
+  'api::announcement.announcement': ['faculty', 'person', 'tags'],
+  'api::event.event': ['faculty', 'person', 'tags'],
+  'api::person.person': ['faculty', 'department', 'unit'],
+  'api::department.department': ['faculty', 'head'],
+  'api::faculty.faculty': ['dean'],
+  'api::unit.unit': ['head', 'parent'],
+};
+const SYNC_DEFAULT_LOCALE = 'az';
+
 export default {
-  register() {},
+  register({ strapi }: { strapi: Core.Strapi }) {
+    const inFlight = new Set<string>();
+    (strapi.documents as unknown as { use: (m: unknown) => void }).use(
+      async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
+        const result = (await next()) as Record<string, unknown> | null;
+        const uid = context && (context.uid as string);
+        const action = context && (context.action as string);
+        if (action !== 'create' && action !== 'update') return result;
+        const fields = REL_SYNC[uid];
+        if (!fields || !result) return result;
+        const documentId = result.documentId as string | undefined;
+        if (!documentId) return result;
+        const guardKey = uid + '|' + documentId;
+        if (inFlight.has(guardKey)) return result;
+        inFlight.add(guardKey);
+        try {
+          const svc = (strapi.documents as unknown as (u: string) => Record<string, (a: unknown) => Promise<Record<string, unknown> | null>>)(uid);
+          const azDoc = await svc.findOne({ documentId, locale: SYNC_DEFAULT_LOCALE, status: 'draft', populate: fields } as unknown);
+          if (!azDoc) return result;
+          const relData: Record<string, unknown> = {};
+          for (const f of fields) {
+            const v = azDoc[f] as unknown;
+            if (Array.isArray(v)) relData[f] = { set: v.map((x: { documentId: string }) => x.documentId) };
+            else if (v && typeof v === 'object' && (v as { documentId?: string }).documentId) relData[f] = { set: [(v as { documentId: string }).documentId] };
+            else relData[f] = { set: [] };
+          }
+          const params = (context.params as Record<string, unknown>) || {};
+          const writtenLocale = (result.locale as string) || (params.locale as string) || SYNC_DEFAULT_LOCALE;
+          const targets: string[] = [];
+          if (writtenLocale === SYNC_DEFAULT_LOCALE) {
+            const locales = (await (strapi.plugin('i18n').service('locales') as unknown as { find: () => Promise<Array<{ code: string }>> }).find()) || [];
+            for (const loc of locales) {
+              if (loc.code === SYNC_DEFAULT_LOCALE) continue;
+              const exists = await svc.findOne({ documentId, locale: loc.code, status: 'draft' } as unknown);
+              if (exists) targets.push(loc.code);
+            }
+          } else {
+            targets.push(writtenLocale);
+          }
+          for (const loc of targets) {
+            await svc.update({ documentId, locale: loc, data: relData } as unknown);
+          }
+        } catch (e) {
+          strapi.log.error('[relSync] ' + (e as Error).message);
+        } finally {
+          inFlight.delete(guardKey);
+        }
+        return result;
+      }
+    );
+  },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     // Lokallar (az/ru/en)
