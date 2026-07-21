@@ -374,6 +374,35 @@ export const getEventBySlug = (slug: string, locale: Locale = 'az') =>
   getBySlug<EventItem>('events', slug, locale, { 'populate[speakers][populate][photo]': true });
 
 
+/** ── F2.5d: Mərhələ (milestone) — 144 illik Nautical marşrut ── */
+export interface Milestone {
+  id: number;
+  documentId: string;
+  year: number;
+  title: string;
+  description: string | null;
+  era: 'temel' | 'inkisaf' | 'muasir';
+  sortOrder: number;
+  image?: StrapiMedia | null;
+  locale: Locale;
+}
+
+export async function getMilestones(locale: Locale = 'az'): Promise<Milestone[]> {
+  try {
+    const json = await strapiFetch<StrapiList<Milestone>>('/milestones', {
+      locale,
+      sort: 'year:asc',
+      'pagination[pageSize]': 100,
+      'populate[image]': true,
+    });
+    return json.data ?? [];
+  } catch (err) {
+    console.error('[milestones] cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
+
 /** ── Menyu (Strapi single-type "Menyu") ── */
 export interface MenuLink { label: string; url: string; }
 export interface MenuGroup { title: string; links: MenuLink[]; }

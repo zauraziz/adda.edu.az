@@ -71,6 +71,9 @@ export default function Spotlight({ locale }: { locale: Locale }) {
           <p className="spot-lead">
             {tr('Xəzərin sahilində, 1881-ci ilə uzanan dənizçilik təhsili ənənəsi üzərində qurulmuş akademiya — beynəlxalq standartlar, real dəniz təcrübəsi və qlobal karyera perspektivi bir ünvanda.', locale)}
           </p>
+          <a href={'/' + locale + '/tarix'} className="spot-history-link">
+            {tr('144 illik marşrutumuz', locale) + ' '}<i className="ti ti-arrow-right" />
+          </a>
         </div>
 
         <div className="why-grid">

@@ -1,0 +1,195 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F2.5d / Nautical timeline (144 illik marşrut)
+   Native CSS scroll-driven animasiya (gsap YOX). Aşamalı təkmilləşdirmə:
+   base state HƏR ŞEYİ görünən saxlayır (dəstəkləməyən brauzerlər statik
+   timeline görür); @supports (animation-timeline: view()) reveal/parallax əlavə edir.
+   Tokenlər globals.css :root-dan.
+   ═══════════════════════════════════════════════════════ */
+
+.tl-wrap { padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 6rem); }
+
+.tl-route {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Marşrut xətti (spine) + dolğu ── */
+.tl-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  background: var(--gray-200);
+  border-radius: 3px;
+}
+.tl-spine-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--gold-500), var(--navy-600));
+  transform: scaleY(1); /* base: tam (degradation) */
+  transform-origin: top;
+}
+
+.tl-list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tl-stop {
+  position: relative;
+  width: 50%;
+  padding: 0 2.5rem 3rem;
+  box-sizing: border-box;
+}
+.tl-stop--l { left: 0; text-align: right; }
+.tl-stop--r { left: 50%; text-align: left; }
+
+/* ── Liman node (lövbər) ── */
+.tl-node {
+  position: absolute;
+  top: 0.4rem;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 2px solid var(--gold-500);
+  color: var(--navy-700);
+  z-index: 2;
+}
+.tl-stop--l .tl-node { right: -20px; }
+.tl-stop--r .tl-node { left: -20px; }
+.tl-node i { font-size: 1.1rem; }
+
+/* ── Kart ── */
+.tl-card {
+  display: inline-block;
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 1.3rem 1.5rem 1.6rem;
+  box-shadow: var(--nav-sh-md, 0 6px 18px -8px rgba(11, 61, 92, 0.15));
+}
+.tl-year {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-2xl);
+  line-height: 1;
+  color: var(--navy-800);
+}
+.tl-era {
+  display: inline-block;
+  margin: 0.5rem 0;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tl-era--temel { color: #7c5e00; background: #fdf0cf; }
+.tl-era--inkisaf { color: var(--navy-700); background: #dceef2; }
+.tl-era--muasir { color: #0a6b4f; background: #d6f2e6; }
+.tl-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-900);
+  margin: 0.3rem 0 0.4rem;
+}
+.tl-desc {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--gray-700);
+  margin: 0;
+}
+.tl-img { width: 100%; border-radius: 10px; margin-top: 0.9rem; }
+
+.tl-empty {
+  padding: 3rem 1rem;
+  text-align: center;
+  font-family: var(--font-body);
+  color: var(--gray-500);
+}
+
+/* ── Spotlight-dan keçid linki ── */
+.spot-history-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--gold-600);
+  text-decoration: none;
+}
+.spot-history-link:hover { color: var(--navy-100); }
+
+/* ── Mobil: tək sütun ── */
+@media (max-width: 720px) {
+  .tl-spine { left: 20px; }
+  .tl-stop,
+  .tl-stop--l,
+  .tl-stop--r {
+    width: 100%;
+    left: 0;
+    text-align: left;
+    padding: 0 0 2.5rem 3.5rem;
+  }
+  .tl-stop--l .tl-node,
+  .tl-stop--r .tl-node { left: 0; right: auto; }
+}
+
+/* ═══ Scroll-driven təkmilləşdirmə (aşamalı) ═══ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tl-card {
+      opacity: 0.25;
+      transform: translateY(24px);
+      animation: tl-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 40%;
+    }
+    @keyframes tl-reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .tl-node {
+      scale: 0.6;
+      animation: tl-pop linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 30%;
+    }
+    @keyframes tl-pop {
+      to { scale: 1; }
+    }
+    .tl-route { view-timeline: --tlroute block; }
+    .tl-spine-fill {
+      transform: scaleY(0);
+      animation: tl-fill linear both;
+      animation-timeline: --tlroute;
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes tl-fill {
+      to { transform: scaleY(1); }
+    }
+  }
+}
+
+/* ═══ View Transitions (aşamalı — dəstəkləyən brauzerlərdə səhifə keçidi) ═══ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(history-title) { animation-duration: 0.45s; }
+}
