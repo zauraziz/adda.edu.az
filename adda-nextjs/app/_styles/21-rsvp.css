@@ -1,0 +1,98 @@
+.rsvp-island {
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 32px;
+  margin: 40px 0;
+  font-family: var(--font-body);
+}
+
+.rsvp-island h3 {
+  font-family: var(--font-display);
+  color: var(--navy-800);
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+}
+
+.rsvp-form .form-group {
+  margin-bottom: 20px;
+}
+
+.rsvp-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--gray-900);
+  font-size: 0.95rem;
+}
+
+.rsvp-form input,
+.rsvp-form select,
+.rsvp-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border-color 0.2s;
+  color: var(--gray-900);
+}
+
+.rsvp-form input:focus,
+.rsvp-form select:focus,
+.rsvp-form textarea:focus {
+  outline: none;
+  border-color: var(--navy-800);
+}
+
+.rsvp-form .row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.rsvp-form .col {
+  flex: 1;
+  min-width: 200px;
+}
+
+.rsvp-island .btn-primary {
+  background-color: var(--navy-800);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+}
+
+.rsvp-island .btn-primary:hover {
+  opacity: 0.9;
+}
+
+.rsvp-island .btn-primary:disabled {
+  background-color: var(--gray-300);
+  cursor: not-allowed;
+}
+
+.rsvp-island .error-msg {
+  color: #d32f2f;
+  margin-top: 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.rsvp-island.success {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.rsvp-island.success h3 {
+  color: var(--gold-500);
+  margin-bottom: 20px;
+}

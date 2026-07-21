@@ -27,6 +27,8 @@ import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
 import { getEventBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
+import '../../../_styles/21-rsvp.css';
+import RsvpIsland from '../../../_components/RsvpIsland';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDateTime, EVENT_FORMAT_LABELS } from '@/lib/format';
 
@@ -52,6 +54,21 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
 
   const img = mediaUrl(ev.cover);
   const bodyHtml = ev.body ? await marked.parse(ev.body) : '';
+  const labels = {
+    register: tr('Qeydiyyatdan keç', locale),
+    going: tr('İştirak edirəm', locale),
+    maybe: tr('Bəlkə', locale),
+    declined: tr('İştirak etmirəm', locale),
+    name: tr('Adınız', locale),
+    email: tr('Email ünvanınız', locale),
+    guests: tr('Qonaq sayı', locale),
+    note: tr('Əlavə qeyd', locale),
+    submit: tr('Göndər', locale),
+    successMsg: tr('Qeydiyyatınız qəbul olundu.', locale),
+    addToCal: tr('Təqvimə əlavə et', locale),
+    error: tr('Uğursuz əməliyyat', locale),
+    status: tr('Status', locale)
+  };
   const speakers = ev.speakers ?? [];
   const isOnline = ev.format === 'onlayn' || ev.format === 'hibrid';
   const isPhysical = ev.format === 'fiziki' || ev.format === 'hibrid';
@@ -175,6 +192,19 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               </div>
             ) : null}
           </div>
+                <div className="container" style={{ paddingBottom: '60px' }}>
+          <div className="na-rsvp-wrapper">
+            <RsvpIsland
+              eventSlug={ev.slug}
+              eventTitle={ev.title}
+              startAt={ev.startAt || new Date().toISOString()}
+              endAt={ev.endAt}
+              location={[ev.venueBuilding, ev.venueRoom].filter(Boolean).join(', ') || undefined}
+              description={ev.excerpt}
+              labels={labels}
+            />
+          </div>
+        </div>
         </article>
       </main>
       <Footer menu={menu} locale={locale} />

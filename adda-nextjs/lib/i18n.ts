@@ -919,6 +919,19 @@ const MENU_T: Array<[string, string, string]> = [
   ['Təməldən bu günə — akademiyanın dənizçilik təhsilindəki yolu.', 'От основания до наших дней — путь академии в морском образовании.', 'From the founding to today, the journey of the academy in maritime education.'],
   ['Tarix mərhələləri hələ əlavə edilməyib.', 'Исторические вехи пока не добавлены.', 'Historical milestones have not been added yet.'],
   ['144 illik marşrutumuz', 'Наш 144-летний маршрут', 'Our 144-year route'],
+  ['Qeydiyyatdan keç', 'Зарегистрироваться', 'Register'],
+  ['İştirak edirəm', 'Участвую', 'Going'],
+  ['Bəlkə', 'Возможно', 'Maybe'],
+  ['İştirak etmirəm', 'Не участвую', 'Declined'],
+  ['Adınız', 'Ваше имя', 'Your Name'],
+  ['Email ünvanınız', 'Ваш Email', 'Your Email'],
+  ['Qonaq sayı', 'Количество гостей', 'Guests'],
+  ['Əlavə qeyd', 'Дополнительное примечание', 'Additional Note'],
+  ['Göndər', 'Отправить', 'Submit'],
+  ['Qeydiyyatınız qəbul olundu.', 'Ваша регистрация принята.', 'Your registration has been received.'],
+  ['Təqvimə əlavə et', 'Добавить в календарь', 'Add to Calendar'],
+  ['Uğursuz əməliyyat', 'Ошибка операции', 'Operation failed'],
+  ['Status', 'Статус', 'Status'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.
