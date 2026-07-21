@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "reactions",
+  "info": {
+    "singularName": "reaction",
+    "pluralName": "reactions",
+    "displayName": "Reaksiya",
+    "description": "Dənizçilik emoji reaksiyaları (⚓🚢🧭🌊) məzmun üzərində"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "targetType": {
+      "type": "enumeration",
+      "enum": [
+        "article",
+        "announcement",
+        "event",
+        "milestone"
+      ],
+      "required": true
+    },
+    "targetSlug": {
+      "type": "string",
+      "required": true
+    },
+    "emoji": {
+      "type": "enumeration",
+      "enum": [
+        "anchor",
+        "ship",
+        "compass",
+        "wave"
+      ],
+      "required": true
+    },
+    "sessionId": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

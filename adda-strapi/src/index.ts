@@ -23,8 +23,18 @@ const PUBLIC_READ_UIDS = [
   'api::page.page',
   'api::person.person',
   'api::program.program',
+  'api::reaction.reaction',
   'api::tag.tag',
   'api::unit.unit',
+];
+
+// Public rol — YAZ (create) icazələri: crowdsourced submission tipləri.
+// QEYD: acıq yaz endpointləridir → istehsalda rate-limit / captcha / validasiya
+// qatı əlavə olunmalıdır (F2.6 möhkəmləndirmə). Read moderasiya üçün admin-də qalır.
+const PUBLIC_CREATE_UIDS = [
+  'api::rsvp.rsvp',
+  'api::reaction.reaction',
+  'api::correction.correction',
 ];
 
 const SEED = {
@@ -1136,6 +1146,26 @@ export default {
           }
         }
         strapi.log.info('[seed] public oxu icazeleri: ' + added + ' elave olundu.');
+
+        let addedCreate = 0;
+        for (const uid of PUBLIC_CREATE_UIDS) {
+          const ct = registry[uid];
+          if (!ct) {
+            strapi.log.warn('[seed] create icaze: ' + uid + ' registrde yoxdur, otuldu.');
+            continue;
+          }
+          const action = uid + '.create';
+          const has = await strapi.db
+            .query('plugin::users-permissions.permission')
+            .findOne({ where: { action, role: role.id } });
+          if (!has) {
+            await strapi.db
+              .query('plugin::users-permissions.permission')
+              .create({ data: { action, role: role.id } });
+            addedCreate++;
+          }
+        }
+        strapi.log.info('[seed] public create icazeleri: ' + addedCreate + ' elave olundu.');
       }
     } catch (err) {
       strapi.log.error('[seed] public icaze xetasi: ' + (err as Error).message);

@@ -1,0 +1,69 @@
+{
+  "kind": "collectionType",
+  "collectionName": "corrections",
+  "info": {
+    "singularName": "correction",
+    "pluralName": "corrections",
+    "displayName": "Düzəliş",
+    "description": "Crowdsourced məzmun düzəlişləri — moderasiya növbəsi (diff-view)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "targetType": {
+      "type": "enumeration",
+      "enum": [
+        "article",
+        "announcement",
+        "event",
+        "milestone",
+        "page",
+        "general"
+      ],
+      "default": "general",
+      "required": true
+    },
+    "targetSlug": {
+      "type": "string"
+    },
+    "fieldPath": {
+      "type": "string"
+    },
+    "currentValue": {
+      "type": "text"
+    },
+    "suggestedValue": {
+      "type": "text",
+      "required": true
+    },
+    "reason": {
+      "type": "text"
+    },
+    "submitterName": {
+      "type": "string"
+    },
+    "submitterEmail": {
+      "type": "email"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "applied"
+      ],
+      "default": "pending",
+      "required": true
+    },
+    "moderatorNote": {
+      "type": "text"
+    }
+  }
+}

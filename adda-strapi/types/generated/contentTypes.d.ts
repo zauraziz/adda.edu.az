@@ -698,6 +698,57 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
+  collectionName: 'corrections';
+  info: {
+    description: 'Crowdsourced m\u0259zmun d\u00FCz\u0259li\u015Fl\u0259ri \u2014 moderasiya n\u00F6vb\u0259si (diff-view)';
+    displayName: 'D\u00FCz\u0259li\u015F';
+    pluralName: 'corrections';
+    singularName: 'correction';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    currentValue: Schema.Attribute.Text;
+    fieldPath: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::correction.correction'
+    > &
+      Schema.Attribute.Private;
+    moderatorNote: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    reason: Schema.Attribute.Text;
+    status: Schema.Attribute.Enumeration<
+      ['pending', 'approved', 'rejected', 'applied']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
+    submitterEmail: Schema.Attribute.Email;
+    submitterName: Schema.Attribute.String;
+    suggestedValue: Schema.Attribute.Text & Schema.Attribute.Required;
+    targetSlug: Schema.Attribute.String;
+    targetType: Schema.Attribute.Enumeration<
+      ['article', 'announcement', 'event', 'milestone', 'page', 'general']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'general'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiDepartmentDepartment extends Struct.CollectionTypeSchema {
   collectionName: 'departments';
   info: {
@@ -1403,6 +1454,92 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
+  collectionName: 'reactions';
+  info: {
+    description: 'D\u0259niz\u00E7ilik emoji reaksiyalar\u0131 (\u2693\uD83D\uDEA2\uD83E\uDDED\uD83C\uDF0A) m\u0259zmun \u00FCz\u0259rind\u0259';
+    displayName: 'Reaksiya';
+    pluralName: 'reactions';
+    singularName: 'reaction';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    emoji: Schema.Attribute.Enumeration<['anchor', 'ship', 'compass', 'wave']> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::reaction.reaction'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    sessionId: Schema.Attribute.String & Schema.Attribute.Required;
+    targetSlug: Schema.Attribute.String & Schema.Attribute.Required;
+    targetType: Schema.Attribute.Enumeration<
+      ['article', 'announcement', 'event', 'milestone']
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRsvpRsvp extends Struct.CollectionTypeSchema {
+  collectionName: 'rsvps';
+  info: {
+    description: 'T\u0259dbir qeydiyyatlar\u0131 (RSVP) \u2014 i\u015Ftirak t\u0259sdiql\u0259ri';
+    displayName: 'RSVP';
+    pluralName: 'rsvps';
+    singularName: 'rsvp';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    eventSlug: Schema.Attribute.String & Schema.Attribute.Required;
+    eventTitle: Schema.Attribute.String;
+    guests: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::rsvp.rsvp'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    note: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['going', 'maybe', 'declined']> &
+      Schema.Attribute.DefaultTo<'going'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTagTag extends Struct.CollectionTypeSchema {
   collectionName: 'tags';
   info: {
@@ -2018,6 +2155,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
       'api::article.article': ApiArticleArticle;
+      'api::correction.correction': ApiCorrectionCorrection;
       'api::department.department': ApiDepartmentDepartment;
       'api::document.document': ApiDocumentDocument;
       'api::event.event': ApiEventEvent;
@@ -2027,6 +2165,8 @@ declare module '@strapi/strapi' {
       'api::page.page': ApiPagePage;
       'api::person.person': ApiPersonPerson;
       'api::program.program': ApiProgramProgram;
+      'api::reaction.reaction': ApiReactionReaction;
+      'api::rsvp.rsvp': ApiRsvpRsvp;
       'api::tag.tag': ApiTagTag;
       'api::unit.unit': ApiUnitUnit;
       'plugin::content-releases.release': PluginContentReleasesRelease;

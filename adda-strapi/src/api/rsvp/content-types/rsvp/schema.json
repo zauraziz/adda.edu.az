@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "rsvps",
+  "info": {
+    "singularName": "rsvp",
+    "pluralName": "rsvps",
+    "displayName": "RSVP",
+    "description": "Tədbir qeydiyyatları (RSVP) — iştirak təsdiqləri"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "eventSlug": {
+      "type": "string",
+      "required": true
+    },
+    "eventTitle": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "going",
+        "maybe",
+        "declined"
+      ],
+      "default": "going"
+    },
+    "guests": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "note": {
+      "type": "text"
+    }
+  }
+}
