@@ -198,9 +198,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               eventSlug={ev.slug}
               eventTitle={ev.title}
               startAt={ev.startAt || new Date().toISOString()}
-              endAt={ev.endAt}
+              endAt={ev.endAt || undefined}
               location={[ev.venueBuilding, ev.venueRoom].filter(Boolean).join(', ') || undefined}
-              description={ev.excerpt}
+              description={ev.excerpt || undefined}
               labels={labels}
             />
           </div>
