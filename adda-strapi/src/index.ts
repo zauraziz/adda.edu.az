@@ -19,6 +19,7 @@ const PUBLIC_READ_UIDS = [
   'api::event.event',
   'api::faculty.faculty',
   'api::menu.menu',
+  'api::milestone.milestone',
   'api::page.page',
   'api::person.person',
   'api::program.program',
@@ -1185,6 +1186,34 @@ export default {
       }
     } catch (err) {
       strapi.log.error('[seed] menu xetasi: ' + (err as Error).message);
+    }
+
+    // Mərhələ (milestone) — 144 illik marşrut skeleti (boşdursa)
+    // QEYD: bunlar redaktə üçün SKELET nöqtələrdir. Təsis ili mübahisəsi
+    // (1881 vs 1996) həll edilməmiş məzmun məsələsidir — editorlar dəqiqləşdirir.
+    try {
+      const uid = 'api::milestone.milestone';
+      const first = await strapi.documents(uid).findFirst({ locale: 'az' });
+      if (!first) {
+        const seeds: Array<{ year: number; era: string; sortOrder: number; title: string; description: string }> = [
+          { year: 1881, era: 'temel', sortOrder: 10, title: 'Dəniz təhsilinin ilk təməlləri', description: 'Xəzər regionunda peşəkar dəniz təhsilinin erkən mərhələsi.' },
+          { year: 1920, era: 'inkisaf', sortOrder: 20, title: 'İnstitusional formalaşma', description: 'Təhsil strukturunun institusional əsasda qurulması.' },
+          { year: 1960, era: 'inkisaf', sortOrder: 30, title: 'Genişlənmə dövrü', description: 'İxtisasların və tədris bazasının genişlənməsi.' },
+          { year: 1996, era: 'muasir', sortOrder: 40, title: 'Müasir akademiya statusu', description: 'Müstəqillik dövründə akademiyanın yenidən təşkili.' },
+          { year: 2020, era: 'muasir', sortOrder: 50, title: 'Rəqəmsal transformasiya', description: 'Rəqəmsal tədris və beynəlxalq inteqrasiya istiqamətləri.' },
+        ];
+        for (const s of seeds) {
+          await strapi.documents(uid).create({
+            data: { year: s.year, era: s.era, sortOrder: s.sortOrder, title: s.title, description: s.description } as never,
+            locale: 'az',
+          });
+        }
+        strapi.log.info('[seed] Merhele skeleti yaradildi: ' + seeds.length + ' nogte (az).');
+      } else {
+        strapi.log.info('[seed] Merhele artiq movcuddur, otulur.');
+      }
+    } catch (err) {
+      strapi.log.error('[seed] merhele xetasi: ' + (err as Error).message);
     }
   },
 };

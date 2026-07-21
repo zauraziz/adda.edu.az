@@ -1116,6 +1116,81 @@ export interface ApiMenuMenu extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMilestoneMilestone extends Struct.CollectionTypeSchema {
+  collectionName: 'milestones';
+  info: {
+    description: '144 illik d\u0259niz mar\u015Frutu \u2014 akademiyan\u0131n tarixi m\u0259rh\u0259l\u0259l\u0259ri (timeline)';
+    displayName: 'M\u0259rh\u0259l\u0259';
+    pluralName: 'milestones';
+    singularName: 'milestone';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 600;
+      }>;
+    era: Schema.Attribute.Enumeration<['temel', 'inkisaf', 'muasir']> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'muasir'>;
+    image: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::milestone.milestone'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    sortOrder: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<0>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    year: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+  };
+}
+
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
@@ -1948,6 +2023,7 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::faculty.faculty': ApiFacultyFaculty;
       'api::menu.menu': ApiMenuMenu;
+      'api::milestone.milestone': ApiMilestoneMilestone;
       'api::page.page': ApiPagePage;
       'api::person.person': ApiPersonPerson;
       'api::program.program': ApiProgramProgram;
