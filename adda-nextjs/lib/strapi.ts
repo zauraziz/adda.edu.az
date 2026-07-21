@@ -336,6 +336,44 @@ export async function getCuratedHomeArticles(locale: Locale = 'az', limit = 4): 
 }
 
 
+/** ── F2.5: Slug ilə tək element (detal səhifələri üçün) ──
+ * Ümumi getBySlug + content-type variantları. Xəta olsa null. Detal üçün
+ * relation-lar da populate olunur (faculty/person/tags), siyahıdan daha zəngin.
+ */
+export async function getBySlug<T>(
+  contentType: FeedContentType,
+  slug: string,
+  locale: Locale = 'az',
+  extraPopulate: Record<string, QueryValue> = {},
+): Promise<T | null> {
+  const query: Record<string, QueryValue> = {
+    locale,
+    'filters[slug][$eq]': slug,
+    'pagination[pageSize]': 1,
+    'populate[cover]': true,
+    'populate[faculty][fields][0]': 'name',
+    'populate[faculty][fields][1]': 'slug',
+    'populate[person][fields][0]': 'name',
+    'populate[person][fields][1]': 'slug',
+    'populate[tags][fields][0]': 'name',
+    'populate[tags][fields][1]': 'slug',
+    ...extraPopulate,
+  };
+  try {
+    const json = await strapiFetch<StrapiList<T>>('/' + contentType, query, 60);
+    return json.data?.[0] ?? null;
+  } catch (err) {
+    console.error('[detail] ' + contentType + '/' + slug + ' cekilmedi: ' + (err as Error).message);
+    return null;
+  }
+}
+
+export const getAnnouncementBySlug = (slug: string, locale: Locale = 'az') =>
+  getBySlug<Announcement>('announcements', slug, locale, { 'populate[attachments]': true });
+export const getEventBySlug = (slug: string, locale: Locale = 'az') =>
+  getBySlug<EventItem>('events', slug, locale, { 'populate[speakers][populate][photo]': true });
+
+
 /** ── Menyu (Strapi single-type "Menyu") ── */
 export interface MenuLink { label: string; url: string; }
 export interface MenuGroup { title: string; links: MenuLink[]; }

@@ -1,5 +1,6 @@
-// F2.5 / Xəbər detalı — /[locale]/xeberler/[slug]
-// getArticleBySlug (F2.4). Body markdown -> HTML (marked / F2.5b).
+// F2.5 / Elan detalı — /[locale]/elanlar/[slug]
+// getAnnouncementBySlug (F2.5). Body markdown -> HTML (marked). importance,
+// deadline, requiresAck və qoşma faylları göstərilir.
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -25,9 +26,9 @@ import { notFound } from 'next/navigation';
 import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
-import { getArticleBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
+import { getAnnouncementBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
-import { fmtDate, CAT_LABELS } from '@/lib/format';
+import { fmtDate, IMPORTANCE_LABELS } from '@/lib/format';
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -35,47 +36,58 @@ export const dynamicParams = true;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const article = await getArticleBySlug(slug, locale);
-  if (!article) return { title: tr('Xəbər', locale) };
-  return { title: article.title, description: article.excerpt ?? undefined };
+  const item = await getAnnouncementBySlug(slug, locale);
+  if (!item) return { title: tr('Elan', locale) };
+  return { title: item.title, description: item.excerpt ?? undefined };
 }
 
-export default async function NewsDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+export default async function AnnouncementDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [article, menu] = await Promise.all([
-    getArticleBySlug(slug, locale),
+  const [item, menu] = await Promise.all([
+    getAnnouncementBySlug(slug, locale),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
-  if (!article) notFound();
+  if (!item) notFound();
 
-  const img = mediaUrl(article.cover);
-  const bodyHtml = article.body ? await marked.parse(article.body) : '';
+  const img = mediaUrl(item.cover);
+  const bodyHtml = item.body ? await marked.parse(item.body) : '';
+  const attachments = (item.attachments ?? []).filter((f) => mediaUrl(f));
+  const impCls =
+    item.importance === 'kritik' ? 'na-badge na-badge--kritik'
+    : item.importance === 'vacib' ? 'na-badge na-badge--vacib'
+    : 'na-badge';
 
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
       <main className="na-wrap">
         <div className="container">
-          <Link href={'/' + locale + '/xeberler'} className="na-back">
+          <Link href={'/' + locale + '/elanlar'} className="na-back">
             <i className="ti ti-arrow-left" />
-            {' ' + tr('Bütün xəbərlər', locale)}
+            {' ' + tr('Bütün elanlar', locale)}
           </Link>
         </div>
 
         <article>
           <div className="container na-head">
-            <div className="na-eyebrow">{CAT_LABELS[locale][article.category] ?? CAT_LABELS[locale].xeber}</div>
-            <h1 className="na-title">{article.title}</h1>
+            <span className={impCls}>{IMPORTANCE_LABELS[locale][item.importance] ?? IMPORTANCE_LABELS[locale].normal}</span>
+            <h1 className="na-title">{item.title}</h1>
             <div className="na-meta">
               <span>
                 <i className="ti ti-calendar" />
-                {' ' + fmtDate(article.newsDate ?? article.publishedAt, locale)}
+                {' ' + fmtDate(item.publishAt ?? item.publishedAt, locale)}
               </span>
-              {article.readingMinutes ? (
+              {item.deadlineAt ? (
                 <span>
-                  <i className="ti ti-clock" />
-                  {' ' + article.readingMinutes + ' ' + tr('dəq oxu', locale)}
+                  <i className="ti ti-clock-hour-4" />
+                  {' ' + tr('Son tarix', locale) + ': ' + fmtDate(item.deadlineAt, locale)}
+                </span>
+              ) : null}
+              {item.requiresAck ? (
+                <span>
+                  <i className="ti ti-checkbox" />
+                  {' ' + tr('Təsdiq tələb olunur', locale)}
                 </span>
               ) : null}
             </div>
@@ -84,7 +96,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
           {img ? (
             <div className="container">
               <div className="na-cover">
-                <img src={img} alt={article.title} />
+                <img src={img} alt={item.title} />
               </div>
             </div>
           ) : null}
@@ -92,8 +104,20 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
           <div className="container">
             {bodyHtml ? (
               <div className="na-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
-            ) : article.excerpt ? (
-              <div className="na-body"><p>{article.excerpt}</p></div>
+            ) : item.excerpt ? (
+              <div className="na-body"><p>{item.excerpt}</p></div>
+            ) : null}
+
+            {attachments.length ? (
+              <div className="na-files">
+                <div className="na-files-h">{tr('Sənədlər', locale)}</div>
+                {attachments.map((f, i) => (
+                  <a key={i} href={mediaUrl(f) ?? '#'} className="na-file" target="_blank" rel="noopener noreferrer">
+                    <i className="ti ti-file-download" />
+                    <span>{f.alternativeText ?? tr('Sənədi yüklə', locale)}</span>
+                  </a>
+                ))}
+              </div>
             ) : null}
           </div>
         </article>

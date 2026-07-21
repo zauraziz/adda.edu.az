@@ -196,6 +196,111 @@
 .na-body p { margin: 0 0 1.15em; }
 .na-body p:last-child { margin-bottom: 0; }
 
+/* ── Detal: zəngin gövdə (marked HTML / F2.5b) ── */
+.na-body h2,
+.na-body h3,
+.na-body h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--navy-800);
+  line-height: 1.2;
+  margin: 1.6em 0 0.5em;
+}
+.na-body h2 { font-size: var(--text-2xl); }
+.na-body h3 { font-size: var(--text-xl); }
+.na-body a { color: var(--navy-600); text-decoration: underline; text-underline-offset: 2px; }
+.na-body a:hover { color: var(--gold-600); }
+.na-body ul,
+.na-body ol { margin: 0 0 1.15em 1.4em; }
+.na-body li { margin: 0.3em 0; }
+.na-body img { max-width: 100%; height: auto; border-radius: 12px; margin: 1.25em 0; }
+.na-body blockquote {
+  margin: 1.25em 0;
+  padding: 0.4em 0 0.4em 1.1em;
+  border-left: 3px solid var(--gold-500);
+  color: var(--gray-700);
+  font-style: italic;
+}
+.na-body code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--gray-100);
+  padding: 0.15em 0.4em;
+  border-radius: 5px;
+}
+.na-body pre {
+  margin: 1.25em 0;
+  padding: 1em 1.2em;
+  background: var(--navy-900);
+  color: var(--navy-50);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.na-body pre code { background: none; padding: 0; color: inherit; }
+.na-body hr { border: none; border-top: 1px solid var(--gray-200); margin: 2em 0; }
+
+/* ── Əhəmiyyət nişanı (detal başlığı) ── */
+.na-badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy-700);
+  background: var(--gold-100);
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+}
+.na-badge--vacib { color: #7c5e00; background: #fdf0cf; }
+.na-badge--kritik { color: var(--white); background: var(--error); }
+
+/* ── Kart nişan variantları + son tarix (siyahı) ── */
+.np-chip--vacib { color: #7c5e00; background: #fdf0cf; }
+.np-chip--kritik { color: var(--white); background: var(--error); }
+.np-deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--warning);
+}
+
+/* ── Qoşma sənədlər (detal) ── */
+.na-files {
+  max-width: 720px;
+  margin: 2rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-200);
+}
+.na-files-h {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-800);
+  margin-bottom: 0.75rem;
+}
+.na-file {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-700);
+  text-decoration: none;
+  transition: border-color var(--nav-dur, 280ms) var(--nav-ease, ease),
+    background var(--nav-dur, 280ms) var(--nav-ease, ease);
+}
+.na-file:hover { border-color: var(--gold-300); background: var(--gold-100); }
+.na-file i { font-size: 1.2em; color: var(--gold-600); }
+
 @media (max-width: 640px) {
   .np-grid { grid-template-columns: 1fr; }
 }

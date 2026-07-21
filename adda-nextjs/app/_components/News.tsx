@@ -70,7 +70,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
           </div>
           <div className="nx-actions">
             <a href={'/' + locale + '/xeberler'} className="nx-btn">{tr('Bütün xəbərlər', locale) + ' '}<i className="ti ti-arrow-right" /></a>
-            <a href="#" className="nx-btn nx-btn--ghost">{tr('Elan və tədbirlər', locale) + ' '}<i className="ti ti-arrow-right" /></a>
+            <a href={'/' + locale + '/elanlar'} className="nx-btn nx-btn--ghost">{tr('Elan və tədbirlər', locale) + ' '}<i className="ti ti-arrow-right" /></a>
           </div>
         </div>
 
