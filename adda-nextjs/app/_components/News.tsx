@@ -96,7 +96,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
           <aside className="nx-rail">
             <div className="nx-sub"><i className="ti ti-speakerphone" />{' ' + tr('Elanlar', locale)}</div>
             {RAIL.map((r, i) => (
-              <a href="#" className="elx" key={i}>
+              <a href={'/' + locale + '/elanlar'} className="elx" key={i}>
                 {r.img && <img className="elx-thumb" src={r.img} alt={tr(r.alt ?? r.title, locale)} loading="lazy" />}
                 <span className="elx-row">
                   <span className="elx-chip">{tr(r.chip, locale)}</span>
@@ -111,7 +111,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
         <div className="nx-sub nx-sub--ev"><i className="ti ti-calendar-event" />{' ' + tr('Tədbirlər', locale)}</div>
         <div className="nx-events">
           {EVENTS.map((e, i) => (
-            <a href="#" className="evx" key={i}>
+            <a href={'/' + locale + '/tedbirler'} className="evx" key={i}>
               <span className="evx-date"><b>{e.d}</b><span>{tr(e.m, locale)}</span></span>
               <span className="evx-body">
                 <span className="evx-chip">{tr(e.chip, locale)}</span>
