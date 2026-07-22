@@ -10,12 +10,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^15.1.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "cobe": "0.6.4",
     "gsap": "^3.12.5",
-    "marked": "^14.1.4"
+    "marked": "^14.1.4",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

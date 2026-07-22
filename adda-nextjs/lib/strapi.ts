@@ -1,7 +1,7 @@
 // ADDA CMS (Strapi 5) — məlumat çəkmə qatı.
 // Server komponentlərində istifadə üçün (CORS yoxdur, sürətli, ISR keşi ilə).
 
-const STRAPI_URL = process.env.STRAPI_URL ?? 'http://localhost:1337';
+export const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'http://localhost:1337';
 
 export type Locale = 'az' | 'ru' | 'en';
 
