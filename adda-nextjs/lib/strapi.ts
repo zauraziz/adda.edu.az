@@ -448,4 +448,3 @@ export async function getMenu(locale: Locale = 'az'): Promise<SiteMenu | null> {
   }
 }
 
-export { STRAPI_URL };
