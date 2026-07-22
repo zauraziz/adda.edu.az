@@ -1,0 +1,50 @@
+.na-reaction-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 24px 0;
+  border-top: 1px solid var(--gray-200);
+  margin-top: 24px;
+}
+
+.na-reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+}
+
+.na-reaction-btn:hover:not(:disabled) {
+  background-color: var(--gray-100);
+  border-color: var(--navy-300);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.na-reaction-btn.active {
+  background-color: var(--navy-50);
+  border-color: var(--navy-800);
+  color: var(--navy-800);
+  cursor: default;
+}
+
+.na-reaction-emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.na-reaction-count {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.na-reaction-btn.active .na-reaction-count {
+  color: var(--navy-800);
+}

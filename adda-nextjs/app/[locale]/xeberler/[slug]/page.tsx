@@ -19,6 +19,8 @@ import '../../../_styles/16-footer-ftx.css';
 import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
+import '../../../_styles/22-reactions.css';
+import ReactionBar from '../../../_components/ReactionBar';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -96,6 +98,10 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
               <div className="na-body"><p>{article.excerpt}</p></div>
             ) : null}
           </div>
+        
+        <div className="container" style={{ paddingBottom: '40px' }}>
+          <ReactionBar targetType="article" targetSlug={slug} />
+        </div>
         </article>
       </main>
       <Footer menu={menu} locale={locale} />
