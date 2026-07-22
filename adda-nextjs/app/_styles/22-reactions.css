@@ -1,50 +1,136 @@
-.na-reaction-bar {
+/* ═══════════════════════════════════════════════════════
+   ADDA — F2.6c / Dənizçilik reaksiya barı
+   Məzmun altında yüngül panel: ⚓ 🚢 🧭 🌊 çipləri, optimist UI,
+   gold təsdiq vəziyyəti, yüklənmədə sabit layout (CLS yox).
+   Kontent sütunu ilə düzlənir (max 720px); events-də .na-reactions
+   sarğısı ilə birgə. Tokenlər globals.css :root-dan.
+   ═══════════════════════════════════════════════════════ */
+
+.na-rx {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 24px 0;
-  border-top: 1px solid var(--gray-200);
-  margin-top: 24px;
+  gap: 1rem 1.25rem;
+  max-width: 720px;
+  margin: 2rem auto 0;
+  padding: 1.05rem 1.4rem;
+  background: linear-gradient(180deg, var(--navy-50), var(--white));
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px -16px rgba(11, 61, 92, 0.16);
 }
 
-.na-reaction-btn {
+/* Events səhifəsi .na-reactions sarğısı öz boşluğunu verir → ikiqat margin olmasın */
+.na-reactions > .na-rx {
+  margin-top: 0;
+}
+
+.na-rx-label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background-color: var(--gray-50);
-  border: 1px solid var(--gray-200);
-  border-radius: 20px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  gap: 0.5rem;
   font-family: var(--font-body);
-}
-
-.na-reaction-btn:hover:not(:disabled) {
-  background-color: var(--gray-100);
-  border-color: var(--navy-400); 
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.na-reaction-btn.active {
-  background-color: var(--navy-50);
-  border-color: var(--navy-800);
+  font-size: var(--text-sm);
+  font-weight: 600;
   color: var(--navy-800);
+}
+.na-rx-label i {
+  font-size: 1.15rem;
+  color: var(--gold-600);
+}
+
+.na-rx-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.na-rx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 999px;
+  background: var(--white);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color var(--nav-dur) var(--nav-ease),
+    background var(--nav-dur) var(--nav-ease),
+    box-shadow var(--nav-dur) var(--nav-ease),
+    transform var(--nav-dur) var(--nav-ease);
+}
+.na-rx-btn:hover:not(:disabled):not(.is-on) {
+  border-color: var(--navy-600);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px -8px rgba(11, 61, 92, 0.28);
+}
+.na-rx-btn:focus-visible {
+  outline: none;
+  border-color: var(--navy-700);
+  box-shadow: 0 0 0 3px rgba(18, 96, 143, 0.16);
+}
+.na-rx-btn.is-on {
+  border-color: var(--gold-600);
+  background: var(--gold-100);
   cursor: default;
 }
 
-.na-reaction-emoji {
-  font-size: 1.25rem;
+.na-rx-emoji {
+  font-size: 1.3rem;
   line-height: 1;
 }
-
-.na-reaction-count {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--gray-900);
+.na-rx-count {
+  min-width: 0.9rem;
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--gray-700);
+}
+.na-rx-btn.is-on .na-rx-count {
+  color: var(--navy-900);
 }
 
-.na-reaction-btn.active .na-reaction-count {
-  color: var(--navy-800);
+/* Yüklənmə vəziyyəti — çiplər sönük, layout sabit */
+.na-rx.is-pending .na-rx-btn {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* React edəndə zərif sıçrayış */
+.na-rx-btn.is-pop .na-rx-emoji {
+  animation: na-rx-pop 0.42s var(--nav-ease);
+}
+@keyframes na-rx-pop {
+  0% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .na-rx {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 1.15rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .na-rx-btn {
+    transition: none;
+  }
+  .na-rx-btn:hover:not(:disabled):not(.is-on) {
+    transform: none;
+  }
+  .na-rx-btn.is-pop .na-rx-emoji {
+    animation: none;
+  }
 }
