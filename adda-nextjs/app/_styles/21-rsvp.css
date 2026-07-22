@@ -1,98 +1,258 @@
-.rsvp-island {
-  background-color: var(--gray-50);
-  border: 1px solid var(--gray-300);
-  border-radius: 8px;
-  padding: 32px;
-  margin: 40px 0;
-  font-family: var(--font-body);
+/* ═══════════════════════════════════════════════════════
+   ADDA — F2.6b / Tədbir RSVP paneli
+   Cilalanmış rezervasiya kartı. Navy gradient başlıq + gold vurğu,
+   pill status seçici, zərif input-lar, uğur vəziyyəti + .ics CTA.
+   Tokenlər globals.css :root-dan.
+   ═══════════════════════════════════════════════════════ */
+
+.rsvp {
+  max-width: 720px;
+  margin: 2.5rem auto 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px -14px rgba(11, 61, 92, 0.18);
 }
 
-.rsvp-island h3 {
-  font-family: var(--font-display);
-  color: var(--navy-800);
-  margin-top: 0;
-  margin-bottom: 24px;
-  font-size: 1.5rem;
-}
-
-.rsvp-form .form-group {
-  margin-bottom: 20px;
-}
-
-.rsvp-form label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--gray-900);
-  font-size: 0.95rem;
-}
-
-.rsvp-form input,
-.rsvp-form select,
-.rsvp-form textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--gray-300);
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 1rem;
-  background-color: #fff;
-  transition: border-color 0.2s;
-  color: var(--gray-900);
-}
-
-.rsvp-form input:focus,
-.rsvp-form select:focus,
-.rsvp-form textarea:focus {
-  outline: none;
-  border-color: var(--navy-800);
-}
-
-.rsvp-form .row {
+/* ── Başlıq (navy gradient + gold icon) ── */
+.rsvp-head {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1.5rem 1.8rem 1.3rem;
+  background: var(--gradient-navy);
+  color: var(--white);
+}
+.rsvp-head-ic {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(201, 169, 97, 0.16);
+  color: var(--gold-400);
+  font-size: 1.45rem;
+}
+.rsvp-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-xl);
+  line-height: 1.2;
+}
+.rsvp-sub {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-50);
+  opacity: 0.82;
 }
 
-.rsvp-form .col {
+/* ── Gövdə / form ── */
+.rsvp-body {
+  padding: 1.5rem 1.8rem 1.8rem;
+}
+
+/* Status pill-ləri */
+.rsvp-status {
+  margin-bottom: 1.35rem;
+}
+.rsvp-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.rsvp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--gray-700);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+    background var(--nav-dur) var(--nav-ease), color var(--nav-dur) var(--nav-ease);
+}
+.rsvp-pill i {
+  font-size: 1.05rem;
+}
+.rsvp-pill:hover {
+  border-color: var(--navy-600);
+  color: var(--navy-700);
+}
+.rsvp-pill.is-active {
+  border-color: var(--navy-800);
+  background: var(--navy-800);
+  color: var(--white);
+}
+.rsvp-pill.going.is-active {
+  border-color: var(--gold-600);
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+
+/* Sahələr */
+.rsvp-field {
+  margin-bottom: 1.1rem;
+}
+.rsvp-field--sm {
+  max-width: 168px;
+}
+.rsvp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.rsvp-row .rsvp-field {
   flex: 1;
   min-width: 200px;
 }
+.rsvp-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+.rsvp-input,
+.rsvp-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--gray-50);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--gray-900);
+  transition: border-color var(--nav-dur) var(--nav-ease),
+    background var(--nav-dur) var(--nav-ease), box-shadow var(--nav-dur) var(--nav-ease);
+}
+.rsvp-input:focus,
+.rsvp-textarea:focus {
+  outline: none;
+  border-color: var(--navy-600);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(18, 96, 143, 0.12);
+}
+.rsvp-textarea {
+  min-height: 84px;
+  resize: vertical;
+}
 
-.rsvp-island .btn-primary {
-  background-color: var(--navy-800);
-  color: #fff;
+/* Göndər düyməsi */
+.rsvp-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.8rem;
   border: none;
-  padding: 14px 28px;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 10px;
+  background: var(--navy-800);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
   font-weight: 600;
-  font-size: 1rem;
-  transition: opacity 0.2s;
+  cursor: pointer;
+  transition: background var(--nav-dur) var(--nav-ease), transform var(--nav-dur) var(--nav-ease);
+}
+.rsvp-submit i {
+  font-size: 1.1rem;
+}
+.rsvp-submit:hover:not(:disabled) {
+  background: var(--navy-700);
+  transform: translateY(-1px);
+}
+.rsvp-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.rsvp-err {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--error);
 }
 
-.rsvp-island .btn-primary:hover {
-  opacity: 0.9;
-}
-
-.rsvp-island .btn-primary:disabled {
-  background-color: var(--gray-300);
-  cursor: not-allowed;
-}
-
-.rsvp-island .error-msg {
-  color: #d32f2f;
-  margin-top: 16px;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.rsvp-island.success {
+/* ── Uğur vəziyyəti ── */
+.rsvp-success {
+  padding: 2.6rem 1.8rem;
   text-align: center;
-  padding: 48px 24px;
+}
+.rsvp-check {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.15rem;
+  border-radius: 50%;
+  background: var(--gold-100);
+  color: var(--gold-600);
+  font-size: 2rem;
+}
+.rsvp-success-msg {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-900);
+}
+.rsvp-cal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 1.5px solid var(--gold-500);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--gold-600);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--nav-dur) var(--nav-ease), color var(--nav-dur) var(--nav-ease);
+}
+.rsvp-cal i {
+  font-size: 1.1rem;
+}
+.rsvp-cal:hover {
+  background: var(--gold-500);
+  color: var(--navy-900);
 }
 
-.rsvp-island.success h3 {
-  color: var(--gold-500);
-  margin-bottom: 20px;
+/* Reaksiya barı — kontent sütunu ilə düzləndir (F2.6c ilə birgə) */
+.na-reactions {
+  max-width: 720px;
+  margin: 1.75rem auto 0;
+}
+
+@media (max-width: 560px) {
+  .rsvp-head,
+  .rsvp-body {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rsvp-pill,
+  .rsvp-submit,
+  .rsvp-input,
+  .rsvp-textarea,
+  .rsvp-cal {
+    transition: none;
+  }
+  .rsvp-submit:hover:not(:disabled) {
+    transform: none;
+  }
 }

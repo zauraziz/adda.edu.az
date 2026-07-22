@@ -1,9 +1,15 @@
 'use client';
+
+// F2.6b / Tədbir RSVP — cilalanmış qeydiyyat paneli (client island).
+// Status pill düymələri (dropdown yox), zərif input-lar, uğur vəziyyəti + .ics yükləmə.
+// Etiketlər props ilə (server komponentindən əvvəlcədən tərcümə — tam T lüğəti import edilmir).
 import { useState } from 'react';
 import { generateIcs } from '@/lib/ics';
 import { STRAPI_URL } from '@/lib/strapi';
 
-interface RsvpProps {
+type RsvpStatus = 'going' | 'maybe' | 'declined';
+
+interface RsvpIslandProps {
   eventSlug: string;
   eventTitle: string;
   startAt: string;
@@ -13,6 +19,14 @@ interface RsvpProps {
   labels: Record<string, string>;
 }
 
+const STATUS_ICONS: Record<RsvpStatus, string> = {
+  going: 'ti-circle-check',
+  maybe: 'ti-help-circle',
+  declined: 'ti-circle-x',
+};
+
+const STATUSES: RsvpStatus[] = ['going', 'maybe', 'declined'];
+
 export default function RsvpIsland({
   eventSlug,
   eventTitle,
@@ -20,114 +34,165 @@ export default function RsvpIsland({
   endAt,
   location,
   description,
-  labels
-}: RsvpProps) {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    rsvpStatus: 'going',
-    guests: 0,
-    note: ''
-  });
+  labels,
+}: RsvpIslandProps) {
+  const [state, setState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<RsvpStatus>('going');
+  const [guests, setGuests] = useState(0);
+  const [note, setNote] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus('loading');
+    setState('loading');
     try {
-      const res = await fetch(`${STRAPI_URL}/api/rsvps`, {
+      const res = await fetch(STRAPI_URL + '/api/rsvps', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          data: {
-            eventSlug,
-            eventTitle,
-            name: formData.name,
-            email: formData.email,
-            status: formData.rsvpStatus,
-            guests: Number(formData.guests),
-            note: formData.note
-          }
-        })
+          data: { eventSlug, eventTitle, name, email, status, guests, note },
+        }),
       });
-      if (!res.ok) throw new Error('API error');
-      setStatus('success');
-    } catch (err) {
-      console.error('RSVP API xetasi:', err);
-      setStatus('error');
+      if (!res.ok) throw new Error('rsvp failed');
+      setState('success');
+    } catch {
+      setState('error');
     }
-  };
+  }
 
-  const handleDownloadIcs = () => {
-    const icsData = generateIcs({
+  function downloadIcs() {
+    const ics = generateIcs({
       title: eventTitle,
       startAt,
       endAt,
       location,
       description,
-      uid: `${eventSlug}@adda.edu.az`
+      uid: eventSlug + '@adda.edu.az',
     });
-    
-    if (!icsData) return;
-
-    const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+    if (!ics) return;
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${eventSlug}.ics`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = eventSlug + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
-  if (status === 'success') {
+  if (state === 'success') {
     return (
-      <div className="rsvp-island success">
-        <h3>{labels.successMsg}</h3>
-        <button type="button" className="btn-primary" onClick={handleDownloadIcs}>
-          {labels.addToCal}
-        </button>
-      </div>
+      <section className="rsvp">
+        <div className="rsvp-success">
+          <div className="rsvp-check" aria-hidden="true">
+            <i className="ti ti-check" />
+          </div>
+          <p className="rsvp-success-msg">{labels.successMsg}</p>
+          <button type="button" className="rsvp-cal" onClick={downloadIcs}>
+            <i className="ti ti-calendar-plus" />
+            {labels.addToCal}
+          </button>
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="rsvp-island">
-      <h3>{labels.register}</h3>
-      <form onSubmit={handleSubmit} className="rsvp-form">
-        <div className="form-group row">
-          <div className="col">
-            <label>{labels.name}</label>
-            <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-          </div>
-          <div className="col">
-            <label>{labels.email}</label>
-            <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+    <section className="rsvp">
+      <header className="rsvp-head">
+        <span className="rsvp-head-ic" aria-hidden="true">
+          <i className="ti ti-calendar-check" />
+        </span>
+        <div>
+          <h3 className="rsvp-title">{labels.register}</h3>
+          <p className="rsvp-sub">{labels.subtitle}</p>
+        </div>
+      </header>
+
+      <form className="rsvp-body" onSubmit={handleSubmit}>
+        <div className="rsvp-status">
+          <span className="rsvp-label">{labels.status}</span>
+          <div className="rsvp-pills" role="group">
+            {STATUSES.map((s) => (
+              <button
+                type="button"
+                key={s}
+                className={'rsvp-pill ' + s + (status === s ? ' is-active' : '')}
+                onClick={() => setStatus(s)}
+                aria-pressed={status === s}
+              >
+                <i className={'ti ' + STATUS_ICONS[s]} />
+                {labels[s]}
+              </button>
+            ))}
           </div>
         </div>
-        <div className="form-group row">
-          <div className="col">
-            <label>{labels.status}</label>
-            <select value={formData.rsvpStatus} onChange={e => setFormData({...formData, rsvpStatus: e.target.value})}>
-              <option value="going">{labels.going}</option>
-              <option value="maybe">{labels.maybe}</option>
-              <option value="declined">{labels.declined}</option>
-            </select>
+
+        <div className="rsvp-row">
+          <div className="rsvp-field">
+            <label className="rsvp-label" htmlFor="rsvp-name">
+              {labels.name}
+            </label>
+            <input
+              id="rsvp-name"
+              className="rsvp-input"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
-          <div className="col">
-            <label>{labels.guests}</label>
-            <input type="number" min="0" max="10" value={formData.guests} onChange={e => setFormData({...formData, guests: parseInt(e.target.value) || 0})} />
+          <div className="rsvp-field">
+            <label className="rsvp-label" htmlFor="rsvp-email">
+              {labels.email}
+            </label>
+            <input
+              id="rsvp-email"
+              className="rsvp-input"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
         </div>
-        <div className="form-group">
-          <label>{labels.note}</label>
-          <textarea rows={3} value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})}></textarea>
+
+        <div className="rsvp-field rsvp-field--sm">
+          <label className="rsvp-label" htmlFor="rsvp-guests">
+            {labels.guests}
+          </label>
+          <input
+            id="rsvp-guests"
+            className="rsvp-input"
+            type="number"
+            min={0}
+            max={10}
+            value={guests}
+            onChange={(e) => setGuests(parseInt(e.target.value, 10) || 0)}
+          />
         </div>
-        <button type="submit" disabled={status === 'loading'} className="btn-primary">
-          {status === 'loading' ? '...' : labels.submit}
+
+        <div className="rsvp-field">
+          <label className="rsvp-label" htmlFor="rsvp-note">
+            {labels.note}
+          </label>
+          <textarea
+            id="rsvp-note"
+            className="rsvp-textarea"
+            rows={3}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
+
+        <button type="submit" className="rsvp-submit" disabled={state === 'loading'}>
+          <i className="ti ti-send" />
+          {state === 'loading' ? labels.sending : labels.submit}
         </button>
-        {status === 'error' && <p className="error-msg">{labels.error}</p>}
+        {state === 'error' ? <p className="rsvp-err">{labels.error}</p> : null}
       </form>
-    </div>
+    </section>
   );
 }

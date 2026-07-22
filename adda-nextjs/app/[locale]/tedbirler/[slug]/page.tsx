@@ -1,6 +1,7 @@
-// F2.5 / Tədbir detalı — /[locale]/tedbirler/[slug]
+// F2.5c / Tədbir detalı — /[locale]/tedbirler/[slug]
 // getEventBySlug (F2.5b). Body markdown -> HTML (marked). Format, tarix/vaxt,
-// məkan və ya onlayn keçid, tutum və spikerlər struktur məlumat blokunda.
+// məkan/onlayn, tutum, spikerlər struktur blokda.
+// F2.6b: RSVP + .ics · F2.6c: dənizçilik reaksiyaları — kontent sütununda.
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -20,17 +21,17 @@ import '../../../_styles/16-footer-ftx.css';
 import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
+import '../../../_styles/21-rsvp.css';
 import '../../../_styles/22-reactions.css';
-import ReactionBar from '../../../_components/ReactionBar';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
-import { getEventBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
-import '../../../_styles/21-rsvp.css';
 import RsvpIsland from '../../../_components/RsvpIsland';
+import ReactionBar from '../../../_components/ReactionBar';
+import { getEventBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDateTime, EVENT_FORMAT_LABELS } from '@/lib/format';
 
@@ -56,8 +57,15 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
 
   const img = mediaUrl(ev.cover);
   const bodyHtml = ev.body ? await marked.parse(ev.body) : '';
-  const labels = {
+  const speakers = ev.speakers ?? [];
+  const isOnline = ev.format === 'onlayn' || ev.format === 'hibrid';
+  const isPhysical = ev.format === 'fiziki' || ev.format === 'hibrid';
+  const venue = [ev.venueBuilding, ev.venueRoom].filter(Boolean).join(', ');
+
+  const labels: Record<string, string> = {
     register: tr('Qeydiyyatdan keç', locale),
+    subtitle: tr('Bu tədbirdə yerinizi təsdiqləyin', locale),
+    status: tr('Status', locale),
     going: tr('İştirak edirəm', locale),
     maybe: tr('Bəlkə', locale),
     declined: tr('İştirak etmirəm', locale),
@@ -66,15 +74,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     guests: tr('Qonaq sayı', locale),
     note: tr('Əlavə qeyd', locale),
     submit: tr('Göndər', locale),
+    sending: tr('Göndərilir', locale),
     successMsg: tr('Qeydiyyatınız qəbul olundu.', locale),
     addToCal: tr('Təqvimə əlavə et', locale),
     error: tr('Uğursuz əməliyyat', locale),
-    status: tr('Status', locale)
   };
-  const speakers = ev.speakers ?? [];
-  const isOnline = ev.format === 'onlayn' || ev.format === 'hibrid';
-  const isPhysical = ev.format === 'fiziki' || ev.format === 'hibrid';
-  const venue = [ev.venueBuilding, ev.venueRoom].filter(Boolean).join(', ');
 
   return (
     <>
@@ -193,24 +197,21 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
                 </div>
               </div>
             ) : null}
-          </div>
-                <div className="container" style={{ paddingBottom: '60px' }}>
-          <div className="na-rsvp-wrapper">
+
             <RsvpIsland
               eventSlug={ev.slug}
               eventTitle={ev.title}
               startAt={ev.startAt || new Date().toISOString()}
               endAt={ev.endAt || undefined}
-              location={[ev.venueBuilding, ev.venueRoom].filter(Boolean).join(', ') || undefined}
+              location={venue || undefined}
               description={ev.excerpt || undefined}
               labels={labels}
             />
+
+            <div className="na-reactions">
+              <ReactionBar targetType="event" targetSlug={slug} />
+            </div>
           </div>
-        </div>
-        
-        <div className="container" style={{ paddingBottom: '40px' }}>
-          <ReactionBar targetType="event" targetSlug={slug} />
-        </div>
         </article>
       </main>
       <Footer menu={menu} locale={locale} />

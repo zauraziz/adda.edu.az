@@ -1,48 +1,52 @@
-export function generateIcs({
-  title,
-  startAt,
-  endAt,
-  location,
-  description,
-  uid
-}: {
+// F2.6b / .ics təqvim generatoru (RFC 5545 sadələşdirilmiş).
+// Client-side "Təqvimə əlavə et" yükləməsi üçün. Xüsusi simvollar escape olunur.
+
+interface IcsInput {
   title: string;
   startAt: string;
   endAt?: string;
   location?: string;
   description?: string;
   uid: string;
-}): string {
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return '';
-    return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  };
-  
-  const start = formatDate(startAt);
-  const end = endAt ? formatDate(endAt) : start;
-  const dtStamp = formatDate(new Date().toISOString());
-  
-  if (!start) return '';
+}
 
-  const ics = [
+// ISO → YYYYMMDDTHHMMSSZ (UTC)
+function toIcsDate(value: string): string {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+// RFC 5545: tərs-slash, nöqtəli vergül, vergül və yeni sətir escape olunmalıdır
+function escapeIcs(text: string): string {
+  return text
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r?\n/g, '\\n');
+}
+
+export function generateIcs(input: IcsInput): string {
+  const start = toIcsDate(input.startAt);
+  if (!start) return '';
+  const end = input.endAt ? toIcsDate(input.endAt) : start;
+  const stamp = toIcsDate(new Date().toISOString());
+
+  const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//ADDA//NONSGML Events//EN',
+    'PRODID:-//ADDA//Tedbirler//AZ',
+    'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
-    `UID:${uid}`,
-    `DTSTAMP:${dtStamp}`,
-    `DTSTART:${start}`,
-    `DTEND:${end}`,
-    `SUMMARY:${title}`
+    'UID:' + input.uid,
+    'DTSTAMP:' + stamp,
+    'DTSTART:' + start,
+    'DTEND:' + end,
+    'SUMMARY:' + escapeIcs(input.title),
   ];
+  if (input.location) lines.push('LOCATION:' + escapeIcs(input.location));
+  if (input.description) lines.push('DESCRIPTION:' + escapeIcs(input.description));
+  lines.push('END:VEVENT', 'END:VCALENDAR');
 
-  if (location) ics.push(`LOCATION:${location}`);
-  if (description) {
-    const cleanDesc = description.replace(/\n/g, '\\n').replace(/\r/g, '');
-    ics.push(`DESCRIPTION:${cleanDesc}`);
-  }
-  
-  ics.push('END:VEVENT', 'END:VCALENDAR');
-  return ics.join('\r\n');
+  return lines.join('\r\n');
 }

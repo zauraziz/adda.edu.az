@@ -932,6 +932,8 @@ const MENU_T: Array<[string, string, string]> = [
   ['Təqvimə əlavə et', 'Добавить в календарь', 'Add to Calendar'],
   ['Uğursuz əməliyyat', 'Ошибка операции', 'Operation failed'],
   ['Status', 'Статус', 'Status'],
+  ['Göndərilir', 'Отправляется', 'Sending'],
+  ['Bu tədbirdə yerinizi təsdiqləyin', 'Подтвердите ваше участие в этом мероприятии', 'Confirm your attendance at this event'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.
