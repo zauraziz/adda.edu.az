@@ -43,6 +43,13 @@
     "sessionId": {
       "type": "string",
       "required": true
+    },
+    "fingerprint": {
+      "type": "string",
+      "unique": true,
+      "maxLength": 64,
+      "private": true,
+      "configurable": false
     }
   }
 }

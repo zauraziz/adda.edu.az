@@ -39,6 +39,28 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       },
     },
   },
+  // --- F2.6e email (nodemailer) ---
+  // Provayder-agnostikdir: SMTP env-ləri dəyişməklə Brevo / Gmail / ADDA-nın öz
+  // poçt serveri arasında KOD DƏYİŞMƏDƏN keçid etmək olar.
+  // SMTP_HOST təyin olunmayıbsa magic-link göndərilmir — link loga yazılır (dev rejimi).
+  email: {
+    config: {
+      provider: 'nodemailer',
+      providerOptions: {
+        host: env('SMTP_HOST', ''),
+        port: env.int('SMTP_PORT', 587),
+        secure: env.bool('SMTP_SECURE', false),
+        auth: {
+          user: env('SMTP_USER', ''),
+          pass: env('SMTP_PASS', ''),
+        },
+      },
+      settings: {
+        defaultFrom: env('SMTP_FROM', 'ADDA <no-reply@adda.edu.az>'),
+        defaultReplyTo: env('SMTP_REPLY_TO', env('SMTP_FROM', 'no-reply@adda.edu.az')),
+      },
+    },
+  },
   upload: {
     config: {
       provider: 'cloudinary',

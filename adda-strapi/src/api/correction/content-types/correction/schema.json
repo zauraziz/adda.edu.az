@@ -64,6 +64,16 @@
     },
     "moderatorNote": {
       "type": "text"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "identity": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::identity.identity",
+      "inversedBy": "corrections"
     }
   }
 }

@@ -5,7 +5,7 @@
     "singularName": "rsvp",
     "pluralName": "rsvps",
     "displayName": "RSVP",
-    "description": "Tədbir qeydiyyatları (RSVP) — iştirak təsdiqləri"
+    "description": "Tədbir qeydiyyatları (RSVP) — yalnız təsdiqlənmiş kimliklərdən (F2.6e)"
   },
   "options": {
     "draftAndPublish": false
@@ -47,6 +47,16 @@
     },
     "note": {
       "type": "text"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "identity": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::identity.identity",
+      "inversedBy": "rsvps"
     }
   }
 }

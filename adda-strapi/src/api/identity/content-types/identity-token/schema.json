@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "identity_tokens",
+  "info": {
+    "singularName": "identity-token",
+    "pluralName": "identity-tokens",
+    "displayName": "Kimlik tokeni",
+    "description": "Magic-link və sessiya tokenlərinin SHA-256 hash-ları. Plaintext HEÇ VAXT saxlanmır."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "tokenHash": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 64
+    },
+    "purpose": {
+      "type": "enumeration",
+      "enum": [
+        "magic",
+        "session"
+      ],
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "locale": {
+      "type": "string",
+      "maxLength": 5,
+      "default": "az"
+    },
+    "expiresAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "usedAt": {
+      "type": "datetime"
+    },
+    "revokedAt": {
+      "type": "datetime"
+    },
+    "identity": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::identity.identity",
+      "inversedBy": "tokens"
+    }
+  }
+}

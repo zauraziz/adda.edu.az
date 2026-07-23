@@ -31,6 +31,9 @@ const config: Core.Config.Middlewares = [
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',
+  // F2.6e — sürət limiti. `strapi::body`-dən SONRA olmalıdır: magic-link sorğusunda
+  // e-poçt başına sayğac üçün parse olunmuş body lazımdır.
+  'global::rate-limit',
   'strapi::session',
   'strapi::favicon',
   'strapi::public',

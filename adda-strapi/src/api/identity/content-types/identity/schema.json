@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "identities",
+  "info": {
+    "singularName": "identity",
+    "pluralName": "identities",
+    "displayName": "Kimlik",
+    "description": "Parolsuz (magic-link) təsdiqlənmiş e-poçt kimlikləri — RSVP və düzəliş göndərənləri"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "displayName": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "locale": {
+      "type": "string",
+      "maxLength": 5,
+      "default": "az"
+    },
+    "verifiedAt": {
+      "type": "datetime"
+    },
+    "lastSeenAt": {
+      "type": "datetime"
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "tokens": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::identity.identity-token",
+      "mappedBy": "identity"
+    },
+    "rsvps": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::rsvp.rsvp",
+      "mappedBy": "identity"
+    },
+    "corrections": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::correction.correction",
+      "mappedBy": "identity"
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { Core } from '@strapi/strapi';
 
 /**
@@ -36,6 +37,22 @@ const PUBLIC_CREATE_UIDS = [
   'api::reaction.reaction',
   'api::correction.correction',
 ];
+
+// --- F2.6e: SERT KIMLIK REJIMI ---
+// IDENTITY_ENFORCE=true olanda rsvp/correction ucun public `create` icazesi
+// HEM verilmir, HEM DE movcud qeyd silinir. Bundan sonra yeganə yazi yolu
+// /api/identity/submit/* -dir (tesdiqlenmis magic-link sessiyasi teleb olunur).
+//
+// NIYE ENV ILE SERTLENDIRILIR: Vercel (Next) ve Render (Strapi) musteqil deploy
+// olunur. Icaze derhal legv olunsa, F2.6e-2 frontend-i cixana qeder RSVP/duzelis
+// KESILERDI. Duzgun sira: (1) bu commit deploy olunur, (2) F2.6e-2 deploy olunur,
+// (3) Render-de IDENTITY_ENFORCE=true qoyulur.
+//
+// DIQQET: enforce sondurulu ikən public `create` hələ aciqdir, yəni gonderen
+// `identity` sahesini saxtalasdira biler (netice: yalniz saxta "tesdiqlenmis"
+// nisani, moderasiya novbesi toxunulmaz qalir). IDENTITY_ENFORCE=true bunu baglayir.
+const IDENTITY_GATED_UIDS = ['api::rsvp.rsvp', 'api::correction.correction'];
+const IDENTITY_ENFORCE = process.env.IDENTITY_ENFORCE === 'true';
 
 const SEED = {
   esasMenyu: [
@@ -1149,6 +1166,7 @@ export default {
 
         let addedCreate = 0;
         for (const uid of PUBLIC_CREATE_UIDS) {
+          if (IDENTITY_ENFORCE && IDENTITY_GATED_UIDS.indexOf(uid) !== -1) continue;
           const ct = registry[uid];
           if (!ct) {
             strapi.log.warn('[seed] create icaze: ' + uid + ' registrde yoxdur, otuldu.');
@@ -1166,6 +1184,25 @@ export default {
           }
         }
         strapi.log.info('[seed] public create icazeleri: ' + addedCreate + ' elave olundu.');
+
+        // F2.6e — sert rejimde kimlik-qapili tiplerin public create icazesini LEGV et.
+        // Strapi 5-de icaze qeydinin MOVCUDLUGU = icaze verilmis demekdir,
+        // ona gore geri alma = qeydin silinmesi. Idempotentdir.
+        if (IDENTITY_ENFORCE) {
+          let revoked = 0;
+          for (const uid of IDENTITY_GATED_UIDS) {
+            const rows = (await strapi.db
+              .query('plugin::users-permissions.permission')
+              .findMany({ where: { action: uid + '.create', role: role.id } })) as Array<{ id: number }>;
+            for (const r of rows) {
+              await strapi.db.query('plugin::users-permissions.permission').delete({ where: { id: r.id } });
+              revoked++;
+            }
+          }
+          strapi.log.info('[seed] F2.6e sert kimlik rejimi AKTIV — public create legv: ' + revoked);
+        } else {
+          strapi.log.warn('[seed] F2.6e sert kimlik rejimi SONDURULU (IDENTITY_ENFORCE!=true) — rsvp/correction public create hele aciqdir.');
+        }
       }
     } catch (err) {
       strapi.log.error('[seed] public icaze xetasi: ' + (err as Error).message);
@@ -1194,6 +1231,56 @@ export default {
       }
     } catch (err) {
       strapi.log.error('[seed] backfill xetasi: ' + (err as Error).message);
+    }
+
+    // F2.6e — reaction.fingerprint backfill (F2.1-in oyrenilmis dersi: sxem
+    // `unique` movcud setirleri DOLDURMUR; NULL qalan setirler dedupe-dan kenarda
+    // qalar). Once kohne dublikatlar temizlenir, sonra barmaq izleri yazilir.
+    // Idempotentdir: yalniz fingerprint IS NULL olan setirlere toxunur.
+    try {
+      const knex = strapi.db.connection;
+      if ((await knex.schema.hasTable('reactions')) && (await knex.schema.hasColumn('reactions', 'fingerprint'))) {
+        const rows = (await knex('reactions')
+          .whereNull('fingerprint')
+          .select('id', 'target_type', 'target_slug', 'emoji', 'session_id')) as Array<{
+          id: number;
+          target_type: string | null;
+          target_slug: string | null;
+          emoji: string | null;
+          session_id: string | null;
+        }>;
+        const seen = new Set<string>();
+        const dupes: number[] = [];
+        let filled = 0;
+        for (const r of rows) {
+          const fp = createHash('sha256')
+            .update([r.target_type || '', r.target_slug || '', r.emoji || '', r.session_id || ''].join('|'), 'utf8')
+            .digest('hex');
+          if (seen.has(fp)) {
+            dupes.push(r.id);
+            continue;
+          }
+          seen.add(fp);
+          await knex('reactions').where({ id: r.id }).update({ fingerprint: fp });
+          filled++;
+        }
+        if (dupes.length) await knex('reactions').whereIn('id', dupes).del();
+        if (filled || dupes.length) {
+          strapi.log.info('[seed] reaction fingerprint backfill: ' + filled + ' dolduruldu, ' + dupes.length + ' dublikat silindi.');
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] fingerprint backfill xetasi: ' + (err as Error).message);
+    }
+
+    // F2.6e — vaxti kecmis kimlik tokenlerini temizle (token expiry gigiyenasi).
+    try {
+      const pruned = await (
+        strapi.service('api::identity.identity') as unknown as { prune: () => Promise<number> }
+      ).prune();
+      if (pruned) strapi.log.info('[seed] kohne kimlik tokenleri silindi: ' + pruned);
+    } catch (err) {
+      strapi.log.warn('[seed] token prune otuldu: ' + (err as Error).message);
     }
 
     // Menyu — boşdursa doldur
