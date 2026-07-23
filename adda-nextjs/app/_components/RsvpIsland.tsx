@@ -3,9 +3,13 @@
 // F2.6b / Tədbir RSVP — cilalanmış qeydiyyat paneli (client island).
 // Status pill düymələri (dropdown yox), zərif input-lar, uğur vəziyyəti + .ics yükləmə.
 // Etiketlər props ilə (server komponentindən əvvəlcədən tərcümə — tam T lüğəti import edilmir).
+//
+// F2.6e-2: SƏRT KİMLİK. Ad/e-poçt sahələri silindi — Strapi onları təsdiqlənmiş
+// kimlikdən götürür. Yazı artıq birbaşa Strapi-yə getmir: sessiya httpOnly
+// cookie-dədir, ona görə POST `/api/submit/rsvp` route handler-indən keçir.
 import { useState } from 'react';
 import { generateIcs } from '@/lib/ics';
-import { STRAPI_URL } from '@/lib/strapi';
+import IdentityGate, { useIdentity } from './IdentityGate';
 
 type RsvpStatus = 'going' | 'maybe' | 'declined';
 
@@ -16,6 +20,7 @@ interface RsvpIslandProps {
   endAt?: string;
   location?: string;
   description?: string;
+  locale: string;
   labels: Record<string, string>;
 }
 
@@ -34,29 +39,44 @@ export default function RsvpIsland({
   endAt,
   location,
   description,
+  locale,
   labels,
 }: RsvpIslandProps) {
+  const { identity, loading, refresh } = useIdentity();
   const [state, setState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [status, setStatus] = useState<RsvpStatus>('going');
   const [guests, setGuests] = useState(0);
   const [note, setNote] = useState('');
+  const [err, setErr] = useState('');
+
+  const L = (k: string): string => labels[k] ?? k;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setState('loading');
+    setErr('');
     try {
-      const res = await fetch(STRAPI_URL + '/api/rsvps', {
+      const res = await fetch('/api/submit/rsvp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data: { eventSlug, eventTitle, name, email, status, guests, note },
-        }),
+        body: JSON.stringify({ eventSlug, eventTitle, status, guests, note }),
       });
-      if (!res.ok) throw new Error('rsvp failed');
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (res.status === 401) {
+        // Sessiya bitib — qapını yenidən göstər.
+        await refresh();
+        setState('idle');
+        return;
+      }
+      if (res.status === 429) {
+        setErr(L('tooMany'));
+        setState('error');
+        return;
+      }
+      if (!res.ok || !data.ok) throw new Error(data.error || 'rsvp failed');
       setState('success');
     } catch {
+      setErr(L('error'));
       setState('error');
     }
   }
@@ -82,6 +102,18 @@ export default function RsvpIsland({
     URL.revokeObjectURL(url);
   }
 
+  const header = (
+    <header className="rsvp-head">
+      <span className="rsvp-head-ic" aria-hidden="true">
+        <i className="ti ti-calendar-check" />
+      </span>
+      <div>
+        <h3 className="rsvp-title">{L('register')}</h3>
+        <p className="rsvp-sub">{L('subtitle')}</p>
+      </div>
+    </header>
+  );
+
   if (state === 'success') {
     return (
       <section className="rsvp">
@@ -89,11 +121,33 @@ export default function RsvpIsland({
           <div className="rsvp-check" aria-hidden="true">
             <i className="ti ti-check" />
           </div>
-          <p className="rsvp-success-msg">{labels.successMsg}</p>
+          <p className="rsvp-success-msg">{L('successMsg')}</p>
           <button type="button" className="rsvp-cal" onClick={downloadIcs}>
             <i className="ti ti-calendar-plus" />
-            {labels.addToCal}
+            {L('addToCal')}
           </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (loading) {
+    return (
+      <section className="rsvp" aria-busy="true">
+        {header}
+        <div className="rsvp-body rsvp-body--wait">
+          <span className="idn-spin" aria-hidden="true" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!identity) {
+    return (
+      <section className="rsvp">
+        {header}
+        <div className="rsvp-body">
+          <IdentityGate locale={locale} labels={labels} heading={L('gateRsvp')} />
         </div>
       </section>
     );
@@ -101,19 +155,17 @@ export default function RsvpIsland({
 
   return (
     <section className="rsvp">
-      <header className="rsvp-head">
-        <span className="rsvp-head-ic" aria-hidden="true">
-          <i className="ti ti-calendar-check" />
-        </span>
-        <div>
-          <h3 className="rsvp-title">{labels.register}</h3>
-          <p className="rsvp-sub">{labels.subtitle}</p>
-        </div>
-      </header>
+      {header}
 
       <form className="rsvp-body" onSubmit={handleSubmit}>
+        <div className="idn-chip">
+          <i className="ti ti-rosette-discount-check" aria-hidden="true" />
+          <span className="idn-chip-mail">{identity.email}</span>
+          <span className="idn-chip-tag">{L('verified')}</span>
+        </div>
+
         <div className="rsvp-status">
-          <span className="rsvp-label">{labels.status}</span>
+          <span className="rsvp-label">{L('status')}</span>
           <div className="rsvp-pills" role="group">
             {STATUSES.map((s) => (
               <button
@@ -124,44 +176,15 @@ export default function RsvpIsland({
                 aria-pressed={status === s}
               >
                 <i className={'ti ' + STATUS_ICONS[s]} />
-                {labels[s]}
+                {L(s)}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="rsvp-row">
-          <div className="rsvp-field">
-            <label className="rsvp-label" htmlFor="rsvp-name">
-              {labels.name}
-            </label>
-            <input
-              id="rsvp-name"
-              className="rsvp-input"
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="rsvp-field">
-            <label className="rsvp-label" htmlFor="rsvp-email">
-              {labels.email}
-            </label>
-            <input
-              id="rsvp-email"
-              className="rsvp-input"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-        </div>
-
         <div className="rsvp-field rsvp-field--sm">
           <label className="rsvp-label" htmlFor="rsvp-guests">
-            {labels.guests}
+            {L('guests')}
           </label>
           <input
             id="rsvp-guests"
@@ -176,7 +199,7 @@ export default function RsvpIsland({
 
         <div className="rsvp-field">
           <label className="rsvp-label" htmlFor="rsvp-note">
-            {labels.note}
+            {L('note')}
           </label>
           <textarea
             id="rsvp-note"
@@ -189,9 +212,9 @@ export default function RsvpIsland({
 
         <button type="submit" className="rsvp-submit" disabled={state === 'loading'}>
           <i className="ti ti-send" />
-          {state === 'loading' ? labels.sending : labels.submit}
+          {state === 'loading' ? L('sending') : L('submit')}
         </button>
-        {state === 'error' ? <p className="rsvp-err">{labels.error}</p> : null}
+        {state === 'error' ? <p className="rsvp-err">{err || L('error')}</p> : null}
       </form>
     </section>
   );

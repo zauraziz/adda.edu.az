@@ -1,0 +1,419 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F2.6e / Parolsuz kimlik (magic-link)
+   Kimlik kartı, təsdiq qapısı, təsdiq səhifəsi və island-lara
+   yerləşən "təsdiqlənmiş" çipi.
+   Tokenlər 01-base.css :root-dan. --nav-sh-md MÖVCUD DEYİL — işlədilmir.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Kart qabı ───────────────────────────────────────── */
+.idn-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+  padding: 1.6rem 1.8rem;
+  box-shadow: 0 14px 36px -14px rgba(11, 61, 92, 0.18);
+}
+.idn-card--wait {
+  display: grid;
+  place-items: center;
+  gap: 0.85rem;
+  min-height: 148px;
+}
+.idn-wait-p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+/* ── Yükləmə fırlanğıcı ──────────────────────────────── */
+.idn-spin {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid var(--gray-200);
+  border-top-color: var(--navy-600);
+  animation: idn-spin 720ms linear infinite;
+}
+@keyframes idn-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .idn-spin { animation-duration: 2400ms; }
+}
+
+/* ── Təsdiqlənmiş kimlik ─────────────────────────────── */
+.idn-who {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.idn-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--gradient-navy);
+  color: var(--gold-400);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+.idn-who-copy { min-width: 0; }
+.idn-who-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.idn-who-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-900);
+  overflow-wrap: anywhere;
+}
+.idn-who-mail {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  overflow-wrap: anywhere;
+}
+.idn-who-note {
+  margin: 0.55rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--gray-700);
+}
+
+/* ── Təsdiq nişanı ───────────────────────────────────── */
+.idn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--gold-100);
+  color: var(--gold-600);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+}
+.idn-badge i { font-size: 0.95rem; }
+
+.idn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.3rem;
+  padding: 0.6rem 1.05rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--gray-700);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              color var(--nav-dur) var(--nav-ease),
+              background var(--nav-dur) var(--nav-ease);
+}
+.idn-logout:hover {
+  border-color: var(--navy-600);
+  color: var(--navy-800);
+  background: var(--navy-50);
+}
+
+/* ── Təsdiq qapısı (island-ların içində də işlənir) ──── */
+.idn-gate {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.35rem;
+  border: 1px dashed var(--gray-300);
+  border-radius: 14px;
+  background: var(--gray-50);
+}
+.idn-gate--sent {
+  border-style: solid;
+  border-color: var(--gold-300);
+  background: var(--gold-100);
+}
+.idn-gate-ic {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: var(--navy-50);
+  color: var(--navy-700);
+  font-size: 1.3rem;
+}
+.idn-gate--sent .idn-gate-ic {
+  background: var(--white);
+  color: var(--gold-600);
+}
+.idn-gate-h {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-base);
+  line-height: 1.35;
+  color: var(--navy-900);
+}
+.idn-gate-p {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--gray-700);
+}
+.idn-gate-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.idn-gate-in {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 10px;
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-900);
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              box-shadow var(--nav-dur) var(--nav-ease);
+}
+.idn-gate-in:focus {
+  outline: none;
+  border-color: var(--navy-600);
+  box-shadow: 0 0 0 3px rgba(18, 96, 143, 0.14);
+}
+.idn-gate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--gradient-navy);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: transform var(--nav-dur) var(--nav-ease),
+              box-shadow var(--nav-dur) var(--nav-ease);
+}
+.idn-gate-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--nav-sh-lg);
+}
+.idn-gate-btn:disabled {
+  opacity: 0.62;
+  cursor: default;
+}
+.idn-gate-alt {
+  justify-self: start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--navy-700);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.idn-gate-alt:hover { color: var(--navy-900); }
+.idn-gate-err {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--error);
+}
+
+/* ── Form içi kimlik çipi ────────────────────────────── */
+.idn-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.15rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--gold-300);
+  border-radius: 999px;
+  background: var(--gold-100);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.idn-chip > i {
+  flex-shrink: 0;
+  color: var(--gold-600);
+  font-size: 1.05rem;
+}
+.idn-chip-mail {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--navy-900);
+  font-weight: 600;
+}
+.idn-chip-tag {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--gold-600);
+  font-weight: 600;
+  font-size: var(--text-xs);
+}
+
+/* ── Təsdiq səhifəsi ─────────────────────────────────── */
+.idn-verify {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2.4rem 1.8rem;
+}
+.idn-verify-ic {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  background: var(--navy-50);
+  color: var(--navy-700);
+  font-size: 1.8rem;
+}
+.idn-verify-ic--ok {
+  background: var(--gold-100);
+  color: var(--gold-600);
+}
+.idn-verify-ic--bad {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+.idn-verify-h {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-xl);
+  line-height: 1.25;
+  color: var(--navy-900);
+}
+.idn-verify-p {
+  margin: 0;
+  max-width: 44ch;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--gray-700);
+}
+.idn-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.7rem;
+  border: none;
+  border-radius: 11px;
+  background: var(--gradient-navy);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: transform var(--nav-dur) var(--nav-ease),
+              box-shadow var(--nav-dur) var(--nav-ease);
+}
+.idn-verify-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--nav-sh-lg);
+}
+.idn-verify-btn:disabled {
+  opacity: 0.62;
+  cursor: default;
+}
+.idn-verify-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  color: var(--navy-700);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+.idn-verify-cta:hover { color: var(--navy-900); }
+.idn-verify-cta i {
+  transition: transform var(--nav-dur) var(--nav-ease);
+}
+.idn-verify-cta:hover i { transform: translateX(3px); }
+
+/* ── Kimlik səhifəsinin başlığı ──────────────────────── */
+.idn-page {
+  padding: 2.6rem 0 4rem;
+}
+.idn-page-head {
+  max-width: 720px;
+  margin: 0 auto 1.6rem;
+}
+.idn-page-kicker {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+.idn-page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--navy-900);
+}
+.idn-page-sub {
+  margin: 0.6rem 0 0;
+  max-width: 56ch;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--gray-700);
+}
+
+/* ── Island-lardakı gözləmə vəziyyətləri ─────────────── */
+.rsvp-body--wait,
+.cx--wait {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+}
+.cx--wait {
+  max-width: 860px;
+  margin: 2.5rem auto 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+}
+
+@media (max-width: 560px) {
+  .idn-card { padding: 1.3rem; }
+  .idn-gate-form { flex-direction: column; }
+  .idn-gate-btn { justify-content: center; }
+}

@@ -1,6 +1,11 @@
 "use client";
+
+// F2.6d duzelis adasi + soz-seviyyeli LCS diff.
+// F2.6e-2: SERT KIMLIK. Ad/e-poct saheleri silindi — Strapi onlari tesdiqlenmis
+// kimlikden goturur. POST birbasa Strapi-ye yox, `/api/submit/correction`
+// route handler-ine gedir (sessiya httpOnly cookie-dedir).
 import { useMemo, useState } from "react";
-import { STRAPI_URL } from "@/lib/strapi";
+import IdentityGate, { useIdentity } from "./IdentityGate";
 
 type TargetType = "article" | "announcement" | "event" | "milestone";
 type FieldKey = "title" | "body" | "other";
@@ -10,6 +15,7 @@ interface CorrectionIslandProps {
   targetType: TargetType;
   targetSlug: string;
   title?: string;
+  locale: string;
   labels: Record<string, string>;
 }
 
@@ -73,14 +79,13 @@ function wordDiff(a: string, b: string): DiffOp[] {
   return merged;
 }
 
-export default function CorrectionIsland({ targetType, targetSlug, title, labels }: CorrectionIslandProps) {
+export default function CorrectionIsland({ targetType, targetSlug, title, locale, labels }: CorrectionIslandProps) {
+  const { identity, loading, refresh } = useIdentity();
   const [open, setOpen] = useState(false);
   const [field, setField] = useState<FieldKey>("body");
   const [current, setCurrent] = useState("");
   const [suggested, setSuggested] = useState("");
   const [reason, setReason] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [err, setErr] = useState("");
 
@@ -104,23 +109,31 @@ export default function CorrectionIsland({ targetType, targetSlug, title, labels
     setPhase("sending");
     setErr("");
     try {
-      const res = await fetch(`${STRAPI_URL}/api/corrections`, {
+      const res = await fetch("/api/submit/correction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          data: {
-            targetType,
-            targetSlug,
-            fieldPath: field,
-            currentValue: current || undefined,
-            suggestedValue: suggested,
-            reason: reason || undefined,
-            submitterName: name || undefined,
-            submitterEmail: email || undefined,
-          },
+          targetType,
+          targetSlug,
+          fieldPath: field,
+          currentValue: current,
+          suggestedValue: suggested,
+          reason,
         }),
       });
-      if (!res.ok) throw new Error("correction post failed");
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (res.status === 401) {
+        // Sessiya bitib — kimlik qapisini yeniden goster.
+        await refresh();
+        setPhase("idle");
+        return;
+      }
+      if (res.status === 429) {
+        setErr(L("tooMany"));
+        setPhase("error");
+        return;
+      }
+      if (!res.ok || !data.ok) throw new Error(data.error || "correction post failed");
       setPhase("done");
     } catch {
       setErr(L("error"));
@@ -137,6 +150,36 @@ export default function CorrectionIsland({ targetType, targetSlug, title, labels
           <span className="cx-trigger-cta">{L("prompt")}</span>
         </button>
       </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <section className="cx cx--wait" aria-busy="true">
+        <span className="idn-spin" aria-hidden="true" />
+      </section>
+    );
+  }
+
+  if (!identity) {
+    return (
+      <section className="cx" aria-label={L("title")}>
+        <header className="cx-head">
+          <span className="cx-head-ic">
+            <i className="ti ti-pencil" aria-hidden="true" />
+          </span>
+          <div>
+            <h3 className="cx-title">{L("title")}</h3>
+            <p className="cx-sub">{L("subtitle")}</p>
+          </div>
+          <button type="button" className="cx-x" aria-label={L("close")} onClick={() => setOpen(false)}>
+            <i className="ti ti-x" aria-hidden="true" />
+          </button>
+        </header>
+        <div className="cx-body">
+          <IdentityGate locale={locale} labels={labels} heading={L("gateCorrection")} />
+        </div>
+      </section>
     );
   }
 
@@ -158,6 +201,7 @@ export default function CorrectionIsland({ targetType, targetSlug, title, labels
   }
 
   const fields: FieldKey[] = ["title", "body", "other"];
+  const identityEmail = identity.email;
 
   return (
     <section className="cx" aria-label={L("title")}>
@@ -175,6 +219,12 @@ export default function CorrectionIsland({ targetType, targetSlug, title, labels
       </header>
 
       <div className="cx-body">
+        <div className="idn-chip">
+          <i className="ti ti-rosette-discount-check" aria-hidden="true" />
+          <span className="idn-chip-mail">{identityEmail}</span>
+          <span className="idn-chip-tag">{L("verified")}</span>
+        </div>
+
         <div className="cx-field">
           <span className="cx-label">{L("fieldLabel")}</span>
           <div className="cx-seg" role="group">
@@ -244,27 +294,6 @@ export default function CorrectionIsland({ targetType, targetSlug, title, labels
             value={reason}
             onChange={(e) => setReason(e.target.value)}
           />
-        </div>
-
-        <div className="cx-row">
-          <div className="cx-field">
-            <label className="cx-label" htmlFor="cx-name">
-              {L("nameLabel")}
-            </label>
-            <input id="cx-name" className="cx-in" value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-          <div className="cx-field">
-            <label className="cx-label" htmlFor="cx-email">
-              {L("emailLabel")}
-            </label>
-            <input
-              id="cx-email"
-              type="email"
-              className="cx-in"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
         </div>
 
         <div className="cx-actions">

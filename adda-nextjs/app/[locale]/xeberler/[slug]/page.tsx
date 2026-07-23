@@ -21,6 +21,7 @@ import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import '../../../_styles/22-reactions.css';
 import '../../../_styles/23-correction.css';
+import '../../../_styles/24-identity.css';
 import ReactionBar from '../../../_components/ReactionBar';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import type { Metadata } from 'next';
@@ -80,6 +81,19 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
     close: tr('Bağla', locale),
     error: tr('Uğursuz əməliyyat', locale),
     emptyErr: tr('Zəhmət olmasa düzəliş mətnini daxil edin.', locale),
+    // --- F2.6e kimlik qapisi ---
+    verifyHeading: tr('Kimliyinizi təsdiqləyin', locale),
+    verifyIntro: tr('E-poçtunuza bir dəfəlik giriş linki göndərəcəyik. Parol lazım deyil.', locale),
+    emailPlaceholder: tr('Email ünvanınız', locale),
+    sendLink: tr('Giriş linki göndər', locale),
+    linkSent: tr('Link göndərildi', locale),
+    checkInbox: tr('Poçt qutunuzu yoxlayın. Link 15 dəqiqə etibarlıdır.', locale),
+    otherAddress: tr('Başqa ünvan yaz', locale),
+    badEmail: tr('Düzgün e-poçt ünvanı daxil edin.', locale),
+    tooMany: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
+    unconfigured: tr('Kimlik xidməti hazırda əlçatan deyil.', locale),
+    verified: tr('Təsdiqlənmiş', locale),
+    gateCorrection: tr('Düzəliş göndərmək üçün kimlik təsdiqi lazımdır', locale),
   };
 
   return (
@@ -131,7 +145,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
           <ReactionBar targetType="article" targetSlug={slug} />
         </div>
         <div className="container" style={{ paddingBottom: '48px' }}>
-          <CorrectionIsland targetType="article" targetSlug={slug} title={article.title} labels={correctionLabels} />
+          <CorrectionIsland targetType="article" targetSlug={slug} title={article.title} locale={locale} labels={correctionLabels} />
         </div>
         </article>
       </main>
