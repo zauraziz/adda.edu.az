@@ -20,7 +20,9 @@ import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import '../../../_styles/22-reactions.css';
+import '../../../_styles/23-correction.css';
 import ReactionBar from '../../../_components/ReactionBar';
+import CorrectionIsland from '../../../_components/CorrectionIsland';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -53,6 +55,32 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
 
   const img = mediaUrl(article.cover);
   const bodyHtml = article.body ? await marked.parse(article.body) : '';
+
+  const correctionLabels: Record<string, string> = {
+    promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
+    prompt: tr('Düzəliş təklif et', locale),
+    title: tr('Düzəliş təklifi', locale),
+    subtitle: tr('Təklifiniz moderasiyadan sonra nəzərdən keçiriləcək.', locale),
+    fieldLabel: tr('Hansı hissə?', locale),
+    f_title: tr('Başlıq', locale),
+    f_body: tr('Mətn', locale),
+    f_other: tr('Digər', locale),
+    currentLabel: tr('Cari mətn', locale),
+    currentHint: tr('Düzəliş lazım olan hissəni bura köçürün', locale),
+    suggestedLabel: tr('Təklif etdiyiniz düzəliş', locale),
+    suggestedHint: tr('Düzgün variant', locale),
+    diffLabel: tr('Fərq önizləməsi', locale),
+    reasonLabel: tr('Səbəb (istəyə bağlı)', locale),
+    nameLabel: tr('Adınız', locale),
+    emailLabel: tr('Email (istəyə bağlı)', locale),
+    submit: tr('Düzəlişi göndər', locale),
+    sending: tr('Göndərilir', locale),
+    successMsg: tr('Təklifiniz göndərildi. Töhfəniz üçün təşəkkür edirik.', locale),
+    successSub: tr('Redaktə komandamız qısa zamanda yoxlayacaq.', locale),
+    close: tr('Bağla', locale),
+    error: tr('Uğursuz əməliyyat', locale),
+    emptyErr: tr('Zəhmət olmasa düzəliş mətnini daxil edin.', locale),
+  };
 
   return (
     <>
@@ -101,6 +129,9 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
         
         <div className="container" style={{ paddingBottom: '40px' }}>
           <ReactionBar targetType="article" targetSlug={slug} />
+        </div>
+        <div className="container" style={{ paddingBottom: '48px' }}>
+          <CorrectionIsland targetType="article" targetSlug={slug} title={article.title} labels={correctionLabels} />
         </div>
         </article>
       </main>

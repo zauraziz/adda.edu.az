@@ -12,6 +12,27 @@ export function isLocale(x: string): x is Locale {
 
 // [az, ru, en]
 const T: Array<[string, string, string]> = [
+  // --- F2.6d düzəliş i18n (az, ru, en) ---
+  ['Bu səhifədə səhv gördünüz?', 'Заметили ошибку на этой странице?', 'Spotted an error on this page?'],
+  ['Düzəliş təklif et', 'Предложить исправление', 'Suggest a correction'],
+  ['Düzəliş təklifi', 'Предложение правки', 'Suggest an edit'],
+  ['Təklifiniz moderasiyadan sonra nəzərdən keçiriləcək.', 'Ваше предложение будет рассмотрено после модерации.', 'Your suggestion will be reviewed after moderation.'],
+  ['Hansı hissə?', 'Какая часть?', 'Which part?'],
+  ['Başlıq', 'Заголовок', 'Title'],
+  ['Mətn', 'Текст', 'Text'],
+  ['Digər', 'Другое', 'Other'],
+  ['Cari mətn', 'Текущий текст', 'Current text'],
+  ['Düzəliş lazım olan hissəni bura köçürün', 'Вставьте сюда фрагмент, требующий исправления', 'Paste the passage that needs fixing'],
+  ['Təklif etdiyiniz düzəliş', 'Ваш вариант исправления', 'Your suggested correction'],
+  ['Düzgün variant', 'Правильный вариант', 'The corrected version'],
+  ['Fərq önizləməsi', 'Предпросмотр изменений', 'Change preview'],
+  ['Səbəb (istəyə bağlı)', 'Причина (необязательно)', 'Reason (optional)'],
+  ['Email (istəyə bağlı)', 'Email (необязательно)', 'Email (optional)'],
+  ['Düzəlişi göndər', 'Отправить исправление', 'Submit correction'],
+  ['Təklifiniz göndərildi. Töhfəniz üçün təşəkkür edirik.', 'Ваше предложение отправлено. Спасибо за вклад!', 'Your suggestion has been sent. Thank you for contributing!'],
+  ['Redaktə komandamız qısa zamanda yoxlayacaq.', 'Наша редакция скоро его проверит.', 'Our editorial team will review it shortly.'],
+  ['Bağla', 'Закрыть', 'Close'],
+  ['Zəhmət olmasa düzəliş mətnini daxil edin.', 'Пожалуйста, введите текст исправления.', 'Please enter the corrected text.'],
   ['Azərbaycan Dövlət Dəniz Akademiyasının rəsmi internet portalı. Portal dövlət informasiya resurslarına dair müəyyən edilmiş tələblərə uyğun olaraq fəaliyyət göstərir.',
    'Официальный интернет-портал Азербайджанской государственной морской академии. Портал функционирует в соответствии с установленными требованиями к государственным информационным ресурсам.',
    'The official web portal of the Azerbaijan State Marine Academy. The portal operates in accordance with the established requirements for state information resources.'],

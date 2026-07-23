@@ -23,6 +23,7 @@ import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import '../../../_styles/21-rsvp.css';
 import '../../../_styles/22-reactions.css';
+import '../../../_styles/23-correction.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -31,6 +32,7 @@ import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
 import RsvpIsland from '../../../_components/RsvpIsland';
 import ReactionBar from '../../../_components/ReactionBar';
+import CorrectionIsland from '../../../_components/CorrectionIsland';
 import { getEventBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDateTime, EVENT_FORMAT_LABELS } from '@/lib/format';
@@ -78,6 +80,32 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     successMsg: tr('Qeydiyyatınız qəbul olundu.', locale),
     addToCal: tr('Təqvimə əlavə et', locale),
     error: tr('Uğursuz əməliyyat', locale),
+  };
+
+  const correctionLabels: Record<string, string> = {
+    promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
+    prompt: tr('Düzəliş təklif et', locale),
+    title: tr('Düzəliş təklifi', locale),
+    subtitle: tr('Təklifiniz moderasiyadan sonra nəzərdən keçiriləcək.', locale),
+    fieldLabel: tr('Hansı hissə?', locale),
+    f_title: tr('Başlıq', locale),
+    f_body: tr('Mətn', locale),
+    f_other: tr('Digər', locale),
+    currentLabel: tr('Cari mətn', locale),
+    currentHint: tr('Düzəliş lazım olan hissəni bura köçürün', locale),
+    suggestedLabel: tr('Təklif etdiyiniz düzəliş', locale),
+    suggestedHint: tr('Düzgün variant', locale),
+    diffLabel: tr('Fərq önizləməsi', locale),
+    reasonLabel: tr('Səbəb (istəyə bağlı)', locale),
+    nameLabel: tr('Adınız', locale),
+    emailLabel: tr('Email (istəyə bağlı)', locale),
+    submit: tr('Düzəlişi göndər', locale),
+    sending: tr('Göndərilir', locale),
+    successMsg: tr('Təklifiniz göndərildi. Töhfəniz üçün təşəkkür edirik.', locale),
+    successSub: tr('Redaktə komandamız qısa zamanda yoxlayacaq.', locale),
+    close: tr('Bağla', locale),
+    error: tr('Uğursuz əməliyyat', locale),
+    emptyErr: tr('Zəhmət olmasa düzəliş mətnini daxil edin.', locale),
   };
 
   return (
@@ -211,6 +239,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
             <div className="na-reactions">
               <ReactionBar targetType="event" targetSlug={slug} />
             </div>
+
+            <CorrectionIsland targetType="event" targetSlug={slug} title={ev.title} labels={correctionLabels} />
           </div>
         </article>
       </main>
