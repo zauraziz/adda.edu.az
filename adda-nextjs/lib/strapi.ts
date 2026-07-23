@@ -1,7 +1,13 @@
 // ADDA CMS (Strapi 5) — məlumat çəkmə qatı.
 // Server komponentlərində istifadə üçün (CORS yoxdur, sürətli, ISR keşi ilə).
 
-export const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'http://localhost:1337';
+// Default: PUBLIC Strapi (demo/prod) — Vercel-de HEC BIR env deyiseni teleb olunmur.
+// Lokal Strapi-ye qosulmaq ucun .env.local yarat:
+//   NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+// DIQQET: yalniz NEXT_PUBLIC_* brauzere inline olunur — client island-lar
+// (RSVP / Reaksiya / Duzelis) sadece bunu oxuya bilir.
+export const STRAPI_URL =
+  process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'https://adda-edu-az.onrender.com';
 
 export type Locale = 'az' | 'ru' | 'en';
 
