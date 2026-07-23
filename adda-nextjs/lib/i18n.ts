@@ -12,6 +12,17 @@ export function isLocale(x: string): x is Locale {
 
 // [az, ru, en]
 const T: Array<[string, string, string]> = [
+  // --- F2.6e-3 push i18n (az, ru, en) ---
+  ['Bildirişlər', 'Уведомления', 'Notifications'],
+  ['Bildirişlər aktivdir', 'Уведомления включены', 'Notifications are on'],
+  ['Yeni xəbər, elan və tədbirlər barədə brauzer bildirişi alın.', 'Получайте браузерные уведомления о новостях, объявлениях и мероприятиях.', 'Get browser notifications about news, announcements and events.'],
+  ['Bildirişləri aç', 'Включить уведомления', 'Turn on notifications'],
+  ['Bildirişləri söndür', 'Отключить уведомления', 'Turn off notifications'],
+  ['Emal olunur', 'Обрабатывается', 'Working'],
+  ['Bu brauzer bildirişləri dəstəkləmir.', 'Этот браузер не поддерживает уведомления.', 'This browser does not support notifications.'],
+  ['Bildirişlər brauzer parametrlərində bloklanıb. İcazəni oradan aça bilərsiniz.', 'Уведомления заблокированы в настройках браузера. Разрешение можно включить там.', 'Notifications are blocked in your browser settings. You can allow them there.'],
+  ['Bildiriş xidməti hazırda əlçatan deyil.', 'Служба уведомлений сейчас недоступна.', 'The notification service is currently unavailable.'],
+  ['Hansı bildirişləri almaq istəyirsiniz?', 'Какие уведомления вы хотите получать?', 'Which notifications would you like?'],
   // --- F2.6e kimlik i18n (az, ru, en) ---
   ['Kimlik', 'Личность', 'Identity'],
   ['Kimlik təsdiqi', 'Подтверждение личности', 'Identity verification'],

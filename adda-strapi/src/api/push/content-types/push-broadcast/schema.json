@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "push_broadcasts",
+  "info": {
+    "singularName": "push-broadcast",
+    "pluralName": "push-broadcasts",
+    "displayName": "Push yayımı",
+    "description": "Yayım jurnalı. dedupeKey unikaldır — təkrar publish təkrar bildiriş göndərmir."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "dedupeKey": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 200
+    },
+    "targetUid": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "docId": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "slug": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "sentCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "failedCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "prunedCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "sentAt": {
+      "type": "datetime"
+    }
+  }
+}

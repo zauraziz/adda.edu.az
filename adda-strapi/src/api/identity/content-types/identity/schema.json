@@ -57,6 +57,12 @@
       "relation": "oneToMany",
       "target": "api::correction.correction",
       "mappedBy": "identity"
+    },
+    "pushSubscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::push.push-subscription",
+      "mappedBy": "identity"
     }
   }
 }

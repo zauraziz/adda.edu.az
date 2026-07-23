@@ -68,6 +68,8 @@ const RULES: Rule[] = [
   { method: 'POST', path: '/api/identity/submit/rsvp', ip: [intEnv('RL_SUBMIT_RSVP_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/identity/submit/correction', ip: [intEnv('RL_SUBMIT_CORRECTION_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/reactions', ip: [intEnv('RL_REACTIONS_IP', 30), 5 * MIN] },
+  { method: 'POST', path: '/api/push/subscribe', ip: [intEnv('RL_PUSH_SUB_IP', 12), 60 * MIN] },
+  { method: 'POST', path: '/api/push/unsubscribe', ip: [intEnv('RL_PUSH_UNSUB_IP', 12), 60 * MIN] },
   { method: 'POST', path: '/api/rsvps', ip: [intEnv('RL_RSVPS_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/corrections', ip: [intEnv('RL_CORRECTIONS_IP', 10), 60 * MIN] },
 ];

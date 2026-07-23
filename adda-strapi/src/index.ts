@@ -1115,6 +1115,41 @@ export default {
         return result;
       }
     );
+
+    // --- F2.6e-3: publish -> Web Push yayimi ---
+    // Ayrica middleware: relSync-e toxunmuruq. `publish` action-i deqiq tutulur,
+    // lifecycle-lerde "yeni derc olundu"-nu ayird etmek ise kovrekdir.
+    // Yayim FIRE-AND-FORGET-dir: push gonderisi publish sorgusunu bloklamamalidir.
+    // Idempotentlik push-broadcast.dedupeKey unikal indeksi ile baza seviyyesindedir,
+    // ona gore i18n uzre 3 defe publish olsa da bildiris BIR defe gedir.
+    const PUSH_UIDS = [
+      'api::article.article',
+      'api::announcement.announcement',
+      'api::event.event',
+    ];
+    (strapi.documents as unknown as { use: (m: unknown) => void }).use(
+      async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
+        const result = (await next()) as Record<string, unknown> | null;
+        if ((context.action as string) !== 'publish') return result;
+        const uid = context.uid as string;
+        if (PUSH_UIDS.indexOf(uid) === -1) return result;
+        const params = (context.params as Record<string, unknown>) || {};
+        const documentId =
+          (params.documentId as string) || ((result && (result.documentId as string)) as string) || '';
+        if (!documentId) return result;
+        try {
+          const push = strapi.service('api::push.push') as unknown as {
+            broadcast: (u: string, d: string) => Promise<void>;
+          };
+          void push.broadcast(uid, documentId).catch((e: Error) => {
+            strapi.log.error('[push] yayim uğursuz: ' + e.message);
+          });
+        } catch (e) {
+          strapi.log.error('[push] yayim baslatila bilmedi: ' + (e as Error).message);
+        }
+        return result;
+      }
+    );
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {

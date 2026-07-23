@@ -21,10 +21,12 @@ import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/24-identity.css';
+import '../../_styles/25-push.css';
 import type { Metadata } from 'next';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import IdentityIsland from '../../_components/IdentityIsland';
+import PushIsland from '../../_components/PushIsland';
 import { getMenu, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -72,6 +74,23 @@ export default async function IdentityPage({ params }: { params: Promise<{ local
     requestNew: tr('Yeni link istə', locale),
   };
 
+  const pushLabels: Record<string, string> = {
+    pushTitle: tr('Bildirişlər', locale),
+    pushOn: tr('Bildirişlər aktivdir', locale),
+    pushIntro: tr('Yeni xəbər, elan və tədbirlər barədə brauzer bildirişi alın.', locale),
+    turnOn: tr('Bildirişləri aç', locale),
+    turnOff: tr('Bildirişləri söndür', locale),
+    working: tr('Emal olunur', locale),
+    unsupported: tr('Bu brauzer bildirişləri dəstəkləmir.', locale),
+    blocked: tr('Bildirişlər brauzer parametrlərində bloklanıb. İcazəni oradan aça bilərsiniz.', locale),
+    pushUnconfigured: tr('Bildiriş xidməti hazırda əlçatan deyil.', locale),
+    topicsLabel: tr('Hansı bildirişləri almaq istəyirsiniz?', locale),
+    topic_news: tr('Xəbərlər', locale),
+    topic_announcements: tr('Elanlar', locale),
+    topic_events: tr('Tədbirlər', locale),
+    error: tr('Uğursuz əməliyyat', locale),
+  };
+
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
@@ -85,6 +104,7 @@ export default async function IdentityPage({ params }: { params: Promise<{ local
             </p>
           </header>
           <IdentityIsland locale={locale} labels={labels} />
+          <PushIsland locale={locale} labels={pushLabels} />
         </div>
       </main>
       <Footer menu={menu} locale={locale} />

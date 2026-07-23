@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "push_subscriptions",
+  "info": {
+    "singularName": "push-subscription",
+    "pluralName": "push-subscriptions",
+    "displayName": "Push abunəliyi",
+    "description": "Web Push (VAPID) abunəlikləri. Endpoint və açarlar private — API ilə heç vaxt qaytarılmır."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "endpoint": {
+      "type": "text",
+      "required": true,
+      "private": true
+    },
+    "endpointHash": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 64,
+      "private": true
+    },
+    "p256dh": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "private": true
+    },
+    "auth": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "private": true
+    },
+    "locale": {
+      "type": "string",
+      "maxLength": 5,
+      "default": "az"
+    },
+    "topics": {
+      "type": "json"
+    },
+    "failCount": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "lastSeenAt": {
+      "type": "datetime"
+    },
+    "identity": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::identity.identity",
+      "inversedBy": "pushSubscriptions"
+    }
+  }
+}
