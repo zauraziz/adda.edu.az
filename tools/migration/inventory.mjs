@@ -151,13 +151,50 @@ if (borderline.length) {
   console.log('\nSerhed sehife yoxdur — hedler temiz ayirir.');
 }
 
-// Dil örtüyündəki boşluqlar — hansı ID hansı dildə yoxdur
-const gaps = {};
-for (const r of records) (gaps[`${r.section}/${r.id}`] ||= new Set()).add(r.locale);
-const partial = Object.entries(gaps).filter(([, s]) => s.size < 3);
-console.log(`\nTam olmayan dil ortuyu: ${partial.length} sened (3 dilden azi)`);
-for (const [k, s] of partial.slice(0, 8)) console.log(`  ${k}: yalniz ${[...s].join(',')}`);
-if (partial.length > 8) console.log(`  ... ve ${partial.length - 8} daha`);
+// ── Dil kombinasiyaları — MƏZMUN STRATEGİYASININ ƏSAS RƏQƏMİ ────────────
+//
+// Köhnə CMS-də tərcümələr qismənidir: bəzi yazılar üç dildə, bəziləri yalnız az,
+// bəziləri (ASCO mənbəli xəbərlər) yalnız ru/en. Bu cədvəl neçə yazının hansı
+// vəziyyətdə olduğunu dəqiq göstərir — Strapi-yə nə köçürüləcəyi buradan çıxır.
+const combos = {};
+for (const r of records) {
+  const k = `${r.section}/${r.id}`;
+  (combos[k] ||= { section: r.section, locales: new Set() }).locales.add(r.locale);
+}
+
+const byCombo = {};
+for (const v of Object.values(combos)) {
+  const combo = [...v.locales].sort().join(',');
+  ((byCombo[v.section] ||= {})[combo] ||= { n: 0 });
+  byCombo[v.section][combo].n++;
+}
+
+console.log('\n=== DIL KOMBINASIYALARI ===');
+console.log('bolme     | diller      | sened');
+console.log('----------+-------------+-------');
+let noAz = 0;
+let azOnly = 0;
+let full = 0;
+for (const [section, m] of Object.entries(byCombo)) {
+  for (const [combo, v] of Object.entries(m).sort((a, b) => b[1].n - a[1].n)) {
+    console.log(section.padEnd(9) + ' | ' + combo.padEnd(11) + ' | ' + String(v.n).padStart(5));
+    if (!combo.split(',').includes('az')) noAz += v.n;
+    else if (combo === 'az') azOnly += v.n;
+    if (combo === 'az,en,ru') full += v.n;
+  }
+}
+console.log('\n  tam trilingual (az,en,ru) : ' + full);
+console.log('  yalniz az                  : ' + azOnly);
+console.log('  az YOXDUR (ru ve/veya en)  : ' + noAz);
+if (noAz) {
+  console.log('  -> az-siz senedler var. Strapi-de `az` menbe-dildir (F2.3 relSync),');
+  console.log('     ona gore bunlar ucun ayrica qerar lazimdir: ya az tercume olunur,');
+  console.log('     ya da menbe-dil hemin senedler ucun ru/en goturulur.');
+  const samples = Object.entries(combos)
+    .filter(([, v]) => !v.locales.has('az'))
+    .slice(0, 8);
+  for (const [k, v] of samples) console.log(`     ${k}: ${[...v.locales].sort().join(',')}`);
+}
 
 // Selektor skorlaması — K2 üçün əsas nəticə
 console.log('\n=== SELEKTOR SKORLARI (govde ucun namizedler) ===');

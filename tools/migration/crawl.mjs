@@ -4,10 +4,18 @@
 // yalnız xam HTML-i diskə yazır. Səbəb: selektorları tənzimləmək üçün
 // ADDA-nın serverinə TƏKRAR getmək lazım gəlməsin. Bir dəfə yığ, dəfələrlə parse et.
 //
-// AZ-ƏVVƏL MƏNTİQİ: hər ID üçün əvvəlcə yalnız `az` yüklənir və təsnif olunur.
-// Boş çıxarsa ru/en heç yüklənmir — boş ID 3 yerinə 1 sorğuya başa gəlir.
-// Zond göstərdi ki, aralıqların böyük hissəsi boşdur (news 1..1091 tamamilə),
-// ona görə bu, ~35% qənaətdir.
+// DİLLƏR MÜSTƏQİL SKAN OLUNUR — bu, ölçülmüş qərardır, optimallaşdırma deyil.
+//
+// K1a-da "az-əvvəl" gating var idi: az boş çıxsa ru/en yüklənmirdi (~35% qənaət).
+// K1d diaqnostikası bunu TƏHLÜKƏLİ göstərdi:
+//   /ru/news/1336 -> 200 "ASCO организовало морской тур..."
+//   /en/news/1452 -> 200 "Wishing you all the happiness..."
+//   /az/news/1984 -> 200, lakin /ru/ və /en/ -> 404
+// Yəni köhnə CMS-də vahid ID ardıcıllığı var, hər yazının dil sahələri ayrıdır
+// və tərcümələr QİSMƏNDİR. az-da olmayıb ru/en-də olan yazı mümkündür —
+// gating belə yazıları səssizcə itirərdi.
+//
+// `--gate` ilə köhnə davranışı qaytarmaq olar, amma `news` üçün İŞLƏTMƏ.
 //
 // İstifadə:
 //   node crawl.mjs                                 # hamısı
@@ -35,6 +43,7 @@ const sections = args.section ? String(args.section).split(',') : Object.keys(SE
 const locales = args.locales ? String(args.locales).split(',') : LOCALES;
 const dryRun = Boolean(args['dry-run']);
 const force = Boolean(args.force);
+const gate = Boolean(args.gate); // köhnə az-əvvəl davranışı (təhlükəli — yuxarıya bax)
 
 for (const name of sections) {
   if (!SECTIONS[name]) {
@@ -47,19 +56,22 @@ const manifest = force ? { __version: MANIFEST_VERSION } : load();
 const hasAz = locales.includes('az');
 const others = locales.filter((l) => l !== 'az');
 
-let probes = 0;
+let ids = 0;
 for (const name of sections) {
   const s = SECTIONS[name];
   const from = args.from ? parseInt(args.from, 10) : s.from;
   const to = args.to ? parseInt(args.to, 10) : s.to;
-  probes += to - from + 1;
+  ids += to - from + 1;
 }
+const requests = gate ? ids : ids * locales.length;
 
 console.log(`Bolmeler  : ${sections.join(', ')}`);
-console.log(`Diller    : ${locales.join(', ')}`);
-console.log(`az zondu  : ${probes} sorgu`);
-console.log(`+ tapilan her ID ucun ${others.length} elave sorgu`);
-console.log(`Tex. vaxt : ${Math.ceil((probes * 0.4) / 60)}-${Math.ceil((probes * 0.4 * 2.2) / 60)} deqiqe\n`);
+console.log(`Diller    : ${locales.join(', ')}  ${gate ? '(GATE: az bos olanda digerleri atlanir)' : '(musteqil skan)'}`);
+console.log(`ID sayi   : ${ids}`);
+console.log(`Sorgu     : ~${requests}${gate ? ' + tapilanlar ucun elave' : ''}`);
+console.log(`Tex. vaxt : ~${Math.ceil((requests * 0.4) / 60)} deqiqe`);
+if (gate) console.log('DIQQET: --gate `news` ucun TEHLUKELIDIR — ru/en-de olub az-da olmayan yazilar itir.');
+console.log('');
 
 if (dryRun) {
   console.log('--dry-run: hec bir sorgu gonderilmedi.');
@@ -84,41 +96,30 @@ for (const name of sections) {
 
   console.log(`--- ${name} (${section.label}) ${from}..${to} ---`);
 
-  for (let id = from; id <= to; id++) {
-    let exists = false;
+  /** Bir (bölmə, id, dil) üçlüyünü al və qeyd et. Nəticə: tapıldımı. */
+  async function fetchOne(id, locale) {
+    const prev = manifest[key(name, id, locale)];
+    if (prev && !force) {
+      totals.skipped++;
+      return prev.kind === 'hit';
+    }
+    const res = await get(BASE + section.path(locale, id));
+    const kind = classify(res, section.minBytes);
+    stats[kind]++;
+    totals[kind]++;
+    if (kind === 'hit') writeFileSync(rawPath(name, id, locale), res.body, 'utf8');
+    record(manifest, name, id, locale, { kind, status: res.status, bytes: res.bytes, error: res.error || undefined });
+    return kind === 'hit';
+  }
 
-    if (hasAz) {
-      const prev = manifest[key(name, id, 'az')];
-      if (prev && !force) {
-        exists = prev.kind === 'hit';
-        totals.skipped++;
-      } else {
-        const res = await get(BASE + section.path('az', id));
-        const kind = classify(res, section.minBytes);
-        stats[kind]++;
-        totals[kind]++;
-        exists = kind === 'hit';
-        if (exists) writeFileSync(rawPath(name, id, 'az'), res.body, 'utf8');
-        record(manifest, name, id, 'az', { kind, status: res.status, bytes: res.bytes, error: res.error || undefined });
+  for (let id = from; id <= to; id++) {
+    if (gate && hasAz) {
+      // Köhnə davranış: az boş olanda digər dillər atlanır.
+      if (await fetchOne(id, 'az')) {
+        for (const locale of others) await fetchOne(id, locale);
       }
     } else {
-      exists = true; // az istənilməyibsə digər dilləri şərtsiz yoxla
-    }
-
-    if (exists) {
-      for (const locale of others) {
-        if (manifest[key(name, id, locale)] && !force) {
-          totals.skipped++;
-          continue;
-        }
-        const res = await get(BASE + section.path(locale, id));
-        const kind = classify(res, section.minBytes);
-        if (kind === 'hit') {
-          writeFileSync(rawPath(name, id, locale), res.body, 'utf8');
-          totals.extra++;
-        }
-        record(manifest, name, id, locale, { kind, status: res.status, bytes: res.bytes, error: res.error || undefined });
-      }
+      for (const locale of locales) await fetchOne(id, locale);
     }
 
     // Windows konsolunda `\r` bezen yenilenmir — her 200 ID-de tam setir yazilir
@@ -138,8 +139,7 @@ for (const name of sections) {
 
 flush(manifest);
 console.log(`\n=== CRAWL BITDI ===`);
-console.log(`  az tapilan : ${totals.hit}`);
-console.log(`  ru/en elave: ${totals.extra}`);
+console.log(`  tapilan    : ${totals.hit}`);
 console.log(`  404        : ${totals.notfound}`);
 console.log(`  bos sablon : ${totals.empty}`);
 console.log(`  xeta       : ${totals.error}`);

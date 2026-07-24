@@ -72,6 +72,32 @@ Hədlər (`config.mjs` → `minBytes`) qəsdən **aşağı** seçilib: real səh
 itirməkdənsə bir neçə boşu içəri buraxmaq daha təhlükəsizdir. `inventory.mjs`
 həddə yaxın olanları **SERHED** kimi işarələyir — onlara əl ilə baxılır.
 
+## Dil modeli (K1d diaqnostikası ilə ÖLÇÜLÜB)
+
+Köhnə CMS-də **vahid ID ardıcıllığı** var; hər yazının dil sahələri ayrıdır və
+boş dil üçün server 404 qaytarır. Tərcümələr **qismənidir**:
+
+```
+/az/news/1984 -> 200  "Bu gün ADDA-nın 30 illik yubileyidir"
+/ru/news/1984 -> 404
+/ru/news/1336 -> 200  "ASCO организовало морской тур..."
+/en/news/1336 -> 200  "ASCO organized a cruise tour..."
+/en/news/1452 -> 200  "Wishing you all the happiness..."
+```
+
+Nəticələr:
+
+1. **Dillər müstəqil skan olunmalıdır.** az boş olanda ru/en-i atlamaq (`--gate`)
+   `news` üçün TƏHLÜKƏLİDİR — az-da olmayıb ru/en-də olan yazılar itir.
+   Ona görə gating standart olaraq **söndürülüb**.
+2. `content` (41 ID), `announce` (6 ID görünən) və `faculty` (2 ID) hər üç dildə
+   **eyni ID dəsti** verir və `content/1` üç dildə fərqli ölçü + düzgün tərcümə
+   olunmuş başlıq qaytarır — bunlar tam trilingualdır.
+3. Yalnız `news` qarışıqdır. Dəqiq mənzərəni `inventory.mjs`-in
+   **DIL KOMBINASIYALARI** cədvəli verəcək.
+
+Qeyd: akademiya `en`-də **ASMA**, `ru`-da **АГМА** kimi keçir.
+
 ## Təxmini həcm (zond nümunələrindən)
 
 | Bölmə | Real aralıq | Təxmin |
