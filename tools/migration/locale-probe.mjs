@@ -8,9 +8,11 @@
 // URL-dir. Onu artıq yığılmış az HTML-indən oxuyuruq — ŞƏBƏKƏYƏ ÇIXMADAN.
 //
 // İstifadə:
-//   node locale-probe.mjs                 # diskdəki hər bölmədən bir nümunə
-//   node locale-probe.mjs news 1984       # konkret səhifə
+//   node locale-probe.mjs                   # diskdəki hər bölmədən bir nümunə
+//   node locale-probe.mjs news 1984         # konkret səhifə
 //   node locale-probe.mjs --live news 1984  # tapılan namizədləri HTTP ilə sına
+//   node locale-probe.mjs --home            # hər dilin ana səhifəsindən ID-ləri çıxar
+//   node locale-probe.mjs --scan en news    # bir dildə ID fəzasını nümunələ
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { BASE, SECTIONS } from './config.mjs';
@@ -19,7 +21,106 @@ import { RAW } from './lib/paths.mjs';
 
 const argv = process.argv.slice(2);
 const live = argv.includes('--live');
+const homeMode = argv.includes('--home');
+const scanMode = argv.includes('--scan');
 const rest = argv.filter((a) => !a.startsWith('--'));
+
+const LOCALES = ['az', 'ru', 'en'];
+const LINK_RE = /\/(az|ru|en)\/(content|news|announce|faculty)\/(\d+)/g;
+
+/**
+ * --home: hər dilin ana səhifəsini yükləyib oradakı bölmə/ID linklərini çıxarır.
+ *
+ * NİYƏ HƏLLEDİCİ: `/ru/news/1984` 404 verir, amma bu, ru xəbərlərin YOX olduğunu
+ * sübut etmir — köhnə CMS-lərdə hər dil ayrı yazıdır və öz ID-si olur.
+ * Ana səhifə öz dilindəki həqiqi ID-lərə link verir, yəni cavab oradadır.
+ */
+async function scanHome() {
+  const summary = {};
+  for (const locale of LOCALES) {
+    const res = await get(`${BASE}/${locale}/`);
+    const found = {};
+    for (const m of res.body.matchAll(LINK_RE)) {
+      if (m[1] !== locale) continue; // basqa dile aid linkleri sayma
+      (found[m[2]] ||= new Set()).add(Number(m[3]));
+    }
+    summary[locale] = { status: res.status, bytes: res.bytes, found };
+  }
+
+  console.log('\n=== ANA SEHIFE LINKLERI ===');
+  console.log('dil | bolme    | say | en kicik ID | en boyuk ID | numuneler');
+  console.log('----+----------+-----+-------------+-------------+-------------------');
+  for (const locale of LOCALES) {
+    const s = summary[locale];
+    const sections = Object.keys(s.found);
+    if (!sections.length) {
+      console.log(`${locale.padEnd(3)} | (bolme/ID linki tapilmadi, status ${s.status}, ${s.bytes} b)`);
+      continue;
+    }
+    for (const sec of sections) {
+      const ids = [...s.found[sec]].sort((a, b) => a - b);
+      console.log(
+        locale.padEnd(3) + ' | ' + sec.padEnd(8) + ' | ' + String(ids.length).padStart(3) + ' | ' +
+        String(ids[0]).padStart(11) + ' | ' + String(ids[ids.length - 1]).padStart(11) + ' | ' +
+        ids.slice(-4).join(', ')
+      );
+    }
+  }
+
+  const azNews = summary.az.found.news ? [...summary.az.found.news] : [];
+  const ruNews = summary.ru.found.news ? [...summary.ru.found.news] : [];
+  const enNews = summary.en.found.news ? [...summary.en.found.news] : [];
+  console.log('\n  OXUNUS:');
+  if (!ruNews.length && !enNews.length) {
+    console.log('  -> ru/en ana sehifesinde XEBER LINKI YOXDUR = xeberler yalniz az-dir.');
+  } else {
+    const overlap = ruNews.filter((id) => azNews.includes(id)).length;
+    console.log(`  -> ru/en xeberler MOVCUDDUR. az ile ustuste dusen ID: ${overlap}/${ruNews.length}`);
+    console.log(overlap ? '     Eyni ID sistemi ola biler.' : '     AYRI ID sistemi — uygunlasdirma tarix/mezmun uzre lazimdir.');
+  }
+}
+
+/** --scan <locale> <section>: bir dildə ID fəzasını bərabər nümunələ. */
+async function scanLocale(locale, sectionName) {
+  const section = SECTIONS[sectionName];
+  if (!section) {
+    console.error(`Bilinmeyen bolme: ${sectionName}`);
+    process.exit(1);
+  }
+  console.log(`\n=== ${locale}/${sectionName} — ${section.from}..${section.to} ===`);
+  console.log('   id | status |   bayt | basliq');
+  console.log('------+--------+--------+--------------------------------------');
+  const n = 15;
+  const step = (section.to - section.from) / (n - 1);
+  let hits = 0;
+  for (let i = 0; i < n; i++) {
+    const id = Math.round(section.from + i * step);
+    const res = await get(BASE + section.path(locale, id));
+    const t = res.body.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+    const title = (t ? t[1] : res.error || '').replace(/\s+/g, ' ').trim().slice(0, 38);
+    if (res.status === 200) hits++;
+    console.log(
+      String(id).padStart(5) + ' | ' + String(res.status).padStart(6) + ' | ' + String(res.bytes).padStart(6) + ' | ' + title
+    );
+  }
+  console.log(`\n  200 cavab: ${hits}/${n}`);
+}
+
+if (homeMode) {
+  await scanHome();
+  console.log('\nBu ciximi mene gonder.\n');
+  process.exit(0);
+}
+if (scanMode) {
+  const [locale, sectionName] = rest;
+  if (!locale || !sectionName) {
+    console.error('Istifade: node locale-probe.mjs --scan <dil> <bolme>');
+    process.exit(1);
+  }
+  await scanLocale(locale, sectionName);
+  console.log('\nBu ciximi mene gonder.\n');
+  process.exit(0);
+}
 
 /** Diskdə mövcud olan bir nümunə seç. */
 function pickSample(section) {
