@@ -17,6 +17,9 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 0 — zond | `probe.mjs` | bəli (~50 sorğu) | konsol hesabatı |
 | 1 — yığım | `crawl.mjs` | bəli (~6000 sorğu) | `data/raw/**.html` |
 | 2 — inventar | `inventory.mjs` | **yox** | `data/inventory.{json,csv}` |
+| 2b — struktur | `structure.mjs`, `dump.mjs` | **yox** | konsol diaqnostikası |
+| 3 — ekstraksiya | `extract.mjs` | **yox** | `data/extracted/*.json` |
+| 3b — baxış | `preview.mjs` | **yox** | konsol |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -114,8 +117,45 @@ az-əvvəl məntiqi sayəsində boş ID cəmi 1 sorğuya başa gəlir.
 
 - Gövdənin CSS selektoru → `inventory.mjs` namizədləri **ölçür**, təxmin etmir
 
+## Markup (K1g ilə ÖLÇÜLÜB)
+
+```html
+<div class="center static-inside">
+  <div class="page-title-line">
+    <span class="page-title">- XƏBƏRLƏR -</span>   <!-- content/faculty-də BAŞLIQ -->
+    <div class="page-options">…sayğac, A-/A+, arxiv…</div>
+  </div>
+  <div class="news-image"><img …>                  <!-- əsas şəkil -->
+    <div class="news_gallery"><a class="more_photo" href="/az/photogallery/1984">
+  </div>
+  <span class="news-title">BAŞLIQ<br>2026.07.15 14:53</span>
+  <span class="news-text">…GÖVDƏ…</span>
+  <div class="share-social">…</div>
+</div>
+```
+
+**Ən vacib tapıntı:** başlıq və tarix EYNİ elementdədir, `<br>` ilə ayrılıb.
+Tarix başqa heç yerdə yoxdur — səhifədəki `availableDates` massivi arxiv
+təqvimidir və bütün səhifələrdə eynidir (`news` üçün 687 tarix, `announce` üçün 284).
+
+| Bölmə | Başlıq | Tarix | Gövdə |
+|---|---|---|---|
+| news, announce | `span.news-title` (`<br>`-dan əvvəl) | `<br>`-dan sonra | `span.news-text` |
+| content, faculty | `span.page-title` (`- … -` kəsilir) | yoxdur | `div.page-full-text` |
+
+⚠️ `div.page-title-line` gövdə zibili kimi silinməməlidir — `content` başlığı onun içindədir.
+
+## Slug siyasəti
+
+`az` mənbədir: ru/en **eyni slug-ı paylaşır**, ona görə dil dəyişdiricisi
+URL-i dəyişmir. az olmayan sənədlərdə (2 ədəd) slug öz dilindən yaranır.
+Azərbaycan hərfləri əl ilə xəritələnir — `toLowerCase()` `I`/`İ` fərqini korlayır.
+
 ## Növbəti mərhələlər
 
-- **K2** — ekstraksiya: HTML→Markdown, slug (`ə→e, ş→s, ç→c...`), redirect xəritəsi
-- **K3** — idxal: idempotent Strapi API importer, az əvvəl → ru/en lokalizasiya, media → Cloudinary
+- **K2 ✓** — ekstraksiya: HTML→Markdown, slug, redirect xəritəsi, media manifesti
+- **K3** — idxal: idempotent Strapi API importer, media → Cloudinary
 - **K4** — doğrulama: say pariteti, Meilisearch reindex, 301 redirect-lər, redaktə düzəlişləri
+
+Arxiv **az-only** qalır (qərar: 23.07.2026). Tərcümə örtüyü: 1212 sənəddən
+cəmi 28-i tam trilingualdır. ru/en lokalizasiyaları yalnız mövcud olduqda yaradılır.
