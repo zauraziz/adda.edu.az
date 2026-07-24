@@ -15,6 +15,7 @@
 // ƏN VACİB TAPINTI: başlıq və tarix EYNİ elementdədir, `<br>` ilə ayrılıb.
 // Tarix başqa heç yerdə yoxdur — səhifədəki `availableDates` massivi arxiv
 // təqvimidir və bütün səhifələrdə eynidir.
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { load as loadHtml } from 'cheerio';
@@ -187,6 +188,44 @@ if (!all.length) {
   process.exit(1);
 }
 
+// ── BOŞ ŞABLONLARIN ATILMASI ─────────────────────────────────────────────
+//
+// `content`/`faculty` bölmələrində olmayan ID üçün server 404 yox, BOŞ ŞABLON
+// qaytarır. `inventory.mjs` bunları hash ilə tapıb atır, amma `extract.mjs`
+// data/raw/-i birbasa oxuduğu üçün filtri özü tətbiq etməlidir — əks halda
+// 57 zibil sənəd Strapi-yə düşər.
+//
+// Yalnız bu iki bölməyə tətbiq olunur: news/announce düzgün 404 verir,
+// orada şablon yoxdur və eyni başlıqlı təkrar elanlar səhvən atıla bilərdi.
+const TEMPLATE_SECTIONS = ['content', 'faculty'];
+const fingerprint = (r) => createHash('sha1').update(r.title + '\u0000' + r.bodyMarkdown, 'utf8').digest('hex');
+
+const groups = {};
+for (const r of all) {
+  if (!TEMPLATE_SECTIONS.includes(r.section)) continue;
+  ((groups[r.section + '|' + r.locale] ||= {})[fingerprint(r)] ||= []).push(r);
+}
+const templateHits = [];
+for (const [gk, byHash] of Object.entries(groups)) {
+  for (const list of Object.values(byHash)) {
+    if (list.length < 2) continue;
+    for (const r of list) r.isTemplate = true;
+    templateHits.push({ group: gk, count: list.length, title: list[0].title.slice(0, 38) });
+  }
+}
+const droppedTemplates = all.filter((r) => r.isTemplate).length;
+for (let i = all.length - 1; i >= 0; i--) if (all[i].isTemplate) all.splice(i, 1);
+
+if (templateHits.length) {
+  console.log('=== BOS SABLONLAR ATILDI ===');
+  console.log('bolme/dil       | say | numune basliq');
+  console.log('----------------+-----+------------------------------');
+  for (const t of templateHits.sort((a, b) => b.count - a.count)) {
+    console.log(t.group.padEnd(15) + ' | ' + String(t.count).padStart(3) + ' | ' + t.title);
+  }
+  console.log('');
+}
+
 // ── Slug: `az` mənbədir, ru/en eyni slug-ı paylaşır ───────────────────────
 //
 // Səbəb: dil dəyişdiricisi eyni sənədin digər dilinə keçəndə URL sabit qalsın.
@@ -196,13 +235,32 @@ const slugByDoc = new Map();
 const order = { az: 0, ru: 1, en: 2 };
 all.sort((a, b) => (order[a.locale] - order[b.locale]) || a.legacyId - b.legacyId);
 
+// Toqquşmada əvvəlcə İL sınanır, sonra rəqəm. Səbəb: eyni elan hər il
+// təkrarlanır ("Akademiyaya bərpa olunmaq istəyənlərin nəzərinə!") və
+// `...-2026` `...-2`-dən həm oxunaqlı, həm də SEO üçün yaxşıdır.
+let suffixed = 0;
+function makeSlug(rec) {
+  const base = slugify(rec.title, `${rec.section}-${rec.legacyId}`);
+  if (!seen.has(base)) {
+    seen.add(base);
+    return base;
+  }
+  suffixed++;
+  const year = rec.publishedAt ? rec.publishedAt.slice(0, 4) : '';
+  if (year && !seen.has(`${base}-${year}`)) {
+    seen.add(`${base}-${year}`);
+    return `${base}-${year}`;
+  }
+  return uniqueSlug(year ? `${base}-${year}` : base, seen);
+}
+
 for (const r of all) {
   const docKey = `${r.section}/${r.legacyId}`;
   if (slugByDoc.has(docKey)) {
     r.slug = slugByDoc.get(docKey);
     continue;
   }
-  r.slug = uniqueSlug(slugify(r.title, `${r.section}-${r.legacyId}`), seen);
+  r.slug = makeSlug(r);
   slugByDoc.set(docKey, r.slug);
 }
 
@@ -255,8 +313,12 @@ if (Object.keys(counts).length) {
 const dates = all.filter((r) => r.publishedAt).map((r) => r.publishedAt).sort();
 if (dates.length) console.log(`\nTarix araligi: ${dates[0].slice(0, 10)} .. ${dates[dates.length - 1].slice(0, 10)}`);
 
-const dupes = all.length - new Set(all.map((r) => `${r.slug}|${r.locale}`)).size;
-console.log(`Slug toqqusmasi (hell olundu): ${dupes}`);
+// DIQQET: bu, HELL OLUNMUS toqqusmalarin sayidir. Qalan toqqusma her zaman 0-dir,
+// onu saymaq mena kesb etmirdi (evvelki versiyada bele idi ve hemise 0 gosterirdi).
+console.log(`Slug toqqusmasi (suffiks elave olundu): ${suffixed}`);
+const stillDupe = all.length - new Set(all.map((r) => `${r.slug}|${r.locale}`)).size;
+if (stillDupe) console.log(`XETA: ${stillDupe} tekrar slug qaldi!`);
+if (droppedTemplates) console.log(`Atilan bos sablon: ${droppedTemplates}`);
 
 console.log(`\nYazildi:`);
 console.log(`  data/extracted/*.json  (${Object.keys(bySection).length} bolme)`);
