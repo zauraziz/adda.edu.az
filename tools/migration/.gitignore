@@ -1,3 +1,6 @@
 # Xam HTML + inventar nəticələri — yüzlərlə MB, repo-ya girməməlidir.
 data/
 node_modules/
+
+# Strapi admin tokeni — HEC VAXT commit olunmamalidir
+.env

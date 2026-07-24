@@ -12,7 +12,9 @@
     "crawl": "node crawl.mjs",
     "inventory": "node inventory.mjs",
     "extract": "node extract.mjs",
-    "preview": "node preview.mjs"
+    "preview": "node preview.mjs",
+    "plan": "node import.mjs --plan",
+    "import": "node import.mjs"
   },
   "dependencies": {
     "cheerio": "1.0.0",

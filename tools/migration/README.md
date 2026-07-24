@@ -20,6 +20,7 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 2b — struktur | `structure.mjs`, `dump.mjs` | **yox** | konsol diaqnostikası |
 | 3 — ekstraksiya | `extract.mjs` | **yox** | `data/extracted/*.json` |
 | 3b — baxış | `preview.mjs` | **yox** | konsol |
+| 4 — idxal | `import.mjs` | Strapi | `data/import-state.json` |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -154,7 +155,29 @@ Azərbaycan hərfləri əl ilə xəritələnir — `toLowerCase()` `I`/`İ` fər
 ## Növbəti mərhələlər
 
 - **K2 ✓** — ekstraksiya: HTML→Markdown, slug, redirect xəritəsi, media manifesti
-- **K3** — idxal: idempotent Strapi API importer, media → Cloudinary
+- **K3 ✓** — idxal: idempotent Strapi importer (media hələ yox)
+
+### İdxal (K3)
+
+```bash
+cp .env.example .env      # STRAPI_TOKEN-i doldur (Full access, Unlimited)
+node import.mjs --plan                     # hec ne yazmir, xeriteni gosterir
+node import.mjs --section=news --limit=5   # kicik sinaq
+node import.mjs                            # hamisi
+```
+
+- **Standart hədəf lokaldır.** Prod-a yazmaq üçün `.env`-də `STRAPI_URL`
+  dəyişməli VƏ `--force` verilməlidir — təsadüfən prod-a 1200 sənəd tökməmək üçün.
+- **İdempotent:** `data/import-state.json` `bölmə/id → documentId` saxlayır.
+  Təkrar run yeni yazı yaratmır, mövcudu yeniləyir. Yarıda kəsilsə davam etdirilir.
+- **Dil:** `az` əvvəl yaradılır (documentId alınır), ru/en həmin sənədə
+  lokalizasiya kimi əlavə olunur — F2.3 relSync-in gözlədiyi mənbə-dil qaydası.
+- `isEmpty` işarəli qeydlər atlanır (`--include-empty` ilə daxil edilir).
+- `publishedAt` payload-a qoyulur, əks halda qeydlər DRAFT qalıb public API-də
+  görünməzdi.
+
+`content/*` səhifələrinin hədəf tipi `mapping.mjs`-dədir (canlı saytın
+sitemap-ından). Səhv təyinat varsa həmin faylı düzəlt və `--plan` ilə yoxla.
 - **K4** — doğrulama: say pariteti, Meilisearch reindex, 301 redirect-lər, redaktə düzəlişləri
 
 Arxiv **az-only** qalır (qərar: 23.07.2026). Tərcümə örtüyü: 1212 sənəddən
