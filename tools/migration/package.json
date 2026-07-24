@@ -1,0 +1,18 @@
+{
+  "name": "adda-migration",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "adda.edu.az kohne saytindan Strapi-ye mezmun miqrasiyasi",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "probe": "node probe.mjs",
+    "crawl": "node crawl.mjs",
+    "inventory": "node inventory.mjs"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0"
+  }
+}
