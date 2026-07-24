@@ -9,6 +9,7 @@
 //   npm install
 //   node inventory.mjs
 //   node inventory.mjs --section=news
+import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { load as loadHtml } from 'cheerio';
@@ -81,6 +82,7 @@ function parseFile(section, id, locale, html) {
     files: files.length,
     fileUrls: files,
     selectors,
+    text,
   };
 }
 
@@ -109,8 +111,46 @@ if (!records.length) {
   process.exit(1);
 }
 
+// ── BOŞ ŞABLONLARIN AŞKARLANMASI (ölçüyə güvənmədən) ────────────────────
+//
+// `minBytes` hədləri yalnız `az` üzərində ölçülmüşdü, amma boş şablonun ölçüsü
+// dilə görə dəyişir (az 24449 / ru 24934 / en 23181 b). Rus şablonu həddən
+// yuxarı qaldığı üçün 26 boş `content` səhifəsi "real" sayılmışdı.
+//
+// Etibarlı üsul: boş şablon HƏR ID üçün eyni mətndir. Yəni (bölmə, dil) qrupu
+// daxilində eyni mətn hash-i təkrarlanırsa — o, şablondur. Hədd lazım deyil.
+const hashOf = (t) => createHash('sha1').update(t, 'utf8').digest('hex').slice(0, 16);
+const groups = {};
+for (const r of records) {
+  r.hash = hashOf(r.text || '');
+  ((groups[r.section + '|' + r.locale] ||= {})[r.hash] ||= []).push(r);
+}
+const templates = [];
+for (const [gk, byHash] of Object.entries(groups)) {
+  for (const [, list] of Object.entries(byHash)) {
+    if (list.length < 2) continue;
+    for (const r of list) r.isTemplate = true;
+    templates.push({ group: gk, count: list.length, sample: list[0].title.slice(0, 38), len: list[0].textLen });
+  }
+}
+
+if (templates.length) {
+  console.log('=== BOS SABLONLAR ASKARLANDI (eyni metn tekrarlanir) ===');
+  console.log('bolme/dil       | say | metn | numune basliq');
+  console.log('----------------+-----+------+-----------------------------');
+  for (const t of templates.sort((a, b) => b.count - a.count)) {
+    console.log(t.group.padEnd(15) + ' | ' + String(t.count).padStart(3) + ' | ' + String(t.len).padStart(4) + ' | ' + t.sample);
+  }
+  console.log('');
+}
+
+const dropped = records.filter((r) => r.isTemplate).length;
+const all = records.length;
+for (let i = records.length - 1; i >= 0; i--) if (records[i].isTemplate) records.splice(i, 1);
+console.log(`Inventar: ${all} fayldan ${dropped} bos sablon cixarildi -> ${records.length} real sened\n`);
+
 // ── Hesabat ──────────────────────────────────────────────────────────────
-console.log(`\nInventar: ${records.length} sened parse olundu\n`);
+
 
 const bySection = {};
 for (const r of records) {
@@ -218,7 +258,11 @@ console.log('  -> Govde namizedi: "tapildi" sayi yuksek VE metn payi 100%-den as
 console.log('     100%-e cox yaxin olanlar butun sehifeni tutur (yeni sarmalayicidir).');
 
 // ── Çıxış faylları ───────────────────────────────────────────────────────
-writeFileSync(dataPath('inventory.json'), JSON.stringify(records, null, 1), 'utf8');
+writeFileSync(
+  dataPath('inventory.json'),
+  JSON.stringify(records.map((r) => { const { text, ...keep } = r; return keep; }), null, 1),
+  'utf8'
+);
 
 const head = ['section', 'id', 'locale', 'title', 'date', 'bytes', 'textLen', 'images', 'files'];
 const rows = [head.join(',')];
