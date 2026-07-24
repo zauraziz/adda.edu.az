@@ -21,6 +21,7 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 3 — ekstraksiya | `extract.mjs` | **yox** | `data/extracted/*.json` |
 | 3b — baxış | `preview.mjs` | **yox** | konsol |
 | 4 — idxal | `import.mjs` | Strapi | `data/import-state.json` |
+| 5 — doğrulama | `verify.mjs` | Strapi (oxu) | konsol hesabatı |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -178,7 +179,25 @@ node import.mjs                            # hamisi
 
 `content/*` səhifələrinin hədəf tipi `mapping.mjs`-dədir (canlı saytın
 sitemap-ından). Səhv təyinat varsa həmin faylı düzəlt və `--plan` ilə yoxla.
-- **K4** — doğrulama: say pariteti, Meilisearch reindex, 301 redirect-lər, redaktə düzəlişləri
+- **K4 ✓** — doğrulama: `verify.mjs`
+- **K5** — media → Cloudinary, 301 redirect-lər, Meilisearch reindex, redaktə düzəlişləri
+
+### Doğrulama (K4)
+
+```bash
+node verify.mjs
+```
+
+Beş yoxlama:
+
+1. **Say pariteti** — hər tip/dil üçün mənbə vs Strapi
+2. **Lokalizasiya bütövlüyü** — ru/en eyni `documentId` altındadırmı.
+   Ən kritik yoxlama: `PUT ?locale=ru` lokalizasiya yaratmalıdır, ayrıca
+   sənəd yox. HTTP 200 almaq bunu sübut etmir.
+3. **Boş gövdələr** — `isEmpty` filtri işləyibmi
+4. **Slug sağlamlığı** — `article-1` kimi avtomatik slug qalıbmı
+   (bunlar idxaldan əvvəl əl ilə əlavə olunmuş qeydlərdir)
+5. **Draft/dərc** — `publishedAt` işləyibmi; draft qeydlər public API-də görünmür
 
 Arxiv **az-only** qalır (qərar: 23.07.2026). Tərcümə örtüyü: 1212 sənəddən
 cəmi 28-i tam trilingualdır. ru/en lokalizasiyaları yalnız mövcud olduqda yaradılır.
