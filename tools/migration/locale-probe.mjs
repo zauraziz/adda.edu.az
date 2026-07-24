@@ -12,6 +12,7 @@
 //   node locale-probe.mjs news 1984         # konkret səhifə
 //   node locale-probe.mjs --live news 1984  # tapılan namizədləri HTTP ilə sına
 //   node locale-probe.mjs --home            # hər dilin ana səhifəsindən ID-ləri çıxar
+//   node locale-probe.mjs --home --live     # + həmin linkləri həqiqətən sına
 //   node locale-probe.mjs --scan en news    # bir dildə ID fəzasını nümunələ
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -64,6 +65,32 @@ async function scanHome() {
         String(ids[0]).padStart(11) + ' | ' + String(ids[ids.length - 1]).padStart(11) + ' | ' +
         ids.slice(-4).join(', ')
       );
+    }
+  }
+
+  // --live: ana səhifənin ÖZ linklərini sına.
+  //
+  // NİYƏ: ru ana səhifəsi /ru/news/1984-ə link verir, amma həmin URL 404 verir.
+  // Deməli linklərin bir hissəsi mexaniki generasiya olunur (mövcudluq
+  // yoxlanmadan), bir hissəsi isə realdır. Yalnız HTTP cavabı ayırd edə bilər.
+  if (live) {
+    console.log('\n=== ANA SEHIFE LINKLERININ SINAGI ===');
+    for (const locale of LOCALES) {
+      const news = summary[locale].found.news ? [...summary[locale].found.news].sort((a, b) => a - b) : [];
+      if (!news.length) {
+        console.log(`\n  ${locale}: xeber linki yoxdur`);
+        continue;
+      }
+      console.log(`\n  --- ${locale}/news (${news.length} link) ---`);
+      let ok = 0;
+      for (const id of news) {
+        const res = await get(`${BASE}/${locale}/news/${id}`);
+        const t = res.body.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        const title = (t ? t[1] : res.error || '').replace(/\s+/g, ' ').trim().slice(0, 44);
+        if (res.status === 200) ok++;
+        console.log(`    ${String(id).padStart(5)} | ${String(res.status).padStart(3)} | ${String(res.bytes).padStart(6)} b | ${title}`);
+      }
+      console.log(`    -> ${ok}/${news.length} isleyir`);
     }
   }
 
