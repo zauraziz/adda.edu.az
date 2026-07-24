@@ -226,6 +226,22 @@ if (templateHits.length) {
   console.log('');
 }
 
+// ── BOŞ SƏNƏDLƏR — İŞARƏLƏNİR, SİLİNMİR ─────────────────────────────────
+//
+// Şablon filtrindən sonra 14 qeyd qalır: real başlığı var, gövdəsi yoxdur.
+// Bunlar EYNİ CİNSDƏN DEYİL:
+//   content/59 "DƏNİZ NAVİQASİYASI MÜHƏNDİSLİYİ" — 0 simvol, menyuda YOXDUR
+//              (content/58 eyni başlıqla var) -> yetim, atılmalıdır
+//   content/22 "TƏDRİSİN TƏŞKİLİ ... PROREKTOR" — gövdə ".", amma MENYUDA VAR
+//              -> atılsa menyu boşluğa gedər, məzmun sonradan doldurulmalıdır
+//
+// Ona görə silmirik: `isEmpty` işarəsi qoyulur, K3 standart olaraq atlayır,
+// siyahı isə tam çap olunur ki, əl ilə qərar verilsin.
+for (const r of all) {
+  r.isEmpty = r.bodyMarkdown.length < 40 && !r.images.length && !r.documents.length;
+}
+const emptyRecords = all.filter((r) => r.isEmpty);
+
 // ── Slug: `az` mənbədir, ru/en eyni slug-ı paylaşır ───────────────────────
 //
 // Səbəb: dil dəyişdiricisi eyni sənədin digər dilinə keçəndə URL sabit qalsın.
@@ -298,6 +314,38 @@ for (const [section, rows] of Object.entries(bySection)) {
   );
 }
 
+if (emptyRecords.length) {
+  console.log(`\n=== BOS SENEDLER (${emptyRecords.length}) — isarelendi, SILINMEDI ===`);
+  console.log('Her birini brauzerde yoxla: menyuda varsa mezmun lazimdir, yoxsa yetimdir.');
+  console.log('sened            | slug                                   | kohne URL');
+  console.log('-----------------+----------------------------------------+---------------------------');
+  for (const r of emptyRecords) {
+    console.log(
+      `${r.section}/${r.legacyId}.${r.locale}`.padEnd(16) + ' | ' +
+      r.slug.slice(0, 38).padEnd(38) + ' | ' + r.legacyUrl
+    );
+  }
+}
+
+// Ən çox təkrarlanan başlıqlar — 165 toqquşmanın mənbəyi.
+const titleCount = {};
+for (const r of all) {
+  if (r.locale !== 'az') continue;
+  const k = r.title.trim().toLowerCase();
+  if (k) (titleCount[k] ||= []).push(r);
+}
+const repeated = Object.entries(titleCount).filter(([, v]) => v.length > 1).sort((a, b) => b[1].length - a[1].length);
+if (repeated.length) {
+  console.log(`\n=== TEKRARLANAN BASLIQLAR (${repeated.length} basliq) ===`);
+  console.log('say | basliq');
+  console.log('----+-----------------------------------------------------------');
+  for (const [title, list] of repeated.slice(0, 10)) {
+    console.log(String(list.length).padStart(3) + ' | ' + list[0].title.slice(0, 58));
+  }
+  if (repeated.length > 10) console.log(`    ... ve ${repeated.length - 10} basliq daha`);
+  console.log('  -> Tarixli olanlar `-2026` suffiksi alir, tarixsizler `-2`.');
+}
+
 const counts = {};
 for (const r of all) for (const w of r.warnings) counts[w] = (counts[w] || 0) + 1;
 if (Object.keys(counts).length) {
@@ -324,4 +372,5 @@ console.log(`\nYazildi:`);
 console.log(`  data/extracted/*.json  (${Object.keys(bySection).length} bolme)`);
 console.log(`  data/redirects.json    (${redirects.length} yonlendirme)`);
 console.log(`  data/media.json        (${media.length} unikal fayl)`);
+if (emptyRecords.length) console.log(`\n  DIQQET: ${emptyRecords.length} qeyd \`isEmpty\` isarelidir — K3 onlari atlayacaq.`);
 console.log('\nNumune yoxlamasi ucun: node preview.mjs news az\n');
