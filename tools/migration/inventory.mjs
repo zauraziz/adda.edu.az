@@ -12,7 +12,7 @@
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { load as loadHtml } from 'cheerio';
-import { BASE, SECTIONS } from './config.mjs';
+import { BASE, BORDERLINE_MARGIN, SECTIONS } from './config.mjs';
 import { RAW, dataPath } from './lib/paths.mjs';
 
 const args = Object.fromEntries(
@@ -133,6 +133,22 @@ for (const [name, b] of Object.entries(bySection)) {
     String(b.locales.az || 0).padStart(3) + ' / ' + String(b.locales.ru || 0).padStart(3) + ' / ' + String(b.locales.en || 0).padStart(3) +
     ' | ' + String(b.images).padStart(5) + ' | ' + String(b.files).padStart(4) + ' | ' + range
   );
+}
+
+// Sərhəd səhifələr — boş şablon həddinə çox yaxın olanlar əl ilə yoxlanmalıdır.
+// Hədlər qəsdən aşağı seçilib, yəni bir neçə boş şablon içəri düşə bilər.
+const borderline = records.filter((r) => {
+  const min = SECTIONS[r.section] && SECTIONS[r.section].minBytes;
+  return min && r.bytes < min + BORDERLINE_MARGIN;
+});
+if (borderline.length) {
+  console.log(`\nSERHED sehifeler (bos sablon ola biler, ${BORDERLINE_MARGIN} b marj): ${borderline.length}`);
+  for (const r of borderline.slice(0, 12)) {
+    console.log(`  ${r.section}/${r.id}.${r.locale}  ${r.bytes} b  metn ${r.textLen}  "${r.title.slice(0, 40)}"`);
+  }
+  if (borderline.length > 12) console.log(`  ... ve ${borderline.length - 12} daha`);
+} else {
+  console.log('\nSerhed sehife yoxdur — hedler temiz ayirir.');
 }
 
 // Dil örtüyündəki boşluqlar — hansı ID hansı dildə yoxdur

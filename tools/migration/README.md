@@ -32,6 +32,7 @@ node probe.mjs
 
 # 1) Kiçik sınaq — real xəbərlər olduğunu bildiyimiz aralıq
 node crawl.mjs --section=news --from=1975 --to=1984
+#    Gözlənilən: 10 tapıldı, data/raw/news/ altında 30 fayl (10 ID x 3 dil)
 
 # 2) Tam yığım (bir neçə saat, kəsilsə davam etdirmək olar)
 node crawl.mjs
@@ -52,11 +53,40 @@ Bu **ADDA-nın canlı prod serveridir**. Standart: tək paralel sorğu + 400 ms 
 (~2.5 sorğu/san). Server rahat aparırsa `config.mjs`-də `THROTTLE_MS` azaldıla bilər.
 İş saatlarından kənarda işlətmək tövsiyə olunur.
 
-## Bilinməyənlər (zonddan sonra dəqiqləşəcək)
+## Mövcudluq qaydası (23.07.2026 zondu ilə ÖLÇÜLÜB)
 
-- Olmayan ID `404` qaytarır, yoxsa `200` + boş şablon? → `probe.mjs` cavab verir
-- Xəbər gövdəsinin CSS selektoru → `inventory.mjs` namizədləri **ölçür**, təxmin etmir
-- `news/1..2000` aralığında neçə real xəbər var → inventar sayır
+İki fərqli davranış var:
+
+| Bölmə | Olmayan ID | Ayırıcı |
+|---|---|---|
+| `news`, `announce` | düzgün **404** | status kifayətdir |
+| `content`, `faculty` | **200 + boş şablon** | yalnız **bayt ölçüsü** |
+
+Boş şablon ölçüləri: `content` = 24361 b, `faculty` = 24365–24369 b.
+Ən kiçik real səhifələr: `content/58` = 26223 b, `faculty/1` = 28267 b.
+
+**Başlıq ayırıcı kimi işləmir** — `faculty/1` real olsa da `<title>`-ı sadəcə
+"Azərbaycan Dövlət Dəniz Akademiyası"-dır, səhifə adı yoxdur.
+
+Hədlər (`config.mjs` → `minBytes`) qəsdən **aşağı** seçilib: real səhifəni
+itirməkdənsə bir neçə boşu içəri buraxmaq daha təhlükəsizdir. `inventory.mjs`
+həddə yaxın olanları **SERHED** kimi işarələyir — onlara əl ilə baxılır.
+
+## Təxmini həcm (zond nümunələrindən)
+
+| Bölmə | Real aralıq | Təxmin |
+|---|---|---|
+| news | ~1100–1984 (1..1091 tamamilə boşdur) | ~850 |
+| announce | ~150–519 | ~370 |
+| content | 1..71, seyrək | ~45 |
+| faculty | 1–2 | 2 |
+
+≈ **1270 sənəd × 3 dil ≈ 3800 giriş**. Aralıqlar buna baxmayaraq tam skan olunur —
+az-əvvəl məntiqi sayəsində boş ID cəmi 1 sorğuya başa gəlir.
+
+## Hələ bilinməyən
+
+- Gövdənin CSS selektoru → `inventory.mjs` namizədləri **ölçür**, təxmin etmir
 
 ## Növbəti mərhələlər
 

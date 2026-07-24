@@ -4,18 +4,24 @@
 // yalnız xam HTML-i diskə yazır. Səbəb: selektorları tənzimləmək üçün
 // ADDA-nın serverinə TƏKRAR getmək lazım gəlməsin. Bir dəfə yığ, dəfələrlə parse et.
 //
+// AZ-ƏVVƏL MƏNTİQİ: hər ID üçün əvvəlcə yalnız `az` yüklənir və təsnif olunur.
+// Boş çıxarsa ru/en heç yüklənmir — boş ID 3 yerinə 1 sorğuya başa gəlir.
+// Zond göstərdi ki, aralıqların böyük hissəsi boşdur (news 1..1091 tamamilə),
+// ona görə bu, ~35% qənaətdir.
+//
 // İstifadə:
-//   node crawl.mjs                                 # hamısı, hər üç dil
+//   node crawl.mjs                                 # hamısı
 //   node crawl.mjs --section=news --from=1900 --to=1984
-//   node crawl.mjs --section=content --locales=az
-//   node crawl.mjs --min-bytes=8000                # az kiçikdirsə ru/en atlanır
+//   node crawl.mjs --section=content
+//   node crawl.mjs --locales=az                    # yalnız az
 //   node crawl.mjs --dry-run                       # yalnız planı göstər
+//   node crawl.mjs --force                         # manifesti nəzərə alma
 //
 // Bərpa olunandır: təkrar işlədəndə artıq alınmışları atlayır.
 import { writeFileSync } from 'node:fs';
 import { BASE, LOCALES, SECTIONS } from './config.mjs';
 import { get } from './lib/http.mjs';
-import { flush, key, load, record } from './lib/manifest.mjs';
+import { MANIFEST_VERSION, flush, key, load, record } from './lib/manifest.mjs';
 import { rawPath } from './lib/paths.mjs';
 
 const args = Object.fromEntries(
@@ -27,78 +33,119 @@ const args = Object.fromEntries(
 
 const sections = args.section ? String(args.section).split(',') : Object.keys(SECTIONS);
 const locales = args.locales ? String(args.locales).split(',') : LOCALES;
-const minBytes = args['min-bytes'] ? parseInt(args['min-bytes'], 10) : 0;
 const dryRun = Boolean(args['dry-run']);
+const force = Boolean(args.force);
 
-const manifest = load();
-let planned = 0;
 for (const name of sections) {
-  const s = SECTIONS[name];
-  if (!s) {
-    console.error(`Bilinmeyen bolme: ${name}`);
+  if (!SECTIONS[name]) {
+    console.error(`Bilinmeyen bolme: ${name}. Movcud: ${Object.keys(SECTIONS).join(', ')}`);
     process.exit(1);
   }
-  const from = args.from ? parseInt(args.from, 10) : s.from;
-  const to = args.to ? parseInt(args.to, 10) : s.to;
-  planned += (to - from + 1) * locales.length;
 }
 
-console.log(`Bolmeler : ${sections.join(', ')}`);
-console.log(`Diller   : ${locales.join(', ')}`);
-console.log(`Maks sorgu: ~${planned} (artiq alinanlar atlanir)`);
-if (minBytes) console.log(`az < ${minBytes} bayt olanda ru/en atlanir`);
-console.log(`Tex. vaxt : ~${Math.ceil((planned * 0.4) / 60)} deqiqe\n`);
+const manifest = force ? { __version: MANIFEST_VERSION } : load();
+const hasAz = locales.includes('az');
+const others = locales.filter((l) => l !== 'az');
+
+let probes = 0;
+for (const name of sections) {
+  const s = SECTIONS[name];
+  const from = args.from ? parseInt(args.from, 10) : s.from;
+  const to = args.to ? parseInt(args.to, 10) : s.to;
+  probes += to - from + 1;
+}
+
+console.log(`Bolmeler  : ${sections.join(', ')}`);
+console.log(`Diller    : ${locales.join(', ')}`);
+console.log(`az zondu  : ${probes} sorgu`);
+console.log(`+ tapilan her ID ucun ${others.length} elave sorgu`);
+console.log(`Tex. vaxt : ${Math.ceil((probes * 0.4) / 60)}-${Math.ceil((probes * 0.4 * 2.2) / 60)} deqiqe\n`);
 
 if (dryRun) {
   console.log('--dry-run: hec bir sorgu gonderilmedi.');
   process.exit(0);
 }
 
-let fetched = 0;
-let skipped = 0;
-let missed = 0;
+const totals = { hit: 0, notfound: 0, empty: 0, error: 0, skipped: 0, extra: 0 };
+
+/** 200 + kifayət qədər böyük = real səhifə. Qalanı boşdur. */
+function classify(res, minBytes) {
+  if (res.status === 0) return 'error';
+  if (res.status !== 200) return 'notfound';
+  if (minBytes && res.bytes < minBytes) return 'empty';
+  return 'hit';
+}
 
 for (const name of sections) {
   const section = SECTIONS[name];
   const from = args.from ? parseInt(args.from, 10) : section.from;
   const to = args.to ? parseInt(args.to, 10) : section.to;
+  const stats = { hit: 0, notfound: 0, empty: 0, error: 0 };
+
+  console.log(`--- ${name} (${section.label}) ${from}..${to} ---`);
 
   for (let id = from; id <= to; id++) {
-    let azBytes = null;
+    let exists = false;
 
-    for (const locale of locales) {
-      if (manifest[key(name, id, locale)]) {
-        skipped++;
-        continue;
-      }
-      // az kiçik çıxıbsa bu ID boşdur — qalan dilləri yükləməyə dəyməz.
-      if (minBytes && locale !== 'az' && azBytes !== null && azBytes < minBytes) {
-        record(manifest, name, id, locale, { status: -1, bytes: 0, note: 'az-bos' });
-        skipped++;
-        continue;
-      }
-
-      const url = BASE + section.path(locale, id);
-      const res = await get(url);
-      if (locale === 'az') azBytes = res.bytes;
-
-      if (res.status === 200 && res.bytes > 0) {
-        writeFileSync(rawPath(name, id, locale), res.body, 'utf8');
-        fetched++;
+    if (hasAz) {
+      const prev = manifest[key(name, id, 'az')];
+      if (prev && !force) {
+        exists = prev.kind === 'hit';
+        totals.skipped++;
       } else {
-        missed++;
+        const res = await get(BASE + section.path('az', id));
+        const kind = classify(res, section.minBytes);
+        stats[kind]++;
+        totals[kind]++;
+        exists = kind === 'hit';
+        if (exists) writeFileSync(rawPath(name, id, 'az'), res.body, 'utf8');
+        record(manifest, name, id, 'az', { kind, status: res.status, bytes: res.bytes, error: res.error || undefined });
       }
-      record(manifest, name, id, locale, { status: res.status, bytes: res.bytes, error: res.error || undefined });
+    } else {
+      exists = true; // az istənilməyibsə digər dilləri şərtsiz yoxla
+    }
 
-      if ((fetched + missed) % 50 === 0) {
-        process.stdout.write(`\r  ${name}: id ${id} | alinan ${fetched} | bos ${missed} | atlanan ${skipped}   `);
+    if (exists) {
+      for (const locale of others) {
+        if (manifest[key(name, id, locale)] && !force) {
+          totals.skipped++;
+          continue;
+        }
+        const res = await get(BASE + section.path(locale, id));
+        const kind = classify(res, section.minBytes);
+        if (kind === 'hit') {
+          writeFileSync(rawPath(name, id, locale), res.body, 'utf8');
+          totals.extra++;
+        }
+        record(manifest, name, id, locale, { kind, status: res.status, bytes: res.bytes, error: res.error || undefined });
       }
     }
+
+    // Windows konsolunda `\r` bezen yenilenmir — her 200 ID-de tam setir yazilir
+    // ki, irelileyis gozle gorunsun (skript "dayanib" kimi qebul olunmasin).
+    if (id % 200 === 0) {
+      console.log(`  id ${id}/${to} | tapilan ${stats.hit} | 404 ${stats.notfound} | bos ${stats.empty} | xeta ${stats.error}`);
+    } else if (id % 25 === 0) {
+      process.stdout.write(
+        `\r  id ${id}/${to} | tapilan ${stats.hit} | 404 ${stats.notfound} | bos ${stats.empty} | xeta ${stats.error}   `
+      );
+    }
   }
+
   flush(manifest);
-  console.log(`\n  ${name} bitdi.`);
+  console.log(`\r  bitdi: tapilan ${stats.hit} | 404 ${stats.notfound} | bos ${stats.empty} | xeta ${stats.error}          `);
 }
 
 flush(manifest);
-console.log(`\nCrawl bitdi. Alinan ${fetched} | bos ${missed} | atlanan ${skipped}`);
-console.log('Novbeti: npm install && node inventory.mjs\n');
+console.log(`\n=== CRAWL BITDI ===`);
+console.log(`  az tapilan : ${totals.hit}`);
+console.log(`  ru/en elave: ${totals.extra}`);
+console.log(`  404        : ${totals.notfound}`);
+console.log(`  bos sablon : ${totals.empty}`);
+console.log(`  xeta       : ${totals.error}`);
+console.log(`  atlanan    : ${totals.skipped} (manifestden)`);
+if (totals.error) {
+  console.log('\n  DIQQET: xetali ID-ler var. Eyni emri tekrar isletsen yalniz onlar yeniden');
+  console.log('          cehd olunacaq (ugurlular manifestde qeydlidir).');
+}
+console.log('\nNovbeti: npm install && node inventory.mjs\n');

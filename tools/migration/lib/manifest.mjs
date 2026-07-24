@@ -9,15 +9,30 @@ import { dataPath } from './paths.mjs';
 
 const FILE = () => dataPath('manifest.json');
 
+// Manifest formatı K1a-da dəyişdi (`kind` sahəsi əlavə olundu). K1-in köhnə
+// manifesti ilə davam etmək səssiz korrupsiyaya gətirib çıxarır: köhnə qeydlərdə
+// `kind` yoxdur, ona görə real səhifələr "tapılmadı" sayılıb ru/en yüklənməz.
+export const MANIFEST_VERSION = 2;
+
 export function load() {
   const path = FILE();
-  if (!existsSync(path)) return {};
+  if (!existsSync(path)) return { __version: MANIFEST_VERSION };
+  let data;
   try {
-    return JSON.parse(readFileSync(path, 'utf8'));
+    data = JSON.parse(readFileSync(path, 'utf8'));
   } catch {
     console.warn('[manifest] oxuna bilmedi, sifirdan baslanir');
-    return {};
+    return { __version: MANIFEST_VERSION };
   }
+  if (data.__version !== MANIFEST_VERSION) {
+    console.error('\n  XETA: data/ qovlugu KOHNE formatdadir (K1-den qalib).');
+    console.error('  Kohne run bos sablonlari da diske yazmisdi, hemin fayllar zibildir.');
+    console.error('\n  Hell (Windows):   rmdir /s /q data');
+    console.error('       (PowerShell):  Remove-Item -Recurse -Force data');
+    console.error('\n  Sonra crawl-i yeniden basla.\n');
+    process.exit(1);
+  }
+  return data;
 }
 
 export function key(section, id, locale) {
