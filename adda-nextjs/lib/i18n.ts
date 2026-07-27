@@ -12,6 +12,12 @@ export function isLocale(x: string): x is Locale {
 
 // [az, ru, en]
 const T: Array<[string, string, string]> = [
+  // --- F2.5b sehifeleme i18n (az, ru, en) ---
+  ['Əvvəlki', 'Назад', 'Previous'],
+  ['Növbəti', 'Вперёд', 'Next'],
+  ['Səhifə', 'Страница', 'Page'],
+  ['/', '/', '/'],
+  ['Ümumi', 'Всего', 'Total'],
   // --- F2.6e-3 push i18n (az, ru, en) ---
   ['Bildirişlər', 'Уведомления', 'Notifications'],
   ['Bildirişlər aktivdir', 'Уведомления включены', 'Notifications are on'],

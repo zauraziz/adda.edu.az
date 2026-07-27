@@ -275,6 +275,53 @@ function buildFeedQuery(p: FeedParams, defaultSort: string): Record<string, Quer
   return q;
 }
 
+/** ── F2.5b: səhifələnmiş lent ──
+ * `getFeed` yalnız `data`-nı qaytarır və `meta.pagination`-ı atır. Siyahı
+ * səhifələri üçün ümumi say lazımdır (840 xəbər / 346 elan), ona görə ayrıca
+ * variant. Xəta olsa boş nəticə — səhifə sınmasın.
+ */
+export interface FeedPage<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+export async function getFeedPage<T>(
+  contentType: FeedContentType,
+  locale: Locale,
+  params: FeedParams = {},
+  defaultSort = 'publishedAt:desc',
+): Promise<FeedPage<T>> {
+  const page = Math.max(1, params.page ?? 1);
+  const pageSize = params.limit ?? 12;
+  try {
+    const json = await strapiFetch<StrapiList<T>>(
+      '/' + contentType,
+      { locale, ...buildFeedQuery({ ...params, page, limit: pageSize }, defaultSort) },
+      params.revalidate ?? 60,
+    );
+    const p = json.meta?.pagination;
+    return {
+      items: json.data ?? [],
+      page: p?.page ?? page,
+      pageSize: p?.pageSize ?? pageSize,
+      pageCount: p?.pageCount ?? 1,
+      total: p?.total ?? (json.data?.length ?? 0),
+    };
+  } catch (err) {
+    console.error('[feed] ' + contentType + ' sehife ' + page + ' cekilmedi: ' + (err as Error).message);
+    return { items: [], page, pageSize, pageCount: 0, total: 0 };
+  }
+}
+
+/** Səhifələnmiş akademiya lentləri (siyahı səhifələri üçün). */
+export const getAcademyArticlesPage = (locale: Locale = 'az', page = 1, pageSize = 12) =>
+  getFeedPage<Article>('articles', locale, { visibility: 'academy', page, limit: pageSize }, 'newsDate:desc');
+export const getAcademyAnnouncementsPage = (locale: Locale = 'az', page = 1, pageSize = 12) =>
+  getFeedPage<Announcement>('announcements', locale, { visibility: 'academy', page, limit: pageSize }, 'publishAt:desc');
+
 /** Ümumi lent çəkici — content type + scope. Xəta olsa boş massiv (ana səhifə sınmasın). */
 export async function getFeed<T>(
   contentType: FeedContentType,
@@ -453,4 +500,3 @@ export async function getMenu(locale: Locale = 'az'): Promise<SiteMenu | null> {
     return null;
   }
 }
-

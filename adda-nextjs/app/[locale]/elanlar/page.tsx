@@ -20,11 +20,13 @@ import '../../_styles/16-footer-ftx.css';
 import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
+import '../../_styles/26-pagination.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import { getAcademyAnnouncements, getMenu, mediaUrl, type Announcement, type SiteMenu } from '@/lib/strapi';
+import Pagination from '../../_components/Pagination';
+import { getAcademyAnnouncementsPage, getMenu, mediaUrl, type Announcement, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate, IMPORTANCE_LABELS } from '@/lib/format';
 
@@ -49,13 +51,31 @@ function impClass(importance: string): string {
   return 'np-chip';
 }
 
-export default async function AnnouncementListPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function AnnouncementListPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [items, menu] = await Promise.all([
-    getAcademyAnnouncements(locale, 24),
+  // searchParams istifadəsi səhifəni dinamik render-ə keçirir, amma Strapi
+  // sorğusu `next: { revalidate }` ilə hələ də keşlənir — yük artmır.
+  const { page: pageRaw } = await searchParams;
+  const page = Math.max(1, parseInt(pageRaw ?? '1', 10) || 1);
+  const [feed, menu] = await Promise.all([
+    getAcademyAnnouncementsPage(locale, page, 12),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
+
+  const items = feed.items;
+  const pgLabels = {
+    prev: tr('Əvvəlki', locale),
+    next: tr('Növbəti', locale),
+    page: tr('Səhifə', locale),
+    of: tr('/', locale),
+  };
 
   return (
     <>
@@ -73,6 +93,11 @@ export default async function AnnouncementListPage({ params }: { params: Promise
 
         <section className="np-wrap">
           <div className="container">
+            {feed.total ? (
+              <p className="np-total">
+                {tr('Ümumi', locale)}: {feed.total}
+              </p>
+            ) : null}
             {items.length ? (
               <div className="np-grid">
                 {items.map((a: Announcement) => {
@@ -107,6 +132,13 @@ export default async function AnnouncementListPage({ params }: { params: Promise
             ) : (
               <p className="np-empty">{tr('Hələlik elan yoxdur.', locale)}</p>
             )}
+
+            <Pagination
+              page={feed.page}
+              pageCount={feed.pageCount}
+              basePath={'/' + locale + '/elanlar'}
+              labels={pgLabels}
+            />
           </div>
         </section>
       </main>

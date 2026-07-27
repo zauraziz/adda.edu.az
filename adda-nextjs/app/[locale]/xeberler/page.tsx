@@ -20,11 +20,13 @@ import '../../_styles/16-footer-ftx.css';
 import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
+import '../../_styles/26-pagination.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import { getAcademyArticles, getMenu, mediaUrl, type Article, type SiteMenu } from '@/lib/strapi';
+import Pagination from '../../_components/Pagination';
+import { getAcademyArticlesPage, getMenu, mediaUrl, type Article, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 60;
@@ -59,13 +61,31 @@ function fmtDate(iso: string | null, locale: Locale): string {
   return String(d.getUTCDate()).padStart(2, '0') + ' ' + MONTHS[locale][d.getUTCMonth()] + ' ' + d.getUTCFullYear();
 }
 
-export default async function NewsListPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function NewsListPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [articles, menu] = await Promise.all([
-    getAcademyArticles(locale, 24),
+  // searchParams istifadəsi səhifəni dinamik render-ə keçirir, amma Strapi
+  // sorğusu `next: { revalidate }` ilə hələ də keşlənir — yük artmır.
+  const { page: pageRaw } = await searchParams;
+  const page = Math.max(1, parseInt(pageRaw ?? '1', 10) || 1);
+  const [feed, menu] = await Promise.all([
+    getAcademyArticlesPage(locale, page, 12),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
+
+  const articles = feed.items;
+  const pgLabels = {
+    prev: tr('Əvvəlki', locale),
+    next: tr('Növbəti', locale),
+    page: tr('Səhifə', locale),
+    of: tr('/', locale),
+  };
 
   return (
     <>
@@ -83,6 +103,11 @@ export default async function NewsListPage({ params }: { params: Promise<{ local
 
         <section className="np-wrap">
           <div className="container">
+            {feed.total ? (
+              <p className="np-total">
+                {tr('Ümumi', locale)}: {feed.total}
+              </p>
+            ) : null}
             {articles.length ? (
               <div className="np-grid">
                 {articles.map((a: Article) => {
@@ -111,6 +136,13 @@ export default async function NewsListPage({ params }: { params: Promise<{ local
             ) : (
               <p className="np-empty">{tr('Hələlik xəbər yoxdur.', locale)}</p>
             )}
+
+            <Pagination
+              page={feed.page}
+              pageCount={feed.pageCount}
+              basePath={'/' + locale + '/xeberler'}
+              labels={pgLabels}
+            />
           </div>
         </section>
       </main>

@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F2.5b / Səhifələmə
+   840 xəbər, 346 elan → siyahılarda naviqasiya.
+   Tokenlər 01-base.css :root-dan. --nav-sh-md MÖVCUD DEYİL.
+   ═══════════════════════════════════════════════════════ */
+
+.pgn {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 2.6rem 0 0.5rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.pgn-list {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pgn-n,
+.pgn-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.7rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--gray-700);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              color var(--nav-dur) var(--nav-ease),
+              background var(--nav-dur) var(--nav-ease);
+}
+
+.pgn-n:hover,
+.pgn-arrow:hover:not(.is-off) {
+  border-color: var(--navy-600);
+  color: var(--navy-800);
+  background: var(--navy-50);
+}
+
+.pgn-n.is-active {
+  border-color: var(--navy-800);
+  background: var(--navy-800);
+  color: var(--white);
+  cursor: default;
+}
+
+.pgn-arrow.is-off {
+  opacity: 0.42;
+  cursor: default;
+}
+
+.pgn-gap {
+  min-width: 24px;
+  text-align: center;
+  color: var(--gray-500);
+  font-family: var(--font-body);
+  user-select: none;
+}
+
+.pgn-count {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+
+/* Siyahının üstündəki ümumi say */
+.np-total {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+@media (max-width: 640px) {
+  .pgn { gap: 0.35rem; }
+  /* Dar ekranda ox mətnləri gizlənir — ikonlar qalır */
+  .pgn-arrow-t { display: none; }
+  .pgn-arrow { min-width: 40px; padding: 0; }
+  .pgn-count {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.6rem;
+    text-align: center;
+  }
+}
