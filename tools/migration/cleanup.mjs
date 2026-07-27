@@ -10,9 +10,10 @@
 //
 //   node cleanup.mjs             # yalnız gösterir
 //   node cleanup.mjs --confirm   # həqiqətən silir
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataPath } from './lib/paths.mjs';
+import { loadState, saveState, targetLabel } from './lib/state.mjs';
 import { STRAPI_URL, api, assertToken, ping } from './lib/strapi.mjs';
 import { PLURAL, targetTypeFor } from './mapping.mjs';
 
@@ -36,8 +37,7 @@ if (!records.some((r) => Object.prototype.hasOwnProperty.call(r, 'isEmpty'))) {
   process.exit(1);
 }
 
-const stateFile = dataPath('import-state.json');
-const state = existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, 'utf8')) : {};
+const state = loadState();
 
 // Sənəd səviyyəsində: bütün dilləri boşdursa sənəd tamamilə boşdur.
 const byDoc = new Map();
@@ -148,7 +148,7 @@ for (const t of targets) {
   }
 }
 
-writeFileSync(stateFile, JSON.stringify(state, null, 1), 'utf8');
+saveState(state);
 console.log(`\n  silindi: ${deleted} | xeta: ${failed}`);
 console.log('  data/import-state.json yenilendi.\n');
 console.log('  Novbeti: node import.mjs   (silinen sehv-tipliler dogru tipde yaranir)');

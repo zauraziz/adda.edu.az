@@ -1,5 +1,23 @@
-# Xam HTML + inventar nəticələri — yüzlərlə MB, repo-ya girməməlidir.
-data/
+# Xam HTML və aralıq nəticələr — yüzlərlə MB, repo-ya girməməlidir.
+#
+# `data/*` (yəni uşaqlar) istisna edilir, `data/` özü yox — yalnız belə
+# olanda aşağıdakı `!` qaydaları işləyir. Git-də üst qovluq tam istisna
+# edilibsə, içindəki faylı geri qaytarmaq MÜMKÜN DEYİL.
+data/*
+
+# ── Repoya GİRƏN: miqrasiyanın transformasiya nəticəsi ──
+# Prod idxalının mənbəyidir və 53 dəqiqəlik crawl-ın davamlı ehtiyat nüsxəsi
+# (data/raw/ commit olunmur, yəni disk itsə yenidən yığmaq lazım gələrdi).
+!data/extracted/
+!data/redirects.json
+!data/media.json
+
+# ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
+#   data/raw/                  — 1373 xam HTML
+#   data/manifest.json         — crawl checkpoint-i
+#   data/import-state.*.json   — documentId-lər BAZAYA XASDIR, hədəf üzrə fərqlidir
+#   data/inventory.{json,csv}  — diaqnostika
+
 node_modules/
 
 # Strapi admin tokeni — HEC VAXT commit olunmamalidir

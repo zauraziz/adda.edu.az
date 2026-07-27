@@ -1,0 +1,5266 @@
+[
+ {
+  "from": "/az/content/1",
+  "to": "/az/sehife/adda-dunen-ve-bugun"
+ },
+ {
+  "from": "/az/faculty/1",
+  "to": "/az/fakulteler/gemi-suruculuyu-fakultesi"
+ },
+ {
+  "from": "/az/content/2",
+  "to": "/az/sehife/informasiya-resurs-merkezi"
+ },
+ {
+  "from": "/az/faculty/2",
+  "to": "/az/fakulteler/gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
+ },
+ {
+  "from": "/az/content/3",
+  "to": "/az/sehife/faydali-linkler"
+ },
+ {
+  "from": "/az/content/4",
+  "to": "/az/sehife/elmi-tedqiqat-qrupu"
+ },
+ {
+  "from": "/az/content/5",
+  "to": "/az/sehife/beynelxalq-elaqeler-qrupu"
+ },
+ {
+  "from": "/az/content/7",
+  "to": "/az/sehife/metbee"
+ },
+ {
+  "from": "/az/content/8",
+  "to": "/az/sehife/muhasibat-ucotu-ve-hesabat-sobesi"
+ },
+ {
+  "from": "/az/content/9",
+  "to": "/az/sehife/yataqxana"
+ },
+ {
+  "from": "/az/content/10",
+  "to": "/az/sehife/muzey"
+ },
+ {
+  "from": "/az/content/11",
+  "to": "/az/sehife/xaricde-tehsil-ve-ixtisasartirma"
+ },
+ {
+  "from": "/az/content/12",
+  "to": "/az/sehife/ecnebi-telebelerin-tehsili"
+ },
+ {
+  "from": "/az/content/13",
+  "to": "/az/sehife/beynelxalq-emekdasliq"
+ },
+ {
+  "from": "/az/content/14",
+  "to": "/az/sehife/telebe-gencler-teskilati"
+ },
+ {
+  "from": "/az/content/15",
+  "to": "/az/sehife/telebe-hemkarlar-ittifaqi-komitesi"
+ },
+ {
+  "from": "/az/content/17",
+  "to": "/az/sehife/personalin-idare-edilmesi-emek-haqqi-sobesi-ve-karguzarliq-sobesi"
+ },
+ {
+  "from": "/az/content/18",
+  "to": "/az/sehife/doktorantura"
+ },
+ {
+  "from": "/az/content/19",
+  "to": "/az/sehife/rektor"
+ },
+ {
+  "from": "/az/content/20",
+  "to": "/az/sehife/elmi-sura"
+ },
+ {
+  "from": "/az/content/21",
+  "to": "/az/sehife/huquq-meslehetcisi"
+ },
+ {
+  "from": "/az/content/22",
+  "to": "/az/sehife/tedrisin-teskili-ve-idareedilmesi-uzre-prorektor"
+ },
+ {
+  "from": "/az/content/23",
+  "to": "/az/sehife/umumi-isler-uzre-prorektor"
+ },
+ {
+  "from": "/az/content/24",
+  "to": "/az/sehife/rektor-komekcisi"
+ },
+ {
+  "from": "/az/content/25",
+  "to": "/az/sehife/elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor"
+ },
+ {
+  "from": "/az/content/27",
+  "to": "/az/sehife/tedris-proseslerinin-teskili-sobesi"
+ },
+ {
+  "from": "/az/content/29",
+  "to": "/az/sehife/telim-tedris-merkezi-ttm"
+ },
+ {
+  "from": "/az/content/30",
+  "to": "/az/sehife/azerbaycan-denizcilik-kolleci"
+ },
+ {
+  "from": "/az/content/31",
+  "to": "/az/sehife/irm"
+ },
+ {
+  "from": "/az/content/32",
+  "to": "/az/sehife/korporativ-uslub"
+ },
+ {
+  "from": "/az/content/33",
+  "to": "/az/sehife/bakalavriat"
+ },
+ {
+  "from": "/az/content/34",
+  "to": "/az/sehife/magistratura"
+ },
+ {
+  "from": "/az/content/35",
+  "to": "/az/sehife/elmi-jurnal"
+ },
+ {
+  "from": "/az/content/36",
+  "to": "/az/sehife/idman"
+ },
+ {
+  "from": "/az/content/37",
+  "to": "/az/sehife/telebe-elmi-cemiyyeti"
+ },
+ {
+  "from": "/az/content/38",
+  "to": "/az/sehife/elmi-konfranslar"
+ },
+ {
+  "from": "/az/content/39",
+  "to": "/az/sehife/elmi-tedqiqat-laboratoriyalari"
+ },
+ {
+  "from": "/az/content/40",
+  "to": "/az/sehife/elmi-tedqiqat-fealiyyeti"
+ },
+ {
+  "from": "/az/content/41",
+  "to": "/az/sehife/genc-alimler-surasi"
+ },
+ {
+  "from": "/az/content/42",
+  "to": "/az/sehife/elektron-kitabxana"
+ },
+ {
+  "from": "/az/content/43",
+  "to": "/az/sehife/elmi-katib"
+ },
+ {
+  "from": "/az/content/45",
+  "to": "/az/sehife/elmi-jurnalimiz-onlayn-versiyada"
+ },
+ {
+  "from": "/az/content/47",
+  "to": "/az/sehife/elaqe"
+ },
+ {
+  "from": "/az/content/49",
+  "to": "/az/sehife/teserrufat-isleri-sobesi"
+ },
+ {
+  "from": "/az/content/50",
+  "to": "/az/sehife/h-x-esedovun-azerbaycan-dovlet-deniz-akademiyasinin-rektoru-teyin-edilmesi-haqqi"
+ },
+ {
+  "from": "/az/content/52",
+  "to": "/az/sehife/ecnebi-telebelerin-qebulu-qaydalari"
+ },
+ {
+  "from": "/az/content/55",
+  "to": "/az/sehife/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi"
+ },
+ {
+  "from": "/az/content/56",
+  "to": "/az/sehife/tecrube-haqqinda"
+ },
+ {
+  "from": "/az/content/58",
+  "to": "/az/sehife/deniz-naviqasiyasi-muhendisliyi"
+ },
+ {
+  "from": "/az/content/59",
+  "to": "/az/sehife/deniz-naviqasiyasi-muhendisliyi-2"
+ },
+ {
+  "from": "/az/content/60",
+  "to": "/az/sehife/gemi-energetik-qurgularinin-istismari-muhendisliyi"
+ },
+ {
+  "from": "/az/content/61",
+  "to": "/az/sehife/gemiqayirma-ve-gemi-temiri-muhendisliyi"
+ },
+ {
+  "from": "/az/content/62",
+  "to": "/az/sehife/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre"
+ },
+ {
+  "from": "/az/content/65",
+  "to": "/az/sehife/qehremanlarimiz"
+ },
+ {
+  "from": "/az/content/68",
+  "to": "/az/sehife/heyder-eliyevin-anadan-olmasinin-100-illiyine-hesr-olunmus-v-avrasiya-konfransi"
+ },
+ {
+  "from": "/az/content/71",
+  "to": "/az/sehife/iqlim-ile-elaqeli-korporativ-idareetme"
+ },
+ {
+  "from": "/az/announce/154",
+  "to": "/az/elanlar/umummilli-lider-heyder-eliyevin-anadan-olmasinin-93-cu-ildonumune-hesr-olunmus-e"
+ },
+ {
+  "from": "/az/announce/156",
+  "to": "/az/elanlar/adda-ya-i-kursa-daxil-olmus-telebeler-ve-onlarin-valideynleri-ile-gorus-kecirile"
+ },
+ {
+  "from": "/az/announce/157",
+  "to": "/az/elanlar/almaniya-metroloji-institutunun-ekspertleri-ile-gorus-kecirilecekdir"
+ },
+ {
+  "from": "/az/announce/158",
+  "to": "/az/elanlar/adda-deniz-universitetlerinin-beynelxalq-assosiasiyasina-iamu-uzv-olub"
+ },
+ {
+  "from": "/az/announce/159",
+  "to": "/az/elanlar/herbi-xidmetden-donen-mezunlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/160",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-rehberliyi-sizleri-qurban-bayrami-munasib"
+ },
+ {
+  "from": "/az/announce/161",
+  "to": "/az/elanlar/umumrespublika-ali-mekteblerarasi-telebe-musabiqesine-start-verildi"
+ },
+ {
+  "from": "/az/announce/162",
+  "to": "/az/elanlar/adda-da-i-kurs-telebeleri-arasinda-umumpese-hazirligi-fenleri-uzre-olimpiada-kec"
+ },
+ {
+  "from": "/az/announce/163",
+  "to": "/az/elanlar/umumrespublika-ali-mekteblerarasi-telebe-musabiqesine-qeydiyyat-dayandirilmisdir"
+ },
+ {
+  "from": "/az/announce/165",
+  "to": "/az/elanlar/doktoranturaya-qebul"
+ },
+ {
+  "from": "/az/announce/167",
+  "to": "/az/elanlar/xarici-olke-alimlerinin-aciq-muhaziresi"
+ },
+ {
+  "from": "/az/announce/168",
+  "to": "/az/elanlar/heveskar-denizci-kurslari-teskil-edilir"
+ },
+ {
+  "from": "/az/announce/169",
+  "to": "/az/elanlar/beynelxalq-deniz-universitetleri-assosiasiyasi-terefinden-teskil-olunmus-telebe"
+ },
+ {
+  "from": "/az/announce/170",
+  "to": "/az/elanlar/qizil-bayt-2017-musabiqesi"
+ },
+ {
+  "from": "/az/announce/172",
+  "to": "/az/elanlar/umummilli-lider-heyder-eliyevin-anadan-olmasinin-94-cu-ildonumune-hesr-olunmus-b"
+ },
+ {
+  "from": "/az/announce/173",
+  "to": "/az/elanlar/umummilli-lider-heyder-eliyevin-anadan-olmasinin-94-cu-ildonumune-hesr-olunmus-t"
+ },
+ {
+  "from": "/az/announce/174",
+  "to": "/az/elanlar/birlesmis-kralliqda-tehsil-al-ve-ozunu-kesv-et"
+ },
+ {
+  "from": "/az/announce/175",
+  "to": "/az/elanlar/aciq-qapi-gunu"
+ },
+ {
+  "from": "/az/announce/176",
+  "to": "/az/elanlar/futbol-komandasina-qebul"
+ },
+ {
+  "from": "/az/announce/177",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasina-qebul-qaydalarindaki-yenilikler"
+ },
+ {
+  "from": "/az/announce/178",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-xususi-tibbi-komissiya-oz-fealiyyetini-ma"
+ },
+ {
+  "from": "/az/announce/179",
+  "to": "/az/elanlar/qanverme-aksiyasi"
+ },
+ {
+  "from": "/az/announce/180",
+  "to": "/az/elanlar/denizci-gunu-munasibeti-ile-foto-musabiqe"
+ },
+ {
+  "from": "/az/announce/181",
+  "to": "/az/elanlar/telebe-karti"
+ },
+ {
+  "from": "/az/announce/182",
+  "to": "/az/elanlar/akademik-borc-yaranmis-2-fenden-her-fenden-bir-defe-olmaqla-tekrar-imtahanlarin"
+ },
+ {
+  "from": "/az/announce/183",
+  "to": "/az/elanlar/yay-semestrinin-teskili-haqqinda"
+ },
+ {
+  "from": "/az/announce/184",
+  "to": "/az/elanlar/tekrar-ali-tehsil"
+ },
+ {
+  "from": "/az/announce/185",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-tehsil-almaq-isteyen-abituriyentlerin-nez"
+ },
+ {
+  "from": "/az/announce/186",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasina-bakalavr-seviyyesine-qebul-olunmus-abituri"
+ },
+ {
+  "from": "/az/announce/187",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-adlari-asagida-gosterilen-dekanliqlar-ve-kaf"
+ },
+ {
+  "from": "/az/announce/188",
+  "to": "/az/elanlar/eziz-i-ii-kurs-telebeleri-sizi-umumpese-hazirligi-fenleri-uzre-olimpiadada-istir"
+ },
+ {
+  "from": "/az/announce/189",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-mezunlarinin-nezerine"
+ },
+ {
+  "from": "/az/announce/191",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-master-klass-derslerinin-kecirilme-qrafik"
+ },
+ {
+  "from": "/az/announce/192",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-bakalavr-seviyyesi-qiyabi-tehsil-uzre-201"
+ },
+ {
+  "from": "/az/announce/193",
+  "to": "/az/elanlar/azerbaycan-metrologiya-sisteminin-guclendirilmesi-uzre-tvinninq-layihesi-cercive"
+ },
+ {
+  "from": "/az/announce/194",
+  "to": "/az/elanlar/adda-emekdaslarinin-nezerine"
+ },
+ {
+  "from": "/az/announce/195",
+  "to": "/az/elanlar/uzaq-seferlerde-filminin-numayisi"
+ },
+ {
+  "from": "/az/announce/196",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-qaynar-xett-fealiyyet-gosterir"
+ },
+ {
+  "from": "/az/announce/197",
+  "to": "/az/elanlar/aciq-mikrofon-gunu"
+ },
+ {
+  "from": "/az/announce/198",
+  "to": "/az/elanlar/dunya-azerbaycanlilarinin-hemreylik-gunu"
+ },
+ {
+  "from": "/az/announce/199",
+  "to": "/az/elanlar/yeni-iliniz-ve-hemreylik-gununuz-mubarek-olsun"
+ },
+ {
+  "from": "/az/announce/200",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-2018-ci-il-ucun-felsefe-doktoru-hazirligi-uz"
+ },
+ {
+  "from": "/az/announce/201",
+  "to": "/az/elanlar/hormetli-hemkarlar-03-04-may-2018-ci-il-tarixinde-azerbaycan-xalqinin-umummilli"
+ },
+ {
+  "from": "/az/announce/202",
+  "to": "/az/elanlar/hormetli-telebeler-5-aprel-2018-ci-il-tarixinde-umummilli-lider-heyder-eliyevin"
+ },
+ {
+  "from": "/az/announce/203",
+  "to": "/az/elanlar/31-mart-azerbaycanlilarin-soyqirimi-gunu"
+ },
+ {
+  "from": "/az/announce/204",
+  "to": "/az/elanlar/actinspace-musabiqesi"
+ },
+ {
+  "from": "/az/announce/205",
+  "to": "/az/elanlar/abituriyentlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/206",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-tedrisi-ingilis-dilinde-apara-bilen-muelliml"
+ },
+ {
+  "from": "/az/announce/207",
+  "to": "/az/elanlar/2017-2018-ci-tedris-ilinde-akademiya-uzre-buraxilis-islerinin-esas-mudafiye-gunl"
+ },
+ {
+  "from": "/az/announce/208",
+  "to": "/az/elanlar/magistratura-pillesine-qebul-olunmus-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/209",
+  "to": "/az/elanlar/yay-semestrinin-teskili-haqqinda-2018"
+ },
+ {
+  "from": "/az/announce/210",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-vakant-yerlere-ise-qebul-elan-edir"
+ },
+ {
+  "from": "/az/announce/211",
+  "to": "/az/elanlar/yeni-melumat-abituriyentlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/212",
+  "to": "/az/elanlar/melumat-abituriyentlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/213",
+  "to": "/az/elanlar/telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/214",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-bakalavr-pillesine-qebul-olunmus-abituriy"
+ },
+ {
+  "from": "/az/announce/215",
+  "to": "/az/elanlar/yeni-qebul-olan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/216",
+  "to": "/az/elanlar/eziz-telebeler-sizi-azerbaycan-xezer-deniz-gemiciliyinin-160-illik-yubileyine-he"
+ },
+ {
+  "from": "/az/announce/217",
+  "to": "/az/elanlar/breyn-ring-bilik-yarisi"
+ },
+ {
+  "from": "/az/announce/218",
+  "to": "/az/elanlar/eziz-telebeler"
+ },
+ {
+  "from": "/az/announce/219",
+  "to": "/az/elanlar/eziz-telebeler-2018"
+ },
+ {
+  "from": "/az/announce/220",
+  "to": "/az/elanlar/eziz-telebeler-2018-2"
+ },
+ {
+  "from": "/az/announce/221",
+  "to": "/az/elanlar/qiyabi-tehsil-alan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/222",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-doktorantura-pillesinde-tehsil-almaq-iste"
+ },
+ {
+  "from": "/az/announce/223",
+  "to": "/az/elanlar/eyani-tehsil-alan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/224",
+  "to": "/az/elanlar/telebe-magistrant-ve-genc-tedqiqatcilarin-nezerine"
+ },
+ {
+  "from": "/az/announce/225",
+  "to": "/az/elanlar/professor-muellim-ve-aparici-mutexessis-heyetinin-nezerine"
+ },
+ {
+  "from": "/az/announce/226",
+  "to": "/az/elanlar/telebelerin-nezerine-2019"
+ },
+ {
+  "from": "/az/announce/227",
+  "to": "/az/elanlar/telebelerin-nezerine-2019-2"
+ },
+ {
+  "from": "/az/announce/228",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-doktorantura-pillesinde-tehsil-almaq-iste-2019"
+ },
+ {
+  "from": "/az/announce/229",
+  "to": "/az/elanlar/050620-deniz-naviqasiyasi-muhendisliyi-ixtisasi-uzre-2018-2019-cu-tedris-ilinde"
+ },
+ {
+  "from": "/az/announce/230",
+  "to": "/az/elanlar/050626-elektrik-muhendisliyi-ixtisasi-uzre-2018-2019-cu-tedris-ilinde-dovlet-imt"
+ },
+ {
+  "from": "/az/announce/231",
+  "to": "/az/elanlar/050619-gemi-energetik-qurgularinin-istismari-muhendisliyi-ixtisasi-uzre-2018-201"
+ },
+ {
+  "from": "/az/announce/232",
+  "to": "/az/elanlar/050618-gemiqayirma-ve-gemi-temiri-muhendisliyi-ixtisasi-uzre-2018-2019-cu-tedris"
+ },
+ {
+  "from": "/az/announce/233",
+  "to": "/az/elanlar/050628-proseslerin-avtomatlasdirilmasi-muhendisliyi-ixtisasi-uzre-2018-2019-cu-t"
+ },
+ {
+  "from": "/az/announce/234",
+  "to": "/az/elanlar/2-3-may-2019-cu-il-tarixinde-azerbaycan-xalqinin-umummilli-lideri-heyder-eliyevi"
+ },
+ {
+  "from": "/az/announce/235",
+  "to": "/az/elanlar/eyani-tehsil-alan-telebelerin-nezerine-2019"
+ },
+ {
+  "from": "/az/announce/236",
+  "to": "/az/elanlar/dorduncu-kurs-telebelerinin-nezerine"
+ },
+ {
+  "from": "/az/announce/237",
+  "to": "/az/elanlar/abituriyentlerin-nezerine-2019"
+ },
+ {
+  "from": "/az/announce/238",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-uzre-kecirilecek-master-class-derslerinin-qr"
+ },
+ {
+  "from": "/az/announce/240",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-vakant-yerlere-ise-qebul-elan-edir-2019"
+ },
+ {
+  "from": "/az/announce/241",
+  "to": "/az/elanlar/yaponiyada-tedqiqatla-mesgul-olmaq-magistratura-ve-ya-doktorantura-tehsili-almaq"
+ },
+ {
+  "from": "/az/announce/242",
+  "to": "/az/elanlar/konfransin-qonaqlari-adda-da-master-klass-kecirecekler"
+ },
+ {
+  "from": "/az/announce/243",
+  "to": "/az/elanlar/diqqet-diqqet"
+ },
+ {
+  "from": "/az/announce/244",
+  "to": "/az/elanlar/28-may-respublika-gunudur"
+ },
+ {
+  "from": "/az/announce/245",
+  "to": "/az/elanlar/diqqet-diqqet-dovlet-imtahani-veren-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/246",
+  "to": "/az/elanlar/diqqet-diqqet-magistrantlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/247",
+  "to": "/az/elanlar/diqqet-diqqet-diqqet"
+ },
+ {
+  "from": "/az/announce/248",
+  "to": "/az/elanlar/diqqet-diqqet-tekrar-ali-tehsil-almaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/249",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-bakalavr-pillesine-qebul-olunmus-abituriy-2019"
+ },
+ {
+  "from": "/az/announce/250",
+  "to": "/az/elanlar/vakant-vezifeler-haqqinda-elan"
+ },
+ {
+  "from": "/az/announce/251",
+  "to": "/az/elanlar/telebelerin-nezerine-2019-3"
+ },
+ {
+  "from": "/az/announce/252",
+  "to": "/az/elanlar/odenissiz-tehsile-kecirilen-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/253",
+  "to": "/az/elanlar/tekrar-ali-tehsil-almaq-isteyen-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/254",
+  "to": "/az/elanlar/olimpiadada-istirak-etmek-isteyen-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/255",
+  "to": "/az/elanlar/doktoranturada-tehsil-almaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/256",
+  "to": "/az/elanlar/telebelerin-nezerine-2019-4"
+ },
+ {
+  "from": "/az/announce/258",
+  "to": "/az/elanlar/telebe-magistrant-ve-genc-tedqiqatcilarin-nezerine-2019"
+ },
+ {
+  "from": "/az/announce/259",
+  "to": "/az/elanlar/adda-nin-professor-muellim-heyetinin-ve-doktorantlarinin-nezerine"
+ },
+ {
+  "from": "/az/announce/260",
+  "to": "/az/elanlar/doktoranturada-tehsil-almaq-isteyenlerin-nezerine-2019"
+ },
+ {
+  "from": "/az/announce/261",
+  "to": "/az/elanlar/vakant-olan-vezifenin-tutulmasi-ucun-musabiqe"
+ },
+ {
+  "from": "/az/announce/262",
+  "to": "/az/elanlar/doktoranturaya-ve-dissertanturaya-xarici-diller-uzre-qebul-imtahanina-hazirlasan"
+ },
+ {
+  "from": "/az/announce/263",
+  "to": "/az/elanlar/doktorantura-ve-dissertanturaya-qebul-olmaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/264",
+  "to": "/az/elanlar/telebe-magistrant-ve-genc-tedqiqatcilarin-nezerine-2020"
+ },
+ {
+  "from": "/az/announce/265",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine"
+ },
+ {
+  "from": "/az/announce/266",
+  "to": "/az/elanlar/abituriyentlerin-nezerine-2020"
+ },
+ {
+  "from": "/az/announce/268",
+  "to": "/az/elanlar/gemiqayirma-ve-gemi-temiri-muhendisliyi-ixtisasi-uzre-2019-2020-ci-tedris-ilinde"
+ },
+ {
+  "from": "/az/announce/269",
+  "to": "/az/elanlar/proseslerin-avtomatlasdirilmasi-muhendisliyi-ixtisasi-uzre-2019-2020-ci-tedris-i"
+ },
+ {
+  "from": "/az/announce/270",
+  "to": "/az/elanlar/gemi-energetik-qurgularinin-istismari-muhendisliyi-ixtisasi-uzre-2019-2020-ci-te"
+ },
+ {
+  "from": "/az/announce/271",
+  "to": "/az/elanlar/elektrik-muhendisliyi-ixtisasi-uzre-2019-2020-ci-tedris-ilinde-dovlet-imtahanini"
+ },
+ {
+  "from": "/az/announce/272",
+  "to": "/az/elanlar/temir-islerinin-satin-alinmasi-meqsedile-aciq-musabiqe-elan-edilir-yenilenib"
+ },
+ {
+  "from": "/az/announce/273",
+  "to": "/az/elanlar/deniz-naviqasiyasi-muhendisliyi-ixtisasi-uzre-2019-2020-ci-tedris-ilinde-dovlet"
+ },
+ {
+  "from": "/az/announce/274",
+  "to": "/az/elanlar/telebelerin-nezerine-2020"
+ },
+ {
+  "from": "/az/announce/275",
+  "to": "/az/elanlar/2020-2021-ci-tedris-ilinde-azerbaycan-dovlet-deniz-akademiyasina-qebul-olmaq-ist"
+ },
+ {
+  "from": "/az/announce/276",
+  "to": "/az/elanlar/telebelerin-nezerine-2020-2"
+ },
+ {
+  "from": "/az/announce/277",
+  "to": "/az/elanlar/telebelerin-nezerine-2020-3"
+ },
+ {
+  "from": "/az/announce/278",
+  "to": "/az/elanlar/adda-da-tekrar-ali-tehsil-almaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/279",
+  "to": "/az/elanlar/yeni-qebul-olunan-magistrantlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/280",
+  "to": "/az/elanlar/tekrar-ali-tehsil-almaq-isteyenler-ucun-erize-formasi"
+ },
+ {
+  "from": "/az/announce/281",
+  "to": "/az/elanlar/ise-qebul-haqqinda-elan"
+ },
+ {
+  "from": "/az/announce/282",
+  "to": "/az/elanlar/adda-da-tekrar-ali-tehsil-almaq-isteyenlerin-sened-qebulunun-vaxti-uzadilib"
+ },
+ {
+  "from": "/az/announce/283",
+  "to": "/az/elanlar/abituriyentlerin-nezerine-2020-2"
+ },
+ {
+  "from": "/az/announce/284",
+  "to": "/az/elanlar/adda-ya-daxil-olmaq-isteyen-abituriyentlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/285",
+  "to": "/az/elanlar/abituriyentlerin-ve-valideynlerinin-nezerine"
+ },
+ {
+  "from": "/az/announce/286",
+  "to": "/az/elanlar/adda-nin-magistratura-pillesinin-bos-qalan-yerlerine-qebul-olunanlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/287",
+  "to": "/az/elanlar/komputerlerin-satin-alinmasi-meqsedile-aciq-musabiqe-elan-edilir-musabiqe-basa-c"
+ },
+ {
+  "from": "/az/announce/288",
+  "to": "/az/elanlar/felsefe-doktoru-hazirligi-uzre-doktoranturaya-sened-qebuluna-baslanib"
+ },
+ {
+  "from": "/az/announce/290",
+  "to": "/az/elanlar/gemiqayirma-ve-gemi-temiri-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/291",
+  "to": "/az/elanlar/deniz-naviqasiyasi-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/292",
+  "to": "/az/elanlar/humanitar-fenler-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/294",
+  "to": "/az/elanlar/gemi-energetik-qurgulari-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/295",
+  "to": "/az/elanlar/gemi-elektroavtomatikasi-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/296",
+  "to": "/az/elanlar/ingilis-dili-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/297",
+  "to": "/az/elanlar/tetbiqi-mexanika-kafedrasi-uzre-muhazireler"
+ },
+ {
+  "from": "/az/announce/298",
+  "to": "/az/elanlar/geyim-formalarinin-satin-alinmasi-meqsedile-aciq-musabiqe-elan-edilir-musabiqe-b"
+ },
+ {
+  "from": "/az/announce/299",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine-2020"
+ },
+ {
+  "from": "/az/announce/300",
+  "to": "/az/elanlar/adda-ya-qebul-olan-abituriyentlerin-nezerine-sened-qebulu-ile-bagli"
+ },
+ {
+  "from": "/az/announce/301",
+  "to": "/az/elanlar/azerbaycan-denizcilik-kollecine-qebul-olanlarin-nezerine-sened-qebulu-ile-bagli"
+ },
+ {
+  "from": "/az/announce/302",
+  "to": "/az/elanlar/temir-islerinin-satin-alinmasi-meqsedile-aciq-musabiqe-elan-edilir-musabiqe-basa"
+ },
+ {
+  "from": "/az/announce/303",
+  "to": "/az/elanlar/gemi-energetik-qurgulari-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/304",
+  "to": "/az/elanlar/deniz-naviqasiyasi-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/305",
+  "to": "/az/elanlar/ingilis-dili-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/306",
+  "to": "/az/elanlar/gemi-elektroavtomatikasi-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/307",
+  "to": "/az/elanlar/gemiqayirma-ve-gemi-temiri-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/308",
+  "to": "/az/elanlar/humanitar-fenler-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/309",
+  "to": "/az/elanlar/tetbiqi-mexanika-kafedrasi-uzre-imtahan-suallari"
+ },
+ {
+  "from": "/az/announce/310",
+  "to": "/az/elanlar/xaricde-doktorantura-tehsili-almaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/311",
+  "to": "/az/elanlar/doktoranturaya-qebul-ve-felsefe-doktoru-imtahani-verecek-iddiacilarin-nezerine"
+ },
+ {
+  "from": "/az/announce/312",
+  "to": "/az/elanlar/telebelerin-nezerine-2021"
+ },
+ {
+  "from": "/az/announce/313",
+  "to": "/az/elanlar/adda-nin-gemi-suruculuyu-fakultesinin-telebelerinin-nezerine"
+ },
+ {
+  "from": "/az/announce/314",
+  "to": "/az/elanlar/adda-nin-gemi-mexanikasi-ve-elektromexanikasi-fakultesinin-telebelerinin-nezerin"
+ },
+ {
+  "from": "/az/announce/315",
+  "to": "/az/elanlar/adda-da-tehsil-alan-magistrantlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/316",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/317",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila"
+ },
+ {
+  "from": "/az/announce/318",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2021"
+ },
+ {
+  "from": "/az/announce/319",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine-2021"
+ },
+ {
+  "from": "/az/announce/320",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila"
+ },
+ {
+  "from": "/az/announce/321",
+  "to": "/az/elanlar/olkenin-butun-tehsil-muessiselerinin-huquqi-ve-fiziki-sexslerin-nezerine"
+ },
+ {
+  "from": "/az/announce/322",
+  "to": "/az/elanlar/abituriyentlerin-nezerine-2021"
+ },
+ {
+  "from": "/az/announce/323",
+  "to": "/az/elanlar/tekrar-ali-tehsil-almaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/325",
+  "to": "/az/elanlar/deniz-naviqasiyasi-muhendisliyi-ixtisasi-uzre-dovlet-imtahaninin-suallari"
+ },
+ {
+  "from": "/az/announce/326",
+  "to": "/az/elanlar/gemi-energetik-qurgularinin-istismari-muhendisliyi-ixtisasi-uzre-dovlet-imtahani"
+ },
+ {
+  "from": "/az/announce/327",
+  "to": "/az/elanlar/elektrik-muhendisliyi-ixtisasi-uzre-dovlet-imtahaninin-suallari"
+ },
+ {
+  "from": "/az/announce/328",
+  "to": "/az/elanlar/gemiqayirma-ve-gemi-temiri-muhendisliyi-ixtisasi-uzre-dovlet-imtahaninin-suallar"
+ },
+ {
+  "from": "/az/announce/329",
+  "to": "/az/elanlar/telebelerin-nezerine-2021-2"
+ },
+ {
+  "from": "/az/announce/330",
+  "to": "/az/elanlar/ikinci-ali-qiyabi-sobede-tehsil-alan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/331",
+  "to": "/az/elanlar/professor-muellim-heyetinin-irm-emekdaslarinin-ve-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/332",
+  "to": "/az/elanlar/telebelerin-nezerine-2021-3"
+ },
+ {
+  "from": "/az/announce/334",
+  "to": "/az/elanlar/telebelerin-nezerine-2021-4"
+ },
+ {
+  "from": "/az/announce/335",
+  "to": "/az/elanlar/temir-islerinin-satin-alinmasi-meqsedile-aciq-musabiqe-elan-edilir"
+ },
+ {
+  "from": "/az/announce/336",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-vakant-vezifelere-qebul-elan-edir"
+ },
+ {
+  "from": "/az/announce/338",
+  "to": "/az/elanlar/azerbaycan-xezer-deniz-gemiciliyi-qsc-azerbaycan-dovlet-deniz-akademiyasinda-mov"
+ },
+ {
+  "from": "/az/announce/339",
+  "to": "/az/elanlar/telebeler-ucun-geyim-formalarinin-satinalinmasi-meqsedile-aciq-musabiqe-elan-edi"
+ },
+ {
+  "from": "/az/announce/342",
+  "to": "/az/elanlar/adda-da-beynelxalq-elmi-texniki-konfrans-kecirilecek"
+ },
+ {
+  "from": "/az/announce/343",
+  "to": "/az/elanlar/magistraturaya-qebul-olmus-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/344",
+  "to": "/az/elanlar/tekrar-ali-tehsil-almaq-isteyenlerin-nezerine-2021"
+ },
+ {
+  "from": "/az/announce/345",
+  "to": "/az/elanlar/2021-2022-ci-tedris-ilinde-tekrar-ali-tehsil-almaq-ucun-sened-teqdim-etmis-sexsl"
+ },
+ {
+  "from": "/az/announce/346",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/347",
+  "to": "/az/elanlar/yekun-dovlet-attestasiyasindan-akademik-borcu-qalan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/348",
+  "to": "/az/elanlar/akademiyaya-berpa-olmaq-isteyen-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/349",
+  "to": "/az/elanlar/adda-da-beynelxalq-elmi-texniki-konfrans-kecirilecek-2021"
+ },
+ {
+  "from": "/az/announce/350",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-bakalavr-pillesine-qebul-olunmus-abituriy-2021"
+ },
+ {
+  "from": "/az/announce/351",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-bakalavr-pillesine-qebul-olunmus-abituriy-2021-2"
+ },
+ {
+  "from": "/az/announce/352",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-nezdinde-azerbaycan-denizcilik-kollecinin"
+ },
+ {
+  "from": "/az/announce/353",
+  "to": "/az/elanlar/adda-nin-1-ci-kursuna-qebul-olan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/354",
+  "to": "/az/elanlar/telebelerin-nezerine-2021-5"
+ },
+ {
+  "from": "/az/announce/355",
+  "to": "/az/elanlar/telebe-ve-muellimlerin-isti-yemekle-temin-olunmasi-xidmetinin-satin-alinmasi-meq"
+ },
+ {
+  "from": "/az/announce/356",
+  "to": "/az/elanlar/iddiacilarin-ixtisas-uzre-felsefe-doktoru-imtahaninda-istirak-etmeleri-ucun-qeyd"
+ },
+ {
+  "from": "/az/announce/357",
+  "to": "/az/elanlar/auditoriyalarda-telebeler-ucun-tek-neferlik-masalarin-satin-alinmasi-meqsedile-a"
+ },
+ {
+  "from": "/az/announce/358",
+  "to": "/az/elanlar/mezunlarin-nezerine"
+ },
+ {
+  "from": "/az/announce/359",
+  "to": "/az/elanlar/telebelerin-nezerine-2021-6"
+ },
+ {
+  "from": "/az/announce/360",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2021-2"
+ },
+ {
+  "from": "/az/announce/361",
+  "to": "/az/elanlar/telebelerin-nezerine-2021-7"
+ },
+ {
+  "from": "/az/announce/362",
+  "to": "/az/elanlar/elan"
+ },
+ {
+  "from": "/az/announce/363",
+  "to": "/az/elanlar/gemi-elektroavtomatikasi-kafedrasi-uzre-dovlet-imtahaninin-suallarini-asagidaki"
+ },
+ {
+  "from": "/az/announce/364",
+  "to": "/az/elanlar/gemiqayirma-ve-gemi-temiri-kafedrasi-uzre-dovlet-imtahaninin-suallari"
+ },
+ {
+  "from": "/az/announce/365",
+  "to": "/az/elanlar/elan-2022"
+ },
+ {
+  "from": "/az/announce/366",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine-2022"
+ },
+ {
+  "from": "/az/announce/367",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine-2022"
+ },
+ {
+  "from": "/az/announce/368",
+  "to": "/az/elanlar/telebelerin-nezerine-2022"
+ },
+ {
+  "from": "/az/announce/369",
+  "to": "/az/elanlar/2022-ci-ilde-azerbaycan-dovlet-deniz-akademiyasina-qebul-olmaq-isteyen-abituriye"
+ },
+ {
+  "from": "/az/announce/370",
+  "to": "/az/elanlar/iddiacilarin-ixtisas-fenni-uzre-felsefe-doktoru-imtahaninda-istirak-etmeleri-ucu"
+ },
+ {
+  "from": "/az/announce/371",
+  "to": "/az/elanlar/deniz-naviqasiyasi-kafedrasi-uzre-dovlet-imtahaninin-suallari"
+ },
+ {
+  "from": "/az/announce/372",
+  "to": "/az/elanlar/doktoranturaya-qebul-olmaq-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/373",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2022"
+ },
+ {
+  "from": "/az/announce/374",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-7-8-aprel-2022-ci-il-umummilli-lider-heyder"
+ },
+ {
+  "from": "/az/announce/375",
+  "to": "/az/elanlar/doktoranturaya-sened-qebulu-elan-edilir"
+ },
+ {
+  "from": "/az/announce/376",
+  "to": "/az/elanlar/elan-2022-2"
+ },
+ {
+  "from": "/az/announce/377",
+  "to": "/az/elanlar/elan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/378",
+  "to": "/az/elanlar/elan-telebelerin-nezerine-2022"
+ },
+ {
+  "from": "/az/announce/379",
+  "to": "/az/elanlar/elan-telebelerin-nezerine-2022-2"
+ },
+ {
+  "from": "/az/announce/380",
+  "to": "/az/elanlar/elmi-seminar-kecirilecek"
+ },
+ {
+  "from": "/az/announce/381",
+  "to": "/az/elanlar/tekrar-ali-tehsile-sened-qebulu-elan-edilir"
+ },
+ {
+  "from": "/az/announce/382",
+  "to": "/az/elanlar/doktoranturaya-sened-qebulu-uzadilib"
+ },
+ {
+  "from": "/az/announce/383",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-master-klass-derslerinin-kecirilme-qrafik-2022"
+ },
+ {
+  "from": "/az/announce/384",
+  "to": "/az/elanlar/ilkin-muzakire-kecirilecek"
+ },
+ {
+  "from": "/az/announce/385",
+  "to": "/az/elanlar/e-l-a-n"
+ },
+ {
+  "from": "/az/announce/386",
+  "to": "/az/elanlar/master-klass-dersi"
+ },
+ {
+  "from": "/az/announce/387",
+  "to": "/az/elanlar/am01-2022-tedris-prosesinde-telebelere-eyani-sekilde-tedris-etmek-meqsedile-xusu"
+ },
+ {
+  "from": "/az/announce/388",
+  "to": "/az/elanlar/telebelerin-nezerine-2022-2"
+ },
+ {
+  "from": "/az/announce/389",
+  "to": "/az/elanlar/telebelerin-nezerine-2022-3"
+ },
+ {
+  "from": "/az/announce/390",
+  "to": "/az/elanlar/ilkin-muzakire-kecirilecek-2022"
+ },
+ {
+  "from": "/az/announce/391",
+  "to": "/az/elanlar/yay-semestrinin-teskili"
+ },
+ {
+  "from": "/az/announce/392",
+  "to": "/az/elanlar/am02-2022-azerbaycan-xezer-deniz-gemiciliyi-qsc-azerbaycan-dovlet-deniz-akademiy"
+ },
+ {
+  "from": "/az/announce/393",
+  "to": "/az/elanlar/adda-da-beynelxalq-elmi-texniki-konfrans-kecirilecek-2022"
+ },
+ {
+  "from": "/az/announce/394",
+  "to": "/az/elanlar/tekrar-ali-tehsile-sened-qebulu-elan-edilir-2022"
+ },
+ {
+  "from": "/az/announce/395",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2022"
+ },
+ {
+  "from": "/az/announce/396",
+  "to": "/az/elanlar/am03-2022-axdg-qsc-azerbaycan-dovlet-deniz-akademiyasinin-esas-inzibati-binasi-v"
+ },
+ {
+  "from": "/az/announce/397",
+  "to": "/az/elanlar/am04-2022-axdg-qsc-azerbaycan-dovlet-deniz-akademiyasi-nin-esas-inzibati-binasin"
+ },
+ {
+  "from": "/az/announce/398",
+  "to": "/az/elanlar/am05-2022-azerbaycan-xezer-deniz-gemiciliyi-qsc-azerbaycan-dovlet-deniz-akademiy"
+ },
+ {
+  "from": "/az/announce/399",
+  "to": "/az/elanlar/elan-2022-3"
+ },
+ {
+  "from": "/az/announce/400",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine-2022-2"
+ },
+ {
+  "from": "/az/announce/402",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-bakalavr-pillesine-qebul-olunmus-abituriy-2022"
+ },
+ {
+  "from": "/az/announce/403",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2022"
+ },
+ {
+  "from": "/az/announce/404",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-nezdinde-azerbaycan-denizcilik-kollecine"
+ },
+ {
+  "from": "/az/announce/405",
+  "to": "/az/elanlar/e-l-a-n-2022"
+ },
+ {
+  "from": "/az/announce/406",
+  "to": "/az/elanlar/adda-da-beynelxalq-elmi-texniki-konfrans-kecirilecek-2022-2"
+ },
+ {
+  "from": "/az/announce/407",
+  "to": "/az/elanlar/am06-2022-axdg-qsc-azerbaycan-dovlet-deniz-akademiyasi-ucun-qaynaq-texnologiyasi"
+ },
+ {
+  "from": "/az/announce/408",
+  "to": "/az/elanlar/am07-2022-axdg-qsc-azerbaycan-dovlet-deniz-akademiyasi-ve-telim-tedris-merkezi-u"
+ },
+ {
+  "from": "/az/announce/409",
+  "to": "/az/elanlar/elan-2022-4"
+ },
+ {
+  "from": "/az/announce/410",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2022-2"
+ },
+ {
+  "from": "/az/announce/411",
+  "to": "/az/elanlar/vakant-olan-vezifelerin-tutulmasi-ucun-musabiqe"
+ },
+ {
+  "from": "/az/announce/412",
+  "to": "/az/elanlar/e-l-a-n-2022-2"
+ },
+ {
+  "from": "/az/announce/413",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-umumpese-hazirligi-fenleri-ve-ixtisas-fen"
+ },
+ {
+  "from": "/az/announce/414",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-lizenziyali-antiplagiat-proqramina-qosulmaq"
+ },
+ {
+  "from": "/az/announce/415",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2022-3"
+ },
+ {
+  "from": "/az/announce/416",
+  "to": "/az/elanlar/telebelerin-nezerine-2022-4"
+ },
+ {
+  "from": "/az/announce/417",
+  "to": "/az/elanlar/gemi-elektroavtomatikasi-kafedrasi-uzre-dovlet-imtahaninin-suallarini-asagidaki-2022"
+ },
+ {
+  "from": "/az/announce/418",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2022-2023-cu-tedris-ilinde-050619-gemi-en"
+ },
+ {
+  "from": "/az/announce/419",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2022-2023-cu-tedris-ilinde-deniz-naviqasi"
+ },
+ {
+  "from": "/az/announce/420",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2022-2023-cu-tedris-ilinde-gemiqayirma-ve"
+ },
+ {
+  "from": "/az/announce/422",
+  "to": "/az/elanlar/e-l-a-n-2023"
+ },
+ {
+  "from": "/az/announce/423",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine-2023"
+ },
+ {
+  "from": "/az/announce/424",
+  "to": "/az/elanlar/telebelerin-nezerine-2023"
+ },
+ {
+  "from": "/az/announce/425",
+  "to": "/az/elanlar/telebelerin-nezerine-2023-2"
+ },
+ {
+  "from": "/az/announce/426",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarinin-nezerine"
+ },
+ {
+  "from": "/az/announce/427",
+  "to": "/az/elanlar/e-l-a-n-2023-2"
+ },
+ {
+  "from": "/az/announce/428",
+  "to": "/az/elanlar/doktoranturaya-sened-qebulu-elan-edilir-2023"
+ },
+ {
+  "from": "/az/announce/429",
+  "to": "/az/elanlar/e-l-a-n-2023-3"
+ },
+ {
+  "from": "/az/announce/430",
+  "to": "/az/elanlar/e-l-a-n-2023-4"
+ },
+ {
+  "from": "/az/announce/432",
+  "to": "/az/elanlar/gemi-muhendisi-2023-texnologiya-sergisi-kecirilecek"
+ },
+ {
+  "from": "/az/announce/433",
+  "to": "/az/elanlar/yay-semestrinin-teskili-2023"
+ },
+ {
+  "from": "/az/announce/434",
+  "to": "/az/elanlar/mezunlarin-nezerine-2023"
+ },
+ {
+  "from": "/az/announce/435",
+  "to": "/az/elanlar/kafedralar-uzre-vakant-olan-vezifelerin-tutulmasi-ucun-musabiqe"
+ },
+ {
+  "from": "/az/announce/436",
+  "to": "/az/elanlar/magistraturaya-qebul-olmus-telebelerin-nezerine-2023"
+ },
+ {
+  "from": "/az/announce/437",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2023"
+ },
+ {
+  "from": "/az/announce/438",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine-2023"
+ },
+ {
+  "from": "/az/announce/439",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-phs-magistraturasina-portal-edu-az-da-qeydiy"
+ },
+ {
+  "from": "/az/announce/440",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-publik-huquqi-sexsinin-bakalavriat-pillesine"
+ },
+ {
+  "from": "/az/announce/441",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2023"
+ },
+ {
+  "from": "/az/announce/442",
+  "to": "/az/elanlar/elan-2023"
+ },
+ {
+  "from": "/az/announce/443",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2023"
+ },
+ {
+  "from": "/az/announce/444",
+  "to": "/az/elanlar/elan-2023-2"
+ },
+ {
+  "from": "/az/announce/445",
+  "to": "/az/elanlar/e-l-a-n-2023-5"
+ },
+ {
+  "from": "/az/announce/446",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-phs-de-umumpese-hazirligi-fenleri-ve-ixtisas"
+ },
+ {
+  "from": "/az/announce/447",
+  "to": "/az/elanlar/e-l-a-n-2023-6"
+ },
+ {
+  "from": "/az/announce/448",
+  "to": "/az/elanlar/elan-2024"
+ },
+ {
+  "from": "/az/announce/449",
+  "to": "/az/elanlar/muellim-ve-tedqiqatcilarin-nezerine"
+ },
+ {
+  "from": "/az/announce/450",
+  "to": "/az/elanlar/telebelerin-nezerine-2024"
+ },
+ {
+  "from": "/az/announce/451",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2023-2024-cu-tedris-ilinde-deniz-naviqasi"
+ },
+ {
+  "from": "/az/announce/452",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2023-2024-cu-tedris-ilinde-gemi-energetik"
+ },
+ {
+  "from": "/az/announce/453",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2023-2024-cu-tedris-ilinde-gemiqayirma-ve"
+ },
+ {
+  "from": "/az/announce/454",
+  "to": "/az/elanlar/aciq-qapi-gunu-2024"
+ },
+ {
+  "from": "/az/announce/455",
+  "to": "/az/elanlar/doktoranturaya-sened-qebulu-elan-edilir-2024"
+ },
+ {
+  "from": "/az/announce/456",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2024"
+ },
+ {
+  "from": "/az/announce/457",
+  "to": "/az/elanlar/elan-2024-2"
+ },
+ {
+  "from": "/az/announce/458",
+  "to": "/az/elanlar/tekrar-ali-tehsil-almaq-isteyenlerin-nezerine-2024"
+ },
+ {
+  "from": "/az/announce/459",
+  "to": "/az/elanlar/mezunlarin-nezerine-2024"
+ },
+ {
+  "from": "/az/announce/460",
+  "to": "/az/elanlar/elan-2024-3"
+ },
+ {
+  "from": "/az/announce/461",
+  "to": "/az/elanlar/dp-sertifikatini-yenilemek-isteyenlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/462",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-publik-huquqi-sexsinin-magistratura-pillesin"
+ },
+ {
+  "from": "/az/announce/463",
+  "to": "/az/elanlar/vakant-olan-professor-muellim-vezifelerinin-tutulmasi-ucun-musabiqe"
+ },
+ {
+  "from": "/az/announce/464",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2024"
+ },
+ {
+  "from": "/az/announce/465",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine-2024"
+ },
+ {
+  "from": "/az/announce/466",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasi-publik-huquqi-sexsinin-bakalavriat-pillesine-2024"
+ },
+ {
+  "from": "/az/announce/467",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2024"
+ },
+ {
+  "from": "/az/announce/468",
+  "to": "/az/elanlar/2024-2025-ci-tedris-ilinde-azerbaycan-dovlet-deniz-akademiyasi-publik-huquqi-sex"
+ },
+ {
+  "from": "/az/announce/469",
+  "to": "/az/elanlar/tekrar-ali-tehsil-almaq-ucun-gemicilik-sahesinde-calisdiqlarini-tesdiq-eden-aray"
+ },
+ {
+  "from": "/az/announce/470",
+  "to": "/az/elanlar/adda-phs-musabiqe-elan-edir"
+ },
+ {
+  "from": "/az/announce/471",
+  "to": "/az/elanlar/adda-phs-musabiqe-elan-edir-2024"
+ },
+ {
+  "from": "/az/announce/472",
+  "to": "/az/elanlar/elan-adda-da-seminar"
+ },
+ {
+  "from": "/az/announce/473",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine-2025"
+ },
+ {
+  "from": "/az/announce/474",
+  "to": "/az/elanlar/doktorant-ve-dissertantlarin-nezerine-2025"
+ },
+ {
+  "from": "/az/announce/475",
+  "to": "/az/elanlar/elan-ilkin-mudafie"
+ },
+ {
+  "from": "/az/announce/476",
+  "to": "/az/elanlar/telebelerin-nezerine-2025"
+ },
+ {
+  "from": "/az/announce/477",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine-2025"
+ },
+ {
+  "from": "/az/announce/479",
+  "to": "/az/elanlar/elan-telebelerin-nezerine-2025"
+ },
+ {
+  "from": "/az/announce/480",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2024-2025-ci-tedris-ilinde-gemiqayirma-ve"
+ },
+ {
+  "from": "/az/announce/481",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2024-2025-ci-tedris-ilinde-gemi-elektroav"
+ },
+ {
+  "from": "/az/announce/482",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2024-2025-ci-tedris-ilinde-deniz-naviqasi"
+ },
+ {
+  "from": "/az/announce/483",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinda-2024-2025-ci-tedris-ilinde-gemi-energetik"
+ },
+ {
+  "from": "/az/announce/484",
+  "to": "/az/elanlar/kafedra-uzre-vakant-olan-vezifenin-tutulmasi-ucun-musabiqe"
+ },
+ {
+  "from": "/az/announce/485",
+  "to": "/az/elanlar/doktoranturaya-sened-qebulu-elan-edilir-2025"
+ },
+ {
+  "from": "/az/announce/486",
+  "to": "/az/elanlar/elan-ilkin-mudafie-2025"
+ },
+ {
+  "from": "/az/announce/487",
+  "to": "/az/elanlar/elan-ilkin-mudafie-2025-2"
+ },
+ {
+  "from": "/az/announce/488",
+  "to": "/az/elanlar/adda-2025-2026-ci-tedris-ili-uzre-tekrar-ali-tehsil-ucun-sened-qebulu-elan-edir"
+ },
+ {
+  "from": "/az/announce/489",
+  "to": "/az/elanlar/e-l-a-n-elmi-seminar"
+ },
+ {
+  "from": "/az/announce/490",
+  "to": "/az/elanlar/e-l-a-n-2025"
+ },
+ {
+  "from": "/az/announce/491",
+  "to": "/az/elanlar/elan-2025"
+ },
+ {
+  "from": "/az/announce/492",
+  "to": "/az/elanlar/e-l-a-n-elmi-seminar-2025"
+ },
+ {
+  "from": "/az/announce/493",
+  "to": "/az/elanlar/elan-2025-2"
+ },
+ {
+  "from": "/az/announce/494",
+  "to": "/az/elanlar/elan-2025-3"
+ },
+ {
+  "from": "/az/announce/495",
+  "to": "/az/elanlar/elan-2025-4"
+ },
+ {
+  "from": "/az/announce/496",
+  "to": "/az/elanlar/akademik-borcu-olan-telebelerin-nezerine-2025-2"
+ },
+ {
+  "from": "/az/announce/497",
+  "to": "/az/elanlar/elan-2025-5"
+ },
+ {
+  "from": "/az/announce/498",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2025"
+ },
+ {
+  "from": "/az/announce/499",
+  "to": "/az/elanlar/adda-ya-qebul-olan-abituriyentlerin-nezerine"
+ },
+ {
+  "from": "/az/announce/500",
+  "to": "/az/elanlar/e-l-a-n-elmi-seminar-2025-2"
+ },
+ {
+  "from": "/az/announce/501",
+  "to": "/az/elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2025"
+ },
+ {
+  "from": "/az/announce/502",
+  "to": "/az/elanlar/elan-2025-6"
+ },
+ {
+  "from": "/az/announce/503",
+  "to": "/az/elanlar/akademiyaya-berpa-olunmaq-isteyen-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/505",
+  "to": "/az/elanlar/vakant-muellim-yerlerine-musabiqe"
+ },
+ {
+  "from": "/az/announce/506",
+  "to": "/az/elanlar/telebelerin-nezerine-2026"
+ },
+ {
+  "from": "/az/announce/507",
+  "to": "/az/elanlar/professor-muellim-heyetinin-nezerine-2026"
+ },
+ {
+  "from": "/az/announce/508",
+  "to": "/az/elanlar/elmi-seminar"
+ },
+ {
+  "from": "/az/announce/509",
+  "to": "/az/elanlar/adda-da-bilik-yarisi-2026-kecirilecek"
+ },
+ {
+  "from": "/az/announce/510",
+  "to": "/az/elanlar/azerbaycan-dovlet-deniz-akademiyasinin-telebe-ve-magistrantlarinin-nezerine"
+ },
+ {
+  "from": "/az/announce/511",
+  "to": "/az/elanlar/abs-da-tehsil-imkanlari"
+ },
+ {
+  "from": "/az/announce/512",
+  "to": "/az/elanlar/yekun-dovlet-attestasiyasinda-istirak-etmek-isteyen-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/announce/513",
+  "to": "/az/elanlar/adda-nin-yubiley-tedbirleri-cercivesinde-uzguculuk-yarisi-kecirilecek"
+ },
+ {
+  "from": "/az/announce/514",
+  "to": "/az/elanlar/adda-da-berpa-olunan-enerji-menbelerine-dair-seminar-kecirilecek"
+ },
+ {
+  "from": "/az/announce/515",
+  "to": "/az/elanlar/doktoranturaya-sened-qebulu-elan-edilir-2026"
+ },
+ {
+  "from": "/az/announce/516",
+  "to": "/az/elanlar/adda-2026-2027-ci-tedris-ili-uzre-tekrar-ali-tehsil-ucun-sened-qebulu-elan-edir"
+ },
+ {
+  "from": "/az/announce/517",
+  "to": "/az/elanlar/elan-2026"
+ },
+ {
+  "from": "/az/announce/518",
+  "to": "/az/elanlar/elan-2026-2"
+ },
+ {
+  "from": "/az/announce/519",
+  "to": "/az/elanlar/akademiyaya-berpa-olunmaq-isteyen-telebelerin-nezerine-2026"
+ },
+ {
+  "from": "/az/news/1110",
+  "to": "/az/xeberler/umummilli-lider-heyder-eliyevin-anadan-olmasinin-93-cu-ildonumune-hesr-olunmus-t"
+ },
+ {
+  "from": "/az/news/1111",
+  "to": "/az/xeberler/adda-da-aciq-qapi-gunu-kecirildi"
+ },
+ {
+  "from": "/az/news/1112",
+  "to": "/az/xeberler/beseriyyete-qarsi-toredilmis-en-qanli-cinayet"
+ },
+ {
+  "from": "/az/news/1113",
+  "to": "/az/xeberler/ulu-onderin-xatiresine-hesr-olunan-elmi-konfrans"
+ },
+ {
+  "from": "/az/news/1114",
+  "to": "/az/xeberler/milli-ordumuzun-ermeni-texribatina-qetiyyetli-cavabi-qelebeye-inamimizi-artirib"
+ },
+ {
+  "from": "/az/news/1137",
+  "to": "/az/xeberler/deniz-neqliyyatinda-innovativ-texnologiyalar-movzusunda-xi-enenevi-beynelxalq-el"
+ },
+ {
+  "from": "/az/news/1138",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinin-resmi-saytinin-teqdimati"
+ },
+ {
+  "from": "/az/news/1139",
+  "to": "/az/xeberler/rauf-veliyev-gencler-menim-gemicilikde-en-cox-guvendiyim-quvvedir"
+ },
+ {
+  "from": "/az/news/1140",
+  "to": "/az/xeberler/emekdasliq-memorandumu-imzalanib"
+ },
+ {
+  "from": "/az/news/1141",
+  "to": "/az/xeberler/deniz-akademiyasinda-aciq-muhazire"
+ },
+ {
+  "from": "/az/news/1142",
+  "to": "/az/xeberler/ulu-onderin-eziz-xatiresi-yad-edildi"
+ },
+ {
+  "from": "/az/news/1143",
+  "to": "/az/xeberler/adda-bdua-ya-uzv-oldu"
+ },
+ {
+  "from": "/az/news/1144",
+  "to": "/az/xeberler/azerbaycanda-denizcilerin-hazirlanmasi-ve-sertifikatlasdirilma-prosesi-haqqinda"
+ },
+ {
+  "from": "/az/news/1145",
+  "to": "/az/xeberler/almaniya-metrologiya-institutunun-eksperteri-adda-da"
+ },
+ {
+  "from": "/az/news/1146",
+  "to": "/az/xeberler/azerbaycan-xezer-deniz-gemiciliyinin-deniz-akademiyasinda-aciq-qapi-gunu"
+ },
+ {
+  "from": "/az/news/1147",
+  "to": "/az/xeberler/adda-da-15-sentyabr-bilik-gunune-hesr-olunmus-tedbir-kecirildi"
+ },
+ {
+  "from": "/az/news/1148",
+  "to": "/az/xeberler/estoniya-denizcilik-akademiyasinin-numayendeleri-adda-da"
+ },
+ {
+  "from": "/az/news/1149",
+  "to": "/az/xeberler/adda-da-i-kurs-telebeleri-arasinda-umumpese-hazirligi-fenleri-uzre-olimpiada-kec-2016"
+ },
+ {
+  "from": "/az/news/1150",
+  "to": "/az/xeberler/adda-10-cu-azerbaycan-beynelxalq-tehsil-sergisinde"
+ },
+ {
+  "from": "/az/news/1151",
+  "to": "/az/xeberler/adda-da-iv-kurs-telebeleri-ile-iclas-kecirilmisdir"
+ },
+ {
+  "from": "/az/news/1152",
+  "to": "/az/xeberler/media-ve-tehsil-dialoqu-movzusunda-telim-konfrans-kecirilib"
+ },
+ {
+  "from": "/az/news/1153",
+  "to": "/az/xeberler/adda-da-umumdunya-narkotikler-eleyhine-mubarize-gunu-munasibetile-tedbir-keciril"
+ },
+ {
+  "from": "/az/news/1154",
+  "to": "/az/xeberler/novbeti-telimler"
+ },
+ {
+  "from": "/az/news/1155",
+  "to": "/az/xeberler/adda-deniz-universitetlerinin-beynelxalq-assosiasiyasina-uzv-qebul-edildi"
+ },
+ {
+  "from": "/az/news/1158",
+  "to": "/az/xeberler/beynelxalq-klublar-assosiasiyanin-ne-harada-ne-zaman-intellektual-oyunu-uzre-vii"
+ },
+ {
+  "from": "/az/news/1159",
+  "to": "/az/xeberler/heyder-eliyev-ve-azerbaycan-tarixi-iii-umumrespublika-bilik-yarisi-kecirildi"
+ },
+ {
+  "from": "/az/news/1162",
+  "to": "/az/xeberler/dil-karyeraya-geden-yol-iii-umumrespublika-ali-mekteblerarasi-telebe-musabiqesi"
+ },
+ {
+  "from": "/az/news/1163",
+  "to": "/az/xeberler/yazici-elxan-elatli-ile-gorus"
+ },
+ {
+  "from": "/az/news/1164",
+  "to": "/az/xeberler/banm-de-astm-api-nin-seminari-kecirildi"
+ },
+ {
+  "from": "/az/news/1166",
+  "to": "/az/xeberler/i-kurs-telebeleri-arasinda-umumpese-hazirligi-fenleri-uzre-olimpiada-kecirildi"
+ },
+ {
+  "from": "/az/news/1167",
+  "to": "/az/xeberler/denizciler-heyder-eliyev-merkezini-ziyaret-edibler"
+ },
+ {
+  "from": "/az/news/1168",
+  "to": "/az/xeberler/adda-da-ulu-onder-heyder-eliyevin-anim-gunu-qeyd-olunub"
+ },
+ {
+  "from": "/az/news/1171",
+  "to": "/az/xeberler/3d-modellesdirme-uzre-seminar"
+ },
+ {
+  "from": "/az/news/1172",
+  "to": "/az/xeberler/xemse-intellektual-yarisi-kecirildi"
+ },
+ {
+  "from": "/az/news/1173",
+  "to": "/az/xeberler/adda-da-aciq-mikrofon-gorusu-kecirildi"
+ },
+ {
+  "from": "/az/news/1174",
+  "to": "/az/xeberler/rauf-veliyev-men-gencleri-aciq-dialoqa-devet-edirem"
+ },
+ {
+  "from": "/az/news/1175",
+  "to": "/az/xeberler/gemicilik-rehberliyi-genclere-qaygi-gosterir"
+ },
+ {
+  "from": "/az/news/1176",
+  "to": "/az/xeberler/deniz-akademiyasinin-yeni-tedris-korpusu-istifadeye-verildi"
+ },
+ {
+  "from": "/az/news/1177",
+  "to": "/az/xeberler/gemiciliyin-nailiyyetlerinde-yap-uzvlerinin-xidmeti-az-deyil"
+ },
+ {
+  "from": "/az/news/1178",
+  "to": "/az/xeberler/xocali-soyqirimindan-25-il-otur"
+ },
+ {
+  "from": "/az/news/1179",
+  "to": "/az/xeberler/adda-da-2016-ci-ilin-yekunlarina-dair-rektorun-hesabati-dinlenildi"
+ },
+ {
+  "from": "/az/news/1180",
+  "to": "/az/xeberler/azsciencenet-movcud-veziyyeti-imkanlari-ve-inkisaf-perspektivleri-movzusu-uzre-r"
+ },
+ {
+  "from": "/az/news/1181",
+  "to": "/az/xeberler/adda-da-aciq-qapi-gunu-kecirildi-2017"
+ },
+ {
+  "from": "/az/news/1182",
+  "to": "/az/xeberler/dunya-denizcilik-universitetinde-magistr-tehsili-alacaq-iki-telebenin-butun-xerc"
+ },
+ {
+  "from": "/az/news/1183",
+  "to": "/az/xeberler/adda-da-20-yanvar-sehidlerinin-xatiresi-anilib"
+ },
+ {
+  "from": "/az/news/1184",
+  "to": "/az/xeberler/novruz-senliyi-alqislarla-qarsilandi"
+ },
+ {
+  "from": "/az/news/1185",
+  "to": "/az/xeberler/bayram-tebriki"
+ },
+ {
+  "from": "/az/news/1186",
+  "to": "/az/xeberler/umummilli-lider-h-eliyevin-xatiresine-hesr-olunmus-elmi-konfrans"
+ },
+ {
+  "from": "/az/news/1187",
+  "to": "/az/xeberler/adnan-menderes-universitetinin-numayendeleri-adda-da"
+ },
+ {
+  "from": "/az/news/1188",
+  "to": "/az/xeberler/qazaxistan-sefirliyinin-konsulluq-sobesinin-mudiri-adda-da"
+ },
+ {
+  "from": "/az/news/1189",
+  "to": "/az/xeberler/akademiyada-imecilik-kecirildi"
+ },
+ {
+  "from": "/az/news/1190",
+  "to": "/az/xeberler/beynelxalq-konfrans-ise-basladi"
+ },
+ {
+  "from": "/az/news/1191",
+  "to": "/az/xeberler/konfrans-istirakcilari-fexri-xiyabanda"
+ },
+ {
+  "from": "/az/news/1192",
+  "to": "/az/xeberler/azerbaycan-xalqinin-ebedi-lideri"
+ },
+ {
+  "from": "/az/news/1193",
+  "to": "/az/xeberler/adda-emekdaslari-qanverme-aksiyasinda-istirak-etdi"
+ },
+ {
+  "from": "/az/news/1194",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasini-ela-qiymetlerle-bitiren-telebeler-is-axtar"
+ },
+ {
+  "from": "/az/news/1195",
+  "to": "/az/xeberler/umummilli-lider-h-eliyevin-xatiresine-hesr-olunmus-elmi-konfransin-qalibleri-muk"
+ },
+ {
+  "from": "/az/news/1197",
+  "to": "/az/xeberler/nufuzlu-tesnifat-cemiyyetinin-numayendeleri-gemicilikde-olub"
+ },
+ {
+  "from": "/az/news/1200",
+  "to": "/az/xeberler/gemicilikde-tehlukesizlik-gunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1201",
+  "to": "/az/xeberler/adda-nin-rektoru-yaxsi-denizciye-telebat-hec-vaxt-azalmayacaq"
+ },
+ {
+  "from": "/az/news/1202",
+  "to": "/az/xeberler/deniz-akademiyasinin-akkreditasiyasi-yekunlasib"
+ },
+ {
+  "from": "/az/news/1203",
+  "to": "/az/xeberler/geleceyin-denizcileri-ali-herbi-mektebde"
+ },
+ {
+  "from": "/az/news/1204",
+  "to": "/az/xeberler/denizcilik-sahesi-ile-bagli-ixtisaslasmis-sayt-fealiyyete-baslayib"
+ },
+ {
+  "from": "/az/news/1205",
+  "to": "/az/xeberler/deniz-akademiyasinda-milli-qurtulus-gunu-qeyd-edildi"
+ },
+ {
+  "from": "/az/news/1206",
+  "to": "/az/xeberler/mezunlara-en-boyuk-hediyye"
+ },
+ {
+  "from": "/az/news/1207",
+  "to": "/az/xeberler/adda-londonda-beynelxalq-telebe-forumunda-temsil-olundu"
+ },
+ {
+  "from": "/az/news/1208",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-tehsil-almaq-isteyen-abituriyentlerin-nez-2017"
+ },
+ {
+  "from": "/az/news/1209",
+  "to": "/az/xeberler/deniz-akademiyasinin-nufuzu-ilden-ile-artir"
+ },
+ {
+  "from": "/az/news/1210",
+  "to": "/az/xeberler/deniz-akademiyasi-qapilarini-acdi"
+ },
+ {
+  "from": "/az/news/1211",
+  "to": "/az/xeberler/15-sentyabr-bilik-gunudur"
+ },
+ {
+  "from": "/az/news/1212",
+  "to": "/az/xeberler/eziz-telebeler-dil-karyeraya-geden-yol-iv-umumrespublika-ali-mekteblerarasi-tele"
+ },
+ {
+  "from": "/az/news/1213",
+  "to": "/az/xeberler/deniz-akademiyasinin-beynelxalq-elaqeleri-ilbeil-genislenir"
+ },
+ {
+  "from": "/az/news/1214",
+  "to": "/az/xeberler/geleceyin-denizcileri-istehsalat-tecrubesinden-qayidiblar"
+ },
+ {
+  "from": "/az/news/1215",
+  "to": "/az/xeberler/adda-da-muellim-gunu-qeyd-edildi"
+ },
+ {
+  "from": "/az/news/1216",
+  "to": "/az/xeberler/muasir-tedris-metodlari-tetbiq-edilir"
+ },
+ {
+  "from": "/az/news/1217",
+  "to": "/az/xeberler/telimler-ugurla-kecdi"
+ },
+ {
+  "from": "/az/news/1218",
+  "to": "/az/xeberler/adda-telebeleri-soz-gelsin-yarismasinda-qalib-oldular"
+ },
+ {
+  "from": "/az/news/1219",
+  "to": "/az/xeberler/almaniya-ve-cexiyanin-metrologiya-institutunun-ekspertleri-adda-da"
+ },
+ {
+  "from": "/az/news/1220",
+  "to": "/az/xeberler/master-klas-dersi-maraga-sebeb-oldu"
+ },
+ {
+  "from": "/az/news/1221",
+  "to": "/az/xeberler/gorkemli-alimkerim-kerimovun-xatiresi-akademiyada-yad-edilib"
+ },
+ {
+  "from": "/az/news/1222",
+  "to": "/az/xeberler/qeydiyyat-sona-yetdi"
+ },
+ {
+  "from": "/az/news/1223",
+  "to": "/az/xeberler/adda-da-elektron-sened-dovriyyesi-sistemi-tetbiq-edilecek"
+ },
+ {
+  "from": "/az/news/1224",
+  "to": "/az/xeberler/mezunumuz-dunya-denizcilik-universitetindeki-tehsili-ile-bagli-teessuratlari-ile"
+ },
+ {
+  "from": "/az/news/1225",
+  "to": "/az/xeberler/da-azerbaycanda-ilk-defe-elektron-ali-tehsil-mekani-movzusunda-kecirilen-simpozi"
+ },
+ {
+  "from": "/az/news/1226",
+  "to": "/az/xeberler/master-klass-dersleri-davam-edir"
+ },
+ {
+  "from": "/az/news/1227",
+  "to": "/az/xeberler/buraxilis-islerinin-mudafiesine-hazirliq-prosesi-baslanib"
+ },
+ {
+  "from": "/az/news/1228",
+  "to": "/az/xeberler/adda-komandasi-heyder-eliyev-ve-azerbaycan-tarixi-iv-umumrespublika-bilik-yarisi"
+ },
+ {
+  "from": "/az/news/1229",
+  "to": "/az/xeberler/daha-bir-mezunumuzun-xaricde-tehsil-uguru"
+ },
+ {
+  "from": "/az/news/1230",
+  "to": "/az/xeberler/akademiyada-mulki-mudafie-uzre-telim-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1231",
+  "to": "/az/xeberler/yap-uzvu-olan-denizcilerin-de-istiraki-ile-cocuq-mercanliya-sefer-teskil-olunub"
+ },
+ {
+  "from": "/az/news/1232",
+  "to": "/az/xeberler/karyeraya-geden-yolda-dil-onemli-vasitedir"
+ },
+ {
+  "from": "/az/news/1233",
+  "to": "/az/xeberler/umumrespublika-musabiqesine-yekun-vuruldu"
+ },
+ {
+  "from": "/az/news/1234",
+  "to": "/az/xeberler/qazaxistanli-terefdaslarla-yeni-memorandum-imzalanib"
+ },
+ {
+  "from": "/az/news/1235",
+  "to": "/az/xeberler/telimler-davam-edir"
+ },
+ {
+  "from": "/az/news/1236",
+  "to": "/az/xeberler/adda-telebeleri-fhn-akademiyasinda-kecirilmis-elmi-praktik-konfransda-istirak-ed"
+ },
+ {
+  "from": "/az/news/1237",
+  "to": "/az/xeberler/adda-telebeleri-azerkitab-kitab-tebligat-merkezinde-olublar"
+ },
+ {
+  "from": "/az/news/1238",
+  "to": "/az/xeberler/istedadli-gencler-olimpiadada-istirak-etdiler"
+ },
+ {
+  "from": "/az/news/1239",
+  "to": "/az/xeberler/40-ilin-mezunlari-adda-da"
+ },
+ {
+  "from": "/az/news/1240",
+  "to": "/az/xeberler/adda-da-ulu-onder-heyder-eliyevin-eziz-xatiresi-yad-edilib"
+ },
+ {
+  "from": "/az/news/1241",
+  "to": "/az/xeberler/novbeti-master-klass-maraqla-dinlenilib"
+ },
+ {
+  "from": "/az/news/1242",
+  "to": "/az/xeberler/adda-da-aciq-mikrofon-gorusu-bas-tutub"
+ },
+ {
+  "from": "/az/news/1243",
+  "to": "/az/xeberler/adda-yuksek-cosquyla-hemreylik-gununu-qeyd-edib"
+ },
+ {
+  "from": "/az/news/1244",
+  "to": "/az/xeberler/kapitanlar-dogma-ali-mektebi-unutmurlar"
+ },
+ {
+  "from": "/az/news/1245",
+  "to": "/az/xeberler/adda-telebeleri-bir-olaq-hemrey-olaq-tedbirine-qatilib"
+ },
+ {
+  "from": "/az/news/1246",
+  "to": "/az/xeberler/bu-gun-azerbaycan-dovlet-deniz-akademiyasinin-rektoru-cingiz-eliyevin-55-illik-y"
+ },
+ {
+  "from": "/az/news/1247",
+  "to": "/az/xeberler/haci-babayev-70"
+ },
+ {
+  "from": "/az/news/1248",
+  "to": "/az/xeberler/adda-da-payiz-imtahan-sessiyasi-ugurla-davam-edir"
+ },
+ {
+  "from": "/az/news/1249",
+  "to": "/az/xeberler/20-yanvarda-qehremanliq-gosteren-azerbaycanli-denizciler-haqqinda-senedli-film-h"
+ },
+ {
+  "from": "/az/news/1250",
+  "to": "/az/xeberler/imperiya-ordusu-ile-qeyri-beraber-mubarizeye-qalxmis-denizcilerimiz"
+ },
+ {
+  "from": "/az/news/1251",
+  "to": "/az/xeberler/qerib-bir-denizci"
+ },
+ {
+  "from": "/az/news/1252",
+  "to": "/az/xeberler/adda-nin-rektoru-dos-c-eliyevin-8-mart-beynelxalq-qadinlar-gunu-munasibeti-ile-t"
+ },
+ {
+  "from": "/az/news/1253",
+  "to": "/az/xeberler/deniz-akademiyasinda-her-sey-ureyimcedir"
+ },
+ {
+  "from": "/az/news/1254",
+  "to": "/az/xeberler/merakes-azerbaycan-emekdasligi"
+ },
+ {
+  "from": "/az/news/1255",
+  "to": "/az/xeberler/novruz-tariximiz-ve-adet-enenelerimiz"
+ },
+ {
+  "from": "/az/news/1256",
+  "to": "/az/xeberler/adda-pesekar-kadrlarin-yetisdirilmesi-istiqametinde-isleri-davam-etdirir"
+ },
+ {
+  "from": "/az/news/1257",
+  "to": "/az/xeberler/qadinlar-heyatin-menasi-bezeyi-ve-ebedi-gozelliyidir"
+ },
+ {
+  "from": "/az/news/1258",
+  "to": "/az/xeberler/adda-da-2017-ci-ilin-yekunlarina-dair-rektorun-hesabati-dinlenildi"
+ },
+ {
+  "from": "/az/news/1259",
+  "to": "/az/xeberler/adda-nin-qocaman-emekdasi-en-yaxsi-muellim-nominasiyasinin-qalibi-olub"
+ },
+ {
+  "from": "/az/news/1260",
+  "to": "/az/xeberler/baki-bulvarinda-yelkenli-qayiqlarin-paradi-teskil-edilib"
+ },
+ {
+  "from": "/az/news/1261",
+  "to": "/az/xeberler/31-mart-soyqirimi-insanliq-eleyhine-yonelmis-qeddar-cinayetdir"
+ },
+ {
+  "from": "/az/news/1262",
+  "to": "/az/xeberler/yenilenmis-adda-saytinin-teqdimati-kecirilib"
+ },
+ {
+  "from": "/az/news/1263",
+  "to": "/az/xeberler/adda-telebeleri-azerkitab-ktm-de-azerbaycanlilarin-soyqiriminin-100-cu-ildonumun"
+ },
+ {
+  "from": "/az/news/1264",
+  "to": "/az/xeberler/litva-boyuk-ipek-yoluna-maraq-gosterir"
+ },
+ {
+  "from": "/az/news/1265",
+  "to": "/az/xeberler/tarixin-bagislamayacagi-qanli-cinayet"
+ },
+ {
+  "from": "/az/news/1266",
+  "to": "/az/xeberler/xocali-vehsiliyin-gorunmemis-tezahuru"
+ },
+ {
+  "from": "/az/news/1267",
+  "to": "/az/xeberler/rektor-cingiz-eliyev-azerkitab-kitab-tebligati-merkezinin-qonagi-olub"
+ },
+ {
+  "from": "/az/news/1268",
+  "to": "/az/xeberler/axdg-de-gencler-gunu-qeyd-olunub"
+ },
+ {
+  "from": "/az/news/1269",
+  "to": "/az/xeberler/adda-ve-ttm-emekdaslari-iso-9001-beynelxalq-standartinin-yeni-2015-versiyasi-uzr"
+ },
+ {
+  "from": "/az/news/1270",
+  "to": "/az/xeberler/umummilli-lider-h-eliyevin-xatiresine-hesr-olunmus-elmi-konfrans-baslayib"
+ },
+ {
+  "from": "/az/news/1271",
+  "to": "/az/xeberler/elmi-konfransa-yekun-vuruldu"
+ },
+ {
+  "from": "/az/news/1272",
+  "to": "/az/xeberler/adda-da-qanverme-aksiyasi-kecirildi"
+ },
+ {
+  "from": "/az/news/1273",
+  "to": "/az/xeberler/azerbaycanlilarin-soyqirimi-kitabi-isiq-uzu-gordu"
+ },
+ {
+  "from": "/az/news/1274",
+  "to": "/az/xeberler/beynelxalq-innovasiya-musabiqesine-hazirliq-gedir"
+ },
+ {
+  "from": "/az/news/1275",
+  "to": "/az/xeberler/emekdasliq-protokolu-imzalanib"
+ },
+ {
+  "from": "/az/news/1276",
+  "to": "/az/xeberler/axdg-qsc-nin-hesabina-telebelere-elave-teqaud-verilecek"
+ },
+ {
+  "from": "/az/news/1277",
+  "to": "/az/xeberler/adda-da-novbeti-aciq-mikrofon-gorusu-kecirildi"
+ },
+ {
+  "from": "/az/news/1278",
+  "to": "/az/xeberler/adda-da-beynelxalq-konfrans-ise-baslayib"
+ },
+ {
+  "from": "/az/news/1279",
+  "to": "/az/xeberler/qonaqlar-tedris-bazasi-ile-tanis-olublar"
+ },
+ {
+  "from": "/az/news/1280",
+  "to": "/az/xeberler/umummilli-liderin-anadan-olmasinin-95-illiyi-munasibetile-yelkenli-qayiq-yarisi"
+ },
+ {
+  "from": "/az/news/1281",
+  "to": "/az/xeberler/qazaxistanli-rektor-adda-da-olub"
+ },
+ {
+  "from": "/az/news/1282",
+  "to": "/az/xeberler/deniz-akademiyasinin-alti-telebesi-qara-denizde-tecrube-kececek"
+ },
+ {
+  "from": "/az/news/1283",
+  "to": "/az/xeberler/beynelxalq-gemicilik-sirketinin-emekdaslari-adda-nin-telim-tedris-merkezinde-kur"
+ },
+ {
+  "from": "/az/news/1284",
+  "to": "/az/xeberler/novbeti-master-klass-dersi-kecirilib"
+ },
+ {
+  "from": "/az/news/1285",
+  "to": "/az/xeberler/azerbaycan-xalq-cumhuriyyeti-100"
+ },
+ {
+  "from": "/az/news/1286",
+  "to": "/az/xeberler/cumhuriyyet-dovrunde-gemicilikde-veziyyet-ve-denizcilik-mekteblerinin-fealiyyeti"
+ },
+ {
+  "from": "/az/news/1287",
+  "to": "/az/xeberler/elektron-akademiya-layihesine-start-verildi"
+ },
+ {
+  "from": "/az/news/1288",
+  "to": "/az/xeberler/denizci-aileleri-atam-anam-ve-men-adli-idman-turizm-yarisinda-istirak-edib"
+ },
+ {
+  "from": "/az/news/1289",
+  "to": "/az/xeberler/elmi-jurnalimiz-onlayn-versiyada-2018"
+ },
+ {
+  "from": "/az/news/1290",
+  "to": "/az/xeberler/bayramlariniz-mubarek-olsun"
+ },
+ {
+  "from": "/az/news/1291",
+  "to": "/az/xeberler/yeni-yap-biletleri-teqdim-edildi"
+ },
+ {
+  "from": "/az/news/1292",
+  "to": "/az/xeberler/pese-bayraminiz-mubarek-olsun"
+ },
+ {
+  "from": "/az/news/1293",
+  "to": "/az/xeberler/adda-nin-kollektivi-itv-de-denizci-gunu-ne-hesr-olunmus-proqramda-istirak-edib-v"
+ },
+ {
+  "from": "/az/news/1294",
+  "to": "/az/xeberler/adda-cempion"
+ },
+ {
+  "from": "/az/news/1295",
+  "to": "/az/xeberler/geleceyin-mexaniki-hem-de-seir-yazir"
+ },
+ {
+  "from": "/az/news/1296",
+  "to": "/az/xeberler/baki-fransiz-liseyinin-sagirdleri-adda-da"
+ },
+ {
+  "from": "/az/news/1297",
+  "to": "/az/xeberler/adda-respublika-musabiqesinin-qalibi-oldu"
+ },
+ {
+  "from": "/az/news/1298",
+  "to": "/az/xeberler/mukafatlar-sahiblerine-teqdim-olundu"
+ },
+ {
+  "from": "/az/news/1299",
+  "to": "/az/xeberler/qurban-bayraminiz-mubarek-olsun"
+ },
+ {
+  "from": "/az/news/1300",
+  "to": "/az/xeberler/daha-yuksek-bal-toplayanlar-adda-ni-secir"
+ },
+ {
+  "from": "/az/news/1301",
+  "to": "/az/xeberler/tatyana-srebnaya-denizci-olmagimla-fexr-edirem"
+ },
+ {
+  "from": "/az/news/1302",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-aciq-qapi-gunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1303",
+  "to": "/az/xeberler/adda-da-andicme-merasimi-kecirildi"
+ },
+ {
+  "from": "/az/news/1304",
+  "to": "/az/xeberler/merakes-sefiri-ile-gorus"
+ },
+ {
+  "from": "/az/news/1305",
+  "to": "/az/xeberler/elmi-eserler-mecmuesinin-2-ci-nomresi-hazirdir"
+ },
+ {
+  "from": "/az/news/1306",
+  "to": "/az/xeberler/adda-nin-telebeleri-bilik-yarisinda-istirak-edibler"
+ },
+ {
+  "from": "/az/news/1307",
+  "to": "/az/xeberler/prezident-ilham-eliyev-deniz-neqliyyati-iscilerinin-teltif-olunmasi-ile-bagli-se"
+ },
+ {
+  "from": "/az/news/1308",
+  "to": "/az/xeberler/160-illik-yubiley-munasibeti-ile-tebrik"
+ },
+ {
+  "from": "/az/news/1309",
+  "to": "/az/xeberler/azerbaycan-xezer-deniz-gemiciliyinin-160-illiyine-hesr-olunmus-merasimin-istirak"
+ },
+ {
+  "from": "/az/news/1310",
+  "to": "/az/xeberler/avropa-deniz-tehlukesizliyi-agentliyi-adda-da-teftis-aparib"
+ },
+ {
+  "from": "/az/news/1311",
+  "to": "/az/xeberler/bayramlariniz-mubarek-olsun-2018"
+ },
+ {
+  "from": "/az/news/1312",
+  "to": "/az/xeberler/adda-magistrantlari-fhn-akademiyasinda-kecirilmis-elmi-praktik-konfransda-istira"
+ },
+ {
+  "from": "/az/news/1313",
+  "to": "/az/xeberler/breyn-rinq-komandalari-yaradilib"
+ },
+ {
+  "from": "/az/news/1314",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-ne-harada-ne-zaman-intellektual-oyunu-kec"
+ },
+ {
+  "from": "/az/news/1315",
+  "to": "/az/xeberler/istedadli-gencler-olimpiadada-istirak-etdiler-2018"
+ },
+ {
+  "from": "/az/news/1316",
+  "to": "/az/xeberler/hindistanli-qonaqlar-adda-da"
+ },
+ {
+  "from": "/az/news/1317",
+  "to": "/az/xeberler/ne-harada-ne-zaman-ikinci-tur"
+ },
+ {
+  "from": "/az/news/1318",
+  "to": "/az/xeberler/umummilli-liderimiz-daim-xalqimizin-qelbindedir"
+ },
+ {
+  "from": "/az/news/1319",
+  "to": "/az/xeberler/saytimiz-muasir-teleblere-cavab-verir"
+ },
+ {
+  "from": "/az/news/1320",
+  "to": "/az/xeberler/denizcilere-mukafatlar-teqdim-edilib"
+ },
+ {
+  "from": "/az/news/1321",
+  "to": "/az/xeberler/2018-ci-ilde-elmi-tedqiqat-fealiyyeti"
+ },
+ {
+  "from": "/az/news/1322",
+  "to": "/az/xeberler/sufreleriniz-bereketli-yolunuz-aciq-olsun"
+ },
+ {
+  "from": "/az/news/1323",
+  "to": "/az/xeberler/cingiz-eliyevin-xatiresi-onu-taniyanlarin-qelbinde-hemise-yasayacaq"
+ },
+ {
+  "from": "/az/news/1324",
+  "to": "/az/xeberler/deniz-akademiyasinin-telebeleri-beynelxalq-gemicilik-sirketinin-tankerlerinde-te"
+ },
+ {
+  "from": "/az/news/1325",
+  "to": "/az/xeberler/asco-da-20-yanvar-faciesinin-29-cu-ildonumune-hesr-olunan-anim-merasimi-kecirili"
+ },
+ {
+  "from": "/az/news/1326",
+  "to": "/az/xeberler/adda-nin-muellimi-insan-sevdiyi-isle-mesgul-olanda-cetinlikleri-az-hiss-edir"
+ },
+ {
+  "from": "/az/news/1327",
+  "to": "/az/xeberler/asco-da-gencler-gunu-munasibetile-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1328",
+  "to": "/az/xeberler/eziz-gencler-bayraminiz-mubarek"
+ },
+ {
+  "from": "/az/news/1329",
+  "to": "/az/xeberler/yeni-tebligat-kampaniyasi"
+ },
+ {
+  "from": "/az/news/1330",
+  "to": "/az/xeberler/asco-da-telimatcilar-ucun-telim-kursu-kecirilib"
+ },
+ {
+  "from": "/az/news/1331",
+  "to": "/az/xeberler/azerbaycanda-insa-olunan-ilk-tanker-suya-salindi"
+ },
+ {
+  "from": "/az/news/1332",
+  "to": "/az/xeberler/asco-emekdaslari-arasinda-sahmat-yarisi-kecirilib"
+ },
+ {
+  "from": "/az/news/1333",
+  "to": "/az/xeberler/xocali-soyqirimi-27-il"
+ },
+ {
+  "from": "/az/news/1334",
+  "to": "/az/xeberler/adda-da-pesekar-karyera-inkisafi-ve-imkanlari-movzusunda-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1335",
+  "to": "/az/xeberler/gozlerinizden-sevinc-uzunuzden-tebessum-eskik-olmasin"
+ },
+ {
+  "from": "/az/news/1336",
+  "to": "/az/xeberler/asco-8-mart-beynelxalq-qadinlar-gunu-ile-bagli-gemi-turu-teskil-edib"
+ },
+ {
+  "from": "/az/news/1337",
+  "to": "/az/xeberler/adda-da-muasir-denizcilik-dunyasina-baxis-movzusunda-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1338",
+  "to": "/az/xeberler/denizciler-adindan-novruz-bayrami-munasibetile-esgerler-ucun-konsert-teskil-olun"
+ },
+ {
+  "from": "/az/news/1339",
+  "to": "/az/xeberler/bahar-imeciliyi-kecirildi"
+ },
+ {
+  "from": "/az/news/1340",
+  "to": "/az/xeberler/bahar-bayraminiz-mubarek-olsun"
+ },
+ {
+  "from": "/az/news/1341",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-master-class-dersleri-kecirilecek"
+ },
+ {
+  "from": "/az/news/1342",
+  "to": "/az/xeberler/adda-telebeleri-azerkitab-ktm-de-azerbaycanlilarin-soyqirimina-hesr-olunmus-tedb"
+ },
+ {
+  "from": "/az/news/1343",
+  "to": "/az/xeberler/akademiyada-beynelxalq-seminar-kecirilecek"
+ },
+ {
+  "from": "/az/news/1344",
+  "to": "/az/xeberler/yaz-semestrinde-master-klass-derslerine-start-verildi"
+ },
+ {
+  "from": "/az/news/1345",
+  "to": "/az/xeberler/telebelerin-tehlukesizliyi-diqqet-merkezinde-movzusunda-telim-kursu"
+ },
+ {
+  "from": "/az/news/1346",
+  "to": "/az/xeberler/h-x-esedovun-azerbaycan-dovlet-deniz-akademiyasinin-rektoru-teyin-edilmesi-haqqi-2019"
+ },
+ {
+  "from": "/az/news/1347",
+  "to": "/az/xeberler/yap-sebail-rayon-teskilatinin-uzvleri-cocuq-mercanliya-sefer-edib"
+ },
+ {
+  "from": "/az/news/1348",
+  "to": "/az/xeberler/umummilli-lider-heyder-eliyevin-anadan-olmasinin-96-ci-ildonumune-hesr-edilmis-e"
+ },
+ {
+  "from": "/az/news/1349",
+  "to": "/az/xeberler/cadmatic-proqram-teminatinin-teqdimat-merasimi-kecirilib"
+ },
+ {
+  "from": "/az/news/1350",
+  "to": "/az/xeberler/adda-nin-yeni-rektoru-kollektive-teqdim-olunub"
+ },
+ {
+  "from": "/az/news/1351",
+  "to": "/az/xeberler/telebe-magistrant-ve-genc-tedqiqatcilarin-elmi-texniki-konfransi-basa-catib"
+ },
+ {
+  "from": "/az/news/1352",
+  "to": "/az/xeberler/adda-da-emniyyetli-idareetme-haqqinda-beynelxalq-mecelleye-giris-movzusunda-semi"
+ },
+ {
+  "from": "/az/news/1353",
+  "to": "/az/xeberler/yangin-tehlukesizliyine-dair-telim"
+ },
+ {
+  "from": "/az/news/1354",
+  "to": "/az/xeberler/deniz-akademiyasinin-telebeleri-ucun-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1355",
+  "to": "/az/xeberler/adda-da-secki-kecirilib"
+ },
+ {
+  "from": "/az/news/1356",
+  "to": "/az/xeberler/elmi-texniki-konfransin-qonaqlari-artiq-paytaxtimiza-gelmeye-baslayib"
+ },
+ {
+  "from": "/az/news/1357",
+  "to": "/az/xeberler/ulu-onderin-xatiresine-hesr-olunmus-xiv-beynelxalq-elmi-texniki-konfrans-isine-b"
+ },
+ {
+  "from": "/az/news/1358",
+  "to": "/az/xeberler/ikiterefli-elaqeler-muzakire-edildi"
+ },
+ {
+  "from": "/az/news/1359",
+  "to": "/az/xeberler/xarici-qonaqlar-ttm-de-olublar"
+ },
+ {
+  "from": "/az/news/1360",
+  "to": "/az/xeberler/kamcatkali-qonaq-master-klass-kecirib"
+ },
+ {
+  "from": "/az/news/1361",
+  "to": "/az/xeberler/telebelerin-mulki-mudafie-hazirligi-onem-dasiyir"
+ },
+ {
+  "from": "/az/news/1362",
+  "to": "/az/xeberler/adda-telebeleri-90-yasli-muharibe-veterani-ile-gorusub"
+ },
+ {
+  "from": "/az/news/1363",
+  "to": "/az/xeberler/yaradici-tefekkur-movzusunda-master-klass"
+ },
+ {
+  "from": "/az/news/1364",
+  "to": "/az/xeberler/denizciler-arasinda-sahmat-yarisi-kecirilib"
+ },
+ {
+  "from": "/az/news/1365",
+  "to": "/az/xeberler/rektor-siz-akademiyanin-simasisiniz"
+ },
+ {
+  "from": "/az/news/1366",
+  "to": "/az/xeberler/adda-da-veten-saati-kecirilib"
+ },
+ {
+  "from": "/az/news/1367",
+  "to": "/az/xeberler/metrologiya-gunu"
+ },
+ {
+  "from": "/az/news/1368",
+  "to": "/az/xeberler/rehber-heyetin-mulki-mudafie-mesqi"
+ },
+ {
+  "from": "/az/news/1369",
+  "to": "/az/xeberler/imtiyazli-telebelerle-gorus"
+ },
+ {
+  "from": "/az/news/1370",
+  "to": "/az/xeberler/ramazan-bayraminiz-mubarek"
+ },
+ {
+  "from": "/az/news/1371",
+  "to": "/az/xeberler/adda-telebelerine-ise-qebul-musabiqesine-hazirliq-barede-teqdimat-kecirilib"
+ },
+ {
+  "from": "/az/news/1372",
+  "to": "/az/xeberler/polsada-beynelxalq-konfrans-ise-baslayib"
+ },
+ {
+  "from": "/az/news/1373",
+  "to": "/az/xeberler/adda-da-lng-gemileri-ve-lng-yeni-yanacaq-novu-kimi-movzusunda-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1374",
+  "to": "/az/xeberler/elmi-eserler-mecmuesinin-1-ci-nomresi-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1375",
+  "to": "/az/xeberler/dovlet-imtahanlari-basladi"
+ },
+ {
+  "from": "/az/news/1377",
+  "to": "/az/xeberler/elmi-eserler-mecmuesinin-2-ci-nomresi-hazirdir-2019"
+ },
+ {
+  "from": "/az/news/1378",
+  "to": "/az/xeberler/valideynler-adda-da"
+ },
+ {
+  "from": "/az/news/1379",
+  "to": "/az/xeberler/yolunuz-hemise-aciq-olsun"
+ },
+ {
+  "from": "/az/news/1380",
+  "to": "/az/xeberler/2018-ci-ilin-en-yaxsilari-mueyyen-olundu"
+ },
+ {
+  "from": "/az/news/1381",
+  "to": "/az/xeberler/mukafatlar-sahiblerine-teqdim-olunub"
+ },
+ {
+  "from": "/az/news/1382",
+  "to": "/az/xeberler/tebrik-edirik"
+ },
+ {
+  "from": "/az/news/1383",
+  "to": "/az/xeberler/ulu-onder-heyder-eliyev-ve-milli-gemicilik-siyaseti-kitabi-nesr-edilib"
+ },
+ {
+  "from": "/az/news/1384",
+  "to": "/az/xeberler/adda-telebeleri-zig-gemi-temiri-ve-tikintisi-zavodunda-istehsalat-tecrubesindedi"
+ },
+ {
+  "from": "/az/news/1385",
+  "to": "/az/xeberler/adda-telebeleri-yayfest-gencler-dusergesi-layihesinde-istirak-edibler"
+ },
+ {
+  "from": "/az/news/1386",
+  "to": "/az/xeberler/adda-nin-8-telebesi-asco-nun-xaricde-uzen-gemilerinde-tecrube-kececek"
+ },
+ {
+  "from": "/az/news/1387",
+  "to": "/az/xeberler/qeydiyyat-basladi"
+ },
+ {
+  "from": "/az/news/1388",
+  "to": "/az/xeberler/telebelerin-qeydiyyati-basa-catib"
+ },
+ {
+  "from": "/az/news/1389",
+  "to": "/az/xeberler/yeni-kitablar-adda-ya-teqdim-olunub"
+ },
+ {
+  "from": "/az/news/1390",
+  "to": "/az/xeberler/adda-rektoru-1-ci-kurslari-tebrik-edib"
+ },
+ {
+  "from": "/az/news/1391",
+  "to": "/az/xeberler/elmi-sura-ise-basladi"
+ },
+ {
+  "from": "/az/news/1392",
+  "to": "/az/xeberler/adda-ya-bu-il-qebul-olan-telebeler-ve-onlarin-valideynleri-ile-gorus-kecirilib"
+ },
+ {
+  "from": "/az/news/1393",
+  "to": "/az/xeberler/telebelerimiz-teltif-olunub"
+ },
+ {
+  "from": "/az/news/1398",
+  "to": "/az/xeberler/elmi-suranin-novbeti-iclasi-kecirilib"
+ },
+ {
+  "from": "/az/news/1399",
+  "to": "/az/xeberler/adda-da-maliyye-savadliligi-seminari-kecirilib"
+ },
+ {
+  "from": "/az/news/1400",
+  "to": "/az/xeberler/sibirli-qonaqlar-adda-da-olublar"
+ },
+ {
+  "from": "/az/news/1401",
+  "to": "/az/xeberler/gemi-layihelendirilmesi-sahesinde-emekdasliq"
+ },
+ {
+  "from": "/az/news/1402",
+  "to": "/az/xeberler/adda-da-deniz-etraf-muhitinin-qlobal-problemleri-movzusunda-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1403",
+  "to": "/az/xeberler/geleceyin-denizcileri-asco-nun-loqosunu-canlandiriblar-video"
+ },
+ {
+  "from": "/az/news/1404",
+  "to": "/az/xeberler/adda-ya-yuksek-balla-qebul-olmus-42-telebeye-asco-nun-vesaiti-hesabina-elave-teq"
+ },
+ {
+  "from": "/az/news/1405",
+  "to": "/az/xeberler/adda-da-tekrar-ali-tehsile-qebulun-neticeleri-aciqlanib"
+ },
+ {
+  "from": "/az/news/1406",
+  "to": "/az/xeberler/adda-da-maariflendirici-tedbir"
+ },
+ {
+  "from": "/az/news/1407",
+  "to": "/az/xeberler/tedris-gemisinde-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1408",
+  "to": "/az/xeberler/h-x-esedovun-sohret-ordeni-ile-teltif-edilmesi-haqqinda-azerbaycan-respublikasi"
+ },
+ {
+  "from": "/az/news/1409",
+  "to": "/az/xeberler/ulu-onder-filminin-teqdimati-kecirilib"
+ },
+ {
+  "from": "/az/news/1410",
+  "to": "/az/xeberler/adda-telebeleri-ucun-seminar"
+ },
+ {
+  "from": "/az/news/1411",
+  "to": "/az/xeberler/genclerle-gorus"
+ },
+ {
+  "from": "/az/news/1412",
+  "to": "/az/xeberler/elmi-suranin-novbeti-iclasi"
+ },
+ {
+  "from": "/az/news/1413",
+  "to": "/az/xeberler/ucrengli-bayragimiz-musteqil-azerbaycan-dovletinin-gucunu-ve-xalqimizin-milli-bi"
+ },
+ {
+  "from": "/az/news/1414",
+  "to": "/az/xeberler/adda-da-bayram-konserti"
+ },
+ {
+  "from": "/az/news/1415",
+  "to": "/az/xeberler/asco-nun-xarici-sularda-uzen-gemilerinde-tecrube-kecen-adda-telebeleri-vetene-qa"
+ },
+ {
+  "from": "/az/news/1416",
+  "to": "/az/xeberler/cinde-beynelxalq-seminar"
+ },
+ {
+  "from": "/az/news/1417",
+  "to": "/az/xeberler/heyder-eliyev-irsini-oyrenirik"
+ },
+ {
+  "from": "/az/news/1418",
+  "to": "/az/xeberler/fakulte-elmi-suralarinin-seckileri"
+ },
+ {
+  "from": "/az/news/1419",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinin-prorektorunun-musahibesi"
+ },
+ {
+  "from": "/az/news/1420",
+  "to": "/az/xeberler/bolqar-herbi-denizciler-adda-da"
+ },
+ {
+  "from": "/az/news/1421",
+  "to": "/az/xeberler/adda-emekdasinin-meruzesi-dinlenilib"
+ },
+ {
+  "from": "/az/news/1422",
+  "to": "/az/xeberler/muellimimiz-sertifikata-layiq-gorulub"
+ },
+ {
+  "from": "/az/news/1424",
+  "to": "/az/xeberler/telebelerimiz-genc-tamasacilar-teatrinda"
+ },
+ {
+  "from": "/az/news/1425",
+  "to": "/az/xeberler/adda-da-fenn-olimpiadalari-kecirilib"
+ },
+ {
+  "from": "/az/news/1426",
+  "to": "/az/xeberler/qlobal-abs-akademiyalarinin-rehberi-ile-gorus"
+ },
+ {
+  "from": "/az/news/1427",
+  "to": "/az/xeberler/adda-telebeleri-ucun-tehlukesizlikle-bagli-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1428",
+  "to": "/az/xeberler/elmi-suranin-novbeti-iclasi-2019"
+ },
+ {
+  "from": "/az/news/1429",
+  "to": "/az/xeberler/yeni-nesrler-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1430",
+  "to": "/az/xeberler/ulu-onderin-eziz-xatiresi-yad-edilib"
+ },
+ {
+  "from": "/az/news/1431",
+  "to": "/az/xeberler/adda-da-istedadlarin-idareolunmasi-ve-pesekar-kadr-hazirligi-ile-bagli-gorus-kec"
+ },
+ {
+  "from": "/az/news/1432",
+  "to": "/az/xeberler/keyfiyyeti-idareetme-sistemine-dair-master-klass"
+ },
+ {
+  "from": "/az/news/1433",
+  "to": "/az/xeberler/nesimi-650"
+ },
+ {
+  "from": "/az/news/1434",
+  "to": "/az/xeberler/elmi-suranin-2019-cu-ilde-son-iclasi"
+ },
+ {
+  "from": "/az/news/1435",
+  "to": "/az/xeberler/payiz-imtahan-sessiyasi-baslayib"
+ },
+ {
+  "from": "/az/news/1436",
+  "to": "/az/xeberler/2020-ci-ilde-sufreleriniz-bereketli-uzunuz-guler-yolunuz-aciq-olsun"
+ },
+ {
+  "from": "/az/news/1437",
+  "to": "/az/xeberler/sabit-orucov-gemisinde-telim"
+ },
+ {
+  "from": "/az/news/1438",
+  "to": "/az/xeberler/adda-nin-ingilis-dilli-qruplarinin-imtahanlari-baslayib"
+ },
+ {
+  "from": "/az/news/1439",
+  "to": "/az/xeberler/2020-ci-ilde-kecirilecek-imtahanlar-haqqinda"
+ },
+ {
+  "from": "/az/news/1440",
+  "to": "/az/xeberler/diplomqabagi-tecrube-baslayib"
+ },
+ {
+  "from": "/az/news/1441",
+  "to": "/az/xeberler/adda-da-elektron-akademiya-tetbiq-olunacaq"
+ },
+ {
+  "from": "/az/news/1442",
+  "to": "/az/xeberler/denizci-telebeler-esgere-salam-herbi-vetenperlik-aksiyasina-qosulublar"
+ },
+ {
+  "from": "/az/news/1443",
+  "to": "/az/xeberler/2020-ci-ilin-ilk-elmi-surasi-kecirilib"
+ },
+ {
+  "from": "/az/news/1444",
+  "to": "/az/xeberler/gencler-hazirda-regionun-lider-dovleti-olan-azerbaycanin-taleyine-daha-gozel-gun"
+ },
+ {
+  "from": "/az/news/1445",
+  "to": "/az/xeberler/valideynler-imtahanda"
+ },
+ {
+  "from": "/az/news/1446",
+  "to": "/az/xeberler/adda-telebeleri-qis-liderlik-mektebine-qatiliblar"
+ },
+ {
+  "from": "/az/news/1447",
+  "to": "/az/xeberler/adda-telebeleri-baki-gemiqayirma-zavodunda-tecrubede-olacaqlar"
+ },
+ {
+  "from": "/az/news/1448",
+  "to": "/az/xeberler/adda-telebeleri-xocali-soyqirimina-hesr-olunan-tedbirde-istirak-edibler"
+ },
+ {
+  "from": "/az/news/1449",
+  "to": "/az/xeberler/koronavirusdan-qorunmaq-ucun-bunlari-bilmek-vacibdir"
+ },
+ {
+  "from": "/az/news/1450",
+  "to": "/az/xeberler/asco-da-koronavirusla-bagli-qaynar-xett-ve-qerargah-fealiyyete-baslayib"
+ },
+ {
+  "from": "/az/news/1451",
+  "to": "/az/xeberler/elmi-suranin-iclasi-kecirilib"
+ },
+ {
+  "from": "/az/news/1452",
+  "to": "/az/xeberler/her-birinize-layiq-oldugunuz-en-boyuk-seadet-arzulayiram"
+ },
+ {
+  "from": "/az/news/1453",
+  "to": "/az/xeberler/ukraynali-qonaqlar-adda-rektoru-ile-gorusubler"
+ },
+ {
+  "from": "/az/news/1454",
+  "to": "/az/xeberler/asco-da-2019-cu-ilin-yekunlarina-gore-en-yaxsilarin-adlari-aciqlanib"
+ },
+ {
+  "from": "/az/news/1455",
+  "to": "/az/xeberler/2019-cu-ilin-en-yaxsi-muellimi-akif-ismayilov"
+ },
+ {
+  "from": "/az/news/1456",
+  "to": "/az/xeberler/elm-ve-tedris-sahesinde-emekdasliga-dair-muqavile-imzalanib"
+ },
+ {
+  "from": "/az/news/1457",
+  "to": "/az/xeberler/sufreleriniz-bereketli-yolunuz-aciq-olsun-2020"
+ },
+ {
+  "from": "/az/news/1458",
+  "to": "/az/xeberler/rauf-veiyev-biz-butun-gucumuzle-calisiriq-ki-emekdaslarin-saglamligi-ve-tehlukes"
+ },
+ {
+  "from": "/az/news/1459",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-distant-tehsil-aparilir"
+ },
+ {
+  "from": "/az/news/1460",
+  "to": "/az/xeberler/adda-rektorunun-telebelere-muracieti"
+ },
+ {
+  "from": "/az/news/1461",
+  "to": "/az/xeberler/adda-da-distant-tehsil-video"
+ },
+ {
+  "from": "/az/news/1462",
+  "to": "/az/xeberler/ramazan-bayraminiz-mubarek-2020"
+ },
+ {
+  "from": "/az/news/1463",
+  "to": "/az/xeberler/adda-nin-elmi-surasinin-yaz-imtahan-sessiyasi-ile-bagli-qerari-aciqlanib"
+ },
+ {
+  "from": "/az/news/1464",
+  "to": "/az/xeberler/adda-da-ilk-defe-onlayn-test-usulu-ile-imtahan-sessiyasi-kecirilir"
+ },
+ {
+  "from": "/az/news/1465",
+  "to": "/az/xeberler/adda-nin-metbeesinde-yeni-kitablar-cap-edilib"
+ },
+ {
+  "from": "/az/news/1466",
+  "to": "/az/xeberler/bayraminiz-mubarek-olsun-eziz-denizciler"
+ },
+ {
+  "from": "/az/news/1467",
+  "to": "/az/xeberler/adda-rektoru-heyder-esedovun-mezunlara-muracieti"
+ },
+ {
+  "from": "/az/news/1468",
+  "to": "/az/xeberler/adda-mezunlari-2020"
+ },
+ {
+  "from": "/az/news/1470",
+  "to": "/az/xeberler/qurban-bayraminiz-mubarek-olsun-2020"
+ },
+ {
+  "from": "/az/news/1471",
+  "to": "/az/xeberler/akademik-borclarin-legvi-ucun-imkan-yaradilib"
+ },
+ {
+  "from": "/az/news/1472",
+  "to": "/az/xeberler/adda-da-eyani-tehsile-hazirliq-aparilir"
+ },
+ {
+  "from": "/az/news/1473",
+  "to": "/az/xeberler/adda-da-muellimler-ucun-telimler-baslayib"
+ },
+ {
+  "from": "/az/news/1474",
+  "to": "/az/xeberler/ilham-eliyevin-yeni-ders-ilinin-baslanmasi-ve-bilik-gunu-munasibetile-muracieti"
+ },
+ {
+  "from": "/az/news/1475",
+  "to": "/az/xeberler/adda-da-yeni-tedris-ili-baslayib"
+ },
+ {
+  "from": "/az/news/1476",
+  "to": "/az/xeberler/denizciler-ucun-kurslar-kecirilir"
+ },
+ {
+  "from": "/az/news/1477",
+  "to": "/az/xeberler/teqaudler-teyin-edilib"
+ },
+ {
+  "from": "/az/news/1478",
+  "to": "/az/xeberler/adda-professoru-sertifikatlara-layiq-gorulub"
+ },
+ {
+  "from": "/az/news/1479",
+  "to": "/az/xeberler/adda-telebelerine-yeni-tehsil-kartlari-verilecek"
+ },
+ {
+  "from": "/az/news/1480",
+  "to": "/az/xeberler/adda-muellimlerinin-kitablari-beynelxalq-kitab-forumunda"
+ },
+ {
+  "from": "/az/news/1481",
+  "to": "/az/xeberler/adda-nin-prorektoru-diploma-layiq-gorulub"
+ },
+ {
+  "from": "/az/news/1482",
+  "to": "/az/xeberler/adda-rektoru-yardim-edib"
+ },
+ {
+  "from": "/az/news/1483",
+  "to": "/az/xeberler/telebelerin-qeydiyyati-bitdi"
+ },
+ {
+  "from": "/az/news/1484",
+  "to": "/az/xeberler/akademiya-ile-ilk-tanisliq"
+ },
+ {
+  "from": "/az/news/1485",
+  "to": "/az/xeberler/denizci-telebeler-esgere-mektub-layihesinde-istirak-edibler"
+ },
+ {
+  "from": "/az/news/1487",
+  "to": "/az/xeberler/denizciler-veten-muharibesinde-elde-olunan-qelebeni-boyuk-iftixar-sonsuz-qurur-h"
+ },
+ {
+  "from": "/az/news/1488",
+  "to": "/az/xeberler/mezunumuza-diplom-teqdim-edildi"
+ },
+ {
+  "from": "/az/news/1489",
+  "to": "/az/xeberler/elmi-jurnalimizin-novbeti-nomresi"
+ },
+ {
+  "from": "/az/news/1490",
+  "to": "/az/xeberler/telebelere-teqaud-kartlari-teqdim-edilecek"
+ },
+ {
+  "from": "/az/news/1491",
+  "to": "/az/xeberler/veten-muharibesinin-istirakcilarina-guzestler-olunacaq"
+ },
+ {
+  "from": "/az/news/1492",
+  "to": "/az/xeberler/adda-muellimlerinin-kitablari-novbeti-beynelxalq-kitab-sergilerinde-teqdim-edili"
+ },
+ {
+  "from": "/az/news/1493",
+  "to": "/az/xeberler/adda-elmi-surasinin-iclasi-kecirilib"
+ },
+ {
+  "from": "/az/news/1494",
+  "to": "/az/xeberler/elmi-jurnalimizin-bu-ilde-son-nomresi"
+ },
+ {
+  "from": "/az/news/1495",
+  "to": "/az/xeberler/azerbaycan-prezidenti-ilham-eliyevin-dogum-gunudur-video"
+ },
+ {
+  "from": "/az/news/1496",
+  "to": "/az/xeberler/adda-metbeesinde-muellimlerimizin-yeni-kitablari-cap-edilib"
+ },
+ {
+  "from": "/az/news/1497",
+  "to": "/az/xeberler/adda-muellimlerinin-yeni-kitablar-neden-behs-edir"
+ },
+ {
+  "from": "/az/news/1498",
+  "to": "/az/xeberler/2021-ci-ilde-caniniz-sag-sufreleriniz-bereketli-uzunuz-guler-yolunuz-aciq-olsun"
+ },
+ {
+  "from": "/az/news/1499",
+  "to": "/az/xeberler/2021-ci-ilin-ilk-imtahan-sessiyasi"
+ },
+ {
+  "from": "/az/news/1500",
+  "to": "/az/xeberler/asco-sedri-veten-muharibesinde-istirak-eden-denizcilerle-gorusub"
+ },
+ {
+  "from": "/az/news/1501",
+  "to": "/az/xeberler/genclerimizin-umidleri-dogrultduqlarini-musahide-etmek-cox-xosdur"
+ },
+ {
+  "from": "/az/news/1502",
+  "to": "/az/xeberler/muellimlerimizin-meqaleleri-xarici-jurnalda-derc-edilecek"
+ },
+ {
+  "from": "/az/news/1503",
+  "to": "/az/xeberler/adda-muellimi-avropa-tebiet-elmleri-akademiyasinin-heqiqi-uzvu-secilib"
+ },
+ {
+  "from": "/az/news/1504",
+  "to": "/az/xeberler/adda-da-2021-ci-ilin-1-ci-yarim-ili-ucun-telebe-teqaudleri-teyin-edilib"
+ },
+ {
+  "from": "/az/news/1505",
+  "to": "/az/xeberler/xocali-soyqirimindan-29-il-otur"
+ },
+ {
+  "from": "/az/news/1506",
+  "to": "/az/xeberler/adda-da-teqaude-dusen-telebelerin-siyahisi"
+ },
+ {
+  "from": "/az/news/1507",
+  "to": "/az/xeberler/adda-da-novbeti-kurslar-kecirilib"
+ },
+ {
+  "from": "/az/news/1508",
+  "to": "/az/xeberler/sevinciniz-bol-olsun"
+ },
+ {
+  "from": "/az/news/1509",
+  "to": "/az/xeberler/yurdumuza-bahar-gelir"
+ },
+ {
+  "from": "/az/news/1510",
+  "to": "/az/xeberler/telebelerimiz-diplomqabagi-tecrubede"
+ },
+ {
+  "from": "/az/news/1511",
+  "to": "/az/xeberler/general-eliaga-sixlinski-kran-gemisinde-telebelerin-tecrubesi-davam-edir"
+ },
+ {
+  "from": "/az/news/1512",
+  "to": "/az/xeberler/adda-muelliminin-hemmuellifi-oldugu-monoqrafiya-cap-edilib"
+ },
+ {
+  "from": "/az/news/1513",
+  "to": "/az/xeberler/adda-da-yaz-imtahan-sessiyasi-kecirilecek"
+ },
+ {
+  "from": "/az/news/1514",
+  "to": "/az/xeberler/adda-muellimi-turkiyede-medalla-teltif-olunub"
+ },
+ {
+  "from": "/az/news/1515",
+  "to": "/az/xeberler/qarabagda-innovativ-texnologiyalar-diqqet-merkezindedir"
+ },
+ {
+  "from": "/az/news/1516",
+  "to": "/az/xeberler/fhn-akademiyasinda-elmi-praktiki-konfrans"
+ },
+ {
+  "from": "/az/news/1517",
+  "to": "/az/xeberler/bayrami-qalib-xalq-kimi-qeyd-etmeyin-de-oz-sevinci-var"
+ },
+ {
+  "from": "/az/news/1518",
+  "to": "/az/xeberler/adda-nin-elmi-surasinin-yekun-dovlet-attestasiyasi-ile-bagli-qerari-aciqlanib"
+ },
+ {
+  "from": "/az/news/1519",
+  "to": "/az/xeberler/adda-professoru-beynelxalq-jurnalin-redaksiya-heyetinde"
+ },
+ {
+  "from": "/az/news/1520",
+  "to": "/az/xeberler/adda-magistrantlari-respublika-elmi-praktiki-konfransinda"
+ },
+ {
+  "from": "/az/news/1521",
+  "to": "/az/xeberler/adda-telebelerinin-baki-gemiqayirma-zavodundaki-istehsalat-tecrubesi-basa-catib"
+ },
+ {
+  "from": "/az/news/1522",
+  "to": "/az/xeberler/adda-muelliminin-monoqrafiyasi-almaniyada-cap-olunub"
+ },
+ {
+  "from": "/az/news/1523",
+  "to": "/az/xeberler/adda-nin-2021-ci-il-ucun-plan-yerleri-aciqlanib"
+ },
+ {
+  "from": "/az/news/1524",
+  "to": "/az/xeberler/adda-muellimleri-ise-devet-edir"
+ },
+ {
+  "from": "/az/news/1525",
+  "to": "/az/xeberler/asco-da-en-yaxsi-enenelerden-biri-pese-bayramini-sanballi-emek-nailiyyetleri-ile"
+ },
+ {
+  "from": "/az/news/1526",
+  "to": "/az/xeberler/adda-telebelerinin-yay-istehsalat-tecrubesi-baslayib"
+ },
+ {
+  "from": "/az/news/1527",
+  "to": "/az/xeberler/daha-bir-adda-muelliminin-uguru"
+ },
+ {
+  "from": "/az/news/1528",
+  "to": "/az/xeberler/azerbaycan-xezer-deniz-gemiciliyi-qsc-nin-asco-azerbaycan-dovlet-deniz-akademiya"
+ },
+ {
+  "from": "/az/news/1529",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-25-il"
+ },
+ {
+  "from": "/az/news/1530",
+  "to": "/az/xeberler/dualariniz-uca-yaradanin-dergahinda-qebul-olunsun"
+ },
+ {
+  "from": "/az/news/1531",
+  "to": "/az/xeberler/asco-da-rusiyanin-nufuzlu-denizcilik-tehsili-muessisesinin-rektoru-ile-gorus-kec"
+ },
+ {
+  "from": "/az/news/1532",
+  "to": "/az/xeberler/sankt-peterburqlu-qonaqlar-adda-da-olublar"
+ },
+ {
+  "from": "/az/news/1534",
+  "to": "/az/xeberler/asco-ile-admiral-s-o-makarov-adina-dovlet-denizcilik-ve-cay-donanmasi-universite"
+ },
+ {
+  "from": "/az/news/1535",
+  "to": "/az/xeberler/adda-mezunu-tehsilini-deniz-ve-okean-universitetinde-davam-etdirecek"
+ },
+ {
+  "from": "/az/news/1536",
+  "to": "/az/xeberler/adda-telebelerinin-baki-gemiqayirma-zavodundaki-tecrubesi-basa-catib"
+ },
+ {
+  "from": "/az/news/1537",
+  "to": "/az/xeberler/adda-nin-metbeesinde-yeni-kitablar-cap-edilib-2021"
+ },
+ {
+  "from": "/az/news/1538",
+  "to": "/az/xeberler/elmi-jurnalimizin-cari-ilde-ilk-nomresi"
+ },
+ {
+  "from": "/az/news/1539",
+  "to": "/az/xeberler/elmi-jurnalimizin-2-ci-nomresi-de-hazirdir"
+ },
+ {
+  "from": "/az/news/1540",
+  "to": "/az/xeberler/adda-telebeleri-kelbecer-tankerinde-olublar"
+ },
+ {
+  "from": "/az/news/1541",
+  "to": "/az/xeberler/adda-ya-2021-2022-ci-il-tedris-ili-uzre-telebe-qebulunun-neticeleri-melum-olub"
+ },
+ {
+  "from": "/az/news/1542",
+  "to": "/az/xeberler/adda-da-anim-gunu"
+ },
+ {
+  "from": "/az/news/1545",
+  "to": "/az/xeberler/yeni-tedris-ili-erefesinde-adda-nin-rektoru-heyder-esedovun-tebriki"
+ },
+ {
+  "from": "/az/news/1546",
+  "to": "/az/xeberler/adda-da-ilk-ders-gunu"
+ },
+ {
+  "from": "/az/news/1547",
+  "to": "/az/xeberler/adda-ya-en-yuksek-balla-qebul-olan-telebe"
+ },
+ {
+  "from": "/az/news/1548",
+  "to": "/az/xeberler/asco-sedri-adda-ya-yuksek-balla-qebul-olan-telebelerle-gorusub"
+ },
+ {
+  "from": "/az/news/1549",
+  "to": "/az/xeberler/amerika-gemicilik-burosunun-asco-nun-telim-tedris-merkezinde-apardigi-audit-basa"
+ },
+ {
+  "from": "/az/news/1550",
+  "to": "/az/xeberler/azerbaycanin-musteqilliyini-berpa-etmesinden-30-il-otur"
+ },
+ {
+  "from": "/az/news/1551",
+  "to": "/az/xeberler/adda-da-master-klass"
+ },
+ {
+  "from": "/az/news/1552",
+  "to": "/az/xeberler/texas-a-m-universitetine-qebul-olan-ilk-adda-mezunu"
+ },
+ {
+  "from": "/az/news/1553",
+  "to": "/az/xeberler/heyder-eliyev-ve-azerbaycan-tarixi-vii-umumrespublika-bilik-yarisi"
+ },
+ {
+  "from": "/az/news/1554",
+  "to": "/az/xeberler/zefer-gunu-ve-dovlet-bayragi-gununuz-mubarek"
+ },
+ {
+  "from": "/az/news/1555",
+  "to": "/az/xeberler/adda-da-zefer-gunu-qeyd-edilib"
+ },
+ {
+  "from": "/az/news/1556",
+  "to": "/az/xeberler/adda-nin-muellimleri-beynelxalq-elmi-praktik-konfransda"
+ },
+ {
+  "from": "/az/news/1557",
+  "to": "/az/xeberler/tecrubeli-kapitanlarin-telebelerle-gorusu-kecirilib"
+ },
+ {
+  "from": "/az/news/1558",
+  "to": "/az/xeberler/tehsil-telebe-krediti-fondunun-vesaiti-hesabina-tehsil-telebe-kreditlerinin-veri"
+ },
+ {
+  "from": "/az/news/1559",
+  "to": "/az/xeberler/adda-da-beynelxalq-elmi-texniki-konfrans-teskil-olunub"
+ },
+ {
+  "from": "/az/news/1560",
+  "to": "/az/xeberler/adda-telebeleri-arasinda-olimpiada-kecirilib"
+ },
+ {
+  "from": "/az/news/1561",
+  "to": "/az/xeberler/adda-da-novbeti-master-klass-kecirilib"
+ },
+ {
+  "from": "/az/news/1562",
+  "to": "/az/xeberler/qehremanlardan-oyrenirik"
+ },
+ {
+  "from": "/az/news/1563",
+  "to": "/az/xeberler/qlobal-deniz-qeza-ve-tehlukesizlik-sistemlerinin-bugunu-ve-geleceyi-adli-telebe"
+ },
+ {
+  "from": "/az/news/1564",
+  "to": "/az/xeberler/akademiyanin-muellimi-sertifikatlar-alib"
+ },
+ {
+  "from": "/az/news/1565",
+  "to": "/az/xeberler/adda-numayende-heyeti-sankt-peterburqda-seferde-olub"
+ },
+ {
+  "from": "/az/news/1566",
+  "to": "/az/xeberler/azerbaycanli-alimin-yeni-uguru"
+ },
+ {
+  "from": "/az/news/1567",
+  "to": "/az/xeberler/professorumuz-sertifikata-layiq-gorulub"
+ },
+ {
+  "from": "/az/news/1568",
+  "to": "/az/xeberler/yeni-ilde-caniniz-saglam-sufreleriniz-bereketli-isleriniz-ugurlu-olsun"
+ },
+ {
+  "from": "/az/news/1569",
+  "to": "/az/xeberler/telebelere-bayram-sufresi"
+ },
+ {
+  "from": "/az/news/1570",
+  "to": "/az/xeberler/adda-da-imtahan-sessiyasi-baslayib"
+ },
+ {
+  "from": "/az/news/1571",
+  "to": "/az/xeberler/daha-bir-muellimimiz-dissertasiya-isini-mudafie-etdi"
+ },
+ {
+  "from": "/az/news/1572",
+  "to": "/az/xeberler/musabiqe-qalibleri-mukafatlandiriliblar"
+ },
+ {
+  "from": "/az/news/1573",
+  "to": "/az/xeberler/telim-tedris-merkezinde-denizciler-ucun-mutemadi-telimler-kecirilir"
+ },
+ {
+  "from": "/az/news/1574",
+  "to": "/az/xeberler/20-yanvar-hadiselerinin-32-ci-ildonumu-ile-elaqedar-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1575",
+  "to": "/az/xeberler/gencler-umidlerimizi-dogrultmagi-bacarirlar"
+ },
+ {
+  "from": "/az/news/1577",
+  "to": "/az/xeberler/adda-nin-qis-imtahan-sessiyasinin-neticeleri-aciqlanib"
+ },
+ {
+  "from": "/az/news/1578",
+  "to": "/az/xeberler/adda-nin-4-cu-kurs-telebelerinin-diplomqabagi-tecrubesi-baslayib"
+ },
+ {
+  "from": "/az/news/1579",
+  "to": "/az/xeberler/adda-da-novbeti-tekmillesdirme-ve-ixtisasartirma-kurslari-kecirilib"
+ },
+ {
+  "from": "/az/news/1580",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-taninmis-sair-publisist-faiq-balabeylinin"
+ },
+ {
+  "from": "/az/news/1581",
+  "to": "/az/xeberler/asco-ve-media-jurnalistler-ucun-telim-kecirib"
+ },
+ {
+  "from": "/az/news/1582",
+  "to": "/az/xeberler/eziz-xanimlar-bayraminiz-mubarek"
+ },
+ {
+  "from": "/az/news/1583",
+  "to": "/az/xeberler/geleceyin-gemi-insaatcilari-bgz-de-tecrube-kecir"
+ },
+ {
+  "from": "/az/news/1584",
+  "to": "/az/xeberler/bahar-bayraminiz-mubarek-olsun-2022"
+ },
+ {
+  "from": "/az/news/1585",
+  "to": "/az/xeberler/qazaxistanda-konfrans"
+ },
+ {
+  "from": "/az/news/1586",
+  "to": "/az/xeberler/adda-telebeleri-misyo-jordan-ve-dervis-mesteli-sah-tamasasini-izleyibler"
+ },
+ {
+  "from": "/az/news/1587",
+  "to": "/az/xeberler/adda-da-enenevi-elmi-konfrans"
+ },
+ {
+  "from": "/az/news/1588",
+  "to": "/az/xeberler/adda-telebe-qebulu-ucun-plan-yerlerini-aciqlayib"
+ },
+ {
+  "from": "/az/news/1589",
+  "to": "/az/xeberler/adda-da-telebeler-ucun-maariflendirici-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1590",
+  "to": "/az/xeberler/adda-telebeleri-arasinda-futbol-yarisi-baslayib"
+ },
+ {
+  "from": "/az/news/1591",
+  "to": "/az/xeberler/ramazan-bayraminiz-mubarek-2022"
+ },
+ {
+  "from": "/az/news/1592",
+  "to": "/az/xeberler/adda-da-genc-tedqiqatclarin-konfransi-kecirilib"
+ },
+ {
+  "from": "/az/news/1593",
+  "to": "/az/xeberler/xvii-beynelxalq-elmi-texniki-konfrans-kecirilib"
+ },
+ {
+  "from": "/az/news/1594",
+  "to": "/az/xeberler/adda-da-elmi-seminar"
+ },
+ {
+  "from": "/az/news/1595",
+  "to": "/az/xeberler/master-klass-dersleri-kecirilir"
+ },
+ {
+  "from": "/az/news/1596",
+  "to": "/az/xeberler/novbeti-master-klass-dersi"
+ },
+ {
+  "from": "/az/news/1597",
+  "to": "/az/xeberler/adda-da-imtahan-sessiyasi-baslayib-2022"
+ },
+ {
+  "from": "/az/news/1598",
+  "to": "/az/xeberler/adda-nin-doktorantlari-beynelxalq-elmi-konfransda"
+ },
+ {
+  "from": "/az/news/1599",
+  "to": "/az/xeberler/daha-bir-elmi-seminarda-muzakireler-aparilib"
+ },
+ {
+  "from": "/az/news/1600",
+  "to": "/az/xeberler/adda-da-veten-muharibesinin-istirakcilarina-guzestler-olunur"
+ },
+ {
+  "from": "/az/news/1601",
+  "to": "/az/xeberler/magistrantlarimiz-beynelxalq-elmi-konfransda"
+ },
+ {
+  "from": "/az/news/1602",
+  "to": "/az/xeberler/qazilerimiz-diqqetdedir"
+ },
+ {
+  "from": "/az/news/1603",
+  "to": "/az/xeberler/adda-telebeleri-ucun-tecrube-oncesi-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1604",
+  "to": "/az/xeberler/elmi-seminarlar-davam-edir"
+ },
+ {
+  "from": "/az/news/1605",
+  "to": "/az/xeberler/alimlerimizin-uguru"
+ },
+ {
+  "from": "/az/news/1606",
+  "to": "/az/xeberler/gemi-temiri-zavodunda-telebeler-ucun-tecrubeden-once-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1607",
+  "to": "/az/xeberler/deniz-neqliyyati-donanmasinda-telebeler-ucun-tecrube-oncesi-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1608",
+  "to": "/az/xeberler/her-bayramin-oz-sevinci-var"
+ },
+ {
+  "from": "/az/news/1609",
+  "to": "/az/xeberler/adda-nin-metbeesinde-yeni-kitablar-cap-edilib-2022"
+ },
+ {
+  "from": "/az/news/1610",
+  "to": "/az/xeberler/xvii-beynelxalq-elmi-texniki-konfransin-meruze-materiallari-cap-olundu"
+ },
+ {
+  "from": "/az/news/1611",
+  "to": "/az/xeberler/adda-da-dovlet-imtahani-kecirilir"
+ },
+ {
+  "from": "/az/news/1612",
+  "to": "/az/xeberler/kesdiyiniz-qurbanlar-uca-tanri-dergahinda-qebul-olunsun"
+ },
+ {
+  "from": "/az/news/1613",
+  "to": "/az/xeberler/adda-ve-adk-muellimleri-ucun-iki-telim-teskil-olunub"
+ },
+ {
+  "from": "/az/news/1614",
+  "to": "/az/xeberler/telebelerin-yay-tecrubesi-davam-edir"
+ },
+ {
+  "from": "/az/news/1615",
+  "to": "/az/xeberler/azerbaycan-xezer-deniz-gemiciliyi-qsc-nin-melumati"
+ },
+ {
+  "from": "/az/news/1616",
+  "to": "/az/xeberler/elmi-jurnalimizin-cari-ilde-iki-nomresi-cap-olundu"
+ },
+ {
+  "from": "/az/news/1617",
+  "to": "/az/xeberler/baki-gemiqayirma-zavodundaki-tedris-tecrubesi-basa-catib"
+ },
+ {
+  "from": "/az/news/1618",
+  "to": "/az/xeberler/asco-kollektivine-agir-itki-uz-verib"
+ },
+ {
+  "from": "/az/news/1619",
+  "to": "/az/xeberler/asco-emekdaslarina-fexri-ad-orden-ve-medallar-teqdim-olunub"
+ },
+ {
+  "from": "/az/news/1620",
+  "to": "/az/xeberler/eziz-abituriyentler-adda-ni-secin-denizleri-bizimle-feth-edin"
+ },
+ {
+  "from": "/az/news/1621",
+  "to": "/az/xeberler/adda-ya-yeni-qebul-olan-telebelerin-nezerine"
+ },
+ {
+  "from": "/az/news/1622",
+  "to": "/az/xeberler/adda-qebul-plani-100-faiz-dolan-6-ali-tehsil-muessisesinden-biri-olub"
+ },
+ {
+  "from": "/az/news/1623",
+  "to": "/az/xeberler/2022-2023-cu-tedris-ili-ucun-adda-ya-yerlesdirmenin-neticeleri-aciqlanib"
+ },
+ {
+  "from": "/az/news/1624",
+  "to": "/az/xeberler/yeni-2022-2023-cu-tedris-ili-erefesinde-adda-nin-rektoru-heyder-esedovun-telebel"
+ },
+ {
+  "from": "/az/news/1625",
+  "to": "/az/xeberler/adda-da-yeni-tedris-ili-baslayib-2022"
+ },
+ {
+  "from": "/az/news/1626",
+  "to": "/az/xeberler/adda-da-master-klass-2022"
+ },
+ {
+  "from": "/az/news/1627",
+  "to": "/az/xeberler/asco-sedri-adda-ya-yuksek-balla-qebul-olan-telebelerle-gorusub-2022"
+ },
+ {
+  "from": "/az/news/1628",
+  "to": "/az/xeberler/iranli-qonaqla-gorus"
+ },
+ {
+  "from": "/az/news/1629",
+  "to": "/az/xeberler/sehidlerimizin-eziz-xatiresi-anilib"
+ },
+ {
+  "from": "/az/news/1630",
+  "to": "/az/xeberler/adda-da-hekaye-ve-esse-musabiqesinin-qalibleri-teltif-olunub"
+ },
+ {
+  "from": "/az/news/1631",
+  "to": "/az/xeberler/elmi-suranin-ilk-iclasi"
+ },
+ {
+  "from": "/az/news/1632",
+  "to": "/az/xeberler/asco-rehberliyi-azerbaycan-denizcilik-kollecinde-olub"
+ },
+ {
+  "from": "/az/news/1633",
+  "to": "/az/xeberler/adda-da-susa-ili-ile-bagli-kim-ne-harada-intellektual-yarisi-kecirildi"
+ },
+ {
+  "from": "/az/news/1634",
+  "to": "/az/xeberler/akademiyamizin-professoru-sertifikata-layiq-gorulub"
+ },
+ {
+  "from": "/az/news/1635",
+  "to": "/az/xeberler/adda-da-elmi-seminar-2022"
+ },
+ {
+  "from": "/az/news/1636",
+  "to": "/az/xeberler/asco-veten-muharibesinin-ilk-gununden-zefer-zengi-calinanadek-resadetli-ordumuzu"
+ },
+ {
+  "from": "/az/news/1637",
+  "to": "/az/xeberler/yeni-emekdasliq-muqavilesi"
+ },
+ {
+  "from": "/az/news/1638",
+  "to": "/az/xeberler/zefer-gunu-ne-hesr-olunmus-deyirmi-masa"
+ },
+ {
+  "from": "/az/news/1639",
+  "to": "/az/xeberler/sahmat-turniri"
+ },
+ {
+  "from": "/az/news/1640",
+  "to": "/az/xeberler/veten-qarsisinda-xususi-xidmetleri-olan-adda-ve-adk-telebelerine-ayliq-maddi-yar"
+ },
+ {
+  "from": "/az/news/1641",
+  "to": "/az/xeberler/adda-telebelerine-sabit-orucov-tedris-gemisinde-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1642",
+  "to": "/az/xeberler/beynelxalq-elmi-texniki-konfrans"
+ },
+ {
+  "from": "/az/news/1643",
+  "to": "/az/xeberler/adda-da-ecnebi-telebeler-ucun-yeni-imkanlar-yaradilir"
+ },
+ {
+  "from": "/az/news/1644",
+  "to": "/az/xeberler/genclerin-ideoloji-maariflenmesi-diqqet-merkezindedir"
+ },
+ {
+  "from": "/az/news/1645",
+  "to": "/az/xeberler/tehsil-kreditine-dair-gorus"
+ },
+ {
+  "from": "/az/news/1646",
+  "to": "/az/xeberler/maariflendirme-tedbiri"
+ },
+ {
+  "from": "/az/news/1647",
+  "to": "/az/xeberler/adda-telebeleri-arasinda-olimpiada-kecirilib-2022"
+ },
+ {
+  "from": "/az/news/1648",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyainin-professor-israil-elmin-inkisaf-akademiyasi"
+ },
+ {
+  "from": "/az/news/1649",
+  "to": "/az/xeberler/yolunuz-aciq-isleriniz-ugurlu-olsun"
+ },
+ {
+  "from": "/az/news/1650",
+  "to": "/az/xeberler/adda-da-qis-imtahan-sessiyasi"
+ },
+ {
+  "from": "/az/news/1651",
+  "to": "/az/xeberler/adda-nin-merhum-rektoru-cingiz-eliyevin-anadan-olmasinin-60-ci-ildonumudur"
+ },
+ {
+  "from": "/az/news/1653",
+  "to": "/az/xeberler/beynelxalq-elmi-texniki-konfransin-meruze-materiallari-cap-olundu"
+ },
+ {
+  "from": "/az/news/1654",
+  "to": "/az/xeberler/gencler-umidleri-dogrultmagi-bacarirlar"
+ },
+ {
+  "from": "/az/news/1655",
+  "to": "/az/xeberler/adda-telebelerinin-diplomqabagi-tecrubesi-baslayib"
+ },
+ {
+  "from": "/az/news/1656",
+  "to": "/az/xeberler/adk-telebeleri-diplomqabagi-tecrubelerini-sabit-orucov-gemisinde-kececekler"
+ },
+ {
+  "from": "/az/news/1657",
+  "to": "/az/xeberler/adda-da-ii-kursda-tehsil-alan-ecnebi-telebeler-sabit-orucov-gemisinde-tecrube-ke"
+ },
+ {
+  "from": "/az/news/1658",
+  "to": "/az/xeberler/sehidler-olmur"
+ },
+ {
+  "from": "/az/news/1659",
+  "to": "/az/xeberler/xocali-soyqirimi-qan-yaddasimizdir"
+ },
+ {
+  "from": "/az/news/1660",
+  "to": "/az/xeberler/26-fevral-xatirelerde-yasayir"
+ },
+ {
+  "from": "/az/news/1661",
+  "to": "/az/xeberler/heyder-eliyev-ili-ne-hesr-olunmus-elmi-seminar"
+ },
+ {
+  "from": "/az/news/1662",
+  "to": "/az/xeberler/eziz-xanimlar-bayraminiz-mubarek-2023"
+ },
+ {
+  "from": "/az/news/1663",
+  "to": "/az/xeberler/beynelxalq-tehsil-sergisi"
+ },
+ {
+  "from": "/az/news/1664",
+  "to": "/az/xeberler/muellimemiz-sertifikat-almisdir"
+ },
+ {
+  "from": "/az/news/1665",
+  "to": "/az/xeberler/ulu-onderin-xatiresine-hesr-olunmus-elmi-texniki-konfrans"
+ },
+ {
+  "from": "/az/news/1666",
+  "to": "/az/xeberler/ulu-onder-heyder-eliyevin-100-illik-yubileyi-ile-elaqedar-agacekme-aksiyasi-keci"
+ },
+ {
+  "from": "/az/news/1667",
+  "to": "/az/xeberler/adda-telebelerine-ferdi-ve-kollektiv-xilasedicilerle-bagli-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1668",
+  "to": "/az/xeberler/heyder-eliyev-100"
+ },
+ {
+  "from": "/az/news/1669",
+  "to": "/az/xeberler/breyn-ring-yarisi-kecirilib"
+ },
+ {
+  "from": "/az/news/1670",
+  "to": "/az/xeberler/akademik-zerife-eliyevanin-100-illiyine-hesr-edilmis-goz-muayinesi-aksiyasi-basa"
+ },
+ {
+  "from": "/az/news/1671",
+  "to": "/az/xeberler/sehidlik-zirvesine-ucalan-adda-mezunlari-daim-qelbimizdedir"
+ },
+ {
+  "from": "/az/news/1673",
+  "to": "/az/xeberler/koreyali-qonaqlarla-gorus"
+ },
+ {
+  "from": "/az/news/1674",
+  "to": "/az/xeberler/xviii-beynelxalq-konfrans-ise-basladi"
+ },
+ {
+  "from": "/az/news/1675",
+  "to": "/az/xeberler/heyder-eliyevin-100-illiyine-hesr-olunmus-master-klass"
+ },
+ {
+  "from": "/az/news/1676",
+  "to": "/az/xeberler/latviyali-qonaqlar-adda-da"
+ },
+ {
+  "from": "/az/news/1677",
+  "to": "/az/xeberler/valideynler-maraq-gosterirler"
+ },
+ {
+  "from": "/az/news/1678",
+  "to": "/az/xeberler/adda-da-yaz-imtahan-sessiyasi-kecirilir"
+ },
+ {
+  "from": "/az/news/1679",
+  "to": "/az/xeberler/gemi-muhendisi-2023-texnologiya-sergisi"
+ },
+ {
+  "from": "/az/news/1680",
+  "to": "/az/xeberler/fhn-akademiyasinda-elmi-seminar-ve-sergi"
+ },
+ {
+  "from": "/az/news/1681",
+  "to": "/az/xeberler/telebemizin-uguru"
+ },
+ {
+  "from": "/az/news/1682",
+  "to": "/az/xeberler/adda-novbeti-tedris-ilinde-telebe-qebulu-ucun-plan-yerlerini-aciqlayib"
+ },
+ {
+  "from": "/az/news/1683",
+  "to": "/az/xeberler/adda-da-dovlet-imtahani-kecirilir-2023"
+ },
+ {
+  "from": "/az/news/1684",
+  "to": "/az/xeberler/telebeler-ucun-tecrube-oncesi-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1685",
+  "to": "/az/xeberler/v-ships-numayendeleri-adda-da"
+ },
+ {
+  "from": "/az/news/1686",
+  "to": "/az/xeberler/adda-da-mezun-gunu"
+ },
+ {
+  "from": "/az/news/1687",
+  "to": "/az/xeberler/heyder-eliyev-irsini-oyrenirik-2023"
+ },
+ {
+  "from": "/az/news/1688",
+  "to": "/az/xeberler/adda-nin-magistratura-bolmesine-ayrilmis-plan-yerleri-100-dolub"
+ },
+ {
+  "from": "/az/news/1689",
+  "to": "/az/xeberler/erasmus-proqrami-cercivesinde-emekdasliq"
+ },
+ {
+  "from": "/az/news/1690",
+  "to": "/az/xeberler/adda-ni-secin-denizleri-bizimle-feth-edin"
+ },
+ {
+  "from": "/az/news/1691",
+  "to": "/az/xeberler/adda-nin-telebeleri-yay-istehsalat-tecrubesi-kecirler"
+ },
+ {
+  "from": "/az/news/1693",
+  "to": "/az/xeberler/adda-da-aciq-qapi-gunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1694",
+  "to": "/az/xeberler/tetbiqi-mexanika-kafedrasinda-master-klass"
+ },
+ {
+  "from": "/az/news/1695",
+  "to": "/az/xeberler/asco-nun-telim-tedris-merkezinin-direktoru-dinamik-movqe-saxlama-telimlerine-hes"
+ },
+ {
+  "from": "/az/news/1696",
+  "to": "/az/xeberler/veten-muharibesi-tarixi-sexsiyyet-faktoru-kitabinin-teqdimati"
+ },
+ {
+  "from": "/az/news/1697",
+  "to": "/az/xeberler/adda-elmi-surasinin-iclasi-kecirilib-2023"
+ },
+ {
+  "from": "/az/news/1698",
+  "to": "/az/xeberler/telim-tedris-merkezinde-uc-yeni-telimin-kecirilmesine-icaze-verilib"
+ },
+ {
+  "from": "/az/news/1699",
+  "to": "/az/xeberler/adda-nin-metbeesinde-yeni-kitablar-cap-edilib-2023"
+ },
+ {
+  "from": "/az/news/1700",
+  "to": "/az/xeberler/adda-da-uzun-iller-sonra-bas-tutan-gorus"
+ },
+ {
+  "from": "/az/news/1701",
+  "to": "/az/xeberler/adda-da-v-avrasiya-risk-beynelxalq-konfransi-ise-baslayib"
+ },
+ {
+  "from": "/az/news/1702",
+  "to": "/az/xeberler/heyder-eliyev-ve-azerbaycan-tarixi-ix-umumrespublika-bilik-yarisi"
+ },
+ {
+  "from": "/az/news/1703",
+  "to": "/az/xeberler/nobel-mukafati-laureati-ile-gorus"
+ },
+ {
+  "from": "/az/news/1704",
+  "to": "/az/xeberler/nobel-mukafati-laureati-tetbiqi-mexanika-kafedrasinda"
+ },
+ {
+  "from": "/az/news/1705",
+  "to": "/az/xeberler/ulu-onder-heyder-eliyev-ve-milli-gemicilik-siyaseti-movzusunda-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1706",
+  "to": "/az/xeberler/seminarda-istirak"
+ },
+ {
+  "from": "/az/news/1707",
+  "to": "/az/xeberler/adda-nin-metbeesinde-yeni-derslikler-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1708",
+  "to": "/az/xeberler/adk-da-bize-zefer-yarasir-adli-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1709",
+  "to": "/az/xeberler/asco-da-calisan-veten-muharibesi-istirakcilarindan-ve-denizci-telebelerden-ibare"
+ },
+ {
+  "from": "/az/news/1710",
+  "to": "/az/xeberler/adda-ya-cari-tedris-ilinde-20-ecnebi-telebe-qebul-olub"
+ },
+ {
+  "from": "/az/news/1711",
+  "to": "/az/xeberler/adda-mezununun-ugurlari-davam-edir"
+ },
+ {
+  "from": "/az/news/1712",
+  "to": "/az/xeberler/adda-telebeleri-metrologiya-institutunda"
+ },
+ {
+  "from": "/az/news/1713",
+  "to": "/az/xeberler/adda-nin-metbeesinde-yeni-derslikler-ve-ders-vesaiti-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1714",
+  "to": "/az/xeberler/tetbiqi-mexanika-kafedrasinin-emekdaslari-ii-beynelxalq-seminarda"
+ },
+ {
+  "from": "/az/news/1715",
+  "to": "/az/xeberler/adda-da-intellektual-yaris-kecirilib"
+ },
+ {
+  "from": "/az/news/1716",
+  "to": "/az/xeberler/emekdasligin-10-illiyi"
+ },
+ {
+  "from": "/az/news/1717",
+  "to": "/az/xeberler/adda-telebesi-heyder-eliyev-adina-teqaud-e-layiq-gorulub"
+ },
+ {
+  "from": "/az/news/1718",
+  "to": "/az/xeberler/adda-da-qis-imtahan-sessiyasi-kecirilir"
+ },
+ {
+  "from": "/az/news/1719",
+  "to": "/az/xeberler/azerbaycan-denizcilik-kolleci-phs-de-qis-imtahan-sessiyasi"
+ },
+ {
+  "from": "/az/news/1720",
+  "to": "/az/xeberler/adda-telebeleri-20-yanvar-qehremanliq-salnamesi-sergisi-ile-tanis-olublar"
+ },
+ {
+  "from": "/az/news/1721",
+  "to": "/az/xeberler/20-yanvar-umumxalq-huzn-gunudur"
+ },
+ {
+  "from": "/az/news/1722",
+  "to": "/az/xeberler/asco-da-gencler-gunune-hesr-olunmus-ne-harada-ne-zaman-intellektual-oyunu-keciri"
+ },
+ {
+  "from": "/az/news/1723",
+  "to": "/az/xeberler/adda-telebelerinin-diplomqabagi-tecrubesi-baslayib-2024"
+ },
+ {
+  "from": "/az/news/1724",
+  "to": "/az/xeberler/elmi-sura-muzakire-etdi"
+ },
+ {
+  "from": "/az/news/1725",
+  "to": "/az/xeberler/tekrar-ali-tehsil-alan-telebelerin-tecrubesi-baslayib"
+ },
+ {
+  "from": "/az/news/1726",
+  "to": "/az/xeberler/adda-telebelerinin-qis-imtahan-sessiyasinda-gosterdikleri-neticeler-aciqlanib"
+ },
+ {
+  "from": "/az/news/1727",
+  "to": "/az/xeberler/enterprise-azerbaijan-la-emekdasliq"
+ },
+ {
+  "from": "/az/news/1728",
+  "to": "/az/xeberler/adda-da-numunevi-ders"
+ },
+ {
+  "from": "/az/news/1729",
+  "to": "/az/xeberler/xocali-soyqiriminin-32-ci-ildonumu"
+ },
+ {
+  "from": "/az/news/1730",
+  "to": "/az/xeberler/dovlet-deniz-ve-liman-agentliyinin-kollektivi-azerbaycan-dovlet-deniz-akademiyas"
+ },
+ {
+  "from": "/az/news/1731",
+  "to": "/az/xeberler/telim-tedris-merkezine-novbeti-uc-ilde-dp-telimlerinin-kecirilmesi-ucun-icaze-ve"
+ },
+ {
+  "from": "/az/news/1732",
+  "to": "/az/xeberler/yeni-derslikler-ve-ders-vesaitleri-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1733",
+  "to": "/az/xeberler/adda-ni-secmek-isteyen-abituriyentler-ucun-aciq-qapi-gunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1734",
+  "to": "/az/xeberler/elmi-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1735",
+  "to": "/az/xeberler/elmi-texniki-konfrans-ise-basladi"
+ },
+ {
+  "from": "/az/news/1736",
+  "to": "/az/xeberler/emekdaslarimiz-sertifikat-aliblar"
+ },
+ {
+  "from": "/az/news/1737",
+  "to": "/az/xeberler/turkiyeli-qonaqlarla-gorus"
+ },
+ {
+  "from": "/az/news/1738",
+  "to": "/az/xeberler/tetbiqi-mexanika-kafedrasinin-emekdaslari-beynelxalq-elmi-konfransda"
+ },
+ {
+  "from": "/az/news/1739",
+  "to": "/az/xeberler/adda-nin-rektoru-heyder-eliyevin-100-illiyi-1923-2023-yubiley-medali-ile-teltif"
+ },
+ {
+  "from": "/az/news/1740",
+  "to": "/az/xeberler/baki-gemiqayirma-zavodunun-numayendeleri-ile-gorus"
+ },
+ {
+  "from": "/az/news/1741",
+  "to": "/az/xeberler/xix-beynelxalq-konfrans-ise-basladi"
+ },
+ {
+  "from": "/az/news/1742",
+  "to": "/az/xeberler/adda-elmi-surasinin-iclasi-kecirilib-2024"
+ },
+ {
+  "from": "/az/news/1743",
+  "to": "/az/xeberler/akademiya-telebelerinin-uguru"
+ },
+ {
+  "from": "/az/news/1744",
+  "to": "/az/xeberler/yasil-dunya-namine-hemreylik"
+ },
+ {
+  "from": "/az/news/1745",
+  "to": "/az/xeberler/cop29-deyirmi-masa-movzusudur"
+ },
+ {
+  "from": "/az/news/1746",
+  "to": "/az/xeberler/adda-da-yaz-imtahan-sessiyasi-kecirilir-2024"
+ },
+ {
+  "from": "/az/news/1747",
+  "to": "/az/xeberler/adda-da-maariflendirme-tedbiri"
+ },
+ {
+  "from": "/az/news/1749",
+  "to": "/az/xeberler/azerbaycan-cop29-a-sedrliyinin-ehemiyyetinin-plenar-muzakiresi"
+ },
+ {
+  "from": "/az/news/1750",
+  "to": "/az/xeberler/azerbaycan-denizcilik-kolleci-phs-de-yay-imtahan-sessiyasi"
+ },
+ {
+  "from": "/az/news/1751",
+  "to": "/az/xeberler/adda-nin-2024-2025-ci-tedris-ili-uzre-plan-yerlerinin-sayi-aciqlanib"
+ },
+ {
+  "from": "/az/news/1752",
+  "to": "/az/xeberler/adda-da-dovlet-imtahani-kecirilir-2024"
+ },
+ {
+  "from": "/az/news/1753",
+  "to": "/az/xeberler/adda-telebelerinin-yay-tecrubesi-baslayib"
+ },
+ {
+  "from": "/az/news/1754",
+  "to": "/az/xeberler/elmi-texniki-konfransin-tezisler-toplusu-cap-olundu"
+ },
+ {
+  "from": "/az/news/1755",
+  "to": "/az/xeberler/adda-da-mezun-gunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1756",
+  "to": "/az/xeberler/elmi-jurnalimizin-cari-ilde-ilk-nomresi-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1757",
+  "to": "/az/xeberler/cop29-isgal-altinda-olmus-torpaqlarda-toredilen-ekoloji-terror"
+ },
+ {
+  "from": "/az/news/1758",
+  "to": "/az/xeberler/adda-nin-yaradilmasindan-28-il-otur"
+ },
+ {
+  "from": "/az/news/1759",
+  "to": "/az/xeberler/abituriyentler-adda-ya-4-ixtisas-uzre-muraciet-ede-bilerler"
+ },
+ {
+  "from": "/az/news/1760",
+  "to": "/az/xeberler/adda-nin-plan-yerleri-100-faiz-dolub"
+ },
+ {
+  "from": "/az/news/1761",
+  "to": "/az/xeberler/ttm-de-tedris-olunan-dp-telimlerinin-sayi-5-e-catdirilib"
+ },
+ {
+  "from": "/az/news/1762",
+  "to": "/az/xeberler/adda-da-yeni-tedris-ili-baslayib-2024"
+ },
+ {
+  "from": "/az/news/1763",
+  "to": "/az/xeberler/bu-il-adda-ya-en-yuksek-balla-qebul-olan-telebe"
+ },
+ {
+  "from": "/az/news/1764",
+  "to": "/az/xeberler/asco-da-texnoloji-musabiqenin-qalibleri-ve-adda-ya-yuksek-balla-qebul-olan-teleb"
+ },
+ {
+  "from": "/az/news/1765",
+  "to": "/az/xeberler/adda-da-heyder-esedovun-millet-vekili-secilmesi-ile-elaqedar-gorus-kecirilib"
+ },
+ {
+  "from": "/az/news/1766",
+  "to": "/az/xeberler/adda-nin-pedoqoji-heyeti-ve-telebeleri-ile-gorus-kecirilib"
+ },
+ {
+  "from": "/az/news/1767",
+  "to": "/az/xeberler/adda-da-deyirmi-masa-kecirilib"
+ },
+ {
+  "from": "/az/news/1768",
+  "to": "/az/xeberler/adda-telebeleri-baki-ekspo-merkezinde"
+ },
+ {
+  "from": "/az/news/1769",
+  "to": "/az/xeberler/asco-emekdaslari-denizci-telebelere-ise-qebulla-bagli-teqdimat-keciribler"
+ },
+ {
+  "from": "/az/news/1770",
+  "to": "/az/xeberler/qrant-musabiqesini-qazandiq"
+ },
+ {
+  "from": "/az/news/1771",
+  "to": "/az/xeberler/cop-29-muzakire-edildi"
+ },
+ {
+  "from": "/az/news/1772",
+  "to": "/az/xeberler/cop29-adda-dunen-bu-gun-sabah"
+ },
+ {
+  "from": "/az/news/1773",
+  "to": "/az/xeberler/cop29-un-azerbaycanda-kecirilmesinin-ehemiyyeti-movzusunda-deyirmi-masa"
+ },
+ {
+  "from": "/az/news/1774",
+  "to": "/az/xeberler/8-noyabr-zefer-gunudur"
+ },
+ {
+  "from": "/az/news/1775",
+  "to": "/az/xeberler/cop-29-ve-etraf-muhit-movzusunda-deyirmi-masa"
+ },
+ {
+  "from": "/az/news/1776",
+  "to": "/az/xeberler/adda-da-narkomaniyaya-qarsi-maariflendirme-tedbiri-kecirilib"
+ },
+ {
+  "from": "/az/news/1777",
+  "to": "/az/xeberler/zeferimiz-fexrimizdir"
+ },
+ {
+  "from": "/az/news/1778",
+  "to": "/az/xeberler/adda-da-zefer-gunu"
+ },
+ {
+  "from": "/az/news/1779",
+  "to": "/az/xeberler/adda-emekdaslari-konfransda-istirak-edibler"
+ },
+ {
+  "from": "/az/news/1780",
+  "to": "/az/xeberler/azerbaycanin-yasil-enerjiye-kecidle-bagli-tesebbusleri-movzusunda-tedbir"
+ },
+ {
+  "from": "/az/news/1781",
+  "to": "/az/xeberler/adda-telebeleri-ekoloji-movzuda-maariflendirilib"
+ },
+ {
+  "from": "/az/news/1782",
+  "to": "/az/xeberler/gemi-kapitani-olmaq-isteyen-mekteblinin-arzusu-video"
+ },
+ {
+  "from": "/az/news/1783",
+  "to": "/az/xeberler/doktorantlarimiz-xxvii-respublika-elmi-konfransinda"
+ },
+ {
+  "from": "/az/news/1784",
+  "to": "/az/xeberler/adda-da-umummilli-liderin-anim-gunu"
+ },
+ {
+  "from": "/az/news/1785",
+  "to": "/az/xeberler/cop29-un-neticeleri-esasinda-azerbaycanin-ekoloji-hedefleri"
+ },
+ {
+  "from": "/az/news/1786",
+  "to": "/az/xeberler/cop29-innovasiya-ve-texnologiya-transferi"
+ },
+ {
+  "from": "/az/news/1787",
+  "to": "/az/xeberler/elmi-jurnalimizin-ikinci-nomresi-isiq-uzu-gorub"
+ },
+ {
+  "from": "/az/news/1788",
+  "to": "/az/xeberler/adda-ve-adk-da-qis-imtahan-sessiyasi-baslayib"
+ },
+ {
+  "from": "/az/news/1789",
+  "to": "/az/xeberler/adda-emekdaslari-x-beynelxalq-elmi-praktik-konfransda"
+ },
+ {
+  "from": "/az/news/1790",
+  "to": "/az/xeberler/adda-telebelerinin-diplomqabagi-tecrubesi-baslayib-2025"
+ },
+ {
+  "from": "/az/news/1791",
+  "to": "/az/xeberler/telebeler-baki-gemiqayirma-zavodunda-tecrubede"
+ },
+ {
+  "from": "/az/news/1792",
+  "to": "/az/xeberler/xocali-soyqirimindan-33-il-kecir"
+ },
+ {
+  "from": "/az/news/1793",
+  "to": "/az/xeberler/adda-da-elmi-texniki-konfrans"
+ },
+ {
+  "from": "/az/news/1794",
+  "to": "/az/xeberler/adda-da-yangin-tehlukesizliyi-telimi-kecirilib"
+ },
+ {
+  "from": "/az/news/1795",
+  "to": "/az/xeberler/emekdasimiz-sertifikat-alib"
+ },
+ {
+  "from": "/az/news/1796",
+  "to": "/az/xeberler/xx-beynelxalq-elmi-texniki-konfrans-ise-basladi"
+ },
+ {
+  "from": "/az/news/1797",
+  "to": "/az/xeberler/adda-nin-asco-techno-komandasi-olimpiadada-istirak-edir"
+ },
+ {
+  "from": "/az/news/1798",
+  "to": "/az/xeberler/tec-ittifaqi-gundemde"
+ },
+ {
+  "from": "/az/news/1799",
+  "to": "/az/xeberler/ilkin-muzakire-iclasi"
+ },
+ {
+  "from": "/az/news/1800",
+  "to": "/az/xeberler/magistratura-seviyyesinde-tehsil-proqramlari-ile-bagli-novbeti-iclas"
+ },
+ {
+  "from": "/az/news/1801",
+  "to": "/az/xeberler/adda-nin-sobe-mudirine-elmi-derece-verilib"
+ },
+ {
+  "from": "/az/news/1802",
+  "to": "/az/xeberler/konstitusiya-ve-suverenlik-ili-cercivesinde-adda-da-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1803",
+  "to": "/az/xeberler/qaliblere-diplomlar-teqdim-olundu"
+ },
+ {
+  "from": "/az/news/1804",
+  "to": "/az/xeberler/telebelerimiz-huquqi-maariflendirme-tedbirinde"
+ },
+ {
+  "from": "/az/news/1806",
+  "to": "/az/xeberler/adda-da-yaz-imtahan-sessiyasi-kecirilir-2025"
+ },
+ {
+  "from": "/az/news/1807",
+  "to": "/az/xeberler/telebelerin-diplomqabagi-tecrubesinin-ugurlu-yekunu"
+ },
+ {
+  "from": "/az/news/1808",
+  "to": "/az/xeberler/adda-da-diplomqabagi-tecrubenin-yekun-qiymetlendirilmesine-baslanilib"
+ },
+ {
+  "from": "/az/news/1810",
+  "to": "/az/xeberler/adda-nin-magistratura-pillesine-qebulun-neticeleri-aciqlanib"
+ },
+ {
+  "from": "/az/news/1811",
+  "to": "/az/xeberler/bgz-de-tecrube-ugurla-yekunlasdi"
+ },
+ {
+  "from": "/az/news/1813",
+  "to": "/az/xeberler/adda-da-azerbaycan-ve-ingilis-dilinde-tedris-ucun-nezerde-tutulan-plan-yerleri-t"
+ },
+ {
+  "from": "/az/news/1814",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinin-alimlerine-yeni-patent-verildi"
+ },
+ {
+  "from": "/az/news/1815",
+  "to": "/az/xeberler/adda-alimleri-beynelxalq-konqresde-ugurla-cixis-edibler"
+ },
+ {
+  "from": "/az/news/1816",
+  "to": "/az/xeberler/akademiyada-anim-gunu-tedbiri"
+ },
+ {
+  "from": "/az/news/1817",
+  "to": "/az/xeberler/8-noyabr-zeferi-seref-tariximizdir"
+ },
+ {
+  "from": "/az/news/1818",
+  "to": "/az/xeberler/azerbaycan-denizcilik-kollecinde-anim-gunu-ile-bagli-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1819",
+  "to": "/az/xeberler/adda-kollektivi-sehidlerin-xatiresini-yad-edib"
+ },
+ {
+  "from": "/az/news/1820",
+  "to": "/az/xeberler/alman-aliminin-master-klass-dersi"
+ },
+ {
+  "from": "/az/news/1821",
+  "to": "/az/xeberler/beynelxalq-muellimler-gunu"
+ },
+ {
+  "from": "/az/news/1822",
+  "to": "/az/xeberler/akademiyada-master-klass"
+ },
+ {
+  "from": "/az/news/1823",
+  "to": "/az/xeberler/turk-is-birliyi-ve-koordinasiya-agentliyi-ile-emekdasliq-muzakire-edilib"
+ },
+ {
+  "from": "/az/news/1824",
+  "to": "/az/xeberler/akademiya-telebeleri-elm-muzeyinde"
+ },
+ {
+  "from": "/az/news/1825",
+  "to": "/az/xeberler/tarixi-zefere-hesr-olunmus-deyirmi-masa"
+ },
+ {
+  "from": "/az/news/1826",
+  "to": "/az/xeberler/azerbaycanda-musteqilliyin-berpasi-gunudur"
+ },
+ {
+  "from": "/az/news/1827",
+  "to": "/az/xeberler/adda-telebeleri-fibonacci-intellektual-yarisinda"
+ },
+ {
+  "from": "/az/news/1828",
+  "to": "/az/xeberler/2025-ci-il-suverenlik-ve-konstitusiya-ilidir"
+ },
+ {
+  "from": "/az/news/1829",
+  "to": "/az/xeberler/professor-abdulla-avey-adda-da-olub"
+ },
+ {
+  "from": "/az/news/1830",
+  "to": "/az/xeberler/adda-telebeleri-telimde-istirak-edibler"
+ },
+ {
+  "from": "/az/news/1831",
+  "to": "/az/xeberler/adda-emekdasliq-istiqametlerini-genislendirir"
+ },
+ {
+  "from": "/az/news/1832",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-seudiyye-erebistani-kralliginin-sefiri-il"
+ },
+ {
+  "from": "/az/news/1833",
+  "to": "/az/xeberler/huquq-zekasi-intellektual-yarisi"
+ },
+ {
+  "from": "/az/news/1834",
+  "to": "/az/xeberler/44-gunun-ebediyyeti"
+ },
+ {
+  "from": "/az/news/1835",
+  "to": "/az/xeberler/alimlerimiz-almaniyada-elmi-ezamiyyetde"
+ },
+ {
+  "from": "/az/news/1836",
+  "to": "/az/xeberler/12-noyabr-konstitusiya-gunudur"
+ },
+ {
+  "from": "/az/news/1837",
+  "to": "/az/xeberler/yuksek-balla-adda-ya-daxil-olmus-telebelerle-asco-da-gorus-kecirilib"
+ },
+ {
+  "from": "/az/news/1838",
+  "to": "/az/xeberler/adda-telebeleri-ucun-ise-qebul-movzusunda-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1839",
+  "to": "/az/xeberler/brandenburq-texniki-universitetinin-numayendeleri-adda-da"
+ },
+ {
+  "from": "/az/news/1840",
+  "to": "/az/xeberler/maariflendirme-tedbiri-2025"
+ },
+ {
+  "from": "/az/news/1841",
+  "to": "/az/xeberler/cenubi-afrika-respublikasinin-numayende-heyetile-gorus"
+ },
+ {
+  "from": "/az/news/1842",
+  "to": "/az/xeberler/adda-nin-novbeti-elmi-surasi-kecirilmisdir"
+ },
+ {
+  "from": "/az/news/1843",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-innovasiya-medeniyyeti-uzre-novbeti-addim"
+ },
+ {
+  "from": "/az/news/1844",
+  "to": "/az/xeberler/akademiyanin-telebe-ve-magistrleri-ucun-innovasiya-medeniyyetine-hesr-olunmus-in"
+ },
+ {
+  "from": "/az/news/1848",
+  "to": "/az/xeberler/adda-ve-giz-eastnt-arasinda-emekdasliga-dair-anlasma-memorandumu-imzalandi"
+ },
+ {
+  "from": "/az/news/1849",
+  "to": "/az/xeberler/bextiyar-vahabzade-100"
+ },
+ {
+  "from": "/az/news/1850",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinin-muellim-ve-telebe-heyeti-ikt-karyera-serg"
+ },
+ {
+  "from": "/az/news/1851",
+  "to": "/az/xeberler/telebeler-marketinq-yoxdursa-startap-yoxdur-movzusunda-meet-up-da-istirak-edible"
+ },
+ {
+  "from": "/az/news/1852",
+  "to": "/az/xeberler/adda-ve-giz-arasinda-emekdasliq-genislendirilir"
+ },
+ {
+  "from": "/az/news/1853",
+  "to": "/az/xeberler/adda-ve-abs-denizcilik-universitetleri-arasinda-strateji-emekdasliga-dogru-ilk-a"
+ },
+ {
+  "from": "/az/news/1854",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-telebelerin-it-olimpiadalarina-hazirligi"
+ },
+ {
+  "from": "/az/news/1855",
+  "to": "/az/xeberler/adda-ile-bp-azerbaycan-arasinda-emekdasligin-esasi-qoyuldu"
+ },
+ {
+  "from": "/az/news/1856",
+  "to": "/az/xeberler/ulu-onder-heyder-eliyevin-eziz-xatiresini-hormetle-aniriq"
+ },
+ {
+  "from": "/az/news/1857",
+  "to": "/az/xeberler/ulu-onder-heyder-eliyevin-anim-merasimi-kecirilib"
+ },
+ {
+  "from": "/az/news/1858",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-adda-elmi-suranin-novbeti-iclasi-kecirili"
+ },
+ {
+  "from": "/az/news/1859",
+  "to": "/az/xeberler/telebelerimiz-data-x-ai-geleceyin-hibrid-gucu-movzusunda-maariflendirici-tedbird"
+ },
+ {
+  "from": "/az/news/1860",
+  "to": "/az/xeberler/adda-da-turkiye-universiteti-ile-emekdasliq-imkanlari-muzakire-edilib"
+ },
+ {
+  "from": "/az/news/1861",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-adda-ve-malta-beynelxalq-deniz-huququ-instit"
+ },
+ {
+  "from": "/az/news/1862",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-adda-ve-koreya-beynelxalq-emekdasliq-agentli"
+ },
+ {
+  "from": "/az/news/1863",
+  "to": "/az/xeberler/adda-da-bayram-tedbiri"
+ },
+ {
+  "from": "/az/news/1864",
+  "to": "/az/xeberler/tetbiqi-mexanika-kafedrasinin-emekdaslari-2025-ci-ilde-muhum-elmi-pedaqoji-ugurl"
+ },
+ {
+  "from": "/az/news/1865",
+  "to": "/az/xeberler/hemreylik-ruhunda-semimi-yeni-il-gorusu"
+ },
+ {
+  "from": "/az/news/1866",
+  "to": "/az/xeberler/hemreylik-gunu-ve-yeni-il-adda-nin-yataqxanasinda-da-qeyd-edilib"
+ },
+ {
+  "from": "/az/news/1867",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-2025-2026-ci-tedris-ilinin-payiz-semestri"
+ },
+ {
+  "from": "/az/news/1868",
+  "to": "/az/xeberler/eldar-qocayev-adda-nin-diplomlari-dunyanin-170-den-cox-olkesinde-taninir-musahib"
+ },
+ {
+  "from": "/az/news/1869",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-adda-ile-dunya-banki-arasinda-emekdasliq-imk"
+ },
+ {
+  "from": "/az/news/1870",
+  "to": "/az/xeberler/20-yanvar-umumxalq-huzn-gunu"
+ },
+ {
+  "from": "/az/news/1871",
+  "to": "/az/xeberler/adda-ve-odtu-rehberliyi-aktiv-akademik-ve-elmi-emekdasliga-baslamaq-imkanlarini"
+ },
+ {
+  "from": "/az/news/1872",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-adda-ile-gn-group-corporation-arasinda-emekd"
+ },
+ {
+  "from": "/az/news/1873",
+  "to": "/az/xeberler/2-fevral-gencler-gunudur"
+ },
+ {
+  "from": "/az/news/1874",
+  "to": "/az/xeberler/turkiye-metbuati-adda-nin-beynelxalq-emekdasligini-isiqlandirib"
+ },
+ {
+  "from": "/az/news/1875",
+  "to": "/az/xeberler/adda-numayende-heyetinin-beynelxalq-elmi-praktiki-konfransda-istiraki"
+ },
+ {
+  "from": "/az/news/1876",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-diplomqabagi-tecrubeye-start-verildi"
+ },
+ {
+  "from": "/az/news/1877",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-ve-turkiyenin-piri-reis-universiteti-arasind"
+ },
+ {
+  "from": "/az/news/1878",
+  "to": "/az/xeberler/xezerden-araliq-denizine-uzanan-intellektual-korpu-fotolar"
+ },
+ {
+  "from": "/az/news/1879",
+  "to": "/az/xeberler/deniz-akademiyasinin-mezunu-tarixe-dusdu"
+ },
+ {
+  "from": "/az/news/1880",
+  "to": "/az/xeberler/adda-da-yaz-semestrine-start-verildi"
+ },
+ {
+  "from": "/az/news/1881",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-adda-israilin-azerbaycandaki-sefiri-ile-g"
+ },
+ {
+  "from": "/az/news/1882",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-adda-elmi-suranin-novbeti-iclasi-kecirili-2026"
+ },
+ {
+  "from": "/az/news/1884",
+  "to": "/az/xeberler/adda-nin-rektoru-vezifesini-icra-eden-eldar-qocayevin-real-fm-e-musahibesi"
+ },
+ {
+  "from": "/az/news/1885",
+  "to": "/az/xeberler/elmi-seminar-2026"
+ },
+ {
+  "from": "/az/news/1887",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-adda-telebeplus-a-qosulub"
+ },
+ {
+  "from": "/az/news/1888",
+  "to": "/az/xeberler/xocali-soyqirimindan-34-il-otur"
+ },
+ {
+  "from": "/az/news/1889",
+  "to": "/az/xeberler/adda-da-ilk-disskussiya-klubu-yaradidi"
+ },
+ {
+  "from": "/az/news/1890",
+  "to": "/az/xeberler/xocali-qurbanlarinin-xatiresi-yad-edilib"
+ },
+ {
+  "from": "/az/news/1891",
+  "to": "/az/xeberler/adda-da-elmi-suranin-novbeti-iclasi-kecirilib"
+ },
+ {
+  "from": "/az/news/1892",
+  "to": "/az/xeberler/umumdunya-mulki-mudafie-gunune-hesr-olunmus-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1893",
+  "to": "/az/xeberler/iki-yubiley-bir-yol-deniz-akademiyasinda-yeni-dovr"
+ },
+ {
+  "from": "/az/news/1895",
+  "to": "/az/xeberler/adda-nin-yeni-loqo-layihelerine-baxis-kecirilib"
+ },
+ {
+  "from": "/az/news/1896",
+  "to": "/az/xeberler/adda-rehber-heyetine-mulki-mudafie-uzre-mesq-kecirilib"
+ },
+ {
+  "from": "/az/news/1897",
+  "to": "/az/xeberler/tec-uzvleri-gencliyin-tedqiqati-tedbirinde-istirak-edib"
+ },
+ {
+  "from": "/az/news/1898",
+  "to": "/az/xeberler/8-mart-beynelxalq-qadinlar-gununuz-mubarek"
+ },
+ {
+  "from": "/az/news/1900",
+  "to": "/az/xeberler/azerbaycan-xezer-deniz-gemiciliyi-qsc-idare-heyetinin-sedri-azerbaycan-dovlet-de"
+ },
+ {
+  "from": "/az/news/1903",
+  "to": "/az/xeberler/adda-da-elmi-tedqiqat-metodlarina-dair-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1904",
+  "to": "/az/xeberler/adda-da-imo-e-learning-telimine-start-verilib"
+ },
+ {
+  "from": "/az/news/1905",
+  "to": "/az/xeberler/adda-da-novruz-senliyi-kecirilib"
+ },
+ {
+  "from": "/az/news/1906",
+  "to": "/az/xeberler/adda-da-mektebliler-ucun-aciq-qapi-gunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1907",
+  "to": "/az/xeberler/adda-da-elmi-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1908",
+  "to": "/az/xeberler/adda-ve-asa-telebe-elmi-cemiyyetleri-arasinda-emekdasliq"
+ },
+ {
+  "from": "/az/news/1910",
+  "to": "/az/xeberler/adda-telebeleri-turkiyede-tecrube-kecir"
+ },
+ {
+  "from": "/az/news/1911",
+  "to": "/az/xeberler/adda-da-31-mart-azerbaycanlilarin-soyqirimi-gunu-anilib"
+ },
+ {
+  "from": "/az/news/1914",
+  "to": "/az/xeberler/adda-da-orqan-donorluguna-hesr-olunmus-maariflendirici-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1915",
+  "to": "/az/xeberler/adda-telebesi-afinada-beynelxalq-turnirin-qalibi-oldu"
+ },
+ {
+  "from": "/az/news/1916",
+  "to": "/az/xeberler/sehid-mezun-ilqar-ehmedovun-xatiresi-yad-edilib"
+ },
+ {
+  "from": "/az/news/1917",
+  "to": "/az/xeberler/adda-da-akademik-yazi-ve-etika-movzusunda-telimler-kecirilir"
+ },
+ {
+  "from": "/az/news/1918",
+  "to": "/az/xeberler/telebe-ve-genc-tedqiqatcilarin-elmi-texniki-konfransi-kecirilib"
+ },
+ {
+  "from": "/az/news/1919",
+  "to": "/az/xeberler/elmi-suranin-novbeti-iclasi-kecirilib-2026"
+ },
+ {
+  "from": "/az/news/1920",
+  "to": "/az/xeberler/adda-da-agilli-limanlar-ve-muasir-gemicilik-movzusunda-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1921",
+  "to": "/az/xeberler/adda-da-karguzarliq-ve-resmi-sened-dovriyyesi-uzre-telim-kecirilib"
+ },
+ {
+  "from": "/az/news/1922",
+  "to": "/az/xeberler/adda-professorunun-kitabi-qazaxistanda-nesr-olunub"
+ },
+ {
+  "from": "/az/news/1923",
+  "to": "/az/xeberler/adda-numayende-heyeti-sehid-ilqar-ehmedovun-xatiresine-hesr-olunmus-anim-tedbiri"
+ },
+ {
+  "from": "/az/news/1924",
+  "to": "/az/xeberler/adda-da-startup-school-4-layihesi-uzre-infosessiya-kecirilib"
+ },
+ {
+  "from": "/az/news/1925",
+  "to": "/az/xeberler/adda-da-alternativ-enerji-texnologiyalarina-dair-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1926",
+  "to": "/az/xeberler/adda-da-gemi-energetik-qurgularina-dair-elmi-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1927",
+  "to": "/az/xeberler/denizcilikde-suni-intellektin-huquqi-aspektleri-muzakire-olunub"
+ },
+ {
+  "from": "/az/news/1928",
+  "to": "/az/xeberler/adda-da-elmi-suranin-novbeti-iclasi-kecirilib-2026"
+ },
+ {
+  "from": "/az/news/1929",
+  "to": "/az/xeberler/adda-da-abs-da-tehsil-imkanlarina-dair-teqdimat-kecirilib"
+ },
+ {
+  "from": "/az/news/1930",
+  "to": "/az/xeberler/erebistanli-qonaqlar-deniz-akademiyasinda"
+ },
+ {
+  "from": "/az/news/1931",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-bilik-yarisi-2026-ugurla-kecirilib"
+ },
+ {
+  "from": "/az/news/1932",
+  "to": "/az/xeberler/adda-da-institusional-akkreditasiya-neticeleri-muzakire-olunub"
+ },
+ {
+  "from": "/az/news/1933",
+  "to": "/az/xeberler/nazir-muavini-geleceyin-denizcileri-ile-gorusub"
+ },
+ {
+  "from": "/az/news/1934",
+  "to": "/az/xeberler/umummilli-lider-heyder-eliyevin-anadan-olmasinin-103-cu-ildonumune-hesr-olunmus"
+ },
+ {
+  "from": "/az/news/1935",
+  "to": "/az/xeberler/adda-nin-yubileylerine-hesr-olunmus-uzguculuk-yarisi-kecirilib"
+ },
+ {
+  "from": "/az/news/1936",
+  "to": "/az/xeberler/umummilli-lider-heyder-eliyevin-xatiresi-anilir"
+ },
+ {
+  "from": "/az/news/1937",
+  "to": "/az/xeberler/adda-nin-emblem-ve-loqotip-muellifleri-mukafatlandirilib"
+ },
+ {
+  "from": "/az/news/1938",
+  "to": "/az/xeberler/adda-da-korrupsiyaya-qarsi-mubarize-movzusunda-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1939",
+  "to": "/az/xeberler/adda-da-suni-intellektin-gemicilikde-tetbiqi-muzakire-olunub"
+ },
+ {
+  "from": "/az/news/1941",
+  "to": "/az/xeberler/elmi-texniki-konfransin-ferqlenen-istirakcilari-teltif-olunub"
+ },
+ {
+  "from": "/az/news/1942",
+  "to": "/az/xeberler/adda-da-elmi-suranin-novbeti-iclasi-kecirilib-2026-2"
+ },
+ {
+  "from": "/az/news/1943",
+  "to": "/az/xeberler/adda-da-narkomaniya-ile-mubarizeye-dair-maariflendirici-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1944",
+  "to": "/az/xeberler/adda-da-gemiciliyin-inkisafina-dair-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1945",
+  "to": "/az/xeberler/adda-numayendeleri-quba-xacmaz-rayonlarinda-mekteblilerle-gorusubler"
+ },
+ {
+  "from": "/az/news/1946",
+  "to": "/az/xeberler/gemilerde-berpa-olunan-enerji-menbelerinin-tetbiqine-dair-elmi-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1947",
+  "to": "/az/xeberler/telebeler-arasinda-futbol-cempionatinin-final-oyunu-kecirilib"
+ },
+ {
+  "from": "/az/news/1949",
+  "to": "/az/xeberler/adda-numayende-heyeti-istanbul-universiteti-cerrahpasada-seferde-olub"
+ },
+ {
+  "from": "/az/news/1950",
+  "to": "/az/xeberler/adda-numayende-heyeti-piri-reis-universitetinde-seferde-olub"
+ },
+ {
+  "from": "/az/news/1951",
+  "to": "/az/xeberler/adda-numayende-heyeti-gn-group-corporation-da-gorus-kecirib"
+ },
+ {
+  "from": "/az/news/1952",
+  "to": "/az/xeberler/adda-numayende-heyeti-istanbul-texniki-universitetinde-ve-turk-bogazlari-denizci"
+ },
+ {
+  "from": "/az/news/1953",
+  "to": "/az/xeberler/adda-numayende-heyeti-yildiz-texnik-universitetinde-isguzar-gorus-kecirib"
+ },
+ {
+  "from": "/az/news/1954",
+  "to": "/az/xeberler/adda-ve-turk-loydu-emekdasliq-imkanlarini-muzakire-edib"
+ },
+ {
+  "from": "/az/news/1955",
+  "to": "/az/xeberler/adda-numayendeleri-sekide-abituriyentlerle-maariflendirici-gorus-kecirib"
+ },
+ {
+  "from": "/az/news/1956",
+  "to": "/az/xeberler/adda-numayendeleri-gence-mekteblileri-ile-gorus-kecirib"
+ },
+ {
+  "from": "/az/news/1957",
+  "to": "/az/xeberler/berde-mekteblerinde-adda-tehsiline-dair-teqdimat-kecirilib"
+ },
+ {
+  "from": "/az/news/1958",
+  "to": "/az/xeberler/adda-numayende-heyeti-lenkeranda-abituriyentlerle-gorusub"
+ },
+ {
+  "from": "/az/news/1959",
+  "to": "/az/xeberler/adda-telebesi-respublika-yazi-musabiqesinde-iii-yer-qazanib"
+ },
+ {
+  "from": "/az/news/1960",
+  "to": "/az/xeberler/adda-da-musteqillik-gunune-hesr-olunmus-konsert-proqrami-teskil-edilib"
+ },
+ {
+  "from": "/az/news/1962",
+  "to": "/az/xeberler/azerbaycanda-qurban-bayrami-qeyd-olunur"
+ },
+ {
+  "from": "/az/news/1963",
+  "to": "/az/xeberler/28-may-musteqillik-gunu-seref-ve-qurur-tariximiz"
+ },
+ {
+  "from": "/az/news/1964",
+  "to": "/az/xeberler/adda-da-yaz-semestrinin-imtahan-sessiyasina-start-verilib"
+ },
+ {
+  "from": "/az/news/1965",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-adda-elmi-suranin-novbeti-iclasi-kecirili-2026-2"
+ },
+ {
+  "from": "/az/news/1966",
+  "to": "/az/xeberler/adda-tgt-sedr-seckilerinin-musahibe-merhelesi-basa-catib"
+ },
+ {
+  "from": "/az/news/1967",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-yeni-tehsil-proqramlarinin-hazirlanmasi-i"
+ },
+ {
+  "from": "/az/news/1968",
+  "to": "/az/xeberler/adda-telebe-gencler-teskilatinin-yeni-sedri-secilib"
+ },
+ {
+  "from": "/az/news/1969",
+  "to": "/az/xeberler/15-iyun-milli-qurtulus-gunu"
+ },
+ {
+  "from": "/az/news/1970",
+  "to": "/az/xeberler/adda-da-milli-qurtulus-gunune-hesr-olunmus-tedbir-kecirilib"
+ },
+ {
+  "from": "/az/news/1971",
+  "to": "/az/xeberler/adda-da-insan-huquqlari-ayligi-cercivesinde-maariflendirici-seminar-kecirilib"
+ },
+ {
+  "from": "/az/news/1972",
+  "to": "/az/xeberler/adda-muellimi-beynelxalq-scopus-indeksli-jurnalin-redaksiya-heyetine-uzv-secilib"
+ },
+ {
+  "from": "/az/news/1974",
+  "to": "/az/xeberler/adda-nin-professoru-beynelxalq-konfransda"
+ },
+ {
+  "from": "/az/news/1975",
+  "to": "/az/xeberler/adda-telebelerinin-diplomqabagi-uzme-tecrubesi-ugurla-basa-catib"
+ },
+ {
+  "from": "/az/news/1976",
+  "to": "/az/xeberler/harbin-muhendislik-universitetinin-numayende-heyeti-adda-da-seferde-olub"
+ },
+ {
+  "from": "/az/news/1977",
+  "to": "/az/xeberler/asco-nun-kollektivi-fexri-xiyabani-ve-sehidler-xiyabanini-ziyaret-edib"
+ },
+ {
+  "from": "/az/news/1978",
+  "to": "/az/xeberler/adda-da-mezun-gunu-qeyd-olunub"
+ },
+ {
+  "from": "/az/news/1979",
+  "to": "/az/xeberler/26-iyun-azerbaycanin-silahli-quvveler-gunu"
+ },
+ {
+  "from": "/az/news/1980",
+  "to": "/az/xeberler/adda-da-elmi-suranin-novbeti-iclasi-kecirilib-2026-3"
+ },
+ {
+  "from": "/az/news/1981",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasi-ile-ukraynanin-milli-neqliyyat-universiteti"
+ },
+ {
+  "from": "/az/news/1982",
+  "to": "/az/xeberler/tovuz-doyuslerinde-helak-olan-sehidlerimizi-derin-ehtiramla-aniriq"
+ },
+ {
+  "from": "/az/news/1983",
+  "to": "/az/xeberler/azerbaycan-dovlet-deniz-akademiyasinin-adda-elmi-surasi-2025-2026-ci-tedris-ilin"
+ },
+ {
+  "from": "/az/news/1984",
+  "to": "/az/xeberler/bu-gun-azerbaycan-dovlet-deniz-akademiyasinin-30-illik-yubileyidir"
+ },
+ {
+  "from": "/ru/content/1",
+  "to": "/ru/sehife/adda-dunen-ve-bugun"
+ },
+ {
+  "from": "/ru/faculty/1",
+  "to": "/ru/fakulteler/gemi-suruculuyu-fakultesi"
+ },
+ {
+  "from": "/ru/content/2",
+  "to": "/ru/sehife/informasiya-resurs-merkezi"
+ },
+ {
+  "from": "/ru/faculty/2",
+  "to": "/ru/fakulteler/gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
+ },
+ {
+  "from": "/ru/content/4",
+  "to": "/ru/sehife/elmi-tedqiqat-qrupu"
+ },
+ {
+  "from": "/ru/content/8",
+  "to": "/ru/sehife/muhasibat-ucotu-ve-hesabat-sobesi"
+ },
+ {
+  "from": "/ru/content/10",
+  "to": "/ru/sehife/muzey"
+ },
+ {
+  "from": "/ru/content/11",
+  "to": "/ru/sehife/xaricde-tehsil-ve-ixtisasartirma"
+ },
+ {
+  "from": "/ru/content/12",
+  "to": "/ru/sehife/ecnebi-telebelerin-tehsili"
+ },
+ {
+  "from": "/ru/content/13",
+  "to": "/ru/sehife/beynelxalq-emekdasliq"
+ },
+ {
+  "from": "/ru/content/14",
+  "to": "/ru/sehife/telebe-gencler-teskilati"
+ },
+ {
+  "from": "/ru/content/18",
+  "to": "/ru/sehife/doktorantura"
+ },
+ {
+  "from": "/ru/content/19",
+  "to": "/ru/sehife/rektor"
+ },
+ {
+  "from": "/ru/content/20",
+  "to": "/ru/sehife/elmi-sura"
+ },
+ {
+  "from": "/ru/content/24",
+  "to": "/ru/sehife/rektor-komekcisi"
+ },
+ {
+  "from": "/ru/content/28",
+  "to": "/ru/sehife/mezhdunarodnyi-obrazovatelnyi-tsentr"
+ },
+ {
+  "from": "/ru/content/32",
+  "to": "/ru/sehife/korporativ-uslub"
+ },
+ {
+  "from": "/ru/content/35",
+  "to": "/ru/sehife/elmi-jurnal"
+ },
+ {
+  "from": "/ru/content/37",
+  "to": "/ru/sehife/telebe-elmi-cemiyyeti"
+ },
+ {
+  "from": "/ru/content/38",
+  "to": "/ru/sehife/elmi-konfranslar"
+ },
+ {
+  "from": "/ru/content/40",
+  "to": "/ru/sehife/elmi-tedqiqat-fealiyyeti"
+ },
+ {
+  "from": "/ru/content/41",
+  "to": "/ru/sehife/genc-alimler-surasi"
+ },
+ {
+  "from": "/ru/content/43",
+  "to": "/ru/sehife/elmi-katib"
+ },
+ {
+  "from": "/ru/content/45",
+  "to": "/ru/sehife/elmi-jurnalimiz-onlayn-versiyada"
+ },
+ {
+  "from": "/ru/content/47",
+  "to": "/ru/sehife/elaqe"
+ },
+ {
+  "from": "/ru/content/49",
+  "to": "/ru/sehife/teserrufat-isleri-sobesi"
+ },
+ {
+  "from": "/ru/content/52",
+  "to": "/ru/sehife/ecnebi-telebelerin-qebulu-qaydalari"
+ },
+ {
+  "from": "/ru/content/63",
+  "to": "/ru/sehife/sabiq-rektorlarimiz"
+ },
+ {
+  "from": "/ru/announce/229",
+  "to": "/ru/elanlar/050620-deniz-naviqasiyasi-muhendisliyi-ixtisasi-uzre-2018-2019-cu-tedris-ilinde"
+ },
+ {
+  "from": "/ru/announce/230",
+  "to": "/ru/elanlar/050626-elektrik-muhendisliyi-ixtisasi-uzre-2018-2019-cu-tedris-ilinde-dovlet-imt"
+ },
+ {
+  "from": "/ru/announce/231",
+  "to": "/ru/elanlar/050619-gemi-energetik-qurgularinin-istismari-muhendisliyi-ixtisasi-uzre-2018-201"
+ },
+ {
+  "from": "/ru/announce/232",
+  "to": "/ru/elanlar/050618-gemiqayirma-ve-gemi-temiri-muhendisliyi-ixtisasi-uzre-2018-2019-cu-tedris"
+ },
+ {
+  "from": "/ru/announce/243",
+  "to": "/ru/elanlar/diqqet-diqqet"
+ },
+ {
+  "from": "/ru/announce/342",
+  "to": "/ru/elanlar/adda-da-beynelxalq-elmi-texniki-konfrans-kecirilecek"
+ },
+ {
+  "from": "/ru/announce/493",
+  "to": "/ru/elanlar/elan-2025-2"
+ },
+ {
+  "from": "/ru/announce/517",
+  "to": "/ru/elanlar/elan-2026"
+ },
+ {
+  "from": "/ru/news/1270",
+  "to": "/ru/xeberler/umummilli-lider-h-eliyevin-xatiresine-hesr-olunmus-elmi-konfrans-baslayib"
+ },
+ {
+  "from": "/ru/news/1271",
+  "to": "/ru/xeberler/elmi-konfransa-yekun-vuruldu"
+ },
+ {
+  "from": "/ru/news/1272",
+  "to": "/ru/xeberler/adda-da-qanverme-aksiyasi-kecirildi"
+ },
+ {
+  "from": "/ru/news/1274",
+  "to": "/ru/xeberler/beynelxalq-innovasiya-musabiqesine-hazirliq-gedir"
+ },
+ {
+  "from": "/ru/news/1275",
+  "to": "/ru/xeberler/emekdasliq-protokolu-imzalanib"
+ },
+ {
+  "from": "/ru/news/1302",
+  "to": "/ru/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-aciq-qapi-gunu-kecirilib"
+ },
+ {
+  "from": "/ru/news/1303",
+  "to": "/ru/xeberler/adda-da-andicme-merasimi-kecirildi"
+ },
+ {
+  "from": "/ru/news/1320",
+  "to": "/ru/xeberler/denizcilere-mukafatlar-teqdim-edilib"
+ },
+ {
+  "from": "/ru/news/1325",
+  "to": "/ru/xeberler/asco-da-20-yanvar-faciesinin-29-cu-ildonumune-hesr-olunan-anim-merasimi-kecirili"
+ },
+ {
+  "from": "/ru/news/1330",
+  "to": "/ru/xeberler/asco-da-telimatcilar-ucun-telim-kursu-kecirilib"
+ },
+ {
+  "from": "/ru/news/1331",
+  "to": "/ru/xeberler/azerbaycanda-insa-olunan-ilk-tanker-suya-salindi"
+ },
+ {
+  "from": "/ru/news/1336",
+  "to": "/ru/xeberler/asco-8-mart-beynelxalq-qadinlar-gunu-ile-bagli-gemi-turu-teskil-edib"
+ },
+ {
+  "from": "/ru/news/1337",
+  "to": "/ru/xeberler/adda-da-muasir-denizcilik-dunyasina-baxis-movzusunda-seminar-kecirilib"
+ },
+ {
+  "from": "/ru/news/1338",
+  "to": "/ru/xeberler/denizciler-adindan-novruz-bayrami-munasibetile-esgerler-ucun-konsert-teskil-olun"
+ },
+ {
+  "from": "/ru/news/1343",
+  "to": "/ru/xeberler/akademiyada-beynelxalq-seminar-kecirilecek"
+ },
+ {
+  "from": "/ru/news/1344",
+  "to": "/ru/xeberler/yaz-semestrinde-master-klass-derslerine-start-verildi"
+ },
+ {
+  "from": "/ru/news/1403",
+  "to": "/ru/xeberler/geleceyin-denizcileri-asco-nun-loqosunu-canlandiriblar-video"
+ },
+ {
+  "from": "/ru/news/1408",
+  "to": "/ru/xeberler/h-x-esedovun-sohret-ordeni-ile-teltif-edilmesi-haqqinda-azerbaycan-respublikasi"
+ },
+ {
+  "from": "/ru/news/1410",
+  "to": "/ru/xeberler/adda-telebeleri-ucun-seminar"
+ },
+ {
+  "from": "/en/content/1",
+  "to": "/en/sehife/adda-dunen-ve-bugun"
+ },
+ {
+  "from": "/en/faculty/1",
+  "to": "/en/fakulteler/gemi-suruculuyu-fakultesi"
+ },
+ {
+  "from": "/en/content/2",
+  "to": "/en/sehife/informasiya-resurs-merkezi"
+ },
+ {
+  "from": "/en/faculty/2",
+  "to": "/en/fakulteler/gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
+ },
+ {
+  "from": "/en/content/4",
+  "to": "/en/sehife/elmi-tedqiqat-qrupu"
+ },
+ {
+  "from": "/en/content/7",
+  "to": "/en/sehife/metbee"
+ },
+ {
+  "from": "/en/content/8",
+  "to": "/en/sehife/muhasibat-ucotu-ve-hesabat-sobesi"
+ },
+ {
+  "from": "/en/content/9",
+  "to": "/en/sehife/yataqxana"
+ },
+ {
+  "from": "/en/content/10",
+  "to": "/en/sehife/muzey"
+ },
+ {
+  "from": "/en/content/11",
+  "to": "/en/sehife/xaricde-tehsil-ve-ixtisasartirma"
+ },
+ {
+  "from": "/en/content/13",
+  "to": "/en/sehife/beynelxalq-emekdasliq"
+ },
+ {
+  "from": "/en/content/14",
+  "to": "/en/sehife/telebe-gencler-teskilati"
+ },
+ {
+  "from": "/en/content/15",
+  "to": "/en/sehife/telebe-hemkarlar-ittifaqi-komitesi"
+ },
+ {
+  "from": "/en/content/17",
+  "to": "/en/sehife/personalin-idare-edilmesi-emek-haqqi-sobesi-ve-karguzarliq-sobesi"
+ },
+ {
+  "from": "/en/content/20",
+  "to": "/en/sehife/elmi-sura"
+ },
+ {
+  "from": "/en/content/21",
+  "to": "/en/sehife/huquq-meslehetcisi"
+ },
+ {
+  "from": "/en/content/22",
+  "to": "/en/sehife/tedrisin-teskili-ve-idareedilmesi-uzre-prorektor"
+ },
+ {
+  "from": "/en/content/23",
+  "to": "/en/sehife/umumi-isler-uzre-prorektor"
+ },
+ {
+  "from": "/en/content/24",
+  "to": "/en/sehife/rektor-komekcisi"
+ },
+ {
+  "from": "/en/content/25",
+  "to": "/en/sehife/elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor"
+ },
+ {
+  "from": "/en/content/27",
+  "to": "/en/sehife/tedris-proseslerinin-teskili-sobesi"
+ },
+ {
+  "from": "/en/content/29",
+  "to": "/en/sehife/telim-tedris-merkezi-ttm"
+ },
+ {
+  "from": "/en/content/30",
+  "to": "/en/sehife/azerbaycan-denizcilik-kolleci"
+ },
+ {
+  "from": "/en/content/31",
+  "to": "/en/sehife/irm"
+ },
+ {
+  "from": "/en/content/33",
+  "to": "/en/sehife/bakalavriat"
+ },
+ {
+  "from": "/en/content/35",
+  "to": "/en/sehife/elmi-jurnal"
+ },
+ {
+  "from": "/en/content/39",
+  "to": "/en/sehife/elmi-tedqiqat-laboratoriyalari"
+ },
+ {
+  "from": "/en/content/43",
+  "to": "/en/sehife/elmi-katib"
+ },
+ {
+  "from": "/en/content/52",
+  "to": "/en/sehife/ecnebi-telebelerin-qebulu-qaydalari"
+ },
+ {
+  "from": "/en/content/55",
+  "to": "/en/sehife/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi"
+ },
+ {
+  "from": "/en/content/56",
+  "to": "/en/sehife/tecrube-haqqinda"
+ },
+ {
+  "from": "/en/content/58",
+  "to": "/en/sehife/deniz-naviqasiyasi-muhendisliyi"
+ },
+ {
+  "from": "/en/content/60",
+  "to": "/en/sehife/gemi-energetik-qurgularinin-istismari-muhendisliyi"
+ },
+ {
+  "from": "/en/content/62",
+  "to": "/en/sehife/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre"
+ },
+ {
+  "from": "/en/announce/240",
+  "to": "/en/elanlar/azerbaycan-dovlet-deniz-akademiyasi-vakant-yerlere-ise-qebul-elan-edir-2019"
+ },
+ {
+  "from": "/en/announce/342",
+  "to": "/en/elanlar/adda-da-beynelxalq-elmi-texniki-konfrans-kecirilecek"
+ },
+ {
+  "from": "/en/announce/493",
+  "to": "/en/elanlar/elan-2025-2"
+ },
+ {
+  "from": "/en/announce/517",
+  "to": "/en/elanlar/elan-2026"
+ },
+ {
+  "from": "/en/news/1270",
+  "to": "/en/xeberler/umummilli-lider-h-eliyevin-xatiresine-hesr-olunmus-elmi-konfrans-baslayib"
+ },
+ {
+  "from": "/en/news/1271",
+  "to": "/en/xeberler/elmi-konfransa-yekun-vuruldu"
+ },
+ {
+  "from": "/en/news/1302",
+  "to": "/en/xeberler/azerbaycan-dovlet-deniz-akademiyasinda-aciq-qapi-gunu-kecirilib"
+ },
+ {
+  "from": "/en/news/1320",
+  "to": "/en/xeberler/denizcilere-mukafatlar-teqdim-edilib"
+ },
+ {
+  "from": "/en/news/1330",
+  "to": "/en/xeberler/asco-da-telimatcilar-ucun-telim-kursu-kecirilib"
+ },
+ {
+  "from": "/en/news/1331",
+  "to": "/en/xeberler/azerbaycanda-insa-olunan-ilk-tanker-suya-salindi"
+ },
+ {
+  "from": "/en/news/1334",
+  "to": "/en/xeberler/adda-da-pesekar-karyera-inkisafi-ve-imkanlari-movzusunda-seminar-kecirilib"
+ },
+ {
+  "from": "/en/news/1336",
+  "to": "/en/xeberler/asco-8-mart-beynelxalq-qadinlar-gunu-ile-bagli-gemi-turu-teskil-edib"
+ },
+ {
+  "from": "/en/news/1338",
+  "to": "/en/xeberler/denizciler-adindan-novruz-bayrami-munasibetile-esgerler-ucun-konsert-teskil-olun"
+ },
+ {
+  "from": "/en/news/1403",
+  "to": "/en/xeberler/geleceyin-denizcileri-asco-nun-loqosunu-canlandiriblar-video"
+ },
+ {
+  "from": "/en/news/1410",
+  "to": "/en/xeberler/adda-telebeleri-ucun-seminar"
+ },
+ {
+  "from": "/en/news/1452",
+  "to": "/en/xeberler/her-birinize-layiq-oldugunuz-en-boyuk-seadet-arzulayiram"
+ },
+ {
+  "from": "/en/news/1467",
+  "to": "/en/xeberler/adda-rektoru-heyder-esedovun-mezunlara-muracieti"
+ }
+]

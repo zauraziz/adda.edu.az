@@ -204,7 +204,45 @@ node verify.mjs
    `page` → `department`), sənəd köhnə tipdə qalır və `import.mjs` onu
    yeniləyə bilmir. Belələri silinir və növbəti idxalda düzgün tipdə yaranır.
 
-Silinən sənəd `import-state.json`-dan da çıxarılır.
+Silinən sənəd vəziyyət faylından da çıxarılır.
+
+## Vəziyyət faylı HƏDƏF ÜZRƏ ayrıdır (K9)
+
+`documentId` **bazaya xasdır**. Lokala idxaldan sonra eyni vəziyyət faylı ilə
+prod-a getsək, importer sənədlərin mövcud olduğunu düşünüb prod-a `PUT` göndərir —
+həmin ID-lər orada yoxdur, hamısı 404 verir.
+
+Ona görə fayl adı hədəf host-dan törəyir:
+
+```
+http://localhost:1337             -> data/import-state.localhost-1337.json
+https://adda-edu-az.onrender.com  -> data/import-state.adda-edu-az-onrender-com.json
+```
+
+Köhnə tək-fayl formatı (`import-state.json`) ilk işə salışda avtomatik köçürülür —
+yalnız **lokal** hədəf üçün, çünki o fayl lokala qarşı yaradılmışdı.
+
+## Repoya nə girir
+
+| Girir | Girmir |
+|---|---|
+| `data/extracted/*.json` | `data/raw/` (1373 xam HTML) |
+| `data/redirects.json` | `data/manifest.json` |
+| `data/media.json` | `data/import-state.*.json` |
+| | `data/inventory.{json,csv}` |
+
+Ekstraksiya nəticəsi commit olunur, çünki o, prod idxalının mənbəyidir və
+53 dəqiqəlik crawl-ın davamlı ehtiyat nüsxəsidir — `data/raw/` repoda yoxdur,
+yəni disk itsə yenidən yığmaq lazım gələrdi.
+
+## Prod-a idxal
+
+```bash
+# .env-də: STRAPI_URL=https://adda-edu-az.onrender.com
+node import.mjs --plan          # hedefi tesdiqle
+node import.mjs --force         # PROD ucun --force MECBURIDIR
+node verify.mjs
+```
 
 ### Doğrulama (K4)
 

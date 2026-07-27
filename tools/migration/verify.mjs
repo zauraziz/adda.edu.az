@@ -12,6 +12,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataPath } from './lib/paths.mjs';
+import { loadState, saveState, targetLabel } from './lib/state.mjs';
 import { STRAPI_URL, api, assertToken, ping } from './lib/strapi.mjs';
 import { FIELDS, PLURAL, targetTypeFor } from './mapping.mjs';
 
@@ -68,8 +69,7 @@ if (!records.some((r) => Object.prototype.hasOwnProperty.call(r, 'isEmpty'))) {
   process.exit(1);
 }
 
-const stateFile = dataPath('import-state.json');
-const state = existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, 'utf8')) : {};
+const state = loadState();
 
 // Gözlənilən: tip -> dil -> say
 const expected = {};

@@ -17,9 +17,10 @@
 //   node import.mjs --section=news --limit=5  # kiçik sınaq
 //   node import.mjs                           # hamısı
 //   node import.mjs --include-empty           # isEmpty qeydləri də gətir
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataPath } from './lib/paths.mjs';
+import { loadState, saveState as writeState, stateFile, targetLabel } from './lib/state.mjs';
 import { STRAPI_URL, api, assertToken, ping } from './lib/strapi.mjs';
 import { FIELDS, PERSON_PAGES, PLURAL, targetTypeFor } from './mapping.mjs';
 
@@ -37,22 +38,12 @@ const limit = args.limit ? parseInt(args.limit, 10) : 0;
 const onlySections = args.section ? String(args.section).split(',') : null;
 
 const SECTIONS = ['content', 'faculty', 'announce', 'news'];
-const STATE_FILE = () => dataPath('import-state.json');
 
-function loadState() {
-  const f = STATE_FILE();
-  if (!existsSync(f)) return {};
-  try {
-    return JSON.parse(readFileSync(f, 'utf8'));
-  } catch {
-    return {};
-  }
-}
 const state = loadState();
 let pending = 0;
 function saveState(force = false) {
   if (!force && ++pending < 20) return;
-  writeFileSync(STATE_FILE(), JSON.stringify(state, null, 1), 'utf8');
+  writeState(state);
   pending = 0;
 }
 
@@ -66,6 +57,19 @@ for (const section of SECTIONS) {
 }
 if (!records.length) {
   console.error('data/extracted/ bosdur. Evvelce: node extract.mjs');
+  process.exit(1);
+}
+
+// KÖHNƏLMİŞ EKSTRAKSİYA QORUMASI.
+//
+// `isEmpty` sahəsi K2b-də əlavə olundu. Ekstraksiya ondan əvvəl işlədilibsə
+// sahə yoxdur, `r.isEmpty` -> undefined -> filtr keçilir və 14 boş sənəd
+// səssizcə Strapi-yə düşür. Bu, sonradan bazada qalan zibildir, ona görə
+// xəbərdarlıq deyil, DAYANMA.
+if (!records.some((r) => Object.prototype.hasOwnProperty.call(r, 'isEmpty'))) {
+  console.error('\n  XETA: data/extracted/ kohnelmisdir (`isEmpty` sahesi yoxdur).');
+  console.error('  Bos senedler filtrlenmeyecek ve zibil idxal olunacaq.');
+  console.error('\n  Hell:  node extract.mjs\n');
   process.exit(1);
 }
 
@@ -122,6 +126,7 @@ console.log('\n' + '='.repeat(66));
 console.log(`  HEDEF: ${STRAPI_URL}${isProd ? '   <<< PROD! >>>' : '   (lokal)'}`);
 console.log(`  Sened: ${docList.length}${limit ? ` (--limit=${limit})` : ''}`);
 console.log(`  Rejim: ${dryRun ? 'DRY-RUN (hec ne yazilmir)' : 'YAZMA'}`);
+console.log(`  Veziyyet: import-state.${targetLabel()}.json (${Object.keys(state).length} sened)`);
 console.log('='.repeat(66) + '\n');
 
 if (isProd && !dryRun && !args.force) {
@@ -226,4 +231,6 @@ if (failures.length) {
   console.log('\n  Eyni emri tekrar islet — ugurlular state-de qeydlidir, yalniz xetalilar cehd olunacaq.');
 }
 
-if (!dryRun) console.log(`\n  Vəziyyət: data/import-state.json (${Object.keys(state).length} sened)\n`);
+if (!dryRun) {
+  console.log(`\n  Veziyyet: ${stateFile().split(/[\\/]/).pop()} (${Object.keys(state).length} sened)\n`);
+}
