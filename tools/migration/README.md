@@ -206,6 +206,19 @@ node verify.mjs
 
 Silinən sənəd vəziyyət faylından da çıxarılır.
 
+3. **Miqrasiyadan əvvəlki əl işi.** Strapi slug-ı `targetField: title`-dan
+   avtomatik doldurur və nəticə tip adının özü olur (`article-2`,
+   `announcement-1`). Bizim importer slug-ı həmişə açıq göndərir, ona görə belə
+   slug idxaldan gələ **bilməz** — admin-də əl ilə yaradılıb və çox vaxt
+   idxal olunanı təkrarlayır. Opt-in silinir:
+   `node cleanup.mjs --confirm --delete-autoslug`
+
+⚠️ **Silinmə həmişə `?locale=` ilə aparılır.** Strapi-nin standart dili `en`-dir
+(`config/plugins.ts`-də i18n konfiqurasiyası yoxdur). Locale verilməyən `DELETE`
+`en` versiyasını axtarır və `en` tərcüməsi olmayan sənəddə **404** qaytarır —
+köhnə versiya bunu "uğur" sayıb sənədi bazada saxlayırdı. İndi hər dil ayrıca
+silinir və nəticə **yoxlanılır**.
+
 ## Vəziyyət faylı HƏDƏF ÜZRƏ ayrıdır (K9)
 
 `documentId` **bazaya xasdır**. Lokala idxaldan sonra eyni vəziyyət faylı ilə

@@ -15,9 +15,10 @@ import { join } from 'node:path';
 import { dataPath } from './lib/paths.mjs';
 import { loadState, saveState, targetLabel } from './lib/state.mjs';
 import { STRAPI_URL, api, assertToken, ping } from './lib/strapi.mjs';
-import { PLURAL, targetTypeFor } from './mapping.mjs';
+import { FIELDS, PLURAL, targetTypeFor } from './mapping.mjs';
 
 const confirm = process.argv.includes('--confirm');
+const deleteAutoSlug = process.argv.includes('--delete-autoslug');
 const SECTIONS = ['content', 'faculty', 'announce', 'news'];
 
 assertToken();
@@ -75,6 +76,51 @@ async function resolveBySlug(type, slug, locale) {
   );
   const row = res.data?.data?.[0];
   return row?.documentId || null;
+}
+
+/**
+ * MİQRASİYADAN ƏVVƏLKİ ƏL İLƏ YARADILMIŞ QEYDLƏR.
+ *
+ * Strapi slug sahəsini `targetField: title`-dan avtomatik doldurur və nəticə
+ * tip adının özü olur: `article`, `article-1`, `announcement-2`...
+ * Bizim importer slug-ı HƏMİŞƏ açıq göndərir (başlıqdan törəyən), ona görə
+ * belə slug idxaldan gələ BİLMƏZ — demək, admin-də əl ilə yaradılıb.
+ *
+ * Prod-da bunlar idxal olunanı təkrarlayır (məs. `article-2` = "26 İyun –
+ * Silahlı Qüvvələr Günü" = news/1979) və ana səhifədə eyni xəbər iki dəfə çıxır.
+ *
+ * Silmək OPT-IN-dir (`--delete-autoslug`): bəziləri qanuni ola bilər.
+ */
+async function findAutoSlug() {
+  const out = [];
+  const types = ['page', 'department', 'program', 'faculty', 'announcement', 'article'];
+  for (const type of types) {
+    const f = FIELDS[type];
+    const re = new RegExp('^' + type + '(-\\d+)?$');
+    for (const locale of ['az', 'ru', 'en']) {
+      for (let page = 1; page <= 30; page++) {
+        const res = await api(
+          'GET',
+          `/api/${PLURAL[type]}?locale=${locale}&status=published&pagination[page]=${page}` +
+            `&pagination[pageSize]=100&fields[0]=slug&fields[1]=${f.title}&fields[2]=createdAt`
+        );
+        for (const row of res.data?.data || []) {
+          if (!re.test(row.slug || '')) continue;
+          out.push({
+            type,
+            locale,
+            documentId: row.documentId,
+            slug: row.slug,
+            title: String(row[f.title] || ''),
+            createdAt: String(row.createdAt || '').slice(0, 10),
+          });
+        }
+        const pg = res.data?.meta?.pagination;
+        if (!pg || page >= pg.pageCount) break;
+      }
+    }
+  }
+  return out;
 }
 
 // Slug axtarışı Strapi tələb edir — əlaqəni ƏVVƏLCƏ yoxla ki, server sönülü
@@ -194,7 +240,6 @@ async function findMismatched() {
 const isProd = !/localhost|127\.0\.0\.1/.test(STRAPI_URL);
 console.log('\n' + '='.repeat(66));
 console.log(`  HEDEF: ${STRAPI_URL}${isProd ? '   <<< PROD! >>>' : '   (lokal)'}`);
-console.log(`  Silinecek: ${targets.length} butov sened + ${localeTargets.length} dil versiyasi`);
 console.log(`  Rejim: ${confirm ? 'SILME' : 'DRY-RUN (hec ne silinmir)'}`);
 console.log('='.repeat(66) + '\n');
 
@@ -210,6 +255,46 @@ if (localeTargets.length) {
   localeTargets.length = 0;
   localeTargets.push(...alive);
   if (gone) console.log(`  ${gone} dil versiyasi artiq silinib — atlanir.\n`);
+}
+
+// Əl ilə yaradılmış (avtomatik sluglı) qeydlər — sənəd üzrə qruplanır.
+const autoSlug = await findAutoSlug();
+const autoDocs = new Map();
+for (const a of autoSlug) {
+  if (!autoDocs.has(a.documentId)) autoDocs.set(a.documentId, { ...a, locales: [] });
+  autoDocs.get(a.documentId).locales.push(a.locale);
+}
+
+if (autoDocs.size) {
+  console.log(`=== EL ILE YARADILMIS QEYDLER (${autoDocs.size} sened) ===`);
+  console.log('Miqrasiyadan EVVEL admin-de yaradilib — idxal olunani tekrarlaya biler.');
+  console.log('tip          | slug             | diller   | tarix      | basliq');
+  console.log('-------------+------------------+----------+------------+-------------------');
+  for (const d of autoDocs.values()) {
+    console.log(
+      d.type.padEnd(12) + ' | ' + d.slug.padEnd(16) + ' | ' +
+      d.locales.sort().join(',').padEnd(8) + ' | ' + d.createdAt.padEnd(10) + ' | ' + d.title.slice(0, 40)
+    );
+  }
+  console.log(
+    deleteAutoSlug
+      ? '\n  --delete-autoslug verilib: bunlar SILINECEK.\n'
+      : '\n  Silmek ucun: node cleanup.mjs --confirm --delete-autoslug\n'
+  );
+
+  if (deleteAutoSlug) {
+    for (const d of autoDocs.values()) {
+      targets.push({
+        key: 'auto/' + d.type + '/' + d.slug,
+        documentId: d.documentId,
+        type: d.type,
+        via: 'autoslug',
+        locales: d.locales,
+        title: d.title || '(el ile yaradilmis)',
+        legacyUrl: '',
+      });
+    }
+  }
 }
 
 const mismatched = await findMismatched();
@@ -241,6 +326,11 @@ if (mismatched.length) {
 } else {
   console.log('  Tip uygunsuzlugu yoxdur.\n');
 }
+
+// Sayğac BURADA çap olunur — bütün hədəflər (boş sənədlər + əl ilə yaradılmış
+// + səhv tipli) toplandıqdan sonra. Əvvəl başlıqda idi və yalnız birinci
+// qrupu sayırdı, ona görə hesabat özü-özü ilə ziddiyyət təşkil edirdi.
+console.log(`  CEMI SILINECEK: ${targets.length} butov sened + ${localeTargets.length} dil versiyasi\n`);
 
 if (!targets.length && !localeTargets.length) {
   console.log('  Silinecek sened yoxdur.\n');
