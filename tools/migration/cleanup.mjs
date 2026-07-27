@@ -57,24 +57,61 @@ for (const r of records) {
 //
 // Strapi 5-də `?locale=` ilə DELETE yalnız həmin dilin versiyasını silir.
 // Nəticəni `node verify.mjs` təsdiqləyir — say pariteti dəqiq oturmalıdır.
+/**
+ * Sənədi slug ilə tap — vəziyyət faylında qeyd yoxdursa.
+ *
+ * NİYƏ LAZIMDIR: `state` yalnız bu maşında işlədilmiş idxalları bilir. Qeyd
+ * silinibsə, əl ilə redaktə olunubsa və ya başqa maşından idxal edilibsə,
+ * `state[key]` boş qalır və köhnə versiya belə qeydləri SƏSSİZCƏ atlayırdı —
+ * nəticədə `verify.mjs`-də izahsız uyğunsuzluq görünürdü.
+ * Slug deterministikdir, ona görə etibarlı ehtiyat yoldur.
+ */
+async function resolveBySlug(type, slug, locale) {
+  if (!slug) return null;
+  const res = await api(
+    'GET',
+    `/api/${PLURAL[type]}?locale=${locale}&filters[slug][$eq]=${encodeURIComponent(slug)}` +
+      '&pagination[pageSize]=1&status=published&fields[0]=slug'
+  );
+  const row = res.data?.data?.[0];
+  return row?.documentId || null;
+}
+
+// Slug axtarışı Strapi tələb edir — əlaqəni ƏVVƏLCƏ yoxla ki, server sönülü
+// olanda hər qeyd "tapılmadı" kimi görünməsin.
+await ping();
+
 const targets = [];
 const localeTargets = [];
+const unresolved = [];
+
 for (const [key, list] of byDoc) {
   const empties = list.filter((r) => r.isEmpty);
   if (!empties.length) continue;
-  const documentId = state[key];
-  if (!documentId) continue; // idxal olunmayıb
   const [section, id] = key.split('/');
   const type = targetTypeFor(section, Number(id));
 
+  let documentId = state[key];
+  let via = 'state';
+  if (!documentId) {
+    // Ehtiyat: slug ilə tap. Boş qeydin öz dilində axtarırıq.
+    documentId = await resolveBySlug(type, empties[0].slug, empties[0].locale);
+    via = 'slug';
+  }
+  if (!documentId) {
+    unresolved.push({ key, type, title: list[0].title, locales: empties.map((r) => r.locale).join(',') });
+    continue;
+  }
+
   if (empties.length === list.length) {
-    targets.push({ key, documentId, type, title: list[0].title, legacyUrl: list[0].legacyUrl });
+    targets.push({ key, documentId, type, via, title: list[0].title, legacyUrl: list[0].legacyUrl });
   } else {
     for (const r of empties) {
       localeTargets.push({
         key,
         documentId,
         type,
+        via,
         locale: r.locale,
         title: r.title,
         legacyUrl: r.legacyUrl,
@@ -82,6 +119,16 @@ for (const [key, list] of byDoc) {
       });
     }
   }
+}
+
+if (unresolved.length) {
+  console.log(`=== TAPILMADI (${unresolved.length}) — ne state-de, ne slug ile ===`);
+  console.log('Bunlar yeqin ki Strapi-de umumiyyetle yoxdur, yeni artiq temizdir.');
+  for (const u of unresolved.slice(0, 10)) {
+    console.log(`  ${u.key}.${u.locales}  ${u.type}  "${u.title.slice(0, 40)}"`);
+  }
+  if (unresolved.length > 10) console.log(`  ... ve ${unresolved.length - 10} daha`);
+  console.log('');
 }
 
 // ── TİP UYĞUNSUZLUĞU ─────────────────────────────────────────────────────
@@ -119,8 +166,6 @@ console.log(`  HEDEF: ${STRAPI_URL}${isProd ? '   <<< PROD! >>>' : '   (lokal)'}
 console.log(`  Silinecek: ${targets.length} butov sened + ${localeTargets.length} dil versiyasi`);
 console.log(`  Rejim: ${confirm ? 'SILME' : 'DRY-RUN (hec ne silinmir)'}`);
 console.log('='.repeat(66) + '\n');
-
-await ping();
 
 // Artıq silinmiş dil versiyalarını siyahıdan çıxar — əks halda hər təkrar
 // işə salışda eyni qeydlər yenidən görünür və hesabat yanıldıcı olur.
@@ -160,10 +205,10 @@ if (!targets.length && !localeTargets.length) {
 
 if (targets.length) {
   console.log('=== BUTOV SENED (butun dilleri bos) ===');
-  console.log('tip          | documentId       | basliq');
-  console.log('-------------+------------------+-----------------------------------');
+  console.log('tip          | documentId       | tapildi | basliq');
+  console.log('-------------+------------------+---------+--------------------------');
   for (const t of targets) {
-    console.log(t.type.padEnd(12) + ' | ' + t.documentId.slice(0, 16).padEnd(16) + ' | ' + t.title.slice(0, 42));
+    console.log(t.type.padEnd(12) + ' | ' + t.documentId.slice(0, 16).padEnd(16) + ' | ' + t.via.padEnd(7) + ' | ' + t.title.slice(0, 34));
     console.log('             | ' + ' '.repeat(16) + ' | ' + t.legacyUrl);
   }
   console.log('');
