@@ -104,7 +104,15 @@ for (const [key, list] of byDoc) {
   }
 
   if (empties.length === list.length) {
-    targets.push({ key, documentId, type, via, title: list[0].title, legacyUrl: list[0].legacyUrl });
+    targets.push({
+      key,
+      documentId,
+      type,
+      via,
+      locales: list.map((r) => r.locale),
+      title: list[0].title,
+      legacyUrl: list[0].legacyUrl,
+    });
   } else {
     for (const r of empties) {
       localeTargets.push({
@@ -220,7 +228,15 @@ if (mismatched.length) {
   console.log('');
   for (const m of mismatched) {
     if (!m.foundIn) continue;
-    targets.push({ key: m.key, documentId: m.documentId, type: m.foundIn, title: '(sehv tip -> ' + m.want + ')', legacyUrl: '' });
+    targets.push({
+      key: m.key,
+      documentId: m.documentId,
+      type: m.foundIn,
+      via: 'tip',
+      locales: (byDoc.get(m.key) || []).map((r) => r.locale),
+      title: '(sehv tip -> ' + m.want + ')',
+      legacyUrl: '',
+    });
   }
 } else {
   console.log('  Tip uygunsuzlugu yoxdur.\n');
@@ -268,16 +284,52 @@ if (isProd) {
 let deleted = 0;
 let failed = 0;
 
-// 1) Bütöv sənədlər
+// 1) Bütöv sənədlər — HƏR DİL AYRICA.
+//
+// ⚠️ `DELETE /api/{tip}/{documentId}` (locale-siz) İŞLƏMİR: Strapi standart
+// dili `en`-dir və həmin versiya yoxdursa 404 qaytarır. Köhnə versiya 404-ü
+// "artıq silinib" sayıb uğur kimi hesablayırdı — nəticədə sənəd bazada qalır,
+// amma vəziyyət faylından çıxarılırdı. Səssiz uğursuzluq.
+//
+// Ona görə: sənədin hər dili `?locale=` ilə silinir, sonra HƏQİQƏTƏN yox
+// olduğu YOXLANILIR. State yalnız təsdiqdən sonra yenilənir.
+let alreadyGone = 0;
 for (const t of targets) {
-  const res = await api('DELETE', `/api/${PLURAL[t.type]}/${t.documentId}`);
-  if (res.ok || res.status === 404) {
-    deleted++;
-    delete state[t.key];
-  } else {
-    failed++;
-    console.log(`  XETA ${t.key}: ${res.data?.error?.message || res.status}`);
+  const locales = t.locales && t.locales.length ? t.locales : ['az', 'ru', 'en'];
+  let hardFail = null;
+  let removedAny = false;
+
+  for (const loc of locales) {
+    const res = await api('DELETE', `/api/${PLURAL[t.type]}/${t.documentId}?locale=${loc}`);
+    if (res.ok) removedAny = true;
+    else if (res.status !== 404) hardFail = res.data?.error?.message || ('HTTP ' + res.status);
   }
+
+  if (hardFail) {
+    failed++;
+    console.log(`  XETA ${t.key}: ${hardFail}`);
+    continue;
+  }
+
+  // Təsdiq: hər dildə yoxa çıxıbmı?
+  let stillThere = false;
+  for (const loc of locales) {
+    const check = await api('GET', `/api/${PLURAL[t.type]}/${t.documentId}?locale=${loc}&status=published`);
+    if (check.status !== 404) {
+      stillThere = true;
+      break;
+    }
+  }
+
+  if (stillThere) {
+    failed++;
+    console.log(`  XETA ${t.key}: silinmedi, hele Strapi-dedir (documentId ${t.documentId})`);
+    continue;
+  }
+
+  if (removedAny) deleted++;
+  else alreadyGone++;
+  delete state[t.key];
 }
 
 // 2) Yalnız dil versiyaları — sənəd və state TOXUNULMUR.
@@ -293,7 +345,7 @@ for (const t of localeTargets) {
 }
 
 saveState(state);
-console.log(`\n  butov sened silindi: ${deleted} | dil versiyasi silindi: ${localeDeleted} | xeta: ${failed}`);
+console.log(`\n  butov sened silindi: ${deleted} | artiq yox idi: ${alreadyGone} | dil versiyasi silindi: ${localeDeleted} | xeta: ${failed}`);
 console.log('  veziyyet fayli yenilendi.\n');
 console.log('  Novbeti: node import.mjs   (silinen sehv-tipliler dogru tipde yaranir)');
 console.log('  Sonra:   node verify.mjs\n');
