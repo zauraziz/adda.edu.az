@@ -720,6 +720,7 @@ export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     currentValue: Schema.Attribute.Text;
     fieldPath: Schema.Attribute.String;
+    identity: Schema.Attribute.Relation<'manyToOne', 'api::identity.identity'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -746,6 +747,7 @@ export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    verified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
   };
 }
 
@@ -1102,6 +1104,108 @@ export interface ApiFacultyFaculty extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiIdentityIdentity extends Struct.CollectionTypeSchema {
+  collectionName: 'identities';
+  info: {
+    description: 'Parolsuz (magic-link) t\u0259sdiql\u0259nmi\u015F e-po\u00E7t kimlikl\u0259ri \u2014 RSVP v\u0259 d\u00FCz\u0259li\u015F g\u00F6nd\u0259r\u0259nl\u0259ri';
+    displayName: 'Kimlik';
+    pluralName: 'identities';
+    singularName: 'identity';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    corrections: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::correction.correction'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    displayName: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    lastSeenAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::identity.identity'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    pushSubscriptions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::push.push-subscription'
+    >;
+    rsvps: Schema.Attribute.Relation<'oneToMany', 'api::rsvp.rsvp'>;
+    tokens: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::identity.identity-token'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    verifiedAt: Schema.Attribute.DateTime;
+  };
+}
+
+export interface ApiIdentityIdentityToken extends Struct.CollectionTypeSchema {
+  collectionName: 'identity_tokens';
+  info: {
+    description: 'Magic-link v\u0259 sessiya tokenl\u0259rinin SHA-256 hash-lar\u0131. Plaintext HE\u00C7 VAXT saxlanm\u0131r.';
+    displayName: 'Kimlik tokeni';
+    pluralName: 'identity-tokens';
+    singularName: 'identity-token';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    identity: Schema.Attribute.Relation<'manyToOne', 'api::identity.identity'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::identity.identity-token'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    purpose: Schema.Attribute.Enumeration<['magic', 'session']> &
+      Schema.Attribute.Required;
+    revokedAt: Schema.Attribute.DateTime;
+    tokenHash: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    usedAt: Schema.Attribute.DateTime;
+  };
+}
+
 export interface ApiMenuMenu extends Struct.SingleTypeSchema {
   collectionName: 'menus';
   info: {
@@ -1454,6 +1558,133 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiPushPushBroadcast extends Struct.CollectionTypeSchema {
+  collectionName: 'push_broadcasts';
+  info: {
+    description: 'Yay\u0131m jurnal\u0131. dedupeKey unikald\u0131r \u2014 t\u0259krar publish t\u0259krar bildiri\u015F g\u00F6nd\u0259rmir.';
+    displayName: 'Push yay\u0131m\u0131';
+    pluralName: 'push-broadcasts';
+    singularName: 'push-broadcast';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dedupeKey: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    docId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    failedCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::push.push-broadcast'
+    > &
+      Schema.Attribute.Private;
+    prunedCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    sentAt: Schema.Attribute.DateTime;
+    sentCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    targetUid: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPushPushSubscription extends Struct.CollectionTypeSchema {
+  collectionName: 'push_subscriptions';
+  info: {
+    description: 'Web Push (VAPID) abun\u0259likl\u0259ri. Endpoint v\u0259 a\u00E7arlar private \u2014 API il\u0259 he\u00E7 vaxt qaytar\u0131lm\u0131r.';
+    displayName: 'Push abun\u0259liyi';
+    pluralName: 'push-subscriptions';
+    singularName: 'push-subscription';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    auth: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    endpoint: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private;
+    endpointHash: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    failCount: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    identity: Schema.Attribute.Relation<'manyToOne', 'api::identity.identity'>;
+    lastSeenAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::push.push-subscription'
+    > &
+      Schema.Attribute.Private;
+    p256dh: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    topics: Schema.Attribute.JSON;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
   collectionName: 'reactions';
   info: {
@@ -1476,6 +1707,12 @@ export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     emoji: Schema.Attribute.Enumeration<['anchor', 'ship', 'compass', 'wave']> &
       Schema.Attribute.Required;
+    fingerprint: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1498,7 +1735,7 @@ export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
 export interface ApiRsvpRsvp extends Struct.CollectionTypeSchema {
   collectionName: 'rsvps';
   info: {
-    description: 'T\u0259dbir qeydiyyatlar\u0131 (RSVP) \u2014 i\u015Ftirak t\u0259sdiql\u0259ri';
+    description: 'T\u0259dbir qeydiyyatlar\u0131 (RSVP) \u2014 yaln\u0131z t\u0259sdiql\u0259nmi\u015F kimlikl\u0259rd\u0259n (F2.6e)';
     displayName: 'RSVP';
     pluralName: 'rsvps';
     singularName: 'rsvp';
@@ -1526,6 +1763,7 @@ export interface ApiRsvpRsvp extends Struct.CollectionTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<0>;
+    identity: Schema.Attribute.Relation<'manyToOne', 'api::identity.identity'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::rsvp.rsvp'> &
       Schema.Attribute.Private;
@@ -1537,6 +1775,7 @@ export interface ApiRsvpRsvp extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    verified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
   };
 }
 
@@ -2160,11 +2399,15 @@ declare module '@strapi/strapi' {
       'api::document.document': ApiDocumentDocument;
       'api::event.event': ApiEventEvent;
       'api::faculty.faculty': ApiFacultyFaculty;
+      'api::identity.identity': ApiIdentityIdentity;
+      'api::identity.identity-token': ApiIdentityIdentityToken;
       'api::menu.menu': ApiMenuMenu;
       'api::milestone.milestone': ApiMilestoneMilestone;
       'api::page.page': ApiPagePage;
       'api::person.person': ApiPersonPerson;
       'api::program.program': ApiProgramProgram;
+      'api::push.push-broadcast': ApiPushPushBroadcast;
+      'api::push.push-subscription': ApiPushPushSubscription;
       'api::reaction.reaction': ApiReactionReaction;
       'api::rsvp.rsvp': ApiRsvpRsvp;
       'api::tag.tag': ApiTagTag;
