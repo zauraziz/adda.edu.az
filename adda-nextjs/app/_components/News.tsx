@@ -1,7 +1,7 @@
 // ── Faza 1 / News (server component) ─────────────────────────────────
 // "Gündəm" bölməsi: xəbər mozaikası (CMS) + elan raili + tədbirlər.
 // Əvvəl HomeClient-də MARKUP + {{NEWS_CARDS}} tokeni ilə qurulurdu.
-import type { NewsItem } from '@/lib/strapi';
+import { mediaUrl, type Announcement, type NewsItem } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
 import { FALLBACK_NEWS } from '@/lib/news-fallback';
 
@@ -23,12 +23,40 @@ function fmtDate(iso: string | null, locale: Locale): string {
   return `${String(d.getUTCDate()).padStart(2, '0')} ${MONTHS[locale][d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
-// Elan raili (statik — F2-də `announcement` tipinə bağlanacaq)
-const RAIL: Array<{ img?: string; alt?: string; chip: string; date: string; title: string }> = [
-  { img: 'https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=75&w=800&h=380&fit=crop', alt: 'Yay imtahan sessiyası', chip: 'Akademik', date: '09 İyun', title: 'Yay imtahan sessiyasının cədvəli dərc olundu' },
-  { chip: 'Sertifikat', date: '05 İyun', title: 'STCW təzələmə kurslarına sənəd qəbulu davam edir' },
-  { chip: 'Tələbə', date: '02 İyun', title: 'Yataqxana yerləşdirilməsi üçün elektron müraciət açıldı' },
-];
+// F2/K7 — elan raili artıq CMS-dəndir. Statik placeholder silindi.
+//
+// NİYƏ FALLBACK YOXDUR: xəbər mozaikasında `FALLBACK_NEWS` var idi və Strapi boş
+// qaytaranda saxta kartlar göstərirdi — bu, "məzmun görünür" illüziyası yaradıb
+// real problemi gizlədirdi. Rail-da bunu təkrarlamırıq: elan yoxdursa rail
+// ümumiyyətlə render olunmur və grid tək sütuna keçir.
+const RAIL_IMP: Record<Locale, Record<Announcement['importance'], string>> = {
+  az: { normal: 'Elan', vacib: 'Vacib', kritik: 'Təcili' },
+  ru: { normal: 'Объявление', vacib: 'Важно', kritik: 'Срочно' },
+  en: { normal: 'Notice', vacib: 'Important', kritik: 'Urgent' },
+};
+
+/** Rail-da qısa tarix: "09 İyun" */
+function fmtShort(iso: string | null, locale: Locale): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return String(d.getUTCDate()).padStart(2, '0') + ' ' + MONTHS[locale][d.getUTCMonth()];
+}
+
+/**
+ * Rail-a neçə elan sığır — `.nx-news` 632px hündürlüyünə görə ÖLÇÜLÜB:
+ *   başlıq zolağı (.nx-sub)         ~34px
+ *   şəkilli kart                    ~232px
+ *   şəkilsiz kart (2 sətir clamp)   ~101px
+ *   aralıq (gap)                     12px
+ * Şəkilli birinci kart varsa: 232 + 3×113 = 571px → 4 element.
+ * Şəkil yoxdursa:             101 + 4×113 = 553px → 5 element.
+ * Hər iki halda 598px-lik boşluğa sığır və aşağı hədd xəbər blokuna yaxın olur.
+ */
+function railFit(items: Announcement[]): Announcement[] {
+  const hasCover = Boolean(items[0] && mediaUrl(items[0].cover));
+  return items.slice(0, hasCover ? 4 : 5);
+}
 
 // Tədbirlər (statik — F5-də `event` tipinə bağlanacaq)
 const EVENTS: Array<{ d: string; m: string; chip: string; title: string; place: string; time: string }> = [
@@ -41,7 +69,15 @@ const EVENTS: Array<{ d: string; m: string; chip: string; title: string; place: 
 
 type Card = { image: string | null; chip: string; date: string; title: string; slug?: string };
 
-export default function News({ news, locale }: { news: NewsItem[]; locale: Locale }) {
+export default function News({
+  news,
+  announcements = [],
+  locale,
+}: {
+  news: NewsItem[];
+  announcements?: Announcement[];
+  locale: Locale;
+}) {
   const slots = ['nx-a', 'nx-b', 'nx-c', 'nx-d'];
 
   // CMS varsa ondan, yoxdursa data-əsaslı fallback-dan — hər ikisi eyni forma
@@ -60,6 +96,8 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
         title: tr(f.title, locale),
       }));
 
+  const rail = railFit(announcements);
+
   return (
     <section className="newsx" id="xeberler">
       <div className="container">
@@ -74,7 +112,7 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
           </div>
         </div>
 
-        <div className="nx-grid">
+        <div className={'nx-grid' + (rail.length ? '' : ' nx-grid--norail')}>
           <div className="nx-news">
             {cards.map((c, i) => (
               <a
@@ -93,19 +131,26 @@ export default function News({ news, locale }: { news: NewsItem[]; locale: Local
             ))}
           </div>
 
-          <aside className="nx-rail">
-            <div className="nx-sub"><i className="ti ti-speakerphone" />{' ' + tr('Elanlar', locale)}</div>
-            {RAIL.map((r, i) => (
-              <a href={'/' + locale + '/elanlar'} className="elx" key={i}>
-                {r.img && <img className="elx-thumb" src={r.img} alt={tr(r.alt ?? r.title, locale)} loading="lazy" />}
-                <span className="elx-row">
-                  <span className="elx-chip">{tr(r.chip, locale)}</span>
-                  <span className="elx-date">{tr(r.date, locale)}</span>
-                </span>
-                <span className="elx-title">{tr(r.title, locale)}</span>
-              </a>
-            ))}
-          </aside>
+          {rail.length ? (
+            <aside className="nx-rail">
+              <div className="nx-sub"><i className="ti ti-speakerphone" />{' ' + tr('Elanlar', locale)}</div>
+              {rail.map((a, i) => {
+                const img = i === 0 ? mediaUrl(a.cover) : null;
+                return (
+                  <a href={'/' + locale + '/elanlar/' + a.slug} className="elx" key={a.documentId}>
+                    {img ? <img className="elx-thumb" src={img} alt={a.title} loading="lazy" /> : null}
+                    <span className="elx-row">
+                      <span className={'elx-chip' + (a.importance !== 'normal' ? ' is-' + a.importance : '')}>
+                        {RAIL_IMP[locale][a.importance] ?? RAIL_IMP[locale].normal}
+                      </span>
+                      <span className="elx-date">{fmtShort(a.publishAt, locale)}</span>
+                    </span>
+                    <span className="elx-title">{a.title}</span>
+                  </a>
+                );
+              })}
+            </aside>
+          ) : null}
         </div>
 
         <div className="nx-sub nx-sub--ev"><i className="ti ti-calendar-event" />{' ' + tr('Tədbirlər', locale)}</div>

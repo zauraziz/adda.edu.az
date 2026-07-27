@@ -33,14 +33,22 @@
 .nx-sub{display:flex;align-items:center;gap:9px;font-family:var(--nav-font);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--navy-800);margin-bottom:14px}
 .nx-sub i{color:var(--gold-600);font-size:17px}
 .nx-sub::after{content:'';flex:1;height:1px;background:var(--line)}
-.nx-rail{display:flex;flex-direction:column;gap:12px}
+/* Rail xeber blokunun (632px) asagi heddini kecmir — artiq element sigmirsa kesilir. */
+.nx-rail{display:flex;flex-direction:column;gap:12px;max-height:632px;overflow:hidden}
+.nx-rail>.elx{flex:0 0 auto}
+/* Elan yoxdursa mozaika tam eni tutur */
+.nx-grid--norail{grid-template-columns:1fr}
 .elx{display:block;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;text-decoration:none;transition:all var(--nav-dur-fast) var(--nav-ease)}
 .elx:hover{background:var(--navy-50);border-color:var(--navy-100);transform:translateY(-2px);box-shadow:var(--nav-sh-sm)}
 .elx-thumb{display:block;width:100%;height:118px;object-fit:cover;border-radius:9px;margin-bottom:13px}
 .elx-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
 .elx-chip{font-family:var(--nav-font);font-size:9.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-600);background:var(--gold-100);padding:4px 10px;border-radius:6px}
 .elx-date{font-family:var(--nav-font);font-size:11px;font-weight:600;color:#6B8494}
-.elx-title{display:block;font-family:var(--nav-font);font-size:13.5px;font-weight:700;color:var(--navy-800);line-height:1.45}
+/* 2 setirlik clamp — kart hundurluyu deterministik olsun deye (railFit hesabi buna baglidir) */
+.elx-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:var(--nav-font);font-size:13.5px;font-weight:700;color:var(--navy-800);line-height:1.45}
+/* Vaciblik dereceleri */
+.elx-chip.is-vacib{color:#8a5a00;background:#fdf0d5}
+.elx-chip.is-kritik{color:#b42318;background:#fbe7e7}
 .elx:hover .elx-title{color:var(--navy-900)}
 /* Tədbirlər zolağı */
 .nx-sub--ev{margin-top:36px}
@@ -62,7 +70,11 @@
 @media(max-width:1180px){.nx-grid{grid-template-columns:1fr 300px}}
 @media(max-width:1024px){
   .nx-grid{grid-template-columns:1fr}
-  .nx-rail{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .nx-rail{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-height:none;overflow:visible}
+  /* Basliq zolagi grid xanasi olmasin - tam eni tutsun */
+  .nx-rail>.nx-sub{grid-column:1/-1}
+  /* 3 sutunda 4-cu element yetim qalir - gizledilir */
+  .nx-rail>.elx:nth-of-type(n+4){display:none}
   .elx-thumb{height:100px}
   .nx-events{grid-template-columns:repeat(3,1fr)}
 }
@@ -71,6 +83,8 @@
   .nx-a,.nx-b,.nx-c,.nx-d{grid-area:auto;min-height:210px}
   .nx-a{min-height:260px}
   .nx-rail{grid-template-columns:1fr}
+  /* Tek sutunda hamisi gorunsun */
+  .nx-rail>.elx:nth-of-type(n+4){display:block}
   .nx-events{grid-template-columns:repeat(2,1fr)}
   .nx-head{flex-direction:column;align-items:flex-start}
 }

@@ -29,7 +29,14 @@ import Intl from '../_components/Intl';
 import Social from '../_components/Social';
 import VQuote from '../_components/VQuote';
 import Footer from '../_components/Footer';
-import { getHomeNews, getMenu, type NewsItem, type SiteMenu } from '@/lib/strapi';
+import {
+  getAcademyAnnouncements,
+  getHomeNews,
+  getMenu,
+  type Announcement,
+  type NewsItem,
+  type SiteMenu,
+} from '@/lib/strapi';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 60;
@@ -41,8 +48,10 @@ export function generateStaticParams() {
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [news, menu] = await Promise.all([
+  const [news, announcements, menu] = await Promise.all([
     getHomeNews(locale, 4).catch(() => [] as NewsItem[]),
+    // 5 çəkilir; `News` şəkilli birinci karta görə 4-ə və ya 5-ə kəsir.
+    getAcademyAnnouncements(locale, 5).catch(() => [] as Announcement[]),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
   return (
@@ -52,7 +61,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <Quicknav menu={menu} locale={locale} />
       <Spotlight locale={locale} />
       <Stats locale={locale} />
-      <News news={news} locale={locale} />
+      <News news={news} announcements={announcements} locale={locale} />
       <Campus locale={locale} />
       <Intl locale={locale} />
       <Social locale={locale} />
