@@ -19,6 +19,7 @@
   ],
   "documents": [],
   "warnings": [],
+  "isEmpty": false,
   "slug": "gemi-suruculuyu-fakultesi"
  },
  {
@@ -41,6 +42,7 @@
   ],
   "documents": [],
   "warnings": [],
+  "isEmpty": false,
   "slug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
  },
  {
@@ -59,6 +61,7 @@
   "warnings": [
    "govde bos ve ya cox qisa"
   ],
+  "isEmpty": true,
   "slug": "gemi-suruculuyu-fakultesi"
  },
  {
@@ -77,6 +80,7 @@
   "warnings": [
    "govde bos ve ya cox qisa"
   ],
+  "isEmpty": true,
   "slug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
  },
  {
@@ -95,6 +99,7 @@
   ],
   "documents": [],
   "warnings": [],
+  "isEmpty": false,
   "slug": "gemi-suruculuyu-fakultesi"
  },
  {
@@ -113,6 +118,7 @@
   ],
   "documents": [],
   "warnings": [],
+  "isEmpty": false,
   "slug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
  }
 ]
