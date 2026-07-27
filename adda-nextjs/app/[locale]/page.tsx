@@ -33,7 +33,9 @@ import {
   getAcademyAnnouncements,
   getHomeNews,
   getMenu,
+  getUpcomingEvents,
   type Announcement,
+  type EventItem,
   type NewsItem,
   type SiteMenu,
 } from '@/lib/strapi';
@@ -48,10 +50,12 @@ export function generateStaticParams() {
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [news, announcements, menu] = await Promise.all([
+  const [news, announcements, events, menu] = await Promise.all([
     getHomeNews(locale, 4).catch(() => [] as NewsItem[]),
     // 5 çəkilir; `News` şəkilli birinci karta görə 4-ə və ya 5-ə kəsir.
     getAcademyAnnouncements(locale, 5).catch(() => [] as Announcement[]),
+    // Yalnız yaxınlaşan tədbirlər (startAt >= indi), tarixə görə artan.
+    getUpcomingEvents(locale, 5).catch(() => [] as EventItem[]),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
   return (
@@ -61,7 +65,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <Quicknav menu={menu} locale={locale} />
       <Spotlight locale={locale} />
       <Stats locale={locale} />
-      <News news={news} announcements={announcements} locale={locale} />
+      <News news={news} announcements={announcements} events={events} locale={locale} />
       <Campus locale={locale} />
       <Intl locale={locale} />
       <Social locale={locale} />

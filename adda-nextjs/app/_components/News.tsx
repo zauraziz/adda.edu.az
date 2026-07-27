@@ -1,7 +1,7 @@
 // ── Faza 1 / News (server component) ─────────────────────────────────
 // "Gündəm" bölməsi: xəbər mozaikası (CMS) + elan raili + tədbirlər.
 // Əvvəl HomeClient-də MARKUP + {{NEWS_CARDS}} tokeni ilə qurulurdu.
-import { mediaUrl, type Announcement, type NewsItem } from '@/lib/strapi';
+import { mediaUrl, type Announcement, type EventItem, type NewsItem } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
 import { FALLBACK_NEWS } from '@/lib/news-fallback';
 
@@ -58,24 +58,49 @@ function railFit(items: Announcement[]): Announcement[] {
   return items.slice(0, hasCover ? 4 : 5);
 }
 
-// Tədbirlər (statik — F5-də `event` tipinə bağlanacaq)
-const EVENTS: Array<{ d: string; m: string; chip: string; title: string; place: string; time: string }> = [
-  { d: '14', m: 'İyn', chip: 'Abituriyent', title: 'Açıq qapı günü', place: 'Əsas korpus', time: '11:00' },
-  { d: '18', m: 'İyn', chip: 'Karyera', title: '"Dəniz peşələri" karyera sərgisi', place: 'Akt zalı', time: '14:00' },
-  { d: '21', m: 'İyn', chip: 'Elm', title: 'IAMU regional seminarı', place: 'Konfrans zalı', time: '10:00' },
-  { d: '25', m: 'İyn', chip: 'Təlim', title: 'STCW yanğınla mübarizə təlimi', place: 'Təlim poliqonu', time: '09:00' },
-  { d: '28', m: 'İyn', chip: 'İcma', title: 'Məzunlarla görüş axşamı', place: 'Akademiya həyəti', time: '17:00' },
-];
+// F2/K8 — tədbir zolağı artıq CMS-dəndir. Statik placeholder silindi.
+// Rail ilə eyni prinsip: saxta məzmun yoxdur. Yaxınlaşan tədbir yoxdursa
+// bütöv bölmə (başlıq + zolaq) render OLUNMUR.
+//
+// ⚠️ QEYD: köhnə saytda tədbir bölməsi yox idi, ona görə miqrasiya `event`
+// tipinə heç nə gətirmədi. Zolaq admin-də tədbir əlavə olunana qədər boşdur.
+const EV_FORMAT: Record<Locale, Record<EventItem['format'], string>> = {
+  az: { fiziki: 'Əyani', onlayn: 'Onlayn', hibrid: 'Hibrid' },
+  ru: { fiziki: 'Очно', onlayn: 'Онлайн', hibrid: 'Гибрид' },
+  en: { fiziki: 'In person', onlayn: 'Online', hibrid: 'Hybrid' },
+};
+
+// Tarix nişanı dar (50px, 9px şrift) — tam ay adı sığmır, qısaldılmış işlənir.
+const MONTHS_SHORT: Record<Locale, string[]> = {
+  az: ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'İyn', 'İyl', 'Avq', 'Sen', 'Okt', 'Noy', 'Dek'],
+  ru: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
+
+/** Tədbirin keçirildiyi yer: onlayn üçün platforma, əyani üçün bina + otaq. */
+function venueOf(e: EventItem, locale: Locale): string {
+  if (e.format === 'onlayn') return e.platform || EV_FORMAT[locale].onlayn;
+  return [e.venueBuilding, e.venueRoom].filter(Boolean).join(', ');
+}
+
+function timeOf(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0');
+}
 
 type Card = { image: string | null; chip: string; date: string; title: string; slug?: string };
 
 export default function News({
   news,
   announcements = [],
+  events = [],
   locale,
 }: {
   news: NewsItem[];
   announcements?: Announcement[];
+  events?: EventItem[];
   locale: Locale;
 }) {
   const slots = ['nx-a', 'nx-b', 'nx-c', 'nx-d'];
@@ -97,6 +122,9 @@ export default function News({
       }));
 
   const rail = railFit(announcements);
+  // `.nx-events` masaüstündə 5 sütunludur — bir sıra. Artığı ikinci sırada
+  // yetim qalardı, ona görə 5-də kəsilir (responsив qaydalar CSS-dədir).
+  const evs = events.slice(0, 5);
 
   return (
     <section className="newsx" id="xeberler">
@@ -153,20 +181,37 @@ export default function News({
           ) : null}
         </div>
 
-        <div className="nx-sub nx-sub--ev"><i className="ti ti-calendar-event" />{' ' + tr('Tədbirlər', locale)}</div>
-        <div className="nx-events">
-          {EVENTS.map((e, i) => (
-            <a href={'/' + locale + '/tedbirler'} className="evx" key={i}>
-              <span className="evx-date"><b>{e.d}</b><span>{tr(e.m, locale)}</span></span>
-              <span className="evx-body">
-                <span className="evx-chip">{tr(e.chip, locale)}</span>
-                <span className="evx-title">{tr(e.title, locale)}</span>
-                <span className="evx-meta"><i className="ti ti-map-pin" />{' ' + tr(e.place, locale)}</span>
-                <span className="evx-meta"><i className="ti ti-clock" />{' ' + e.time}</span>
-              </span>
-            </a>
-          ))}
-        </div>
+        {evs.length ? (
+          <>
+            <div className="nx-sub nx-sub--ev"><i className="ti ti-calendar-event" />{' ' + tr('Tədbirlər', locale)}</div>
+            <div className="nx-events">
+              {evs.map((e) => {
+                const d = e.startAt ? new Date(e.startAt) : null;
+                const valid = d && !Number.isNaN(d.getTime());
+                const place = venueOf(e, locale);
+                const time = timeOf(e.startAt);
+                return (
+                  <a href={'/' + locale + '/tedbirler/' + e.slug} className="evx" key={e.documentId}>
+                    <span className="evx-date">
+                      <b>{valid ? String(d.getUTCDate()).padStart(2, '0') : '—'}</b>
+                      <span>{valid ? MONTHS_SHORT[locale][d.getUTCMonth()] : ''}</span>
+                    </span>
+                    <span className="evx-body">
+                      <span className="evx-chip">{EV_FORMAT[locale][e.format] ?? EV_FORMAT[locale].fiziki}</span>
+                      <span className="evx-title">{e.title}</span>
+                      {place ? (
+                        <span className="evx-meta"><i className="ti ti-map-pin" />{' ' + place}</span>
+                      ) : null}
+                      {time ? (
+                        <span className="evx-meta"><i className="ti ti-clock" />{' ' + time}</span>
+                      ) : null}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
       </div>
     </section>
   );

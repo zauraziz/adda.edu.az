@@ -76,7 +76,9 @@
   /* 3 sutunda 4-cu element yetim qalir - gizledilir */
   .nx-rail>.elx:nth-of-type(n+4){display:none}
   .elx-thumb{height:100px}
+  /* 3 sutun: 5 tedbirin 2-si ikinci sirada yetim qalir - gizledilir */
   .nx-events{grid-template-columns:repeat(3,1fr)}
+  .nx-events>.evx:nth-of-type(n+4){display:none}
 }
 @media(max-width:700px){
   .nx-news{height:auto;grid-template-columns:1fr;grid-template-rows:none}
@@ -85,9 +87,16 @@
   .nx-rail{grid-template-columns:1fr}
   /* Tek sutunda hamisi gorunsun */
   .nx-rail>.elx:nth-of-type(n+4){display:block}
+  /* 2 sutun: 4 tedbir = 2 tam sira */
   .nx-events{grid-template-columns:repeat(2,1fr)}
+  .nx-events>.evx:nth-of-type(4){display:flex}
+  .nx-events>.evx:nth-of-type(n+5){display:none}
   .nx-head{flex-direction:column;align-items:flex-start}
 }
-@media(max-width:470px){.nx-events{grid-template-columns:1fr}}
+@media(max-width:470px){
+  .nx-events{grid-template-columns:1fr}
+  /* Tek sutunda hamisi gorunsun */
+  .nx-events>.evx:nth-of-type(n+5){display:flex}
+}
 @media(prefers-reduced-motion:reduce){.nx-card,.elx,.evx,.nx-btn{transition:none!important}}
 /* Campus v2 */
