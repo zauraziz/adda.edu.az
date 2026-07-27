@@ -144,16 +144,39 @@ async function findMismatched() {
   for (const [key, documentId] of Object.entries(state)) {
     if (!key.startsWith('content/')) continue;
     const want = targetTypeFor('content', Number(key.split('/')[1]));
-    const res = await api('GET', `/api/${PLURAL[want]}/${documentId}?status=published`);
-    if (res.status !== 404) continue;
+
+    // Sənədin HƏQİQƏTƏN malik olduğu dillərlə yoxlanılır.
+    //
+    // ⚠️ NİYƏ `?locale=` MƏCBURİDİR: bu layihədə Strapi-nin i18n standart dili
+    // `en`-dir (`config/plugins.ts`-də i18n konfiqurasiyası yoxdur, yəni Strapi
+    // öz standartını işlədir). Sorğu `locale` olmadan getsə, Strapi `en`
+    // versiyasını axtarır və `en` tərcüməsi olmayan HƏR sənəd 404 qaytarır —
+    // nəticədə 22 sağlam sənəd saxta "səhv tip" kimi görünürdü və yeganə
+    // real uyğunsuzluq (content/28) onların arasında itirdi.
+    const locales = (byDoc.get(key) || []).map((r) => r.locale);
+    const probes = locales.length ? locales : ['az'];
+
+    let exists = false;
+    for (const loc of probes) {
+      const res = await api('GET', `/api/${PLURAL[want]}/${documentId}?locale=${loc}&status=published`);
+      if (res.status !== 404) {
+        exists = true;
+        break;
+      }
+    }
+    if (exists) continue;
+
     let foundIn = null;
     for (const t of ['page', 'department', 'program', 'faculty']) {
       if (t === want) continue;
-      const probe = await api('GET', `/api/${PLURAL[t]}/${documentId}?status=published`);
-      if (probe.ok) {
-        foundIn = t;
-        break;
+      for (const loc of probes) {
+        const probe = await api('GET', `/api/${PLURAL[t]}/${documentId}?locale=${loc}&status=published`);
+        if (probe.ok) {
+          foundIn = t;
+          break;
+        }
       }
+      if (foundIn) break;
     }
     out.push({ key, documentId, want, foundIn });
   }
@@ -189,7 +212,12 @@ if (mismatched.length) {
   for (const m of mismatched) {
     console.log(m.key.padEnd(14) + ' | ' + m.want.padEnd(15) + ' | ' + (m.foundIn || '(tapilmadi)'));
   }
-  console.log('\n  Bunlar da silinir — `node import.mjs` onlari DOGRU tipde yeniden yaradacaq.\n');
+  const removable = mismatched.filter((m) => m.foundIn).length;
+  console.log('\n  ' + removable + '/' + mismatched.length + ' silinir — sonra `node import.mjs` onlari DOGRU tipde yeniden yaradacaq.');
+  if (removable < mismatched.length) {
+    console.log('  `(tapilmadi)` olanlara toxunulmur — Strapi-de umumiyyetle yoxdurlar.');
+  }
+  console.log('');
   for (const m of mismatched) {
     if (!m.foundIn) continue;
     targets.push({ key: m.key, documentId: m.documentId, type: m.foundIn, title: '(sehv tip -> ' + m.want + ')', legacyUrl: '' });
