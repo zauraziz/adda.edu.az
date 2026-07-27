@@ -23,6 +23,23 @@ const args = Object.fromEntries(
 );
 
 const LOCALES = ['az', 'ru', 'en'];
+const PAGE_SIZE = 100;
+
+/**
+ * BÜTÜN qeydləri gətirir. Əvvəlki versiya yalnız ilk 100-ə baxırdı, yəni
+ * 808 məqalədən 708-i heç yoxlanmırdı — hesabatdakı "4 boş gövdə" əsl say deyildi.
+ */
+async function fetchAll(plural, query) {
+  const out = [];
+  for (let page = 1; page <= 100; page++) {
+    const res = await api('GET', `/api/${plural}?${query}&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`);
+    const rows = res.data?.data || [];
+    out.push(...rows);
+    const total = res.data?.meta?.pagination?.pageCount ?? 1;
+    if (page >= total || !rows.length) break;
+  }
+  return out;
+}
 const SECTIONS = ['content', 'faculty', 'announce', 'news'];
 const onlySections = args.section ? String(args.section).split(',') : null;
 
@@ -39,6 +56,15 @@ for (const section of SECTIONS) {
 }
 if (!records.length) {
   console.error('data/extracted/ bosdur.');
+  process.exit(1);
+}
+
+// KÖHNƏLMİŞ EKSTRAKSİYA QORUMASI (import.mjs-dəki ilə eyni).
+// `isEmpty` yoxdursa boş sənədlər sayıla bilməz və hesabat yanlış olur.
+if (!records.some((r) => Object.prototype.hasOwnProperty.call(r, 'isEmpty'))) {
+  console.error('\n  XETA: data/extracted/ kohnelmisdir (`isEmpty` sahesi yoxdur).');
+  console.error('  Bos sened hesabati yanlis olacaq.');
+  console.error('\n  Hell:  node extract.mjs\n');
   process.exit(1);
 }
 
@@ -126,24 +152,32 @@ if (!samples.length) {
 // ── 3. Boş gövdələr ──────────────────────────────────────────────────────
 console.log('\n=== 3. BOS GOVDELER ===');
 const shouldBeEmpty = records.filter((r) => r.isEmpty).length;
-let emptyFound = 0;
-const emptySamples = [];
+const emptyRows = [];
+let scanned = 0;
 for (const type of Object.keys(expected)) {
   const f = FIELDS[type];
-  const res = await api('GET', `/api/${PLURAL[type]}?locale=az&pagination[pageSize]=100&status=published&fields[0]=${f.title}&fields[1]=slug&fields[2]=${f.body}`);
-  for (const row of res.data?.data || []) {
+  const rows = await fetchAll(PLURAL[type], `locale=az&status=published&fields[0]=${f.title}&fields[1]=slug&fields[2]=${f.body}`);
+  scanned += rows.length;
+  for (const row of rows) {
     const body = row[f.body];
     if (!body || String(body).trim().length < 40) {
-      emptyFound++;
-      if (emptySamples.length < 6) emptySamples.push(`${type}/${row.slug}: "${String(row[f.title] || '').slice(0, 38)}"`);
+      emptyRows.push({ type, slug: row.slug, documentId: row.documentId, title: String(row[f.title] || '') });
     }
   }
 }
-console.log(`  mənbədə isEmpty isareli : ${shouldBeEmpty}`);
-console.log(`  Strapi-de bos govde     : ${emptyFound} (ilk 100 qeyd uzre, her tip)`);
-for (const s of emptySamples) console.log('    ' + s);
-if (emptyFound) {
-  console.log('  -> Bunlar admin-de silinmeli, ya da mezmunla doldurulmalidir.');
+console.log(`  menbede isEmpty isareli : ${shouldBeEmpty}`);
+console.log(`  Strapi-de bos govde     : ${emptyRows.length} (${scanned} qeyd TAM skan olundu)`);
+if (emptyRows.length) {
+  console.log('\ntip          | documentId       | basliq');
+  console.log('-------------+------------------+---------------------------------');
+  for (const r of emptyRows.slice(0, 20)) {
+    console.log(r.type.padEnd(12) + ' | ' + String(r.documentId).slice(0, 16).padEnd(16) + ' | ' + r.title.slice(0, 40));
+  }
+  if (emptyRows.length > 20) console.log(`  ... ve ${emptyRows.length - 20} daha`);
+  console.log('\n  Temizlemek ucun: node cleanup.mjs        (dry-run)');
+  console.log('                   node cleanup.mjs --confirm');
+  console.log('  DIQQET: sekli olan qisa qeydler (mes. yeni il tebriki) SILINMIR —');
+  console.log('          cleanup yalniz menbede `isEmpty` isareli olanlari hedefleyir.');
 }
 
 // ── 4. Slug sağlamlığı ───────────────────────────────────────────────────
@@ -151,8 +185,8 @@ console.log('\n=== 4. SLUG SAGLAMLIGI ===');
 let autoSlugs = 0;
 const autoSamples = [];
 for (const type of Object.keys(expected)) {
-  const res = await api('GET', `/api/${PLURAL[type]}?locale=az&pagination[pageSize]=100&status=published&fields[0]=slug`);
-  for (const row of res.data?.data || []) {
+  const rows = await fetchAll(PLURAL[type], `locale=az&status=published&fields[0]=slug`);
+  for (const row of rows) {
     // Strapi avtomatik slug-lari tip adindan yaradir: `article`, `article-1`...
     if (new RegExp(`^${type}(-\\d+)?$`).test(row.slug || '')) {
       autoSlugs++;
@@ -174,6 +208,8 @@ for (const type of Object.keys(expected)) {
   const d = dr.data?.meta?.pagination?.total ?? -1;
   console.log(`  ${type.padEnd(12)} derc olunmus ${String(p).padStart(5)} | draft ${String(d).padStart(5)}`);
 }
-console.log('  -> Draft qeydler public API-de GORUNMUR. Cox olsa `publishedAt` islememis demekdir.');
+console.log('\n  QEYD: Strapi 5-de HER senedin hem draft, hem published versiyasi olur.');
+console.log('  Beraber saylar = butun senedler DERC OLUNUB (dogru veziyyet).');
+console.log('  Problem eksinedir: published sayi draft-dan AZ olsa, `publishedAt` islememis demekdir.');
 
 console.log('\nBu hesabati mene gonder.\n');

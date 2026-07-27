@@ -26,6 +26,11 @@ export const CONTENT_MAP = {
   2: 'department', // İNFORMASİYA-RESURS MƏRKƏZİ
   29: 'department', // TƏLİM-TƏDRİS MƏRKƏZİ
   30: 'department', // AZƏRBAYCAN DƏNİZÇİLİK KOLLECİ
+  28: 'department', // МЕЖДУНАРОДНЫЙ ОБРАЗОВАТЕЛЬНЫЙ ЦЕНТР (yalnız ru)
+
+  // ⚠️ DUBLİKAT ŞÜBHƏSİ: 2 "İNFORMASİYA RESURS MƏRKƏZİ" (az,ru,en) və
+  // 31 "İRM" (az,en) eyni qurumdur. İkisi də idxal olunsa Strapi-də iki
+  // department qeydi yaranacaq. Brauzerdə yoxla, köhnəlmişi buradan çıxar.
 
   // Qalan hər şey -> page
 };

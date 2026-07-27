@@ -15,7 +15,8 @@
     "preview": "node preview.mjs",
     "plan": "node import.mjs --plan",
     "import": "node import.mjs",
-    "verify": "node verify.mjs"
+    "verify": "node verify.mjs",
+    "cleanup": "node cleanup.mjs"
   },
   "dependencies": {
     "cheerio": "1.0.0",

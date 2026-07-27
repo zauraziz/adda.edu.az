@@ -22,6 +22,7 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 3b — baxış | `preview.mjs` | **yox** | konsol |
 | 4 — idxal | `import.mjs` | Strapi | `data/import-state.json` |
 | 5 — doğrulama | `verify.mjs` | Strapi (oxu) | konsol hesabatı |
+| 6 — təmizləmə | `cleanup.mjs` | Strapi | silinmiş qeydlər |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -180,7 +181,30 @@ node import.mjs                            # hamisi
 `content/*` səhifələrinin hədəf tipi `mapping.mjs`-dədir (canlı saytın
 sitemap-ından). Səhv təyinat varsa həmin faylı düzəlt və `--plan` ilə yoxla.
 - **K4 ✓** — doğrulama: `verify.mjs`
-- **K5** — media → Cloudinary, 301 redirect-lər, Meilisearch reindex, redaktə düzəlişləri
+- **K5 ✓** — təmizləmə: `cleanup.mjs`
+- **K6** — media → Cloudinary, 301 redirect-lər, Meilisearch reindex, redaktə düzəlişləri
+
+### Təmizləmə (K5)
+
+```bash
+node extract.mjs        # MƏCBURİ — isEmpty sahələri üçün
+node cleanup.mjs        # yalnız göstərir
+node cleanup.mjs --confirm
+node import.mjs         # səhv tipdə olanlar düzgün tipdə yenidən yaranır
+node verify.mjs
+```
+
+İki problemi həll edir:
+
+1. **Boş sənədlər.** Yalnız mənbədə `isEmpty` işarəli qeydlər silinir —
+   Strapi-də "qısa görünən" hər şey yox. Məsələn yeni il təbriki elanının
+   gövdəsi qısadır, amma şəkli var və qanuni məzmundur.
+   Hədəf `documentId` ilə dəqiq tapılır; başlıq/slug üzrə axtarış YOXDUR.
+2. **Səhv tip.** `mapping.mjs` idxaldan sonra dəyişibsə (məs. `content/28`
+   `page` → `department`), sənəd köhnə tipdə qalır və `import.mjs` onu
+   yeniləyə bilmir. Belələri silinir və növbəti idxalda düzgün tipdə yaranır.
+
+Silinən sənəd `import-state.json`-dan da çıxarılır.
 
 ### Doğrulama (K4)
 
