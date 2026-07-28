@@ -23,6 +23,8 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 4 — idxal | `import.mjs` | Strapi | `data/import-state.json` |
 | 5 — doğrulama | `verify.mjs` | Strapi (oxu) | konsol hesabatı |
 | 6 — təmizləmə | `cleanup.mjs` | Strapi | silinmiş qeydlər |
+| 7 — media yükləmə | `media-upload.mjs` | adda.edu.az + Strapi | `data/media-map.<host>.json` |
+| 8 — media bağlama | `media-link.mjs` | Strapi | `data/media-linked.<host>.json` |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -276,3 +278,33 @@ Beş yoxlama:
 
 Arxiv **az-only** qalır (qərar: 23.07.2026). Tərcümə örtüyü: 1212 sənəddən
 cəmi 28-i tam trilingualdır. ru/en lokalizasiyaları yalnız mövcud olduqda yaradılır.
+
+## Media köçürməsi (K15)
+
+```bash
+node media-upload.mjs --dry-run
+node media-upload.mjs --limit=20     # kicik sinaq
+node media-upload.mjs --force        # PROD ucun --force MECBURI
+node media-link.mjs --force
+```
+
+**Niyə Strapi üzərindən, birbaşa Cloudinary-yə yox:** `cover` sahəsi Strapi fayl
+`id`-si ilə bağlanır. Birbaşa Cloudinary-yə yükləsək Strapi-də media qeydi olmaz
+və heç nəyə bağlaya bilmərik.
+
+| Tip | Media sahələri |
+|---|---|
+| `article` | `cover` ← əsas şəkil, `gallery` ← gövdə şəkilləri |
+| `announcement` | `cover`, `attachments` ← PDF/doc |
+| `page`, `faculty`, `program`, `department` | media sahəsi yoxdur — yalnız gövdə URL-ləri |
+
+Hər iki mərhələ **idempotentdir**: `media-map` yüklənənləri, `media-linked`
+bağlananları saxlayır. Kəsilsə eyni əmr davam etdirir. `--relink` məcburi
+yenidən bağlama üçündür.
+
+⚠️ Yükləmə **ADDA-nın canlı serverindən** gedir və `lib/http.mjs`-in boğma
+mexanizmindən keçir. 1192 fayl ~30 dəqiqə çəkir.
+
+⚠️ Prod Strapi-də `CLOUDINARY_NAME` / `CLOUDINARY_KEY` / `CLOUDINARY_SECRET`
+env dəyişənləri qurulmalıdır — yoxdursa fayllar Render-in müvəqqəti diskinə
+düşür və növbəti deploy-da İTİR.

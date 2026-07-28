@@ -60,6 +60,54 @@ export function saveState(state) {
   writeFileSync(stateFile(), JSON.stringify(state, null, 1), 'utf8');
 }
 
+/**
+ * Media xəritəsi də HƏDƏF ÜZRƏ ayrıdır.
+ * Cloudinary URL-i hər iki instansda eyni ola bilər, amma Strapi fayl `id`-si
+ * instansa xasdır — `cover` məhz id ilə bağlanır.
+ */
+export function mediaMapFile() {
+  return dataPath('media-map.' + hostKey(STRAPI_URL) + '.json');
+}
+
+export function loadMediaMap() {
+  const path = mediaMapFile();
+  if (!existsSync(path)) return {};
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    console.warn('  [media] xerite oxuna bilmedi, sifirdan baslanir');
+    return {};
+  }
+}
+
+export function saveMediaMap(map) {
+  writeFileSync(mediaMapFile(), JSON.stringify(map, null, 1), 'utf8');
+}
+
+/**
+ * Media bağlanmasının tamamlanma qeydi — hədəf üzrə.
+ * Olmasa, hər təkrar run 1206 sənədə yenidən `PUT` göndərərdi (Render pulsuz
+ * tarifdə saatlarla). Mənbə faylı dəyişmədiyi üçün nəticə eyni olur, yəni
+ * təkrarın faydası yoxdur.
+ */
+export function linkedFile() {
+  return dataPath('media-linked.' + hostKey(STRAPI_URL) + '.json');
+}
+
+export function loadLinked() {
+  const path = linkedFile();
+  if (!existsSync(path)) return {};
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+export function saveLinked(done) {
+  writeFileSync(linkedFile(), JSON.stringify(done, null, 1), 'utf8');
+}
+
 /** Hədəfin adı — hesabatlarda göstərmək üçün. */
 export function targetLabel() {
   return hostKey(STRAPI_URL);

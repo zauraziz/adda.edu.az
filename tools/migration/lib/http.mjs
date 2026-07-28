@@ -13,6 +13,41 @@ async function throttle() {
 }
 
 /**
+ * İkili (binary) fayl gətir — media yükləməsi üçün.
+ * Eyni boğma (throttle) mexanizmindən keçir ki, ADDA-nın serveri yüklənməsin.
+ * @returns {{ status:number, buffer:Buffer|null, contentType:string, error:string|null }}
+ */
+export async function getBuffer(url) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= RETRIES; attempt++) {
+    await throttle();
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), TIMEOUT_MS * 3); // media daha boyuk
+    try {
+      const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, redirect: 'follow', signal: ac.signal });
+      if (res.status >= 500 && attempt < RETRIES) {
+        clearTimeout(timer);
+        lastError = 'HTTP ' + res.status;
+        await sleep(1000 * attempt);
+        continue;
+      }
+      if (!res.ok) {
+        clearTimeout(timer);
+        return { status: res.status, buffer: null, contentType: '', error: 'HTTP ' + res.status };
+      }
+      const buffer = Buffer.from(await res.arrayBuffer());
+      clearTimeout(timer);
+      return { status: res.status, buffer, contentType: res.headers.get('content-type') || '', error: null };
+    } catch (err) {
+      clearTimeout(timer);
+      lastError = err && err.name === 'AbortError' ? 'timeout' : String((err && err.message) || err);
+      if (attempt < RETRIES) await sleep(1000 * attempt);
+    }
+  }
+  return { status: 0, buffer: null, contentType: '', error: lastError };
+}
+
+/**
  * Səhifəni gətir. HEÇ VAXT throw etmir — həmişə nəticə obyekti qaytarır ki,
  * uzun crawl bir xətadan dayanmasın.
  * @returns {{ status:number, body:string, bytes:number, error:string|null }}
