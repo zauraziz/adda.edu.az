@@ -43,6 +43,11 @@ const MEDIA_FIELDS = {
 assertToken();
 const map = loadMediaMap();
 const state = loadState();
+
+// Qalereya şəkilləri (K16). Xəbərin gövdəsində şəkil olmur — həqiqi qalereya
+// `/az/photogallery/{id}` səhifəsindədir və `gallery-crawl.mjs` onu yığır.
+const galleryFile = dataPath('galleries.json');
+const galleries = existsSync(galleryFile) ? JSON.parse(readFileSync(galleryFile, 'utf8')) : {};
 // `--relink` ilə tamamlanma qeydi nəzərə alınmır (məcburi yenidən bağlama).
 const linked = args.relink ? {} : loadLinked();
 
@@ -63,6 +68,7 @@ const isProd = !/localhost|127\.0\.0\.1/.test(STRAPI_URL);
 console.log('\n' + '='.repeat(66));
 console.log(`  HEDEF : ${STRAPI_URL}${isProd ? '   <<< PROD! >>>' : '   (lokal)'}`);
 console.log(`  Xerite: ${Object.keys(map).length} media`);
+console.log(`  Qalereya: ${Object.keys(galleries).length} sened`);
 console.log(`  Qeyd  : ${active.length}`);
 console.log(`  Rejim : ${dryRun ? 'DRY-RUN' : 'YAZMA'}${limit ? ` (--limit=${limit})` : ''}`);
 console.log(`  Artiq baglanib: ${Object.keys(linked).length}`);
@@ -125,8 +131,14 @@ for (const rec of work) {
       data[mf.cover] = hero;
       stats.covers++;
     }
-    // Çoxluq sahəsi: məqalədə qalereya (şəkillər), elanda əlavələr (sənədlər).
-    const pool = type === 'announcement' ? rec.documents : rec.images;
+    // Çoxluq sahəsi: məqalədə qalereya, elanda əlavələr (sənədlər).
+    // Məqalə üçün mənbə `galleries.json`-dur — `rec.images` yalnız əsas şəkli
+    // saxlayır, çünki gövdədə şəkil olmur.
+    const galleryKey = `${rec.section}/${rec.legacyId}`;
+    const pool =
+      type === 'announcement'
+        ? rec.documents
+        : [...(galleries[galleryKey] || []), ...(rec.images || [])];
     const ids = (pool || [])
       .filter((u) => map[u] && map[u].id !== hero)
       .map((u) => map[u].id);

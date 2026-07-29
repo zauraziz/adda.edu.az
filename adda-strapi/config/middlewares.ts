@@ -30,7 +30,21 @@ const config: Core.Config.Middlewares = [
   },
   'strapi::poweredBy',
   'strapi::query',
-  'strapi::body',
+  // F2/K16 — yükləmə həddi.
+  //
+  // Media köçürməsində 5 fayl `413 PayloadTooLarge` verdi: Strapi-nin standart
+  // `formLimit`-i (~56 MB deyil, koa-body-nin daha aşağı standartı) böyük
+  // skan/PDF sənədləri üçün kifayət etmir. ADDA arxivində 200 elan sənədi var
+  // və bəziləri onlarla MB-dır.
+  {
+    name: 'strapi::body',
+    config: {
+      formLimit: '100mb',   // multipart (fayl yükləmə)
+      jsonLimit: '10mb',
+      textLimit: '10mb',
+      formidable: { maxFileSize: 100 * 1024 * 1024 },
+    },
+  },
   // F2.6e — sürət limiti. `strapi::body`-dən SONRA olmalıdır: magic-link sorğusunda
   // e-poçt başına sayğac üçün parse olunmuş body lazımdır.
   'global::rate-limit',

@@ -66,6 +66,19 @@ if (!existsSync(listFile)) {
   process.exit(1);
 }
 let urls = JSON.parse(readFileSync(listFile, 'utf8'));
+
+// Qalereya şəkilləri (K16) — ayrı səhifələrdən yığılır, `media.json`-da yoxdur.
+const galleryFile = dataPath('galleries.json');
+let galleryCount = 0;
+if (existsSync(galleryFile)) {
+  for (const list of Object.values(JSON.parse(readFileSync(galleryFile, 'utf8')))) {
+    for (const u of list) {
+      urls.push(u);
+      galleryCount++;
+    }
+  }
+}
+
 urls = [...new Set(urls.filter((u) => typeof u === 'string' && u.startsWith('http')))];
 
 assertToken();
@@ -77,6 +90,7 @@ console.log('\n' + '='.repeat(66));
 console.log(`  HEDEF   : ${STRAPI_URL}${isProd ? '   <<< PROD! >>>' : '   (lokal)'}`);
 console.log(`  Xerite  : ${mediaMapFile().split(/[\\/]/).pop()}`);
 console.log(`  Media   : ${urls.length} unikal | artiq yuklenib ${urls.length - pending.length} | qalir ${pending.length}`);
+if (galleryCount) console.log(`  Qalereya: ${galleryCount} sekil siyahiya qatildi (galleries.json)`);
 console.log(`  Rejim   : ${dryRun ? 'DRY-RUN' : 'YUKLEME'}${limit ? ` (--limit=${limit})` : ''}`);
 console.log(`  Tex.vaxt: ~${Math.ceil((Math.min(pending.length, limit || pending.length) * 1.6) / 60)} deqiqe`);
 console.log('='.repeat(66) + '\n');

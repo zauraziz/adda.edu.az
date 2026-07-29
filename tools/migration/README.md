@@ -25,6 +25,7 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 6 — təmizləmə | `cleanup.mjs` | Strapi | silinmiş qeydlər |
 | 7 — media yükləmə | `media-upload.mjs` | adda.edu.az + Strapi | `data/media-map.<host>.json` |
 | 8 — media bağlama | `media-link.mjs` | Strapi | `data/media-linked.<host>.json` |
+| 9 — qalereya | `gallery-crawl.mjs` | adda.edu.az | `data/galleries.json` |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -308,3 +309,31 @@ mexanizmindən keçir. 1192 fayl ~30 dəqiqə çəkir.
 ⚠️ Prod Strapi-də `CLOUDINARY_NAME` / `CLOUDINARY_KEY` / `CLOUDINARY_SECRET`
 env dəyişənləri qurulmalıdır — yoxdursa fayllar Render-in müvəqqəti diskinə
 düşür və növbəti deploy-da İTİR.
+
+## Foto qalereyalar (K16)
+
+**Tapıntı:** xəbərin gövdəsində (`span.news-text`) şəkil demək olar ki yoxdur —
+yalnız mətn. Tək şəkil `div.news-image`-dəkidir və o, `cover`-ə gedir.
+Həqiqi qalereya **ayrıca səhifədədir**:
+
+```html
+<div class="news_gallery">
+  <a href="/az/photogallery/1984" class="more_photo">Foto</a>
+</div>
+```
+
+`extract.mjs` bu URL-i `gallery` sahəsində saxlayırdı, amma səhifələrin özü
+crawl olunmamışdı — ona görə `article.gallery` boş qalırdı (1192 mediadan
+cəmi 29 qalereya elementi).
+
+```bash
+node gallery-crawl.mjs --probe      # MECBURI ilk addim: markup-u olc
+node gallery-crawl.mjs              # ~800 sehife
+node media-upload.mjs --force       # yeni sekiller Cloudinary-ye
+node media-link.mjs --force --relink
+```
+
+`--relink` **məcburidir**: `media-linked` faylı sənədləri artıq "bağlanmış"
+sayır, yeni qalereya şəkilləri onsuz tətbiq olunmaz.
+
+`media-upload.mjs` və `media-link.mjs` `galleries.json`-u avtomatik oxuyur.
