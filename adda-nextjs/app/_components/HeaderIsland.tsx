@@ -7,7 +7,7 @@
 // hər effektdə tam cleanup (naviqasiyada listener yığılmır), locale props-dan
 // gəlir (pathname parse YOX). Contract ID/selektorlar dəyişməyib.
 import { useEffect } from 'react';
-import { SEARCH_UI } from '@/lib/search-ui';
+import { SEARCH_UI, searchHref } from '@/lib/search-ui';
 import type { Locale } from '@/lib/i18n';
 
 const esc = (s: string) =>
@@ -138,11 +138,19 @@ export default function HeaderIsland({ locale }: { locale: Locale }) {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     const closers = Array.from(modal.querySelectorAll('[data-search-close]'));
 
-    type Hit = { title?: string; excerpt?: string; contentType?: string };
+    type Hit = { title?: string; excerpt?: string; contentType?: string; slug?: string };
     const render = (hits: Hit[]) => {
       if (!hits.length) { results.innerHTML = `<div class="search-empty">${esc(ui.empty)}</div>`; return; }
       results.innerHTML = hits
-        .map((h) => `<a href="#" class="search-hit"><span class="sh-type">${esc(ui.types[h.contentType || ''] || '')}</span><span class="sh-main"><b>${esc(h.title || '')}</b>${h.excerpt ? `<small>${esc(h.excerpt)}</small>` : ''}</span><i class="ti ti-arrow-up-right"></i></a>`)
+        // K20: netice artiq kliklenir. Marsrut yoxdursa (bilinmeyen tip)
+        // element <a> deyil <span> kimi render olunur — sinmis link olmasin.
+        .map((h) => {
+          const href = searchHref(locale, h.contentType, h.slug);
+          const inner = `<span class="sh-type">${esc(ui.types[h.contentType || ''] || '')}</span><span class="sh-main"><b>${esc(h.title || '')}</b>${h.excerpt ? `<small>${esc(h.excerpt)}</small>` : ''}</span><i class="ti ti-arrow-up-right"></i>`;
+          return href
+            ? `<a href="${esc(href)}" class="search-hit">${inner}</a>`
+            : `<span class="search-hit is-plain">${inner}</span>`;
+        })
         .join('');
     };
 

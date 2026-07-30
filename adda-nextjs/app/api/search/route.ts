@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
         q,
         limit: 8,
         filter: [`locale = "${locale}"`],
+        // `slug` netice linkini qurmaq ucun MECBURIDIR (K20).
         attributesToRetrieve: ['title', 'slug', 'excerpt', 'contentType', 'category', 'documentId'],
       }),
     });
