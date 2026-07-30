@@ -120,8 +120,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
     config: {
       host: env('MEILISEARCH_HOST', ''),
       apiKey: env('MEILISEARCH_ADMIN_KEY', ''),
+      
       article: {
-        indexName: 'adda',
+        indexName: 'articles', // 'adda' əvəzinə unikal ad
         entriesQuery: { locale: '*', status: 'published' },
         settings: SEARCH_SETTINGS,
         transformEntry({ entry }: { entry: Record<string, any> }) {
@@ -136,6 +137,31 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
             contentType: 'article',
             locale: entry.locale,
           };
+        },
+      },
+      
+      announcement: {
+        indexName: 'announcements', // İkinci tip üçün fərqli indeks adı
+        entriesQuery: { locale: '*', status: 'published' },
+        settings: SEARCH_SETTINGS,
+        transformEntry({ entry }: { entry: Record<string, any> }) {
+          return {
+            id: entry.id,
+            documentId: entry.documentId,
+            title: entry.title,
+            slug: entry.slug,
+            excerpt: autoExcerpt(entry.excerpt, entry.body),
+            body: searchBody(entry.body),
+            // category sahəsi announcement modelində yoxdursa, burdan silə bilərsiniz
+            contentType: 'announcement',
+            locale: entry.locale,
+          };
+        },
+      },
+      
+      // event, page, program, department, faculty tiplərini də 
+      // eyni yuxarıdakı blok kimi kopyalayaraq bura əlavə etməlisiniz.
+      };
         },
       },
       program: {
