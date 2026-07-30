@@ -118,7 +118,10 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
   },
   meilisearch: {
     config: {
-      host: env('MEILISEARCH_HOST', ''),
+      // K24: sondaki `/` kesilir — `.../` + `/indexes/...` ikiqat slash yaradir
+      // ve Meilisearch Cloud slyuzu marsrut tapmir. `https://` prefiksinin
+      // yoxlugu ile eyni sinifden teledir, ikisi de SESSIZ sinmaya aparir.
+      host: (env('MEILISEARCH_HOST', '') || '').replace(/\/+$/, ''),
       apiKey: env('MEILISEARCH_ADMIN_KEY', ''),
       // ⚠️ BÜTÜN TİPLƏR EYNİ İNDEKSDƏDİR: `indexName: 'adda'`. DƏYİŞDİRMƏ.
       //

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Meilisearch axtarış proxy-si — search key serverdə qalır (browser-ə açılmır).
-const HOST = process.env.MEILISEARCH_HOST;
+//
+// ⚠️ K24: SONDAKI `/` MÜTLƏQ KƏSİLİR.
+// `https://ms-x.meilisearch.io/` + `/health` = `...io//health` — ikiqat slash.
+// Meilisearch Cloud-un şlüzü (Kong) belə yolu tanımır və `no Route matched`
+// qaytarır. Səhv "indeks yoxdur" kimi görünür, halbuki səbəb URL-dədir.
+// Bu, `https://` prefiksinin yoxluğu ilə eyni sinifdən tələdir.
+const HOST = (process.env.MEILISEARCH_HOST || '').replace(/\/+$/, '') || undefined;
 const KEY = process.env.MEILISEARCH_SEARCH_KEY;
 
 const INDEX = 'adda';
@@ -37,8 +43,12 @@ async function diagnose(q: string, locale: string) {
 
   // Host adı — yanlış ünvanı görmək üçün lazımdır. Açar SIZDIRILMIR.
   try {
-    out.hostname = new URL(HOST).hostname;
-    if (new URL(HOST).pathname !== '/') out.hostPath = new URL(HOST).pathname;
+    const u = new URL(HOST);
+    out.hostname = u.hostname;
+    if (u.pathname !== '/') out.hostPath = u.pathname;
+    // Sorğunun HƏQİQİ ünvanı — ikiqat slash və ya artıq yol dərhal görünsün.
+    out.probeUrl = `${HOST}/health`;
+    out.rawHadTrailingSlash = /\/$/.test(process.env.MEILISEARCH_HOST || '');
   } catch {
     out.verdict = 'MEILISEARCH_HOST duzgun URL deyil.';
     return out;
@@ -79,9 +89,13 @@ async function diagnose(q: string, locale: string) {
       String(out.healthBody ?? '').includes('request_id') ||
       String(out.versionBody ?? '').includes('request_id') ||
       String(out.healthBody ?? '').includes('no Route matched');
-    out.verdict = gateway
-      ? 'MEILISEARCH_HOST Meilisearch-e YOX, bir slyuze (gateway) baxir — cavab Kong formatindadir. Unvani yoxla.'
-      : 'MEILISEARCH_HOST Meilisearch kimi cavab vermir (/health ve /version tanninmadi). Unvani yoxla.';
+    if (gateway) {
+      out.verdict = /meilisearch\.io$/i.test(String(out.hostname))
+        ? 'Unvan Meilisearch Cloud-dur, amma slyuz marsrut tapmir. Ehtimallar: (a) proyekt silinib/vaxti bitib, (b) unvanda artiq yol var. Meilisearch Cloud panelinde proyektin aktiv oldugunu yoxla.'
+        : 'MEILISEARCH_HOST Meilisearch-e YOX, bir slyuze (gateway) baxir. Unvani yoxla.';
+    } else {
+      out.verdict = 'MEILISEARCH_HOST Meilisearch kimi cavab vermir (/health ve /version tanninmadi). Unvani yoxla.';
+    }
     return out;
   }
 
