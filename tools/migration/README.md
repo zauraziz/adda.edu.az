@@ -26,6 +26,7 @@ Bu iki mərhələ **qəsdən ayrıdır**:
 | 7 — media yükləmə | `media-upload.mjs` | adda.edu.az + Strapi | `data/media-map.<host>.json` |
 | 8 — media bağlama | `media-link.mjs` | Strapi | `data/media-linked.<host>.json` |
 | 9 — qalereya | `gallery-crawl.mjs` | adda.edu.az | `data/galleries.json` |
+| 10 — yönləndirmə | `gen-redirects.mjs` | **yox** | `adda-nextjs/lib/legacy-redirects.ts` |
 
 Səbəb: selektorları tənzimləyərkən ADDA-nın **canlı prod serverinə təkrar getmək
 lazım gəlməməlidir**. Bir dəfə yığ, dəfələrlə parse et.
@@ -337,3 +338,32 @@ node media-link.mjs --force --relink
 sayır, yeni qalereya şəkilləri onsuz tətbiq olunmaz.
 
 `media-upload.mjs` və `media-link.mjs` `galleries.json`-u avtomatik oxuyur.
+
+## Köhnə URL yönləndirmələri (K19)
+
+```bash
+node extract.mjs          # redirects.json yenilensin
+node gen-redirects.mjs    # -> adda-nextjs/lib/legacy-redirects.ts
+```
+
+Köhnə saytın ünvanları (`/az/news/1981`) Google indeksindədir və xarici
+saytlardan link alır. Yönləndirmə olmasa hamısı 404 verər.
+
+**Niyə kod, JSON yox:** middleware Edge runtime-da işləyir və fayl sistemini
+oxuya bilmir — xəritə bundle-a daxil olmalıdır.
+
+**Sıxılma:** `redirects.json`-da 1316 sətir var (438 sənəd × 3 dil), amma
+ru/en **eyni slug-ı paylaşır** (K2 qərarı). Ona görə xəritə dilsiz saxlanılır
+və dil prefiksini middleware özü qoyur — 1316 → ~440 yazı.
+
+Generator dil üzrə slug fərqi tapsa **dayanır**: sıxılma o halda etibarsızdır.
+
+| Köhnə | Yeni |
+|---|---|
+| `/az/news/1981` | `301 → /az/xeberler/{slug}` |
+| `/ru/news/1981` | `301 → /ru/xeberler/{slug}` (dil qorunur) |
+| `/news/1981` | `301 → /az/xeberler/{slug}` |
+| `/az/photogallery/1981` | `301 → /az/xeberler/{slug}` (qalereya artıq xəbərin içindədir) |
+
+`lib/legacy-redirects.ts` **boş** göndərilir — generator işlədilənə qədər
+yönləndirmə yoxdur, amma sayt normal işləyir.

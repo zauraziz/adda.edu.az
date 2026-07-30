@@ -19,7 +19,8 @@
     "cleanup": "node cleanup.mjs",
     "media": "node media-upload.mjs",
     "media-link": "node media-link.mjs",
-    "gallery": "node gallery-crawl.mjs"
+    "gallery": "node gallery-crawl.mjs",
+    "redirects": "node gen-redirects.mjs"
   },
   "dependencies": {
     "cheerio": "1.0.0",
