@@ -35,6 +35,68 @@ async function diagnose(q: string, locale: string) {
     return out;
   }
 
+  // Host adı — yanlış ünvanı görmək üçün lazımdır. Açar SIZDIRILMIR.
+  try {
+    out.hostname = new URL(HOST).hostname;
+    if (new URL(HOST).pathname !== '/') out.hostPath = new URL(HOST).pathname;
+  } catch {
+    out.verdict = 'MEILISEARCH_HOST duzgun URL deyil.';
+    return out;
+  }
+
+  // ── 0) BU, HƏQİQƏTƏN MEILISEARCH-DİRMİ? ────────────────────────────────
+  //
+  // K23: əvvəlki versiya 404-ü avtomatik "indeks yoxdur" kimi oxuyurdu.
+  // Amma 404 şlüzdən (gateway) də gələ bilər — Kong "no Route matched with
+  // those values" + `request_id` qaytarır, Meilisearch isə
+  // `{"code":"index_not_found"}`. İkisini qarışdırmaq yanlış diaqnoz verir.
+  let looksLikeMeili = false;
+  try {
+    const r = await fetch(`${HOST}/health`, { headers: authHeaders(), cache: 'no-store' });
+    out.healthStatus = r.status;
+    const t = (await r.text()).slice(0, 200);
+    out.healthBody = t;
+    looksLikeMeili = r.ok && t.includes('status');
+  } catch (e) {
+    out.healthError = String((e as Error).message).slice(0, 160);
+  }
+
+  if (!looksLikeMeili) {
+    try {
+      const r = await fetch(`${HOST}/version`, { headers: authHeaders(), cache: 'no-store' });
+      out.versionStatus = r.status;
+      const t = (await r.text()).slice(0, 200);
+      out.versionBody = t;
+      if (r.ok && t.includes('pkgVersion')) looksLikeMeili = true;
+    } catch (e) {
+      out.versionError = String((e as Error).message).slice(0, 160);
+    }
+  }
+  out.looksLikeMeilisearch = looksLikeMeili;
+
+  if (!looksLikeMeili) {
+    const gateway =
+      String(out.healthBody ?? '').includes('request_id') ||
+      String(out.versionBody ?? '').includes('request_id') ||
+      String(out.healthBody ?? '').includes('no Route matched');
+    out.verdict = gateway
+      ? 'MEILISEARCH_HOST Meilisearch-e YOX, bir slyuze (gateway) baxir — cavab Kong formatindadir. Unvani yoxla.'
+      : 'MEILISEARCH_HOST Meilisearch kimi cavab vermir (/health ve /version tanninmadi). Unvani yoxla.';
+    return out;
+  }
+
+  // İndeks siyahısı — `adda` var, yoxsa başqa adla yaranıb?
+  try {
+    const r = await fetch(`${HOST}/indexes?limit=50`, { headers: authHeaders(), cache: 'no-store' });
+    out.indexesStatus = r.status;
+    if (r.ok) {
+      const d = (await r.json()) as { results?: Array<{ uid?: string }> };
+      out.indexes = (d.results ?? []).map((x) => x.uid).filter(Boolean);
+    }
+  } catch (e) {
+    out.indexesError = String((e as Error).message).slice(0, 160);
+  }
+
   // 1) İndeks var və neçə sənəd saxlayır?
   try {
     const r = await fetch(`${HOST}/indexes/${INDEX}/stats`, { headers: authHeaders(), cache: 'no-store' });
@@ -94,8 +156,11 @@ async function diagnose(q: string, locale: string) {
   const withF = out.withFilter as { hits?: number } | undefined;
   const noF = out.noFilter as { hits?: number } | undefined;
 
+  const known = (out.indexes as string[] | undefined) ?? [];
   if (out.statsStatus === 404) {
-    out.verdict = `"${INDEX}" indeksi YOXDUR — Strapi admin-de Meilisearch plugin-den indeksle.`;
+    out.verdict = known.length
+      ? `"${INDEX}" indeksi YOXDUR. Movcud indeksler: ${known.join(', ')} — plugins.ts-de indexName bunlarla uygun olmalidir.`
+      : `"${INDEX}" indeksi YOXDUR ve hec bir indeks yaranmayib — Strapi admin-de Meilisearch plugin-den indeksle.`;
   } else if (out.statsStatus === 401 || out.statsStatus === 403) {
     out.verdict = 'Acar qebul olunmadi — MEILISEARCH_SEARCH_KEY yanlisdir.';
   } else if (docs === 0) {
