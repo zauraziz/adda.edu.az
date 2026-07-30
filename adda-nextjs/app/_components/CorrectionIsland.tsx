@@ -7,7 +7,16 @@
 import { useMemo, useState } from "react";
 import IdentityGate, { useIdentity } from "./IdentityGate";
 
-type TargetType = "article" | "announcement" | "event" | "milestone";
+// K18: `page` ve `general` elave olundu — statik mezmun sehifeleri de
+// duzelis qebul edir. Strapi terefde bu deyerler artiq icazelidir
+// (correction lifecycle TARGETS siyahisi).
+export type TargetType =
+  | "article"
+  | "announcement"
+  | "event"
+  | "milestone"
+  | "page"
+  | "general";
 type FieldKey = "title" | "body" | "other";
 type Phase = "idle" | "sending" | "done" | "error";
 

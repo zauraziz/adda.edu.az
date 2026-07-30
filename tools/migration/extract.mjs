@@ -23,6 +23,7 @@ import TurndownService from 'turndown';
 import { BASE, SECTIONS } from './config.mjs';
 import { RAW, dataPath } from './lib/paths.mjs';
 import { slugify, uniqueSlug } from './lib/slug.mjs';
+import { targetTypeFor } from './mapping.mjs';
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -291,9 +292,23 @@ for (const [section, rows] of Object.entries(bySection)) {
 }
 
 // Yönləndirmə xəritəsi — SEO üçün kritik. Köhnə URL-lər indeksdədir.
+//
+// ⚠️ MARŞRUT BÖLMƏDƏN YOX, HƏDƏF TİPİNDƏN törəyir. `content/*` sənədləri
+// Strapi-də dörd fərqli tipə bölünür (page / department / program / faculty)
+// və hər birinin öz marşrutu var. Bölmə üzrə hesablasaq, şöbə səhifəsi
+// `/sehife/...`-ə yönlənərdi — orada isə heç nə yoxdur.
+const ROUTE_BY_TYPE = {
+  article: 'xeberler',
+  announcement: 'elanlar',
+  page: 'sehife',
+  department: 'struktur',
+  program: 'ixtisaslar',
+  faculty: 'fakulteler',
+};
+
 const redirects = all.map((r) => ({
   from: `/${r.locale}/${r.section}/${r.legacyId}`,
-  to: `/${r.locale}/${RULES[r.section].route}/${r.slug}`,
+  to: `/${r.locale}/${ROUTE_BY_TYPE[targetTypeFor(r.section, r.legacyId)]}/${r.slug}`,
 }));
 writeFileSync(dataPath('redirects.json'), JSON.stringify(redirects, null, 1), 'utf8');
 

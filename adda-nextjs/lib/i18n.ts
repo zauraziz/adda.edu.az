@@ -12,6 +12,14 @@ export function isLocale(x: string): x is Locale {
 
 // [az, ru, en]
 const T: Array<[string, string, string]> = [
+  // --- K18 mezmun sehifeleri i18n (az, ru, en) ---
+  ['Səhifə', 'Страница', 'Page'],
+  ['Struktur', 'Структура', 'Structure'],
+  ['İxtisas', 'Специальность', 'Programme'],
+  ['Fakültə', 'Факультет', 'Faculty'],
+  ['Bu səhifənin məzmunu hazırlanır.', 'Содержание этой страницы готовится.', 'The content of this page is being prepared.'],
+  ['Səhv gördünüzsə bizə bildirin.', 'Заметили ошибку — сообщите нам.', 'Spotted an error? Let us know.'],
+  ['Hansı sahə?', 'Какое поле?', 'Which field?'],
   // --- K17 qalereya i18n (az, ru, en) ---
   ['Foto qalereya', 'Фотогалерея', 'Photo gallery'],
   ['Şəkli aç', 'Открыть изображение', 'Open image'],

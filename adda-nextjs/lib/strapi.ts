@@ -160,15 +160,80 @@ export async function getHomeNews(locale: Locale = 'az', limit = 4): Promise<New
   }));
 }
 
-/** Slug ilə səhifə. */
-export async function getPageBySlug(slug: string, locale: Locale = 'az'): Promise<PageDoc | null> {
-  const json = await strapiFetch<StrapiList<PageDoc>>('/pages', {
+/** ── K18: statik məzmun tipləri ──
+ * Miqrasiyadan 53 sənəd gəldi (36 səhifə, 11 şöbə, 4 proqram, 2 fakültə),
+ * amma saytda onlara marşrut yox idi — yəni əlçatmaz qalırdılar.
+ * Dördü də eyni formadadır: başlıq + Markdown gövdə.
+ */
+export interface Department {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  about: string | null;
+  locale: Locale;
+}
+
+export interface FacultyDoc {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  about: string | null;
+  locale: Locale;
+}
+
+/** Statik məzmun sənədinin ümumi forması (marşrutlar bunu işlədir). */
+export interface ContentDoc {
+  title: string;
+  slug: string;
+  body: string | null;
+}
+
+async function oneBySlug<T>(
+  path: string,
+  slug: string,
+  locale: Locale,
+  extra: Record<string, QueryValue> = {},
+): Promise<T | null> {
+  const json = await strapiFetch<StrapiList<T>>(path, {
     locale,
     'filters[slug][$eq]': slug,
     'pagination[pageSize]': 1,
+    ...extra,
   });
   return json.data?.[0] ?? null;
 }
+
+/** Bir tipin bütün slug-ları — `generateStaticParams` üçün. */
+async function allSlugs(path: string, locale: Locale): Promise<string[]> {
+  try {
+    const json = await strapiFetch<StrapiList<{ slug: string }>>(path, {
+      locale,
+      'pagination[pageSize]': 200,
+      'fields[0]': 'slug',
+    });
+    return (json.data ?? []).map((r) => r.slug).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/** Slug ilə səhifə. */
+export async function getPageBySlug(slug: string, locale: Locale = 'az'): Promise<PageDoc | null> {
+  return oneBySlug<PageDoc>('/pages', slug, locale);
+}
+export const getDepartmentBySlug = (slug: string, locale: Locale = 'az') =>
+  oneBySlug<Department>('/departments', slug, locale);
+export const getProgramBySlug = (slug: string, locale: Locale = 'az') =>
+  oneBySlug<Program>('/programs', slug, locale);
+export const getFacultyBySlug = (slug: string, locale: Locale = 'az') =>
+  oneBySlug<FacultyDoc>('/faculties', slug, locale);
+
+export const getPageSlugs = (locale: Locale = 'az') => allSlugs('/pages', locale);
+export const getDepartmentSlugs = (locale: Locale = 'az') => allSlugs('/departments', locale);
+export const getProgramSlugs = (locale: Locale = 'az') => allSlugs('/programs', locale);
+export const getFacultySlugs = (locale: Locale = 'az') => allSlugs('/faculties', locale);
 
 
 /** ── F2.4: Elan (announcement) tipi ── */
