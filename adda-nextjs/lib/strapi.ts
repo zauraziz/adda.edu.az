@@ -118,7 +118,10 @@ export async function getArticleBySlug(slug: string, locale: Locale = 'az'): Pro
   const json = await strapiFetch<StrapiList<Article>>('/articles', {
     locale,
     'filters[slug][$eq]': slug,
-    populate: 'cover',
+    // K17: `gallery` DE populate olunmalidir — Strapi populate olunmayan media
+    // sahesini QAYTARMIR, ona gore qalereya sekilleri sessizce itirdi.
+    'populate[cover]': true,
+    'populate[gallery]': true,
     'pagination[pageSize]': 1,
   });
   return json.data?.[0] ?? null;

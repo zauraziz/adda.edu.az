@@ -12,6 +12,11 @@ export function isLocale(x: string): x is Locale {
 
 // [az, ru, en]
 const T: Array<[string, string, string]> = [
+  // --- K17 qalereya i18n (az, ru, en) ---
+  ['Foto qalereya', 'Фотогалерея', 'Photo gallery'],
+  ['Şəkli aç', 'Открыть изображение', 'Open image'],
+  ['Əvvəlki şəkil', 'Предыдущее изображение', 'Previous image'],
+  ['Növbəti şəkil', 'Следующее изображение', 'Next image'],
   // --- F2.5b sehifeleme i18n (az, ru, en) ---
   ['Əvvəlki', 'Назад', 'Previous'],
   ['Növbəti', 'Вперёд', 'Next'],

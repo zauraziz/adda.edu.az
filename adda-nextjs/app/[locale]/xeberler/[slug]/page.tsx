@@ -21,6 +21,7 @@ import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import '../../../_styles/22-reactions.css';
 import '../../../_styles/23-correction.css';
+import '../../../_styles/27-gallery.css';
 import '../../../_styles/24-identity.css';
 import ReactionBar from '../../../_components/ReactionBar';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
@@ -30,6 +31,7 @@ import { notFound } from 'next/navigation';
 import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
+import GalleryIsland, { type GalleryImage } from '../../../_components/GalleryIsland';
 import { getArticleBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate, CAT_LABELS } from '@/lib/format';
@@ -55,6 +57,24 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
   if (!article) notFound();
 
   const img = mediaUrl(article.cover);
+
+  // K17 — foto qalereya. Örtük şəkli qalereyada TƏKRARLANMIR.
+  const gallery: GalleryImage[] = (article.gallery ?? [])
+    .map((m) => ({
+      url: mediaUrl(m) ?? '',
+      alt: m.alternativeText || article.title,
+      width: m.width,
+      height: m.height,
+    }))
+    .filter((g) => g.url && g.url !== img);
+
+  const galleryLabels: Record<string, string> = {
+    gallery: tr('Foto qalereya', locale),
+    openImage: tr('Şəkli aç', locale),
+    previous: tr('Əvvəlki şəkil', locale),
+    next: tr('Növbəti şəkil', locale),
+    close: tr('Bağla', locale),
+  };
   const bodyHtml = article.body ? await marked.parse(article.body) : '';
 
   const correctionLabels: Record<string, string> = {
@@ -141,6 +161,10 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
             ) : null}
           </div>
         
+        <div className="container">
+          <GalleryIsland images={gallery} labels={galleryLabels} />
+        </div>
+
         <div className="container" style={{ paddingBottom: '40px' }}>
           <ReactionBar targetType="article" targetSlug={slug} />
         </div>
