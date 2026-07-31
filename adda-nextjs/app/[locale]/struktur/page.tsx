@@ -1,8 +1,7 @@
 // K26 — /[locale]/struktur
 //
 // Bu marşrut ƏVVƏL YOX İDİ: yalnız `struktur/[slug]` mövcud idi, ona görə
-// menyudakı "Təşkilati struktur" 404 verirdi. Burada 2025 təşkilati strukturu
-// ağac şəklində göstərilir.
+// menyudakı "Təşkilati struktur" 404 verirdi.
 //
 // Ağac SƏHİFƏDƏ qurulur, Strapi-də yox — iç-içə populate dərinliyi məhduddur,
 // düz siyahı + `parent.slug` isə istənilən dərinlikdə işləyir.
@@ -82,19 +81,19 @@ function buildTree(units: OrgUnit[], staff: Person[]): Node[] {
 function Branch({ nodes, locale }: { nodes: Node[]; locale: Locale }) {
   if (!nodes.length) return null;
   return (
-    <ul className="st-tree">
+    <ul className="stf-tree">
       {nodes.map((n) => {
         const vacancies = n.vacancies ?? [];
-        const parts: string[] = [];
-        if (n.staffCount) parts.push(`${n.staffCount} ${tr('işçi', locale)}`);
-        if (n.children.length) parts.push(`${n.children.length} ${tr('bölmə', locale)}`);
+        const meta: string[] = [];
+        if (n.staffCount) meta.push(`${n.staffCount} ${tr('işçi', locale)}`);
+        if (n.children.length) meta.push(`${n.children.length} ${tr('bölmə', locale)}`);
         return (
-          <li key={n.slug} className={n.children.length ? 'st-node' : 'st-node st-node--leaf'}>
-            <Link href={`/${locale}/struktur/${n.slug}`} className="st-card">
-              <span className="st-name">{tr(n.name, locale)}</span>
-              {parts.length ? <span className="st-meta">{parts.join(' · ')}</span> : null}
+          <li key={n.slug} className={n.children.length ? 'stf-node' : 'stf-node stf-node--leaf'}>
+            <Link href={`/${locale}/struktur/${n.slug}`} className="stf-unit">
+              <span className="stf-unit-name">{tr(n.name, locale)}</span>
+              {meta.length ? <span className="stf-unit-meta">{meta.join(' · ')}</span> : null}
               {vacancies.map((v) => (
-                <span key={v.position} className="st-vacancy">
+                <span key={v.position} className="stf-vac">
                   {tr(v.position, locale)} — {tr('vakant', locale)}
                 </span>
               ))}
@@ -122,20 +121,24 @@ export default async function StructurePage({ params }: { params: Promise<{ loca
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
-      <main className="na-wrap">
-        <header className="st-head">
-          <p className="st-kicker">{tr('Akademiya', locale)}</p>
-          <h1 className="st-title">{tr('Təşkilati struktur', locale)}</h1>
-          <p className="st-lede">
-            {tr('Akademiyanın 2025-ci il üçün təsdiqlənmiş təşkilati strukturu.', locale)}
-          </p>
-        </header>
+      <main>
+        <section className="np-hero">
+          <div className="container np-hero-inner">
+            <div className="np-eyebrow">{tr('Akademiya', locale)}</div>
+            <h1 className="np-h1">{tr('Təşkilati struktur', locale)}</h1>
+            <p className="np-lead">{tr('Akademiyanın 2025-ci il üçün təsdiqlənmiş təşkilati strukturu.', locale)}</p>
+          </div>
+        </section>
 
-        {roots.length ? (
-          <Branch nodes={roots} locale={locale} />
-        ) : (
-          <p className="hy-empty">{tr('Struktur məlumatı hazırda əlçatan deyil.', locale)}</p>
-        )}
+        <section className="np-wrap">
+          <div className="container">
+            {roots.length ? (
+              <Branch nodes={roots} locale={locale} />
+            ) : (
+              <p className="np-empty">{tr('Struktur məlumatı hazırda əlçatan deyil.', locale)}</p>
+            )}
+          </div>
+        </section>
       </main>
       <Footer menu={menu} locale={locale} />
     </>

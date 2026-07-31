@@ -1,3 +1,5 @@
+// K26 — /[locale]/ixtisaslar
+// K26-3-de menyudan bura link qoymusdum, amma siyahi sehifesi yox idi -> 404.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -59,7 +61,6 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
     getPrograms(locale).catch(() => [] as Program[]),
   ]);
 
-  // Səviyyə üzrə qruplaşdırma — bakalavr/magistr/doktorantura ayrı oxunur.
   const groups = (Object.keys(DEGREE) as Program['degree'][])
     .map((d) => ({ degree: d, list: programs.filter((p) => p.degree === d) }))
     .filter((g) => g.list.length);
@@ -67,30 +68,39 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
-      <main className="na-wrap">
-        <header className="st-head">
-          <p className="st-kicker">{tr('Təhsil', locale)}</p>
-          <h1 className="st-title">{tr('İxtisaslar', locale)}</h1>
-        </header>
-        {groups.length ? (
-          groups.map((g) => (
-            <section key={g.degree} className="hy-group">
-              <h2 className="hy-group-title">{tr(DEGREE[g.degree], locale)}</h2>
-              <ul className="hy-list">
-                {g.list.map((p) => (
-                  <li key={p.slug} className="hy-item">
-                    <Link href={`/${locale}/ixtisaslar/${p.slug}`} className="hy-person">
-                      {p.title}
-                    </Link>
-                    {p.faculty ? <span className="hy-role">{p.faculty.name}</span> : null}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))
-        ) : (
-          <p className="hy-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>
-        )}
+      <main>
+        <section className="np-hero">
+          <div className="container np-hero-inner">
+            <div className="np-eyebrow">{tr('Təhsil', locale)}</div>
+            <h1 className="np-h1">{tr('İxtisaslar', locale)}</h1>
+            <p className="np-lead">{tr('Bakalavriat, magistratura və doktorantura proqramları.', locale)}</p>
+          </div>
+        </section>
+
+        <section className="np-wrap">
+          <div className="container">
+            {groups.length ? (
+              groups.map((g) => (
+                <section key={g.degree} className="stf-sec">
+                  <h2 className="stf-sec-title">{tr(DEGREE[g.degree], locale)}</h2>
+                  <div className="np-grid">
+                    {g.list.map((p) => (
+                      <Link key={p.slug} href={`/${locale}/ixtisaslar/${p.slug}`} className="np-card">
+                        <span className="np-card-body">
+                          {p.faculty ? <span className="np-meta"><span className="np-chip">{p.faculty.name}</span></span> : null}
+                          <h3 className="np-card-title">{p.title}</h3>
+                          {p.description ? <p className="np-card-ex">{p.description.slice(0, 160)}</p> : null}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              ))
+            ) : (
+              <p className="np-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>
+            )}
+          </div>
+        </section>
       </main>
       <Footer menu={menu} locale={locale} />
     </>

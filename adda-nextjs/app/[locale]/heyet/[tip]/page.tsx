@@ -1,10 +1,5 @@
 // K26 — /[locale]/heyet/[tip]
 //
-// Menyudakı üç bənd bura gəlir:
-//   professor-muellim -> akademik
-//   telimci-texniki   -> telimci_texniki
-//   inzibati          -> inzibati + rehberlik
-//
 // FİLTR `roles` ÜZRƏDİR, `staffType` üzrə DEYİL. Səbəb: 22 nəfərin iki
 // vəzifəsi var (məs. dekan + professor). Yalnız əsas `staffType`-a baxsaydıq,
 // dekan professor siyahısından tamamilə düşərdi.
@@ -38,10 +33,25 @@ import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
 
-const TABS: { slug: string; label: string; types: StaffType[] }[] = [
-  { slug: 'professor-muellim', label: 'Professor-müəllim heyəti', types: ['akademik'] },
-  { slug: 'telimci-texniki', label: 'Təlimçi-texniki heyət', types: ['telimci_texniki'] },
-  { slug: 'inzibati', label: 'İnzibati heyət', types: ['inzibati', 'rehberlik'] },
+const TABS: { slug: string; label: string; lead: string; types: StaffType[] }[] = [
+  {
+    slug: 'professor-muellim',
+    label: 'Professor-müəllim heyəti',
+    lead: 'Akademiyanın professor, dosent və müəllim heyəti.',
+    types: ['akademik'],
+  },
+  {
+    slug: 'telimci-texniki',
+    label: 'Təlimçi-texniki heyət',
+    lead: 'Laboratoriya, təlim və texniki dəstək heyəti.',
+    types: ['telimci_texniki'],
+  },
+  {
+    slug: 'inzibati',
+    label: 'İnzibati heyət',
+    lead: 'Rəhbərlik, şöbələr və inzibati xidmət heyəti.',
+    types: ['inzibati', 'rehberlik'],
+  },
 ];
 
 export function generateStaticParams() {
@@ -59,11 +69,32 @@ export async function generateMetadata({
   return { title: tr(tab ? tab.label : 'Heyət', locale) };
 }
 
-/** Vəzifə sıra nömrəsi — ştatdakı ardıcıllığı saxlayır (rəhbərlik yuxarıda). */
+/** Ştatdakı sıra nömrəsi — rəhbərlik yuxarıda qalsın. */
 function sortKey(p: Person, types: StaffType[]): number {
-  const own = (p.roles ?? []).filter((r) => types.includes(r.staffType));
-  const min = own.reduce((a, r) => Math.min(a, r.sortOrder ?? 9999), 9999);
-  return min;
+  return (p.roles ?? [])
+    .filter((r) => types.includes(r.staffType))
+    .reduce((a, r) => Math.min(a, r.sortOrder ?? 9999), 9999);
+}
+
+function PersonList({ list, types, locale }: { list: Person[]; types: StaffType[]; locale: Locale }) {
+  return (
+    <div className="np-grid">
+      {list.map((p) => {
+        const roles = p.roles ?? [];
+        const primary = roles.find((r) => types.includes(r.staffType));
+        const other = roles.find((r) => !types.includes(r.staffType));
+        return (
+          <div key={p.slug} className="stf-row">
+            <span className="stf-name">{p.name}</span>
+            {primary ? <span className="stf-post">{tr(primary.position, locale)}</span> : null}
+            {other ? (
+              <span className="stf-post stf-post--alt">{tr(other.position, locale)}</span>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default async function StaffPage({
@@ -86,8 +117,8 @@ export default async function StaffPage({
     .filter((p) => (p.roles ?? []).some((r) => tab.types.includes(r.staffType)))
     .sort((a, b) => sortKey(a, tab.types) - sortKey(b, tab.types));
 
-  // Bölmə üzrə qruplaşdırma — inzibati heyət üçün mənalıdır, akademik
-  // heyət üçün ştatda bölmə göstərilmir, ona görə tək siyahı qalır.
+  // Bölmə üzrə qruplaşdırma inzibati heyət üçün mənalıdır; akademik heyətdə
+  // ştat bölmə göstərmir, ona görə orada tək siyahı qalır.
   const grouped = new Map<string, Person[]>();
   for (const p of people) {
     const role = (p.roles ?? []).find((r) => tab.types.includes(r.staffType));
@@ -100,73 +131,52 @@ export default async function StaffPage({
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
-      <main className="na-wrap">
-        <header className="st-head">
-          <p className="st-kicker">{tr('Akademiya', locale)}</p>
-          <h1 className="st-title">{tr(tab.label, locale)}</h1>
-        </header>
+      <main>
+        <section className="np-hero">
+          <div className="container np-hero-inner">
+            <div className="np-eyebrow">{tr('Akademiya', locale)}</div>
+            <h1 className="np-h1">{tr(tab.label, locale)}</h1>
+            <p className="np-lead">{tr(tab.lead, locale)}</p>
+          </div>
+        </section>
 
-        <nav className="hy-tabs" aria-label={tr('Heyət', locale)}>
-          {TABS.map((t) => (
-            <Link
-              key={t.slug}
-              href={`/${locale}/heyet/${t.slug}`}
-              className="hy-tab"
-              aria-current={t.slug === tab.slug ? 'page' : undefined}
-            >
-              {tr(t.label, locale)}
-            </Link>
-          ))}
-        </nav>
+        <section className="np-wrap">
+          <div className="container">
+            <nav className="stf-tabs" aria-label={tr('Heyət', locale)}>
+              {TABS.map((t) => (
+                <Link
+                  key={t.slug}
+                  href={`/${locale}/heyet/${t.slug}`}
+                  className="stf-tab"
+                  aria-current={t.slug === tab.slug ? 'page' : undefined}
+                >
+                  {tr(t.label, locale)}
+                </Link>
+              ))}
+            </nav>
 
-        <p className="hy-count">
-          {people.length} {tr('nəfər', locale)}
-        </p>
+            {people.length ? (
+              <p className="np-total">
+                {tr('Ümumi', locale)}: {people.length}
+              </p>
+            ) : null}
 
-        {!people.length ? (
-          <p className="hy-empty">{tr('Bu bölmə üzrə məlumat hazırda əlçatan deyil.', locale)}</p>
-        ) : useGroups ? (
-          [...grouped.entries()].map(([unit, list]) => (
-            <section key={unit} className="hy-group">
-              <h2 className="hy-group-title">{tr(unit, locale)}</h2>
-              <PersonList list={list} types={tab.types} locale={locale} />
-            </section>
-          ))
-        ) : (
-          <PersonList list={people} types={tab.types} locale={locale} />
-        )}
+            {!people.length ? (
+              <p className="np-empty">{tr('Bu bölmə üzrə məlumat hazırda əlçatan deyil.', locale)}</p>
+            ) : useGroups ? (
+              [...grouped.entries()].map(([unit, list]) => (
+                <section key={unit} className="stf-sec">
+                  <h2 className="stf-sec-title">{tr(unit, locale)}</h2>
+                  <PersonList list={list} types={tab.types} locale={locale} />
+                </section>
+              ))
+            ) : (
+              <PersonList list={people} types={tab.types} locale={locale} />
+            )}
+          </div>
+        </section>
       </main>
       <Footer menu={menu} locale={locale} />
     </>
-  );
-}
-
-function PersonList({
-  list,
-  types,
-  locale,
-}: {
-  list: Person[];
-  types: StaffType[];
-  locale: Locale;
-}) {
-  return (
-    <ul className="hy-list">
-      {list.map((p) => {
-        const roles = p.roles ?? [];
-        const primary = roles.find((r) => types.includes(r.staffType));
-        // Bu siyahıya aid OLMAYAN digər vəzifə — kontekst üçün göstərilir.
-        const other = roles.find((r) => !types.includes(r.staffType));
-        return (
-          <li key={p.slug} className="hy-item">
-            <span className="hy-person">{p.name}</span>
-            {primary ? <span className="hy-role">{tr(primary.position, locale)}</span> : null}
-            {other ? (
-              <span className="hy-role hy-role--extra">{tr(other.position, locale)}</span>
-            ) : null}
-          </li>
-        );
-      })}
-    </ul>
   );
 }

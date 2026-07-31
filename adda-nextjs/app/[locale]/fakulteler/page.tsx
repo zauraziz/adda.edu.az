@@ -1,3 +1,5 @@
+// K26 — /[locale]/fakulteler
+// K26-3-de menyudan bura link qoymusdum, amma siyahi sehifesi yox idi -> 404.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -56,24 +58,33 @@ export default async function FacultyListPage({ params }: { params: Promise<{ lo
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
-      <main className="na-wrap">
-        <header className="st-head">
-          <p className="st-kicker">{tr('Təhsil', locale)}</p>
-          <h1 className="st-title">{tr('Fakültələr', locale)}</h1>
-        </header>
-        {faculties.length ? (
-          <ul className="hy-list">
-            {faculties.map((f) => (
-              <li key={f.slug} className="hy-item">
-                <Link href={`/${locale}/fakulteler/${f.slug}`} className="hy-person">
-                  {f.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="hy-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>
-        )}
+      <main>
+        <section className="np-hero">
+          <div className="container np-hero-inner">
+            <div className="np-eyebrow">{tr('Təhsil', locale)}</div>
+            <h1 className="np-h1">{tr('Fakültələr', locale)}</h1>
+            <p className="np-lead">{tr('Akademiyanın fakültələri və tədris istiqamətləri.', locale)}</p>
+          </div>
+        </section>
+
+        <section className="np-wrap">
+          <div className="container">
+            {faculties.length ? (
+              <div className="np-grid">
+                {faculties.map((f) => (
+                  <Link key={f.slug} href={`/${locale}/fakulteler/${f.slug}`} className="np-card">
+                    <span className="np-card-body">
+                      <h2 className="np-card-title">{f.name}</h2>
+                      {f.about ? <p className="np-card-ex">{f.about.slice(0, 160)}</p> : null}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="np-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>
+            )}
+          </div>
+        </section>
       </main>
       <Footer menu={menu} locale={locale} />
     </>
