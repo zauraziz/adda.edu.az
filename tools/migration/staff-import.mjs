@@ -63,17 +63,57 @@ if (planOnly || dryRun) {
 assertToken();
 await ping();
 
+// ── --verify: prod-da HƏQİQƏTƏN nə görünür ────────────────────────────────
+// Yazmadan əvvəl/sonra vəziyyəti oxuyur. `published` sayı 0-dırsa, qeydlər
+// draft qalıb və saytda görünməyəcək.
+if (args.verify) {
+  for (const plural of ['units', 'people']) {
+    const out = {};
+    for (const status of ['published', 'draft']) {
+      const res = await api('GET', `/api/${plural}?locale=${LOCALE}&status=${status}&pagination[pageSize]=1`);
+      out[status] = res.ok && res.data?.meta?.pagination ? res.data.meta.pagination.total : `XETA ${res.status}`;
+    }
+    console.log(`  ${plural.padEnd(8)} published: ${String(out.published).padStart(4)}   draft: ${out.draft}`);
+  }
+  // Slug təkrarı = əvvəlki run duplikat yaradıb.
+  for (const plural of ['units', 'people']) {
+    const res = await api('GET', `/api/${plural}?locale=${LOCALE}&status=draft&fields[0]=slug&pagination[pageSize]=500`);
+    const list = res.ok && Array.isArray(res.data?.data) ? res.data.data : [];
+    const seen = new Map();
+    for (const d of list) seen.set(d.slug, (seen.get(d.slug) || 0) + 1);
+    const dup = [...seen].filter(([, n]) => n > 1);
+    console.log(`  ${plural.padEnd(8)} slug dublikati: ${dup.length}${dup.length ? '  <-- TEMIZLIK LAZIMDIR' : ''}`);
+    for (const [slug, n] of dup.slice(0, 10)) console.log(`      ${slug} x${n}`);
+  }
+  console.log('');
+  process.exit(0);
+}
+
 const stats = { unitCreated: 0, unitUpdated: 0, personCreated: 0, personUpdated: 0, failed: 0 };
 const failures = [];
 
-/** Mövcud sənədi slug ilə tap — state faylı boş olsa da işləsin. */
+/**
+ * Mövcud sənədi slug ilə tap — state faylı boş olsa da işləsin.
+ *
+ * HƏM published, HƏM draft yoxlanılır. NİYƏ: `draftAndPublish` açıqdır və
+ * REST default olaraq YALNIZ published qaytarır. Yalnız published-a baxsaydıq,
+ * əvvəlki run-un draft kimi yaratdığı qeydləri "tapılmadı" sayıb TƏKRAR
+ * yaradardıq — nəticədə hər slug üçün iki sənəd.
+ */
 async function findBySlug(plural, slug) {
-  const res = await api(
-    'GET',
-    `/api/${plural}?locale=${LOCALE}&filters[slug][$eq]=${encodeURIComponent(slug)}&pagination[pageSize]=1`,
-  );
-  const hit = res.ok && res.data && Array.isArray(res.data.data) ? res.data.data[0] : null;
-  return hit ? hit.documentId : null;
+  for (const status of ['published', 'draft']) {
+    const res = await api(
+      'GET',
+      `/api/${plural}?locale=${LOCALE}&status=${status}` +
+        `&filters[slug][$eq]=${encodeURIComponent(slug)}&pagination[pageSize]=2`,
+    );
+    const list = res.ok && res.data && Array.isArray(res.data.data) ? res.data.data : [];
+    // Sanity: filtr işləməsə Strapi bütün kolleksiyanı qaytarar və biz
+    // TAMAM BAŞQA sənədin üstünə yazarıq. Slug-ı geri yoxlayırıq.
+    const hit = list.find((d) => d.slug === slug);
+    if (hit) return hit.documentId;
+  }
+  return null;
 }
 
 async function upsert(plural, key, slug, data) {
@@ -120,6 +160,9 @@ for (const u of units) {
   const r = await upsert('units', `unit:${u.slug}`, u.slug, {
     name: u.name,
     slug: u.slug,
+    // draftAndPublish aciqdir: publishedAt verilmese qeyd DRAFT qalir ve
+    // public API-de gorunmur. Eyni tela import.mjs-de de var idi.
+    publishedAt: new Date().toISOString(),
     ...(vac.length ? { vacancies: vac } : {}),
   });
   if (!r) continue;
@@ -148,6 +191,7 @@ for (const p of staff) {
   const r = await upsert('people', `person:${p.slug}`, p.slug, {
     name: p.name,
     slug: p.slug,
+    publishedAt: new Date().toISOString(),
     staffType: p.staffType,
     position: p.position,
     roles: p.roles.map((x) => ({
@@ -161,6 +205,9 @@ for (const p of staff) {
   if (!r) continue;
   if (r.created) stats.personCreated++;
   else stats.personUpdated++;
+  // Aralıq yazma: 162 qeydin ortasında Render qopsa, artıq yaradılanların
+  // documentId-si itməsin — əks halda növbəti run onları TƏKRAR yaradır.
+  if ((stats.personCreated + stats.personUpdated) % 20 === 0) saveState(state);
 }
 saveState(state);
 
