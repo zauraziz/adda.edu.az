@@ -1,0 +1,156 @@
+[
+  {
+    "name": "Elmi şura",
+    "slug": "elmi-sura",
+    "parentSlug": null,
+    "kind": "advisory",
+    "sortOrder": 10
+  },
+  {
+    "name": "Rəhbərlik",
+    "slug": "rehberlik",
+    "parentSlug": null,
+    "kind": "leadership",
+    "sortOrder": 20
+  },
+  {
+    "name": "Elmi işlər və beynəlxalq əlaqələr üzrə prorektorluq",
+    "slug": "elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq",
+    "parentSlug": null,
+    "kind": "prorektor",
+    "sortOrder": 30
+  },
+  {
+    "name": "Tədrisin təşkili və idarəedilməsi üzrə prorektorluq",
+    "slug": "tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq",
+    "parentSlug": null,
+    "kind": "prorektor",
+    "sortOrder": 40
+  },
+  {
+    "name": "Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi",
+    "slug": "elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi",
+    "parentSlug": "elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq",
+    "kind": "sobe",
+    "sortOrder": 50
+  },
+  {
+    "name": "İnformasiya resurs mərkəzi",
+    "slug": "informasiya-resurs-merkezi",
+    "parentSlug": "elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq",
+    "kind": "merkez",
+    "sortOrder": 60
+  },
+  {
+    "name": "Mətbəə",
+    "slug": "metbee",
+    "parentSlug": "elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq",
+    "kind": "xidmet",
+    "sortOrder": 70
+  },
+  {
+    "name": "Tədris proseslərinin təşkili şöbəsi",
+    "slug": "tedris-proseslerinin-teskili-sobesi",
+    "parentSlug": "tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq",
+    "kind": "sobe",
+    "sortOrder": 80
+  },
+  {
+    "name": "Təsərrüfat işləri şöbəsi",
+    "slug": "teserrufat-isleri-sobesi",
+    "parentSlug": "tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq",
+    "kind": "sobe",
+    "sortOrder": 90
+  },
+  {
+    "name": "Gəmi sürücülüyü fakültəsi",
+    "slug": "gemi-suruculuyu-fakultesi",
+    "parentSlug": "tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq",
+    "kind": "fakulte",
+    "sortOrder": 100
+  },
+  {
+    "name": "Gəmi mexanikası və elektromexanikası fakültəsi",
+    "slug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi",
+    "parentSlug": "tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq",
+    "kind": "fakulte",
+    "sortOrder": 110
+  },
+  {
+    "name": "Dəniz naviqasiyası kafedrası",
+    "slug": "deniz-naviqasiyasi-kafedrasi",
+    "parentSlug": "gemi-suruculuyu-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 120
+  },
+  {
+    "name": "Gəmiqayırma və gəmi təmiri kafedrası",
+    "slug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+    "parentSlug": "gemi-suruculuyu-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 130
+  },
+  {
+    "name": "İngilis dili kafedrası",
+    "slug": "ingilis-dili-kafedrasi",
+    "parentSlug": "gemi-suruculuyu-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 140
+  },
+  {
+    "name": "Humanitar fənlər kafedrası",
+    "slug": "humanitar-fenler-kafedrasi",
+    "parentSlug": "gemi-suruculuyu-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 150
+  },
+  {
+    "name": "Tətbiqi mexanika kafedrası",
+    "slug": "tetbiqi-mexanika-kafedrasi",
+    "parentSlug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 160
+  },
+  {
+    "name": "Gəmi energetik qurğuları kafedrası",
+    "slug": "gemi-energetik-qurgulari-kafedrasi",
+    "parentSlug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 170
+  },
+  {
+    "name": "Gəmi elektroavtomatikası kafedrası",
+    "slug": "gemi-elektroavtomatikasi-kafedrasi",
+    "parentSlug": "gemi-mexanikasi-ve-elektromexanikasi-fakultesi",
+    "kind": "kafedra",
+    "sortOrder": 180
+  },
+  {
+    "name": "Personalın idarəedilməsi, əmək haqqı və kargüzarlıq şöbəsi",
+    "slug": "personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi",
+    "parentSlug": null,
+    "kind": "sobe",
+    "sortOrder": 190
+  },
+  {
+    "name": "Mühasibat uçotu və hesabatı şöbəsi",
+    "slug": "muhasibat-ucotu-ve-hesabati-sobesi",
+    "parentSlug": null,
+    "kind": "sobe",
+    "sortOrder": 200
+  },
+  {
+    "name": "Təlim Tədris Mərkəzi",
+    "slug": "telim-tedris-merkezi",
+    "parentSlug": null,
+    "kind": "merkez",
+    "sortOrder": 210
+  },
+  {
+    "name": "Azərbaycan Dənizçilik Kolleci PHŞ",
+    "slug": "azerbaycan-denizcilik-kolleci-phs",
+    "parentSlug": null,
+    "kind": "tabeli_qurum",
+    "sortOrder": 220
+  }
+]
