@@ -568,3 +568,83 @@ export async function getMenu(locale: Locale = 'az'): Promise<SiteMenu | null> {
     return null;
   }
 }
+
+// ── K26: struktur bölmələri və heyət ──────────────────────────────────────
+
+export type StaffType = 'akademik' | 'telimci_texniki' | 'inzibati' | 'rehberlik' | 'diger';
+
+/** Bir şəxsin bir vəzifəsi. Bir adamın birdən çox vəzifəsi ola bilər. */
+export interface StaffRole {
+  staffType: StaffType;
+  position: string;
+  unitName: string | null;
+  sortOrder: number | null;
+}
+
+export interface Person {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  staffType: StaffType;
+  position: string | null;
+  roles: StaffRole[];
+  locale: Locale;
+}
+
+export interface OrgUnit {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  about: string | null;
+  vacancies: { position: string }[] | null;
+  parent: { slug: string; name: string } | null;
+  locale: Locale;
+}
+
+/**
+ * Bütün struktur bölmələri (valideyn əlaqəsi ilə).
+ *
+ * Ağac BURADA qurulmur — səhifə qurur. Səbəb: Strapi iç-içə populate-i
+ * dərinlik üzrə məhdudlaşdırır, 4 səviyyəli ağacı bir sorğu ilə tam gətirmək
+ * mümkün deyil. Düz siyahı + valideyn slug-ı həmişə işləyir.
+ */
+export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
+  const json = await strapiFetch<StrapiList<OrgUnit>>('/units', {
+    locale,
+    sort: 'id:asc',
+    'pagination[pageSize]': 200,
+    'populate[vacancies]': true,
+    'populate[parent][fields][0]': 'slug',
+    'populate[parent][fields][1]': 'name',
+  });
+  return json.data ?? [];
+}
+
+/**
+ * Bütün heyət (vəzifələri ilə).
+ *
+ * `roles` komponenti POPULATE OLUNMALIDIR — Strapi populate edilməyən
+ * komponenti ümumiyyətlə qaytarmır, sahə sadəcə cavabda olmur. Populate
+ * yazmasaq siyahılar səssizcə boş çıxar.
+ */
+export async function getStaff(locale: Locale = 'az'): Promise<Person[]> {
+  const json = await strapiFetch<StrapiList<Person>>('/people', {
+    locale,
+    sort: 'name:asc',
+    'pagination[pageSize]': 300,
+    'populate[roles]': true,
+  });
+  return json.data ?? [];
+}
+
+/** Bütün fakültələr. */
+export async function getFaculties(locale: Locale = 'az'): Promise<FacultyDoc[]> {
+  const json = await strapiFetch<StrapiList<FacultyDoc>>('/faculties', {
+    locale,
+    sort: 'name:asc',
+    'pagination[pageSize]': 100,
+  });
+  return json.data ?? [];
+}

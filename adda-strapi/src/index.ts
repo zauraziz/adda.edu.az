@@ -169,15 +169,15 @@ const SEED = {
             "links": [
               {
                 "label": "Professor-müəllim heyəti",
-                "url": "/hazirlanir/professor-muellim-heyeti"
+                "url": "/heyet/professor-muellim"
               },
               {
                 "label": "Təlimçi-texniki heyət",
-                "url": "/hazirlanir/telimci-texniki-heyet"
+                "url": "/heyet/telimci-texniki"
               },
               {
                 "label": "İnzibati heyət",
-                "url": "/hazirlanir/inzibati-heyet"
+                "url": "/heyet/inzibati"
               }
             ]
           },
