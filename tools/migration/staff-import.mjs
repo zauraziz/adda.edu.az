@@ -66,24 +66,54 @@ await ping();
 // ── --verify: prod-da HƏQİQƏTƏN nə görünür ────────────────────────────────
 // Yazmadan əvvəl/sonra vəziyyəti oxuyur. `published` sayı 0-dırsa, qeydlər
 // draft qalıb və saytda görünməyəcək.
-if (args.verify) {
+if (args.verify || args.audit) {
+  // DİQQƏT — Strapi 5-də `draft` sayı SƏNƏD SAYIDIR, dərc olunmamışların sayı
+  // deyil: dərc olunmuş sənədin də draft versiyası qalır. Ona görə mənalı
+  // yoxlama `published === draft`-dir. `published < draft` olsa, fərq qədər
+  // sənəd dərc olunmayıb.
+  const totals = {};
   for (const plural of ['units', 'people']) {
     const out = {};
     for (const status of ['published', 'draft']) {
       const res = await api('GET', `/api/${plural}?locale=${LOCALE}&status=${status}&pagination[pageSize]=1`);
-      out[status] = res.ok && res.data?.meta?.pagination ? res.data.meta.pagination.total : `XETA ${res.status}`;
+      out[status] = res.ok && res.data?.meta?.pagination ? res.data.meta.pagination.total : -1;
     }
-    console.log(`  ${plural.padEnd(8)} published: ${String(out.published).padStart(4)}   draft: ${out.draft}`);
+    totals[plural] = out;
+    const gap = out.draft - out.published;
+    console.log(
+      `  ${plural.padEnd(8)} sened: ${String(out.draft).padStart(4)}   derc olunmus: ${String(out.published).padStart(4)}` +
+        (gap > 0 ? `   <-- ${gap} DERC OLUNMAYIB` : '   OK'),
+    );
   }
-  // Slug təkrarı = əvvəlki run duplikat yaradıb.
+
+  // Strapi-dəki slug-ları mənbə fayllarla tutuşdur.
+  const expected = { units: new Set(units.map((u) => u.slug)), people: new Set(staff.map((p) => p.slug)) };
   for (const plural of ['units', 'people']) {
-    const res = await api('GET', `/api/${plural}?locale=${LOCALE}&status=draft&fields[0]=slug&pagination[pageSize]=500`);
-    const list = res.ok && Array.isArray(res.data?.data) ? res.data.data : [];
     const seen = new Map();
-    for (const d of list) seen.set(d.slug, (seen.get(d.slug) || 0) + 1);
-    const dup = [...seen].filter(([, n]) => n > 1);
-    console.log(`  ${plural.padEnd(8)} slug dublikati: ${dup.length}${dup.length ? '  <-- TEMIZLIK LAZIMDIR' : ''}`);
-    for (const [slug, n] of dup.slice(0, 10)) console.log(`      ${slug} x${n}`);
+    let page = 1;
+    for (;;) {
+      const res = await api(
+        'GET',
+        `/api/${plural}?locale=${LOCALE}&status=draft&fields[0]=slug&fields[1]=name` +
+          `&pagination[page]=${page}&pagination[pageSize]=100`,
+      );
+      const list = res.ok && Array.isArray(res.data?.data) ? res.data.data : [];
+      for (const d of list) seen.set(d.slug, { name: d.name, n: (seen.get(d.slug)?.n || 0) + 1 });
+      const pg = res.data?.meta?.pagination;
+      if (!pg || page >= pg.pageCount) break;
+      page++;
+    }
+    const dup = [...seen].filter(([, v]) => v.n > 1);
+    const extra = [...seen.keys()].filter((sl) => !expected[plural].has(sl));
+    const missing = [...expected[plural]].filter((sl) => !seen.has(sl));
+
+    console.log(`\n  ${plural}: Strapi ${seen.size} | menbe ${expected[plural].size}`);
+    console.log(`    dublikat slug : ${dup.length}${dup.length ? '  <-- TEMIZLIK LAZIMDIR' : ''}`);
+    for (const [sl, v] of dup.slice(0, 10)) console.log(`      ${sl} x${v.n}`);
+    console.log(`    Strapi-de VAR, menbede YOX : ${extra.length}`);
+    for (const sl of extra.slice(0, 20)) console.log(`      ${sl}  (${seen.get(sl).name})`);
+    console.log(`    menbede VAR, Strapi-de YOX : ${missing.length}`);
+    for (const sl of missing.slice(0, 20)) console.log(`      ${sl}`);
   }
   console.log('');
   process.exit(0);
