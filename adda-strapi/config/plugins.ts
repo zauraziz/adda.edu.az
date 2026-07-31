@@ -117,6 +117,15 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
     },
   },
   meilisearch: {
+    // K25: HOST TEYIN OLUNMAYIBSA PLUGIN SONULUDUR.
+    //
+    // Meilisearch-in pulsuz sinaq muddeti bitdi ve axtaris `/api/site-search`-e
+    // (baza uzerinden) kecdi. Plugin bos host ile qalarsa boot zamani xeta
+    // verir ve BUTUN Strapi-ni sindira biler — ona gore sertlendirilir.
+    //
+    // Gelecekde Meilisearch qaytarilarsa: MEILISEARCH_HOST teyin et, plugin
+    // ozu qosulacaq. Konfiqurasiya oldugu kimi qalir.
+    enabled: Boolean(env('MEILISEARCH_HOST', '')),
     config: {
       // K24: sondaki `/` kesilir — `.../` + `/indexes/...` ikiqat slash yaradir
       // ve Meilisearch Cloud slyuzu marsrut tapmir. `https://` prefiksinin
