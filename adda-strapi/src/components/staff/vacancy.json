@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_staff_vacancies",
+  "info": {
+    "displayName": "Vakansiya",
+    "description": "Ştatda mövcud, hazırda tutulmamış vəzifə.",
+    "icon": "userMinus"
+  },
+  "options": {},
+  "attributes": {
+    "position": {
+      "type": "string",
+      "required": true
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

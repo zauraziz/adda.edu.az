@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_staff_roles",
+  "info": {
+    "displayName": "Vəzifə",
+    "description": "Bir şəxsin bir vəzifəsi. Bir adamın birdən çox vəzifəsi ola bilər (məs. dekan + professor).",
+    "icon": "briefcase"
+  },
+  "options": {},
+  "attributes": {
+    "staffType": {
+      "type": "enumeration",
+      "enum": [
+        "akademik",
+        "telimci_texniki",
+        "inzibati",
+        "rehberlik",
+        "diger"
+      ],
+      "required": true
+    },
+    "position": {
+      "type": "string",
+      "required": true
+    },
+    "unitName": {
+      "type": "string"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -43,6 +43,16 @@
         }
       }
     },
+    "vacancies": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.vacancy",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "head": {
       "type": "relation",
       "relation": "oneToOne",

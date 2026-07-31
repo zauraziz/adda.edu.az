@@ -52,6 +52,11 @@ const ORG = [
   { name: 'Personalın idarəedilməsi, əmək haqqı və kargüzarlıq şöbəsi', parent: null, kind: 'sobe' },
   { name: 'Mühasibat uçotu və hesabatı şöbəsi', parent: null, kind: 'sobe' },
   { name: 'Təlim Tədris Mərkəzi', parent: null, kind: 'merkez' },
+  // 2025 sxemində YOXDUR, ştatda 2 işçi ilə VAR. Zaur: sxem köhnədir, əlavə et.
+  // TABELİYİ NAMƏLUMDUR: nə sxemdə, nə ştatda göstərilib. Rektora birbaşa
+  // bağladım — ehtimal etmək yerinə bilmədiyimi açıq saxlayıram; dəqiqləşəndə
+  // `parent` dəyişdirilməlidir.
+  { name: 'Təhsil innovasiyaları və rəqəmsal həllər mərkəzi', parent: null, kind: 'merkez' },
   { name: 'Azərbaycan Dənizçilik Kolleci PHŞ', parent: null, kind: 'tabeli_qurum' },
 ];
 
@@ -146,6 +151,41 @@ for (const line of lines) {
   });
 }
 
+// ── Şəxsləri birləşdir: 1 insan = 1 qeyd, N vəzifə ────────────────────────
+// 22 nəfər ştatda iki sətirdədir (məs. dekan + professor). Ayrı-ayrı qeyd
+// yaratsaq slug toqquşur; birini atsaq həmin adam siyahıların birindən düşür.
+// Ona görə `roles` massivi — `person.roles` komponenti ilə birebir uyğundur.
+const RANK = { rehberlik: 0, inzibati: 1, akademik: 2, telimci_texniki: 3, diger: 4 };
+
+const merged = new Map();
+for (const p of people) {
+  if (!p.name) continue;
+  if (!merged.has(p.slug)) {
+    merged.set(p.slug, { name: p.name, slug: p.slug, roles: [] });
+  }
+  const rec = merged.get(p.slug);
+  // Eyni ad fərqli yazılışla gələ bilər — ən uzun variantı saxla (tam ata adı).
+  if (p.name.length > rec.name.length) rec.name = p.name;
+  rec.roles.push({ staffType: p.staffType, position: p.position, unitName: p.unit, sortOrder: p.ss });
+}
+for (const rec of merged.values()) {
+  rec.roles.sort((a, b) => (RANK[a.staffType] - RANK[b.staffType]) || (a.sortOrder - b.sortOrder));
+  // Əsas tip = ən yüksək rütbəli rol. `staffType` sahəsi geriyə uyğunluq üçün qalır.
+  rec.staffType = rec.roles[0].staffType;
+  rec.position = rec.roles[0].position;
+  rec.unit = rec.roles[0].unitName;
+}
+const staff = [...merged.values()].sort((a, b) => a.roles[0].sortOrder - b.roles[0].sortOrder);
+
+// Slug toqquşması: fərqli adamlar eyni slug alsa məlumat itər.
+const slugOwners = new Map();
+for (const p of people) {
+  if (!p.slug) continue;
+  if (!slugOwners.has(p.slug)) slugOwners.set(p.slug, new Set());
+  slugOwners.get(p.slug).add(p.name);
+}
+const collisions = [...slugOwners.entries()].filter(([, names]) => names.size > 1);
+
 // ── Uyğunsuzluqlar ────────────────────────────────────────────────────────
 const orgNames = new Set(ORG.map((u) => u.name));
 const statUnits = new Set([...unitsSeen.keys()].map((u) => (normUnit(u) in UNIT_ALIAS ? UNIT_ALIAS[normUnit(u)] : normUnit(u))).filter(Boolean));
@@ -177,6 +217,11 @@ console.log(`    telimci_texniki  -> Telimci-texniki heyet    : ${byType.telimci
 console.log(`    inzibati         -> Inzibati heyet           : ${byType.inzibati || 0}`);
 console.log(`    rehberlik        -> Inzibati heyet (ust)     : ${byType.rehberlik || 0}`);
 
+console.log(`\n  birlesdirilmis sexs : ${staff.length}  (${people.filter((p) => p.name).length} setirden)`);
+console.log(`  cox vezifeli sexs   : ${staff.filter((s) => s.roles.length > 1).length}`);
+console.log(`  slug toqqusmasi     : ${collisions.length}${collisions.length ? '  <-- DIQQET' : ''}`);
+for (const [slug, names] of collisions) console.log(`    ${slug}: ${[...names].join(' | ')}`);
+
 console.log(`\n=== UYGUNSUZLUQ: statda VAR, 2025 strukturunda YOX (${onlyInStat.length}) ===`);
 for (const u of onlyInStat) console.log(`  ${u}  (${[...unitsSeen].filter(([k]) => (normUnit(k) in UNIT_ALIAS ? UNIT_ALIAS[normUnit(k)] : normUnit(k)) === u).reduce((n, [, c]) => n + c, 0)} isci)`);
 console.log(`\n=== UYGUNSUZLUQ: 2025 strukturunda VAR, statda YOX (${onlyInOrg.length}) ===`);
@@ -206,9 +251,13 @@ if (WRITE) {
   // .gitignore `data/*`-ı bağlayır, `data/extracted/`-i isə açır — yəni buraya
   // yazmaq faylın repoya DÜŞMƏMƏSİ deməkdir. 162 işçinin adı-soyadı git
   // tarixçəsinə birdəfəlik həkk olunmasın; ştat.txt-dən hər an yenidən yığılır.
-  writeFileSync(join(DATA, 'staff.json'), `${JSON.stringify(people, null, 2)}\n`, 'utf8');
+  writeFileSync(
+    join(DATA, 'staff.json'),
+    `${JSON.stringify({ staff, vacancies, generatedAt: new Date().toISOString() }, null, 2)}\n`,
+    'utf8',
+  );
   console.log(`\nYazildi: data/extracted/units.json  (${units.length})`);
-  console.log(`Yazildi: data/staff.json  (${people.length})  [repoya DUSMUR]`);
+  console.log(`Yazildi: data/staff.json  (${staff.length} sexs, ${vacancies.length} vakansiya)  [repoya DUSMUR]`);
 } else {
   console.log('\n(--write verilmeyib, fayl yazilmadi)');
 }

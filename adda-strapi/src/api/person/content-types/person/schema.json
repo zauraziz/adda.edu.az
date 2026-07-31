@@ -59,6 +59,16 @@
         }
       }
     },
+    "roles": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.role",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "bio": {
       "type": "richtext",
       "pluginOptions": {

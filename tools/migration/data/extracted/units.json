@@ -147,10 +147,17 @@
     "sortOrder": 210
   },
   {
+    "name": "Təhsil innovasiyaları və rəqəmsal həllər mərkəzi",
+    "slug": "tehsil-innovasiyalari-ve-reqemsal-heller-merkezi",
+    "parentSlug": null,
+    "kind": "merkez",
+    "sortOrder": 220
+  },
+  {
     "name": "Azərbaycan Dənizçilik Kolleci PHŞ",
     "slug": "azerbaycan-denizcilik-kolleci-phs",
     "parentSlug": null,
     "kind": "tabeli_qurum",
-    "sortOrder": 220
+    "sortOrder": 230
   }
 ]
