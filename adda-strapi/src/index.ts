@@ -55,992 +55,1094 @@ const IDENTITY_GATED_UIDS = ['api::rsvp.rsvp', 'api::correction.correction'];
 const IDENTITY_ENFORCE = process.env.IDENTITY_ENFORCE === 'true';
 
 const SEED = {
-  esasMenyu: [
+    "esasMenyu": [
       {
-            "label": "Akademiya",
-            "order": 1,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Akademik irs və missiya",
-                        "links": [
-                              {
-                                    "label": "Akademiya haqqında",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Akademiyanın tarixi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Sabiq rektorlarımız",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "ADDA Qəhrəmanları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Fəxri doktorlarımız",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Fəxri məzunlar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "ADDA reytinqlərdə",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Rəqəmlər və faktlar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Rəhbərlik və idarəetmə",
-                        "links": [
-                              {
-                                    "label": "Rektor",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Rəhbərlik",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Elmi Şura",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Himayəçilər Şurası",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təşkilati struktur",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Hüquqi baza, etika və keyfiyyət",
-                        "links": [
-                              {
-                                    "label": "Təhsil müəssisəsi haqqında",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Normativ-hüquqi sənədlər",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Akademik dürüstlük bəyannaməsi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "ADDA etika kodeksi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Keyfiyyətin monitorinqi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Dayanıqlı inkişaf",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Heyət",
-                        "links": [
-                              {
-                                    "label": "Professor-müəllim heyəti",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təlimçi-texniki heyət",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "İnzibati heyət",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Təminat",
-                        "links": [
-                              {
-                                    "label": "Satınalmalar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Binalar və infrastruktur",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "I və II tədris binaları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Yataqxana",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təlim-Tədris Mərkəzi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tədris gəmisi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Kollec",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Kommunikasiya",
-                        "links": [
-                              {
-                                    "label": "Vətəndaşların müraciəti",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Əlaqə",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "Akademiya",
+        "order": 1,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Akademik irs və missiya",
+            "links": [
+              {
+                "label": "Akademiya haqqında",
+                "url": "/sehife/adda-dunen-ve-bugun"
+              },
+              {
+                "label": "Akademiyanın tarixi",
+                "url": "/tarix"
+              },
+              {
+                "label": "Sabiq rektorlarımız",
+                "url": "/hazirlanir/sabiq-rektorlarimiz"
+              },
+              {
+                "label": "ADDA Qəhrəmanları",
+                "url": "/sehife/qehremanlarimiz"
+              },
+              {
+                "label": "Fəxri doktorlarımız",
+                "url": "/hazirlanir/fexri-doktorlarimiz"
+              },
+              {
+                "label": "Fəxri məzunlar",
+                "url": "/hazirlanir/fexri-mezunlar"
+              },
+              {
+                "label": "ADDA reytinqlərdə",
+                "url": "/hazirlanir/adda-reytinqlerde"
+              },
+              {
+                "label": "Rəqəmlər və faktlar",
+                "url": "/hazirlanir/reqemler-ve-faktlar"
+              }
             ]
+          },
+          {
+            "title": "Rəhbərlik və idarəetmə",
+            "links": [
+              {
+                "label": "Rektor",
+                "url": "/sehife/rektor"
+              },
+              {
+                "label": "Rəhbərlik",
+                "url": "/hazirlanir/rehberlik"
+              },
+              {
+                "label": "Elmi Şura",
+                "url": "/sehife/elmi-sura"
+              },
+              {
+                "label": "Himayəçilər Şurası",
+                "url": "/hazirlanir/himayeciler-surasi"
+              },
+              {
+                "label": "Təşkilati struktur",
+                "url": "/struktur"
+              },
+              {
+                "label": "Ümumi işlər üzrə prorektor",
+                "url": "/sehife/umumi-isler-uzre-prorektor"
+              },
+              {
+                "label": "Rektor köməkçisi",
+                "url": "/sehife/rektor-komekcisi"
+              },
+              {
+                "label": "Elmi katib",
+                "url": "/sehife/elmi-katib"
+              }
+            ]
+          },
+          {
+            "title": "Hüquqi baza, etika və keyfiyyət",
+            "links": [
+              {
+                "label": "Təhsil müəssisəsi haqqında",
+                "url": "/hazirlanir/tehsil-muessisesi-haqqinda"
+              },
+              {
+                "label": "Normativ-hüquqi sənədlər",
+                "url": "/sehife/h-x-esedovun-azerbaycan-dovlet-deniz-akademiyasinin-rektoru-teyin-edilmesi-haqqi"
+              },
+              {
+                "label": "Akademik dürüstlük bəyannaməsi",
+                "url": "/hazirlanir/akademik-durustluk-beyannamesi"
+              },
+              {
+                "label": "ADDA etika kodeksi",
+                "url": "/hazirlanir/adda-etika-kodeksi"
+              },
+              {
+                "label": "Keyfiyyətin monitorinqi",
+                "url": "/hazirlanir/keyfiyyetin-monitorinqi"
+              },
+              {
+                "label": "Dayanıqlı inkişaf",
+                "url": "/sehife/iqlim-ile-elaqeli-korporativ-idareetme"
+              }
+            ]
+          },
+          {
+            "title": "Heyət",
+            "links": [
+              {
+                "label": "Professor-müəllim heyəti",
+                "url": "/hazirlanir/professor-muellim-heyeti"
+              },
+              {
+                "label": "Təlimçi-texniki heyət",
+                "url": "/hazirlanir/telimci-texniki-heyet"
+              },
+              {
+                "label": "İnzibati heyət",
+                "url": "/hazirlanir/inzibati-heyet"
+              }
+            ]
+          },
+          {
+            "title": "Təminat",
+            "links": [
+              {
+                "label": "Satınalmalar",
+                "url": "/hazirlanir/satinalmalar"
+              },
+              {
+                "label": "Binalar və infrastruktur",
+                "url": "/hazirlanir/binalar-ve-infrastruktur"
+              },
+              {
+                "label": "I və II tədris binaları",
+                "url": "/hazirlanir/i-ve-ii-tedris-binalari"
+              },
+              {
+                "label": "Yataqxana",
+                "url": "/sehife/yataqxana"
+              },
+              {
+                "label": "Təlim-Tədris Mərkəzi",
+                "url": "/struktur/telim-tedris-merkezi-ttm"
+              },
+              {
+                "label": "Tədris gəmisi",
+                "url": "/hazirlanir/tedris-gemisi"
+              },
+              {
+                "label": "Kollec",
+                "url": "/struktur/azerbaycan-denizcilik-kolleci"
+              },
+              {
+                "label": "Muzey",
+                "url": "/sehife/muzey"
+              }
+            ]
+          },
+          {
+            "title": "Kommunikasiya",
+            "links": [
+              {
+                "label": "Vətəndaşların müraciəti",
+                "url": "/hazirlanir/vetendaslarin-muracieti"
+              },
+              {
+                "label": "Əlaqə",
+                "url": "/sehife/elaqe"
+              },
+              {
+                "label": "Korporativ üslub",
+                "url": "/sehife/korporativ-uslub"
+              }
+            ]
+          },
+          {
+            "title": "Şöbələr və xidmətlər",
+            "links": [
+              {
+                "label": "Tədris proseslərinin təşkili şöbəsi",
+                "url": "/struktur/tedris-proseslerinin-teskili-sobesi"
+              },
+              {
+                "label": "Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi",
+                "url": "/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi"
+              },
+              {
+                "label": "Mühasibat uçotu və hesabat şöbəsi",
+                "url": "/struktur/muhasibat-ucotu-ve-hesabat-sobesi"
+              },
+              {
+                "label": "Personalın idarə edilməsi şöbəsi",
+                "url": "/struktur/personalin-idare-edilmesi-emek-haqqi-sobesi-ve-karguzarliq-sobesi"
+              },
+              {
+                "label": "Təsərrüfat işləri şöbəsi",
+                "url": "/struktur/teserrufat-isleri-sobesi"
+              },
+              {
+                "label": "Hüquq məsləhətçisi",
+                "url": "/struktur/huquq-meslehetcisi"
+              },
+              {
+                "label": "İnformasiya Resurs Mərkəzi",
+                "url": "/struktur/informasiya-resurs-merkezi"
+              },
+              {
+                "label": "Mətbəə",
+                "url": "/struktur/metbee"
+              }
+            ]
+          }
+        ]
       },
       {
-            "label": "Qəbul",
-            "order": 2,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Akademik səviyyələr üzrə qəbul",
-                        "links": [
-                              {
-                                    "label": "Bakalavriat",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Subbakalavr",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Əcnəbi tələbələr",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Magistratura",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Doktorantura",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Əlavə təhsil",
-                        "links": [
-                              {
-                                    "label": "Təkrar ali təhsil",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "İxtisasartırma",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təkmilləşdirmə",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Sertifikatlar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Əcnəbi tələbə qəbulu",
-                        "links": [
-                              {
-                                    "label": "Əcnəbi tələbələrin qəbulu",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Viza və miqrasiya dəstəyi",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Faydalı məlumatlar və keçidlər",
-                        "links": [
-                              {
-                                    "label": "Qeydiyyat xidməti",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təhsil haqqı və güzəştlər",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Onlayn qeydiyyat",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Açıq qapı günləri",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "Qəbul",
+        "order": 2,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Akademik səviyyələr üzrə qəbul",
+            "links": [
+              {
+                "label": "Bakalavriat",
+                "url": "/sehife/bakalavriat"
+              },
+              {
+                "label": "Subbakalavr",
+                "url": "/hazirlanir/subbakalavr"
+              },
+              {
+                "label": "Əcnəbi tələbələr",
+                "url": "/sehife/ecnebi-telebelerin-tehsili"
+              },
+              {
+                "label": "Magistratura",
+                "url": "/sehife/magistratura"
+              },
+              {
+                "label": "Doktorantura",
+                "url": "/sehife/doktorantura"
+              }
             ]
+          },
+          {
+            "title": "Əlavə təhsil",
+            "links": [
+              {
+                "label": "Təkrar ali təhsil",
+                "url": "/hazirlanir/tekrar-ali-tehsil"
+              },
+              {
+                "label": "İxtisasartırma",
+                "url": "/sehife/xaricde-tehsil-ve-ixtisasartirma"
+              },
+              {
+                "label": "Təkmilləşdirmə",
+                "url": "/hazirlanir/tekmillesdirme"
+              },
+              {
+                "label": "Sertifikatlar",
+                "url": "#"
+              }
+            ]
+          },
+          {
+            "title": "Əcnəbi tələbə qəbulu",
+            "links": [
+              {
+                "label": "Əcnəbi tələbələrin qəbulu",
+                "url": "/sehife/ecnebi-telebelerin-qebulu-qaydalari"
+              },
+              {
+                "label": "Viza və miqrasiya dəstəyi",
+                "url": "/hazirlanir/viza-ve-miqrasiya-desteyi"
+              }
+            ]
+          },
+          {
+            "title": "Faydalı məlumatlar və keçidlər",
+            "links": [
+              {
+                "label": "Qeydiyyat xidməti",
+                "url": "/hazirlanir/qeydiyyat-xidmeti"
+              },
+              {
+                "label": "Təhsil haqqı və güzəştlər",
+                "url": "/hazirlanir/tehsil-haqqi-ve-guzestler"
+              },
+              {
+                "label": "Onlayn qeydiyyat",
+                "url": "/hazirlanir/onlayn-qeydiyyat"
+              },
+              {
+                "label": "Açıq qapı günləri",
+                "url": "/hazirlanir/aciq-qapi-gunleri"
+              },
+              {
+                "label": "Faydalı linklər",
+                "url": "/sehife/faydali-linkler"
+              }
+            ]
+          }
+        ]
       },
       {
-            "label": "Təhsil",
-            "order": 3,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Rəqəmsal Akademiya",
-                        "links": [
-                              {
-                                    "label": "LMS Portalı",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "E-Tədris resursları",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Proqramların kataloqu",
-                        "links": [
-                              {
-                                    "label": "Bakalavriat",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Magistratura",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Doktorantura",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Əlavə təhsil",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Təhsil standartları",
-                        "links": [
-                              {
-                                    "label": "Dənizçilik qanunvericilik sənədləri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Beynəlxalq standartlar (IMO/STCW)",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Təhsilin keyfiyyətinin qiymətləndirilməsi",
-                        "links": [
-                              {
-                                    "label": "Yerli və beynəlxalq akkreditasiya",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tələbə sorğuları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Qaynar xətt və təkliflər",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "Təhsil",
+        "order": 3,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Rəqəmsal Akademiya",
+            "links": [
+              {
+                "label": "LMS Portalı",
+                "url": "#"
+              },
+              {
+                "label": "E-Tədris resursları",
+                "url": "/hazirlanir/e-tedris-resurslari"
+              }
             ]
+          },
+          {
+            "title": "Proqramların kataloqu",
+            "links": [
+              {
+                "label": "Bakalavriat",
+                "url": "/sehife/bakalavriat"
+              },
+              {
+                "label": "Magistratura",
+                "url": "/sehife/magistratura"
+              },
+              {
+                "label": "Doktorantura",
+                "url": "/sehife/doktorantura"
+              },
+              {
+                "label": "Əlavə təhsil",
+                "url": "/hazirlanir/elave-tehsil"
+              },
+              {
+                "label": "Dəniz naviqasiyası mühəndisliyi",
+                "url": "/ixtisaslar/deniz-naviqasiyasi-muhendisliyi"
+              },
+              {
+                "label": "Gəmi energetik qurğularının istismarı mühəndisliyi",
+                "url": "/ixtisaslar/gemi-energetik-qurgularinin-istismari-muhendisliyi"
+              },
+              {
+                "label": "Gəmiqayırma və gəmi təmiri mühəndisliyi",
+                "url": "/ixtisaslar/gemiqayirma-ve-gemi-temiri-muhendisliyi"
+              },
+              {
+                "label": "Elektrik və elektronika mühəndisliyi",
+                "url": "/ixtisaslar/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre"
+              }
+            ]
+          },
+          {
+            "title": "Təhsil standartları",
+            "links": [
+              {
+                "label": "Dənizçilik qanunvericilik sənədləri",
+                "url": "/hazirlanir/denizcilik-qanunvericilik-senedleri"
+              },
+              {
+                "label": "Beynəlxalq standartlar (IMO/STCW)",
+                "url": "/hazirlanir/beynelxalq-standartlar-imo-stcw"
+              }
+            ]
+          },
+          {
+            "title": "Təhsilin keyfiyyətinin qiymətləndirilməsi",
+            "links": [
+              {
+                "label": "Yerli və beynəlxalq akkreditasiya",
+                "url": "/hazirlanir/yerli-ve-beynelxalq-akkreditasiya"
+              },
+              {
+                "label": "Tələbə sorğuları",
+                "url": "/hazirlanir/telebe-sorgulari"
+              },
+              {
+                "label": "Qaynar xətt və təkliflər",
+                "url": "/hazirlanir/qaynar-xett-ve-teklifler"
+              }
+            ]
+          },
+          {
+            "title": "Fakültələr",
+            "links": [
+              {
+                "label": "Gəmi sürücülüyü fakültəsi",
+                "url": "/fakulteler/gemi-suruculuyu-fakultesi"
+              },
+              {
+                "label": "Gəmi mexanikası və elektromexanikası fakültəsi",
+                "url": "/fakulteler/gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
+              }
+            ]
+          }
+        ]
       },
       {
-            "label": "Elm və innovasiya",
-            "order": 4,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Elmi idarəetmə və strategiya",
-                        "links": [
-                              {
-                                    "label": "Elmi siyasət",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tədris-Metodiki Şura",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Rəqəmlər və faktlar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Elmi-tədqiqat mərkəzləri və laboratoriyalar",
-                        "links": [
-                              {
-                                    "label": "Tədqiqat mərkəzləri və laboratoriyalar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Elmi nəşrlər və kitabxana",
-                        "links": [
-                              {
-                                    "label": "ADDA-nın Elmi Jurnalı",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Əməkdaşların nəşrləri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "E-Kitabxana",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Konvensiyalar və normativ sənədlər fondu",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tərəfdaş kitabxanalar və elmi bazalar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Doktorantura və elmi kadrların hazırlığı",
-                        "links": [
-                              {
-                                    "label": "Doktorantura",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Dissertasiya şuraları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Gənc alimlərin platforması",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Qrantlar, müsabiqələr və tədbirlər",
-                        "links": [
-                              {
-                                    "label": "Qrantlar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Mükafatlar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Elmi tədbirlər təqvimi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Beynəlxalq Dənizçilik Konfransları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Sahəvi seminarlar və təlimlər",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "Elm və innovasiya",
+        "order": 4,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Elmi idarəetmə və strategiya",
+            "links": [
+              {
+                "label": "Elmi siyasət",
+                "url": "/hazirlanir/elmi-siyaset"
+              },
+              {
+                "label": "Tədris-Metodiki Şura",
+                "url": "/hazirlanir/tedris-metodiki-sura"
+              },
+              {
+                "label": "Rəqəmlər və faktlar",
+                "url": "/hazirlanir/reqemler-ve-faktlar"
+              }
             ]
+          },
+          {
+            "title": "Elmi-tədqiqat mərkəzləri və laboratoriyalar",
+            "links": [
+              {
+                "label": "Tədqiqat mərkəzləri və laboratoriyalar",
+                "url": "/sehife/elmi-tedqiqat-laboratoriyalari"
+              },
+              {
+                "label": "Elmi-tədqiqat qrupu",
+                "url": "/sehife/elmi-tedqiqat-qrupu"
+              }
+            ]
+          },
+          {
+            "title": "Elmi nəşrlər və kitabxana",
+            "links": [
+              {
+                "label": "ADDA-nın Elmi Jurnalı",
+                "url": "/sehife/elmi-jurnal"
+              },
+              {
+                "label": "Əməkdaşların nəşrləri",
+                "url": "/hazirlanir/emekdaslarin-nesrleri"
+              },
+              {
+                "label": "E-Kitabxana",
+                "url": "/sehife/elektron-kitabxana"
+              },
+              {
+                "label": "Konvensiyalar və normativ sənədlər fondu",
+                "url": "/hazirlanir/konvensiyalar-ve-normativ-senedler-fondu"
+              },
+              {
+                "label": "Tərəfdaş kitabxanalar və elmi bazalar",
+                "url": "/hazirlanir/terefdas-kitabxanalar-ve-elmi-bazalar"
+              },
+              {
+                "label": "Elmi jurnalımız onlayn versiyada",
+                "url": "/sehife/elmi-jurnalimiz-onlayn-versiyada"
+              }
+            ]
+          },
+          {
+            "title": "Doktorantura və elmi kadrların hazırlığı",
+            "links": [
+              {
+                "label": "Doktorantura",
+                "url": "/sehife/doktorantura"
+              },
+              {
+                "label": "Dissertasiya şuraları",
+                "url": "/hazirlanir/dissertasiya-suralari"
+              },
+              {
+                "label": "Gənc alimlərin platforması",
+                "url": "/sehife/genc-alimler-surasi"
+              }
+            ]
+          },
+          {
+            "title": "Qrantlar, müsabiqələr və tədbirlər",
+            "links": [
+              {
+                "label": "Qrantlar",
+                "url": "/hazirlanir/qrantlar"
+              },
+              {
+                "label": "Mükafatlar",
+                "url": "/hazirlanir/mukafatlar"
+              },
+              {
+                "label": "Elmi tədbirlər təqvimi",
+                "url": "/hazirlanir/elmi-tedbirler-teqvimi"
+              },
+              {
+                "label": "Beynəlxalq Dənizçilik Konfransları",
+                "url": "/hazirlanir/beynelxalq-denizcilik-konfranslari"
+              },
+              {
+                "label": "Sahəvi seminarlar və təlimlər",
+                "url": "/hazirlanir/sahevi-seminarlar-ve-telimler"
+              }
+            ]
+          }
+        ]
       },
       {
-            "label": "Tələbə həyatı",
-            "order": 5,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Tələbə təşkilatları",
-                        "links": [
-                              {
-                                    "label": "Tələbə Gənclər Təşkilatı (TGK)",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tələbə Həmkarlar İttifaqı (THİK)",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tələbə Elmi Cəmiyyəti (TEC)",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Könüllülük hərəkatı",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Yaşayış və rifah",
-                        "links": [
-                              {
-                                    "label": "Tələbə yataqxanası",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Onlayn müraciət və yerləşdirmə",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Sosial təminat və maddi yardım",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təqaüd proqramları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Psixoloji dəstək xidməti",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tibb xidməti",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Yaradıcılıq, idman və asudə vaxt",
-                        "links": [
-                              {
-                                    "label": "İdman klubları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Mədəniyyət və yaradıcılıq dərnəkləri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "İntellektual oyun klubları",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Media və kommunikasiya",
-                        "links": [
-                              {
-                                    "label": "Sosial media elçiləri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tədbirlər təqvimi",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "Tələbə həyatı",
+        "order": 5,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Tələbə təşkilatları",
+            "links": [
+              {
+                "label": "Tələbə Gənclər Təşkilatı (TGK)",
+                "url": "/sehife/telebe-gencler-teskilati"
+              },
+              {
+                "label": "Tələbə Həmkarlar İttifaqı (THİK)",
+                "url": "/sehife/telebe-hemkarlar-ittifaqi-komitesi"
+              },
+              {
+                "label": "Tələbə Elmi Cəmiyyəti (TEC)",
+                "url": "/sehife/telebe-elmi-cemiyyeti"
+              },
+              {
+                "label": "Könüllülük hərəkatı",
+                "url": "/hazirlanir/konulluluk-herekati"
+              }
             ]
+          },
+          {
+            "title": "Yaşayış və rifah",
+            "links": [
+              {
+                "label": "Tələbə yataqxanası",
+                "url": "/sehife/yataqxana"
+              },
+              {
+                "label": "Onlayn müraciət və yerləşdirmə",
+                "url": "/hazirlanir/onlayn-muraciet-ve-yerlesdirme"
+              },
+              {
+                "label": "Sosial təminat və maddi yardım",
+                "url": "/hazirlanir/sosial-teminat-ve-maddi-yardim"
+              },
+              {
+                "label": "Təqaüd proqramları",
+                "url": "/hazirlanir/teqaud-proqramlari"
+              },
+              {
+                "label": "Psixoloji dəstək xidməti",
+                "url": "/hazirlanir/psixoloji-destek-xidmeti"
+              },
+              {
+                "label": "Tibb xidməti",
+                "url": "/hazirlanir/tibb-xidmeti"
+              }
+            ]
+          },
+          {
+            "title": "Yaradıcılıq, idman və asudə vaxt",
+            "links": [
+              {
+                "label": "İdman klubları",
+                "url": "/sehife/idman"
+              },
+              {
+                "label": "Mədəniyyət və yaradıcılıq dərnəkləri",
+                "url": "/hazirlanir/medeniyyet-ve-yaradiciliq-dernekleri"
+              },
+              {
+                "label": "İntellektual oyun klubları",
+                "url": "/hazirlanir/intellektual-oyun-klublari"
+              }
+            ]
+          },
+          {
+            "title": "Media və kommunikasiya",
+            "links": [
+              {
+                "label": "Sosial media elçiləri",
+                "url": "/hazirlanir/sosial-media-elcileri"
+              },
+              {
+                "label": "Tədbirlər təqvimi",
+                "url": "/hazirlanir/tedbirler-teqvimi"
+              }
+            ]
+          }
+        ]
       },
       {
-            "label": "Beynəlxalq əlaqələr",
-            "order": 6,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Akademik tərəfdaşlıq və ikili diplom",
-                        "links": [
-                              {
-                                    "label": "İkili diplom layihələri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Akademik tərəfdaşlar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Mobillik proqramları",
-                        "links": [
-                              {
-                                    "label": "Erasmus+ və Mevlana",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Müəllim mübadiləsi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Yay məktəbləri",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Beynəlxalq assosiasiyalar və təşkilatlar",
-                        "links": [
-                              {
-                                    "label": "IAMU",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "IMO",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "BSAMI",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Digər təşkilatlar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Xarici gəmiçilik şirkətləri",
-                        "links": [
-                              {
-                                    "label": "Kadet proqramları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Məzunların işlə təminatı",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Beynəlxalq elmi araşdırmalar",
-                        "links": [
-                              {
-                                    "label": "Birgə elmi konfranslar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Qrant layihələri",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "Beynəlxalq əlaqələr",
+        "order": 6,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Akademik tərəfdaşlıq və ikili diplom",
+            "links": [
+              {
+                "label": "İkili diplom layihələri",
+                "url": "/hazirlanir/ikili-diplom-layiheleri"
+              },
+              {
+                "label": "Akademik tərəfdaşlar",
+                "url": "/hazirlanir/akademik-terefdaslar"
+              },
+              {
+                "label": "Beynəlxalq əlaqələr qrupu",
+                "url": "/sehife/beynelxalq-elaqeler-qrupu"
+              }
             ]
+          },
+          {
+            "title": "Mobillik proqramları",
+            "links": [
+              {
+                "label": "Erasmus+ və Mevlana",
+                "url": "/hazirlanir/erasmus-ve-mevlana"
+              },
+              {
+                "label": "Müəllim mübadiləsi",
+                "url": "/hazirlanir/muellim-mubadilesi"
+              },
+              {
+                "label": "Yay məktəbləri",
+                "url": "/hazirlanir/yay-mektebleri"
+              }
+            ]
+          },
+          {
+            "title": "Beynəlxalq assosiasiyalar və təşkilatlar",
+            "links": [
+              {
+                "label": "IAMU",
+                "url": "/hazirlanir/iamu"
+              },
+              {
+                "label": "IMO",
+                "url": "/hazirlanir/imo"
+              },
+              {
+                "label": "BSAMI",
+                "url": "/hazirlanir/bsami"
+              },
+              {
+                "label": "Digər təşkilatlar",
+                "url": "/hazirlanir/diger-teskilatlar"
+              }
+            ]
+          },
+          {
+            "title": "Xarici gəmiçilik şirkətləri",
+            "links": [
+              {
+                "label": "Kadet proqramları",
+                "url": "/hazirlanir/kadet-proqramlari"
+              },
+              {
+                "label": "Məzunların işlə təminatı",
+                "url": "/hazirlanir/mezunlarin-isle-teminati"
+              }
+            ]
+          },
+          {
+            "title": "Beynəlxalq elmi araşdırmalar",
+            "links": [
+              {
+                "label": "Birgə elmi konfranslar",
+                "url": "/sehife/elmi-konfranslar"
+              },
+              {
+                "label": "Qrant layihələri",
+                "url": "/hazirlanir/qrant-layiheleri"
+              }
+            ]
+          }
+        ]
       }
-],
-  ustMenyu: [
+    ],
+    "ustMenyu": [
       {
-            "label": "ADDA Məzunları",
-            "order": 1,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Məzun mərkəzi",
-                        "links": [
-                              {
-                                    "label": "Məzunlar assosiasiyası",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Regional və beynəlxalq nümayəndəliklər",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Məzunların mentorluq proqramı",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Məzunlar-işəgötürənlər şəbəkəsi",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Karyera və inkişaf",
-                        "links": [
-                              {
-                                    "label": "Vakansiyalar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Məzunlar üçün təkmilləşdirmə",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Karyera hekayələri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Elm-təhsil-istehsalat platforması",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Diskussiya klubu",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Karyera sərgisi",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Tədbirlər və layihələr",
-                        "links": [
-                              {
-                                    "label": "Məzun günü",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Peşəkar görüşlər",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "İnkişafa dəstək təşəbbüsləri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Məzun kartı",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Məzunların rəyləri",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+        "label": "ADDA Məzunları",
+        "order": 1,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Məzun mərkəzi",
+            "links": [
+              {
+                "label": "Məzunlar assosiasiyası",
+                "url": "/hazirlanir/mezunlar-assosiasiyasi"
+              },
+              {
+                "label": "Regional və beynəlxalq nümayəndəliklər",
+                "url": "/hazirlanir/regional-ve-beynelxalq-numayendelikler"
+              },
+              {
+                "label": "Məzunların mentorluq proqramı",
+                "url": "/hazirlanir/mezunlarin-mentorluq-proqrami"
+              },
+              {
+                "label": "Məzunlar-işəgötürənlər şəbəkəsi",
+                "url": "/hazirlanir/mezunlar-isegoturenler-sebekesi"
+              }
             ]
-      },
-      {
-            "label": "Karyera",
-            "order": 2,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Karyera Mərkəzi",
-                        "links": [
-                              {
-                                    "label": "Karyera Mərkəzi haqqında",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Karyera bələdçisi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Fərdi konsultasiyalar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Tələbə portfolioları",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "İş və təcrübə imkanları",
-                        "links": [
-                              {
-                                    "label": "Vakansiyalar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Təcrübə proqramları",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Könüllü təcrübəçilik",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "İstehsalat ilə əlaqələr",
-                        "links": [
-                              {
-                                    "label": "Korporativ tərəfdaşlar",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Sərgilər və forumlar",
-                                    "url": "#"
-                              }
-                        ]
-                  },
-                  {
-                        "title": "Bacarıqların inkişafı",
-                        "links": [
-                              {
-                                    "label": "Soft Skills təlimləri",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Sertifikatlaşdırma dəstəyi",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Master-klaslar",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+          },
+          {
+            "title": "Karyera və inkişaf",
+            "links": [
+              {
+                "label": "Vakansiyalar",
+                "url": "/hazirlanir/vakansiyalar"
+              },
+              {
+                "label": "Məzunlar üçün təkmilləşdirmə",
+                "url": "/hazirlanir/mezunlar-ucun-tekmillesdirme"
+              },
+              {
+                "label": "Karyera hekayələri",
+                "url": "/hazirlanir/karyera-hekayeleri"
+              },
+              {
+                "label": "Elm-təhsil-istehsalat platforması",
+                "url": "/hazirlanir/elm-tehsil-istehsalat-platformasi"
+              },
+              {
+                "label": "Diskussiya klubu",
+                "url": "/hazirlanir/diskussiya-klubu"
+              },
+              {
+                "label": "Karyera sərgisi",
+                "url": "/hazirlanir/karyera-sergisi"
+              }
             ]
-      },
-      {
-            "label": "Kollec",
-            "order": 3,
-            "url": "#",
-            "groups": [
-                  {
-                        "title": "Kollec",
-                        "links": [
-                              {
-                                    "label": "Fakültələr",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "Əlavə təhsil",
-                                    "url": "#"
-                              },
-                              {
-                                    "label": "İnfrastruktur",
-                                    "url": "#"
-                              }
-                        ]
-                  }
+          },
+          {
+            "title": "Tədbirlər və layihələr",
+            "links": [
+              {
+                "label": "Məzun günü",
+                "url": "/hazirlanir/mezun-gunu"
+              },
+              {
+                "label": "Peşəkar görüşlər",
+                "url": "/hazirlanir/pesekar-gorusler"
+              },
+              {
+                "label": "İnkişafa dəstək təşəbbüsləri",
+                "url": "/hazirlanir/inkisafa-destek-tesebbusleri"
+              },
+              {
+                "label": "Məzun kartı",
+                "url": "/hazirlanir/mezun-karti"
+              },
+              {
+                "label": "Məzunların rəyləri",
+                "url": "/hazirlanir/mezunlarin-reyleri"
+              }
             ]
+          }
+        ]
       },
       {
-            "label": "FAQ",
-            "order": 4,
-            "url": "#",
-            "groups": []
+        "label": "Karyera",
+        "order": 2,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Karyera Mərkəzi",
+            "links": [
+              {
+                "label": "Karyera Mərkəzi haqqında",
+                "url": "/hazirlanir/karyera-merkezi-haqqinda"
+              },
+              {
+                "label": "Karyera bələdçisi",
+                "url": "/hazirlanir/karyera-beledcisi"
+              },
+              {
+                "label": "Fərdi konsultasiyalar",
+                "url": "/hazirlanir/ferdi-konsultasiyalar"
+              },
+              {
+                "label": "Tələbə portfolioları",
+                "url": "/hazirlanir/telebe-portfoliolari"
+              }
+            ]
+          },
+          {
+            "title": "İş və təcrübə imkanları",
+            "links": [
+              {
+                "label": "Vakansiyalar",
+                "url": "/hazirlanir/vakansiyalar"
+              },
+              {
+                "label": "Təcrübə proqramları",
+                "url": "/sehife/tecrube-haqqinda"
+              },
+              {
+                "label": "Könüllü təcrübəçilik",
+                "url": "/hazirlanir/konullu-tecrubecilik"
+              }
+            ]
+          },
+          {
+            "title": "İstehsalat ilə əlaqələr",
+            "links": [
+              {
+                "label": "Korporativ tərəfdaşlar",
+                "url": "/hazirlanir/korporativ-terefdaslar"
+              },
+              {
+                "label": "Sərgilər və forumlar",
+                "url": "/hazirlanir/sergiler-ve-forumlar"
+              }
+            ]
+          },
+          {
+            "title": "Bacarıqların inkişafı",
+            "links": [
+              {
+                "label": "Soft Skills təlimləri",
+                "url": "/hazirlanir/soft-skills-telimleri"
+              },
+              {
+                "label": "Sertifikatlaşdırma dəstəyi",
+                "url": "/hazirlanir/sertifikatlasdirma-desteyi"
+              },
+              {
+                "label": "Master-klaslar",
+                "url": "/hazirlanir/master-klaslar"
+              }
+            ]
+          }
+        ]
       },
       {
-            "label": "Əlaqə",
-            "order": 5,
-            "url": "#",
-            "groups": []
+        "label": "Kollec",
+        "order": 3,
+        "url": "#",
+        "groups": [
+          {
+            "title": "Kollec",
+            "links": [
+              {
+                "label": "Fakültələr",
+                "url": "/fakulteler"
+              },
+              {
+                "label": "Əlavə təhsil",
+                "url": "/hazirlanir/elave-tehsil"
+              },
+              {
+                "label": "İnfrastruktur",
+                "url": "/hazirlanir/infrastruktur"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "FAQ",
+        "order": 4,
+        "url": "/hazirlanir/faq",
+        "groups": []
+      },
+      {
+        "label": "Əlaqə",
+        "order": 5,
+        "url": "/sehife/elaqe",
+        "groups": []
       }
-],
-  eAkademiya: {
+    ],
+    "eAkademiya": {
       "title": "E-Akademiya platforması",
       "subtitle": "Rəqəmsal təhsil ekosistemi",
       "cards": [
-            {
-                  "label": "Tələbə kabineti",
-                  "description": "ADDA Lider sistemi",
-                  "url": "#",
-                  "icon": "device-laptop"
-            },
-            {
-                  "label": "Müəllim kabineti",
-                  "description": "Tədris idarəetməsi",
-                  "url": "#",
-                  "icon": "chalkboard"
-            },
-            {
-                  "label": "Elektron jurnal",
-                  "description": "Qiymət və davamiyyət",
-                  "url": "#",
-                  "icon": "notebook"
-            },
-            {
-                  "label": "Dərs cədvəli",
-                  "description": "Cari semestr",
-                  "url": "#",
-                  "icon": "calendar"
-            },
-            {
-                  "label": "E-Kitabxana",
-                  "description": "Elektron resurslar",
-                  "url": "#",
-                  "icon": "books"
-            },
-            {
-                  "label": "Sertifikatlar",
-                  "description": "STCW & Təlim mərkəzi",
-                  "url": "#",
-                  "icon": "certificate"
-            }
+        {
+          "label": "Tələbə kabineti",
+          "description": "ADDA Lider sistemi",
+          "url": "#",
+          "icon": "device-laptop"
+        },
+        {
+          "label": "Müəllim kabineti",
+          "description": "Tədris idarəetməsi",
+          "url": "#",
+          "icon": "chalkboard"
+        },
+        {
+          "label": "Elektron jurnal",
+          "description": "Qiymət və davamiyyət",
+          "url": "#",
+          "icon": "notebook"
+        },
+        {
+          "label": "Dərs cədvəli",
+          "description": "Cari semestr",
+          "url": "#",
+          "icon": "calendar"
+        },
+        {
+          "label": "E-Kitabxana",
+          "description": "Elektron resurslar",
+          "url": "/sehife/elektron-kitabxana",
+          "icon": "books"
+        },
+        {
+          "label": "Sertifikatlar",
+          "description": "STCW & Təlim mərkəzi",
+          "url": "#",
+          "icon": "certificate"
+        }
       ]
-},
-  istifadeciQruplari: [
+    },
+    "istifadeciQruplari": [
       {
-            "label": "Abituriyentlər",
-            "url": "#"
+        "label": "Abituriyentlər",
+        "url": "/hazirlanir/abituriyentler"
       },
       {
-            "label": "Tələbələr",
-            "url": "#"
+        "label": "Tələbələr",
+        "url": "/hazirlanir/telebeler"
       },
       {
-            "label": "Məzunlar",
-            "url": "#"
+        "label": "Məzunlar",
+        "url": "/hazirlanir/mezunlar"
       },
       {
-            "label": "Əməkdaşlar",
-            "url": "#"
+        "label": "Əməkdaşlar",
+        "url": "/hazirlanir/emekdaslar"
       },
       {
-            "label": "Beynəlxalq tələbələr",
-            "url": "#"
+        "label": "Beynəlxalq tələbələr",
+        "url": "/sehife/ecnebi-telebelerin-tehsili"
       },
       {
-            "label": "Valideynlər",
-            "url": "#"
+        "label": "Valideynlər",
+        "url": "/hazirlanir/valideynler"
       }
-],
-  suretliKecidler: [
+    ],
+    "suretliKecidler": [
       {
-            "label": "Tələbə kabineti",
-            "url": "#",
-            "icon": "device-laptop"
+        "label": "Tələbə kabineti",
+        "url": "#",
+        "icon": "device-laptop"
       },
       {
-            "label": "Elektron jurnal",
-            "url": "#",
-            "icon": "notebook"
+        "label": "Elektron jurnal",
+        "url": "#",
+        "icon": "notebook"
       },
       {
-            "label": "E-Kitabxana",
-            "url": "#",
-            "icon": "books"
+        "label": "E-Kitabxana",
+        "url": "/sehife/elektron-kitabxana",
+        "icon": "books"
       },
       {
-            "label": "Dərs cədvəli",
-            "url": "#",
-            "icon": "calendar"
+        "label": "Dərs cədvəli",
+        "url": "#",
+        "icon": "calendar"
       },
       {
-            "label": "Karyera Mərkəzi",
-            "url": "#",
-            "icon": "briefcase"
+        "label": "Karyera Mərkəzi",
+        "url": "/hazirlanir/karyera-merkezi",
+        "icon": "briefcase"
       },
       {
-            "label": "Əlaqə",
-            "url": "#",
-            "icon": "mail"
+        "label": "Əlaqə",
+        "url": "/sehife/elaqe",
+        "icon": "mail"
       }
-],
-  footerMenyusu: [
+    ],
+    "footerMenyusu": [
       {
-            "title": "Akademiya",
-            "links": [
-                  {
-                        "label": "Haqqımızda",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Rəhbərlik",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Struktur",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Tarix",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Akkreditasiya",
-                        "url": "#"
-                  }
-            ]
+        "title": "Akademiya",
+        "links": [
+          {
+            "label": "Haqqımızda",
+            "url": "/sehife/adda-dunen-ve-bugun"
+          },
+          {
+            "label": "Rəhbərlik",
+            "url": "/hazirlanir/rehberlik"
+          },
+          {
+            "label": "Struktur",
+            "url": "/struktur"
+          },
+          {
+            "label": "Tarix",
+            "url": "/tarix"
+          },
+          {
+            "label": "Akkreditasiya",
+            "url": "/hazirlanir/akkreditasiya"
+          }
+        ]
       },
       {
-            "title": "Qəbul",
-            "links": [
-                  {
-                        "label": "Bakalavr qəbulu",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Magistratura qəbulu",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Onlayn müraciət",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Qəbul şərtləri",
-                        "url": "#"
-                  }
-            ]
+        "title": "Qəbul",
+        "links": [
+          {
+            "label": "Bakalavr qəbulu",
+            "url": "/sehife/bakalavriat"
+          },
+          {
+            "label": "Magistratura qəbulu",
+            "url": "/sehife/magistratura"
+          },
+          {
+            "label": "Onlayn müraciət",
+            "url": "#"
+          },
+          {
+            "label": "Qəbul şərtləri",
+            "url": "/hazirlanir/qebul-sertleri"
+          }
+        ]
       },
       {
-            "title": "Təhsil",
-            "links": [
-                  {
-                        "label": "Bakalavriat",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Magistratura",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Qiyabi təhsil",
-                        "url": "#"
-                  },
-                  {
-                        "label": "İxtisaslar",
-                        "url": "#"
-                  },
-                  {
-                        "label": "E-Akademiya",
-                        "url": "#"
-                  }
-            ]
+        "title": "Təhsil",
+        "links": [
+          {
+            "label": "Bakalavriat",
+            "url": "/sehife/bakalavriat"
+          },
+          {
+            "label": "Magistratura",
+            "url": "/sehife/magistratura"
+          },
+          {
+            "label": "Qiyabi təhsil",
+            "url": "/hazirlanir/qiyabi-tehsil"
+          },
+          {
+            "label": "İxtisaslar",
+            "url": "/ixtisaslar"
+          },
+          {
+            "label": "E-Akademiya",
+            "url": "#"
+          }
+        ]
       },
       {
-            "title": "Universitet",
-            "links": [
-                  {
-                        "label": "Elm və innovasiya",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Tələbə həyatı",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Beynəlxalq əməkdaşlıq",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Xəbərlər",
-                        "url": "#"
-                  },
-                  {
-                        "label": "Kampus",
-                        "url": "#"
-                  }
-            ]
+        "title": "Universitet",
+        "links": [
+          {
+            "label": "Elm və innovasiya",
+            "url": "/sehife/elmi-tedqiqat-fealiyyeti"
+          },
+          {
+            "label": "Tələbə həyatı",
+            "url": "/hazirlanir/telebe-heyati"
+          },
+          {
+            "label": "Beynəlxalq əməkdaşlıq",
+            "url": "/sehife/beynelxalq-emekdasliq"
+          },
+          {
+            "label": "Xəbərlər",
+            "url": "/xeberler"
+          },
+          {
+            "label": "Kampus",
+            "url": "/hazirlanir/kampus"
+          }
+        ]
       }
-],
-};
+    ]
+  };
 
 /**
  * F2.3 — Relation lokalizasiya sinxronu.
@@ -1326,15 +1428,22 @@ export default {
         populate: { esasMenyu: true },
       })) as { documentId: string; esasMenyu?: unknown[] } | null;
       const hasData = !!existing && Array.isArray(existing.esasMenyu) && existing.esasMenyu.length > 0;
-      if (!hasData) {
+      // K26: menyu ARTIQ doludur (180 bend), ona gore `!hasData` qapisi
+      // yeni SEED-i PROD-a hec vaxt buraxmazdi -- klassik sessiz ugursuzluq.
+      // MENU_RESEED=true bir defelik uzerine yazmaga icaze verir.
+      // NIYE avtomatik deyil: her boot-da uzerine yazsaq, admin panelde edilen
+      // elle duzelisler itardi. Sira: (1) bu commit deploy olunur,
+      // (2) Render-de MENU_RESEED=true qoyulur, (3) log yoxlanilir, (4) silinir.
+      const force = process.env.MENU_RESEED === 'true';
+      if (!hasData || force) {
         if (existing) {
           await strapi.documents(uid).update({ documentId: existing.documentId, data: SEED as never, locale: 'az' });
         } else {
           await strapi.documents(uid).create({ data: SEED as never, locale: 'az' });
         }
-        strapi.log.info('[seed] Menyu dolduruldu (esas 6 + ust 5 + portal + qruplar + suretli + footer).');
+        strapi.log.info('[seed] Menyu yazildi' + (force ? ' (MENU_RESEED=true -- uzerine yazildi).' : ' (bos idi).'));
       } else {
-        strapi.log.info('[seed] Menyu artiq doludur, otulur.');
+        strapi.log.info('[seed] Menyu artiq doludur, otulur. Yenilemek ucun MENU_RESEED=true.');
       }
     } catch (err) {
       strapi.log.error('[seed] menu xetasi: ' + (err as Error).message);

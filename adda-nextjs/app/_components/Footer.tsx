@@ -11,6 +11,7 @@
 //     escape edir (HTML string yığmadığımız üçün əl ilə escape lazım deyil);
 //   · initNewsletter() → NewsletterIsland.tsx (mesajlar burada tərcümə olunur).
 import { tr, type Locale } from '@/lib/i18n';
+import { menuHref } from '@/lib/menu-href';
 import type { SiteMenu } from '@/lib/strapi';
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
 import NewsletterIsland, { type NewsletterMsgs } from './NewsletterIsland';
@@ -74,7 +75,7 @@ export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale
         <div className="ftx-grid">
           <div className="foot-brand">
             {/* Faza 2: href="#" → ana səhifə marşrutu */}
-            <a href="#" className="brand">
+            <a href={`/${locale}`} className="brand">
               <div className="brand-emblem"><img src="/home/emblem.webp" alt={tr('ADDA logo', locale)} /></div>
               <div className="brand-divider" style={{ background: 'rgba(255,255,255,0.18)' }} />
               <div className="brand-text">
@@ -102,7 +103,7 @@ export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale
               <div className="foot-col" key={col.title}>
                 <h4>{tr(col.title, locale)}</h4>
                 {(col.links ?? []).map((l, i) => (
-                  <a href={l.url || '#'} key={`${l.label}-${i}`}>{tr(l.label, locale)}</a>
+                  <a href={menuHref(l.url, locale)} key={`${l.label}-${i}`}>{tr(l.label, locale)}</a>
                 ))}
               </div>
             ))}

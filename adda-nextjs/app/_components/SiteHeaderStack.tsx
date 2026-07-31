@@ -7,6 +7,7 @@ import type {
   SiteMenu, MenuCategory, MenuLink, MenuPortal, MenuPortalCard,
 } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
+import { menuHref } from '@/lib/menu-href';
 import { FALLBACK_MENU, FALLBACK_EACAD } from '@/lib/menu-fallback';
 import { SEARCH_UI } from '@/lib/search-ui';
 import HeaderIsland from './HeaderIsland';
@@ -55,18 +56,18 @@ function UtilityLeft({ cats, locale }: { cats: MenuCategory[]; locale: Locale })
         const groups = c.groups ?? [];
         if (!groups.length) {
           return (
-            <a key={`ul-${i}`} href={c.url || '#'}>{icon}{' '}{tr(c.label, locale)}</a>
+            <a key={`ul-${i}`} href={menuHref(c.url, locale)}>{icon}{' '}{tr(c.label, locale)}</a>
           );
         }
         return (
           <div className="util-item" key={`ul-${i}`}>
-            <a href={c.url || '#'}>{icon}{' '}{tr(c.label, locale)}{' '}<UmChev /></a>
+            <a href={menuHref(c.url, locale)}>{icon}{' '}{tr(c.label, locale)}{' '}<UmChev /></a>
             <div className="util-menu">
               {groups.map((g, gi) => (
                 <div className="um-g" key={`ug-${gi}`}>
                   <span className="um-h">{tr(g.title, locale)}</span>
                   {(g.links ?? []).map((l, li) => (
-                    <a key={`ugl-${li}`} href={l.url || '#'}>{tr(l.label, locale)}</a>
+                    <a key={`ugl-${li}`} href={menuHref(l.url, locale)}>{tr(l.label, locale)}</a>
                   ))}
                 </div>
               ))}
@@ -83,7 +84,7 @@ function Infofor({ items, locale }: { items: MenuLink[]; locale: Locale }) {
   return (
     <>
       {items.map((l, i) => (
-        <a key={`if-${i}`} href={l.url || '#'}>
+        <a key={`if-${i}`} href={menuHref(l.url, locale)}>
           <span className="if-ic"><i className="ti ti-user" /></span>
           <span className="if-tx"><b>{tr(l.label, locale)}</b></span>
         </a>
@@ -115,13 +116,13 @@ function MainNav({ cats, locale }: { cats: MenuCategory[]; locale: Locale }) {
         if (!groups.length) {
           return (
             <div className="nav-item" key={`nv-${i}`}>
-              <a href={c.url || '#'} className={active ? 'active' : undefined}>{tr(c.label, locale)}</a>
+              <a href={menuHref(c.url, locale)} className={active ? 'active' : undefined}>{tr(c.label, locale)}</a>
             </div>
           );
         }
         return (
           <div className="nav-item nav-mega" key={`nv-${i}`}>
-            <a href={c.url || '#'} className={active ? 'active' : undefined}>{tr(c.label, locale)}{' '}<MegaChevH /></a>
+            <a href={menuHref(c.url, locale)} className={active ? 'active' : undefined}>{tr(c.label, locale)}{' '}<MegaChevH /></a>
             <div className="mega">
               <div className="mega-wrap">
                 <nav className="mega-groups" aria-label={tr(c.label, locale)}>
@@ -137,7 +138,7 @@ function MainNav({ cats, locale }: { cats: MenuCategory[]; locale: Locale }) {
                       <div className="mp-title">{tr(g.title, locale)}</div>
                       <div className="mp-links">
                         {(g.links ?? []).map((l, li) => (
-                          <a key={`mpl-${li}`} href={l.url || '#'}>{tr(l.label, locale)}</a>
+                          <a key={`mpl-${li}`} href={menuHref(l.url, locale)}>{tr(l.label, locale)}</a>
                         ))}
                       </div>
                     </div>
@@ -147,7 +148,7 @@ function MainNav({ cats, locale }: { cats: MenuCategory[]; locale: Locale }) {
                   <div className="mc-card">
                     <span className="mc-eyebrow">{cta.eyebrow}</span>
                     <span className="mc-name">{tr(c.label, locale)}</span>
-                    <a className="mc-btn" href={c.url || '#'}>{cta.btn}{' '}<span aria-hidden="true">→</span></a>
+                    <a className="mc-btn" href={menuHref(c.url, locale)}>{cta.btn}{' '}<span aria-hidden="true">→</span></a>
                     <p className="mc-tx">{cta.tx}</p>
                   </div>
                 </aside>
@@ -177,7 +178,7 @@ function EacadMega({ eacad, locale }: { eacad: MenuPortal; locale: Locale }) {
         </div>
         <div className="eacad-grid">
           {cards.map((c, i) => (
-            <a key={`ea-${i}`} href={c.url || '#'} className="eacad-card">
+            <a key={`ea-${i}`} href={menuHref(c.url, locale)} className="eacad-card">
               <span className="ea-ic"><i className={`ti ti-${c.icon || 'circle'}`} /></span>
               <span className="ea-tx"><b>{tr(c.label, locale)}</b><small>{tr(c.description || '', locale)}</small></span>
             </a>
@@ -238,7 +239,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
       {/* Header (hero-wrap-dan kənara çıxarıldı — position:relative/fixed olduğu üçün vizual eyni) */}
       <header id="siteHeader">
         <div className="header-inner">
-          <a href="#" className="brand">
+          <a href={`/${locale}`} className="brand">
             <div className="brand-emblem"><img src="/home/emblem.webp" alt="ADDA logo" /></div>
             <div className="brand-divider" />
             <div className="brand-text">
