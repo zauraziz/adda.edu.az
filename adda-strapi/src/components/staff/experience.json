@@ -1,0 +1,11 @@
+{
+  "collectionName": "components_staff_experiences",
+  "info": { "displayName": "İş təcrübəsi", "icon": "briefcase" },
+  "options": {},
+  "attributes": {
+    "period": { "type": "string", "required": true },
+    "organization": { "type": "string", "required": true },
+    "position": { "type": "string" },
+    "sortYear": { "type": "integer" }
+  }
+}

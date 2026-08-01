@@ -648,3 +648,111 @@ export async function getFaculties(locale: Locale = 'az'): Promise<FacultyDoc[]>
   });
   return json.data ?? [];
 }
+// K26-11 — heyət kataloqu üçün genişləndirilmiş tiplər və sorğular.
+
+export interface StaffLanguage {
+  lang: 'az' | 'tr' | 'en' | 'ru' | 'diger';
+  level: string | null;
+}
+export interface StaffScholar {
+  spin: string | null;
+  orcid: string | null;
+  researcherId: string | null;
+  scopusAuthorId: string | null;
+  googleScholar: string | null;
+}
+export interface StaffTag {
+  label: string;
+}
+export interface StaffPublication {
+  title: string;
+  year: number | null;
+  source: string | null;
+  url: string | null;
+}
+export interface StaffExperience {
+  period: string;
+  organization: string;
+  position: string | null;
+  sortYear: number | null;
+}
+export interface StaffEducation {
+  period: string;
+  institution: string;
+  qualification: string | null;
+  sortYear: number | null;
+}
+
+export type AcademicDegree = 'elmler_doktoru' | 'felsefe_doktoru' | 'yoxdur';
+
+/** Tam profil — yalnız fərdi səhifədə işlədilir. */
+export interface PersonFull extends Person {
+  academicTitle: string | null;
+  academicDegree: AcademicDegree | null;
+  phone: string | null;
+  office: string | null;
+  building: string | null;
+  bio: string | null;
+  photo: StrapiMedia | null;
+  email: string | null;
+  languages: StaffLanguage[] | null;
+  scholar: StaffScholar | null;
+  researchAreas: StaffTag[] | null;
+  teaching: string | null;
+  publications: StaffPublication[] | null;
+  experience: StaffExperience[] | null;
+  education: StaffEducation[] | null;
+  responsibilities: string | null;
+  other: string | null;
+  unit: { name: string; slug: string } | null;
+  faculty: FacultyRef | null;
+}
+
+/**
+ * Kataloq üçün heyət — kart üçün lazım olan sahələr.
+ *
+ * `populate` SİYAHISI TAM OLMALIDIR: Strapi populate edilməyən komponenti və
+ * media sahəsini ümumiyyətlə qaytarmır — sahə cavabda görünmür, xəta da
+ * vermir. Bir ad unudulsa həmin filtr səssizcə boş qalır.
+ */
+export async function getStaffDirectory(locale: Locale = 'az'): Promise<PersonFull[]> {
+  const json = await strapiFetch<StrapiList<PersonFull>>('/people', {
+    locale,
+    sort: 'name:asc',
+    'pagination[pageSize]': 400,
+    'populate[roles]': true,
+    'populate[photo]': true,
+    'populate[researchAreas]': true,
+    'populate[languages]': true,
+    'populate[unit][fields][0]': 'name',
+    'populate[unit][fields][1]': 'slug',
+    'populate[faculty][fields][0]': 'name',
+    'populate[faculty][fields][1]': 'slug',
+  });
+  return json.data ?? [];
+}
+
+/** Bir əməkdaşın tam profili. */
+export async function getPersonBySlug(slug: string, locale: Locale = 'az'): Promise<PersonFull | null> {
+  const json = await strapiFetch<StrapiList<PersonFull>>('/people', {
+    locale,
+    'filters[slug][$eq]': slug,
+    'pagination[pageSize]': 1,
+    'populate[roles]': true,
+    'populate[photo]': true,
+    'populate[languages]': true,
+    'populate[scholar]': true,
+    'populate[researchAreas]': true,
+    'populate[publications]': true,
+    'populate[experience]': true,
+    'populate[education]': true,
+    'populate[unit][fields][0]': 'name',
+    'populate[unit][fields][1]': 'slug',
+    'populate[faculty][fields][0]': 'name',
+    'populate[faculty][fields][1]': 'slug',
+  });
+  return json.data?.[0] ?? null;
+}
+
+/** Statik generasiya üçün bütün slug-lar. */
+export const getPersonSlugs = (locale: Locale = 'az') => allSlugs('/people', locale);

@@ -1,8 +1,8 @@
-// K26 — /[locale]/heyet/[tip]
+// K26-11 — /[locale]/heyet/[tip] — kateqoriya üzrə heyət.
 //
-// FİLTR `roles` ÜZRƏDİR, `staffType` üzrə DEYİL. Səbəb: 22 nəfərin iki
-// vəzifəsi var (məs. dekan + professor). Yalnız əsas `staffType`-a baxsaydıq,
-// dekan professor siyahısından tamamilə düşərdi.
+// FİLTR `roles` ÜZRƏDİR, `staffType` üzrə DEYİL: 22 nəfərin iki vəzifəsi var
+// (məs. dekan + professor). Yalnız əsas tipə baxsaydıq, dekan professor
+// siyahısından tamamilə düşərdi.
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -23,12 +23,14 @@ import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import '../../../_styles/28-staff.css';
+import '../../../_styles/29-directory.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
-import { getMenu, getStaff, type Person, type SiteMenu, type StaffType } from '@/lib/strapi';
+import StaffDirectory from '../../../_components/StaffDirectory';
+import { getMenu, type SiteMenu, type StaffType } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
@@ -69,35 +71,7 @@ export async function generateMetadata({
   return { title: tr(tab ? tab.label : 'Heyət', locale) };
 }
 
-/** Ştatdakı sıra nömrəsi — rəhbərlik yuxarıda qalsın. */
-function sortKey(p: Person, types: StaffType[]): number {
-  return (p.roles ?? [])
-    .filter((r) => types.includes(r.staffType))
-    .reduce((a, r) => Math.min(a, r.sortOrder ?? 9999), 9999);
-}
-
-function PersonList({ list, types, locale }: { list: Person[]; types: StaffType[]; locale: Locale }) {
-  return (
-    <div className="np-grid">
-      {list.map((p) => {
-        const roles = p.roles ?? [];
-        const primary = roles.find((r) => types.includes(r.staffType));
-        const other = roles.find((r) => !types.includes(r.staffType));
-        return (
-          <div key={p.slug} className="stf-row">
-            <span className="stf-name">{p.name}</span>
-            {primary ? <span className="stf-post">{tr(primary.position, locale)}</span> : null}
-            {other ? (
-              <span className="stf-post stf-post--alt">{tr(other.position, locale)}</span>
-            ) : null}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-export default async function StaffPage({
+export default async function StaffTypePage({
   params,
 }: {
   params: Promise<{ locale: string; tip: string }>;
@@ -108,25 +82,7 @@ export default async function StaffPage({
   const tab = TABS.find((t) => t.slug === tip);
   if (!tab) notFound();
 
-  const [menu, all] = await Promise.all([
-    getMenu(locale).catch(() => null as SiteMenu | null),
-    getStaff(locale).catch(() => [] as Person[]),
-  ]);
-
-  const people = all
-    .filter((p) => (p.roles ?? []).some((r) => tab.types.includes(r.staffType)))
-    .sort((a, b) => sortKey(a, tab.types) - sortKey(b, tab.types));
-
-  // Bölmə üzrə qruplaşdırma inzibati heyət üçün mənalıdır; akademik heyətdə
-  // ştat bölmə göstərmir, ona görə orada tək siyahı qalır.
-  const grouped = new Map<string, Person[]>();
-  for (const p of people) {
-    const role = (p.roles ?? []).find((r) => tab.types.includes(r.staffType));
-    const key = role?.unitName || '';
-    if (!grouped.has(key)) grouped.set(key, []);
-    grouped.get(key)!.push(p);
-  }
-  const useGroups = grouped.size > 1 && !grouped.has('');
+  const menu = await getMenu(locale).catch(() => null as SiteMenu | null);
 
   return (
     <>
@@ -143,6 +99,9 @@ export default async function StaffPage({
         <section className="np-wrap">
           <div className="container">
             <nav className="stf-tabs" aria-label={tr('Heyət', locale)}>
+              <Link href={`/${locale}/heyet`} className="stf-tab" aria-current={undefined}>
+                {tr('Bütün əməkdaşlar', locale)}
+              </Link>
               {TABS.map((t) => (
                 <Link
                   key={t.slug}
@@ -155,24 +114,11 @@ export default async function StaffPage({
               ))}
             </nav>
 
-            {people.length ? (
-              <p className="np-total">
-                {tr('Ümumi', locale)}: {people.length}
-              </p>
-            ) : null}
-
-            {!people.length ? (
-              <p className="np-empty">{tr('Bu bölmə üzrə məlumat hazırda əlçatan deyil.', locale)}</p>
-            ) : useGroups ? (
-              [...grouped.entries()].map(([unit, list]) => (
-                <section key={unit} className="stf-sec">
-                  <h2 className="stf-sec-title">{tr(unit, locale)}</h2>
-                  <PersonList list={list} types={tab.types} locale={locale} />
-                </section>
-              ))
-            ) : (
-              <PersonList list={people} types={tab.types} locale={locale} />
-            )}
+            <StaffDirectory
+              locale={locale}
+              types={tab.types}
+              basePath={`/${locale}/emekdas`}
+            />
           </div>
         </section>
       </main>

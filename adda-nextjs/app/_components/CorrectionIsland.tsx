@@ -15,6 +15,7 @@ export type TargetType =
   | "announcement"
   | "event"
   | "milestone"
+  | "person"
   | "page"
   | "general";
 type FieldKey = "title" | "body" | "other";

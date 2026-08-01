@@ -1,0 +1,11 @@
+{
+  "collectionName": "components_staff_publications",
+  "info": { "displayName": "Nəşr", "icon": "book" },
+  "options": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "year": { "type": "integer" },
+    "source": { "type": "string" },
+    "url": { "type": "string" }
+  }
+}

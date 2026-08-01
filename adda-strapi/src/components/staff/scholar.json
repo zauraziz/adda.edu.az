@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_staff_scholars",
+  "info": { "displayName": "Elmi identifikatorlar", "icon": "link" },
+  "options": {},
+  "attributes": {
+    "spin": { "type": "string" },
+    "orcid": { "type": "string" },
+    "researcherId": { "type": "string" },
+    "scopusAuthorId": { "type": "string" },
+    "googleScholar": { "type": "string" }
+  }
+}

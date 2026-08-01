@@ -59,6 +59,27 @@
         }
       }
     },
+    "academicTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "academicDegree": {
+      "type": "enumeration",
+      "enum": [
+        "elmler_doktoru",
+        "felsefe_doktoru",
+        "yoxdur"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "roles": {
       "type": "component",
       "repeatable": true,
@@ -70,6 +91,80 @@
       }
     },
     "bio": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "languages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.language"
+    },
+    "scholar": {
+      "type": "component",
+      "repeatable": false,
+      "component": "staff.scholar"
+    },
+    "researchAreas": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.tag",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "teaching": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "publications": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.publication",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "experience": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.experience",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "education": {
+      "type": "component",
+      "repeatable": true,
+      "component": "staff.education",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "responsibilities": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "other": {
       "type": "richtext",
       "pluginOptions": {
         "i18n": {
@@ -94,6 +189,25 @@
       "pluginOptions": {
         "i18n": {
           "localized": false
+        }
+      }
+    },
+    "phone": {
+      "type": "string"
+    },
+    "office": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "building": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
         }
       }
     },

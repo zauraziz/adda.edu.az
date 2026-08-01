@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_staff_languages",
+  "info": { "displayName": "Dil bilikləri", "icon": "earth" },
+  "options": {},
+  "attributes": {
+    "lang": {
+      "type": "enumeration",
+      "enum": ["az", "tr", "en", "ru", "diger"],
+      "required": true
+    },
+    "level": { "type": "string" }
+  }
+}

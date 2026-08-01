@@ -1,0 +1,8 @@
+{
+  "collectionName": "components_staff_tags",
+  "info": { "displayName": "Etiket", "description": "İxtisas və tədqiqat sahəsi", "icon": "priceTag" },
+  "options": {},
+  "attributes": {
+    "label": { "type": "string", "required": true }
+  }
+}

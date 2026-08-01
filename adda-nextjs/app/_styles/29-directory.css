@@ -1,0 +1,410 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — K26-11 / Heyət kataloqu və fərdi profil
+   Dizayn sistemi: Navy #0B3D5C · Gold #C9A961 · Fraunces + Manrope.
+   Tokenlər globals.css :root-dan.
+
+   Qabıq (.np-hero, .container, .np-wrap, .np-grid, .np-card, .np-chip,
+   .np-total, .np-empty) 19-news-page.css-dən gəlir. Burada YALNIZ
+   kataloqa və profilə xas hissələr var.
+   Ad fəzaları: .dir-* kataloq, .prf-* profil.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Axtarış və filtr paneli ────────────────────────── */
+.dir-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.dir-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.dir-search > i {
+  position: absolute;
+  left: 1rem;
+  color: var(--gray-500);
+  pointer-events: none;
+}
+.dir-search input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-base, 1rem);
+  color: var(--navy-900);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding: 0.85rem 1.15rem 0.85rem 2.75rem;
+  transition: border-color var(--nav-dur, 280ms) var(--nav-ease, ease);
+}
+.dir-search input::placeholder { color: var(--gray-500); }
+.dir-search input:hover { border-color: var(--gold-300); }
+.dir-search input:focus-visible {
+  outline: 3px solid var(--gold-500);
+  outline-offset: 2px;
+  border-color: var(--gold-500);
+}
+.dir-search--area input { background: var(--gray-50, #f8fafc); }
+
+/* ── Əlifba indeksi ─────────────────────────────────── */
+.dir-alpha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.dir-letter {
+  min-width: 2.15rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--navy-700);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  transition: border-color var(--nav-dur, 280ms) var(--nav-ease, ease),
+    background var(--nav-dur, 280ms) var(--nav-ease, ease);
+}
+.dir-letter:hover:not(:disabled) { border-color: var(--gold-300); }
+.dir-letter:focus-visible { outline: 3px solid var(--gold-500); outline-offset: 2px; }
+.dir-letter[aria-pressed='true'] {
+  color: var(--white);
+  background: var(--navy-800);
+  border-color: var(--navy-800);
+}
+/* Nəticəsi olmayan hərf — klik boş ekrana aparardı. */
+.dir-letter:disabled {
+  color: var(--gray-300, #cbd5e1);
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+/* ── Açılan filtrlər ────────────────────────────────── */
+.dir-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.75rem;
+}
+.dir-field { display: flex; flex-direction: column; gap: 0.3rem; }
+.dir-field-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+.dir-field select {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-900);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+}
+.dir-field select:focus-visible { outline: 3px solid var(--gold-500); outline-offset: 2px; }
+
+.dir-count { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+.dir-reset {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--navy-700);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gold-500);
+  padding: 0 0 1px;
+  cursor: pointer;
+}
+.dir-reset:hover { color: var(--gold-600); }
+
+/* ── Əməkdaş kartı ──────────────────────────────────── */
+.dir-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(300px, 42vw, 430px), 1fr));
+  gap: clamp(1rem, 2vw, 1.4rem);
+}
+.dir-card {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 1rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  transition: transform var(--nav-dur, 280ms) var(--nav-ease, ease),
+    box-shadow var(--nav-dur, 280ms) var(--nav-ease, ease),
+    border-color var(--nav-dur, 280ms) var(--nav-ease, ease);
+}
+.dir-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--nav-sh-lg, 0 12px 32px -6px rgba(11, 61, 92, 0.18));
+  border-color: var(--gold-300);
+}
+
+.dir-photo {
+  display: block;
+  width: 84px;
+  height: 104px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--navy-100);
+}
+.dir-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Şəkil yoxdur — 162 profilin əksəriyyəti belədir. Boş boz qutu əvəzinə
+   soyadın ilk hərfi. */
+.dir-photo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--navy-600);
+  background: var(--navy-100);
+}
+
+.dir-body { min-width: 0; }
+.dir-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  margin: 0;
+}
+.dir-name a { color: var(--navy-900); text-decoration: none; }
+.dir-name a:hover { color: var(--gold-600); }
+.dir-name a:focus-visible { outline: 3px solid var(--gold-500); outline-offset: 2px; }
+
+.dir-post {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+  line-height: 1.5;
+  margin: 0.3rem 0 0;
+}
+.dir-rank { font-weight: 700; color: var(--navy-700); margin-right: 0.35rem; }
+.dir-unit {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  margin: 0.2rem 0 0;
+}
+
+.dir-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.dir-tag { font-size: var(--text-xs); }
+
+.dir-contact {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--gray-200);
+}
+.dir-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-700);
+  text-decoration: none;
+  word-break: break-word;
+}
+.dir-link:hover { color: var(--gold-600); text-decoration: underline; }
+.dir-link:focus-visible { outline: 3px solid var(--gold-500); outline-offset: 2px; }
+
+/* ── Fərdi profil ───────────────────────────────────── */
+.prf-top {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  align-items: center;
+}
+.prf-avatar {
+  width: clamp(96px, 14vw, 148px);
+  height: clamp(120px, 17vw, 182px);
+  overflow: hidden;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
+.prf-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.prf-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 600;
+  color: var(--gold-300);
+}
+.prf-ident { min-width: 0; }
+.prf-name { font-size: clamp(1.6rem, 3.6vw, 2.6rem); }
+.prf-roles {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: var(--text-base, 1rem);
+  color: var(--navy-100);
+  line-height: 1.55;
+}
+.prf-role-unit { color: rgba(255, 255, 255, 0.62); }
+.prf-rank {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold-400);
+}
+
+.prf-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  align-items: start;
+}
+.prf-side {
+  position: sticky;
+  top: 1.5rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 1.25rem 1.35rem;
+}
+.prf-side-title {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+  margin: 1.4rem 0 0.6rem;
+}
+.prf-side-title:first-child { margin-top: 0; }
+
+.prf-facts { margin: 0; padding: 0; list-style: none; }
+.prf-facts li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.prf-facts li:last-child { border-bottom: none; }
+.prf-fact-k {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+.prf-fact-v {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-900);
+  word-break: break-word;
+}
+.prf-fact-none {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+.prf-tags { margin-top: 0.5rem; }
+
+.prf-main { min-width: 0; }
+.prf-tabs { position: sticky; top: 0; z-index: 2; padding: 0.6rem 0; background: var(--paper, #fafdfe); }
+.prf-sec { margin: 0 0 clamp(2rem, 4vw, 2.75rem); scroll-margin-top: 5rem; }
+.prf-sec:last-of-type { margin-bottom: 1.5rem; }
+.prf-sub {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-base, 1rem);
+  color: var(--navy-900);
+  margin: 1.6rem 0 0.7rem;
+}
+.prf-none {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* Xronoloji siyahı — təhsil və iş təcrübəsi. */
+.prf-time { margin: 0; padding: 0; list-style: none; }
+.prf-time li {
+  display: grid;
+  grid-template-columns: minmax(84px, auto) 1fr;
+  gap: 0.9rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.prf-time li:last-child { border-bottom: none; }
+.prf-time-when {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--gold-600);
+  white-space: nowrap;
+}
+.prf-time-what {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-900);
+}
+.prf-time-what em { color: var(--gray-700); font-style: normal; }
+
+.prf-pubs { margin: 0; padding: 0; list-style: none; }
+.prf-pubs li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--gray-200);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-900);
+}
+.prf-pubs li:last-child { border-bottom: none; }
+.prf-pub-meta { font-size: var(--text-xs); color: var(--gray-500); }
+
+.prf-correction { margin-top: 2rem; }
+
+@media (max-width: 900px) {
+  .prf-grid { grid-template-columns: 1fr; }
+  .prf-side { position: static; }
+}
+@media (max-width: 560px) {
+  .prf-top { grid-template-columns: 1fr; }
+  .dir-card { grid-template-columns: 64px 1fr; }
+  .dir-photo { width: 64px; height: 80px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dir-card,
+  .dir-letter,
+  .dir-search input { transition: none; }
+  .dir-card:hover { transform: none; }
+}

@@ -1,0 +1,11 @@
+{
+  "collectionName": "components_staff_educations",
+  "info": { "displayName": "Təhsil", "icon": "manyToOne" },
+  "options": {},
+  "attributes": {
+    "period": { "type": "string", "required": true },
+    "institution": { "type": "string", "required": true },
+    "qualification": { "type": "string" },
+    "sortYear": { "type": "integer" }
+  }
+}
