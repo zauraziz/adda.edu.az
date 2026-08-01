@@ -42,6 +42,18 @@ export default {
     },
     {
       method: 'POST',
+      path: '/identity/profile',
+      handler: 'identity.myProfile',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
+      method: 'POST',
+      path: '/identity/profile/update',
+      handler: 'identity.updateProfile',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
+      method: 'POST',
       path: '/identity/submit/correction',
       handler: 'identity.submitCorrection',
       config: { auth: false, policies: [], middlewares: [] },

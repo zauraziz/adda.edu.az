@@ -90,7 +90,8 @@ export async function generateMetadata({
   const p = await getPersonBySlug(slug, locale).catch(() => null);
   if (!p) return { title: tr('Əməkdaş', locale) };
   const post = p.roles?.[0]?.position ?? p.position ?? '';
-  return { title: p.name, description: post ? `${p.name} — ${tr(post, locale)}` : p.name };
+  const shown = p.displayName || p.name;
+  return { title: shown, description: post ? `${shown} — ${tr(post, locale)}` : shown };
 }
 
 function nonEmpty(s: string | null | undefined): boolean {
@@ -126,6 +127,8 @@ export default async function PersonPage({
         .filter((r) => nonEmpty(r.value))
     : [];
 
+  // Göstərilən ad — "Ad Ata Soyad". `name` ştat sırasındadır (Soyad Ad Ata).
+  const shownName = person.displayName || person.name;
   const photo = mediaUrl(person.photo);
   const degree = person.academicDegree ? DEGREE_LABEL[person.academicDegree] : '';
 
@@ -173,14 +176,14 @@ export default async function PersonPage({
             <div className="prf-avatar">
               {photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={photo} alt={person.name} />
+                <img src={photo} alt={shownName} />
               ) : (
-                <span className="prf-avatar-fallback">{person.name.trim()[0]}</span>
+                <span className="prf-avatar-fallback">{shownName.trim()[0]}</span>
               )}
             </div>
             <div className="prf-ident">
               <div className="np-eyebrow">{tr('Əməkdaş', locale)}</div>
-              <h1 className="np-h1 prf-name">{person.name}</h1>
+              <h1 className="np-h1 prf-name">{shownName}</h1>
               {roles.length ? (
                 <ul className="prf-roles">
                   {roles.map((r, i) => (
@@ -414,7 +417,7 @@ export default async function PersonPage({
                 <CorrectionIsland
                   targetType="person"
                   targetSlug={slug}
-                  title={person.name}
+                  title={shownName}
                   locale={locale}
                   labels={correctionLabels}
                 />

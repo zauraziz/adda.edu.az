@@ -25,6 +25,14 @@
         }
       }
     },
+    "displayName": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "slug": {
       "type": "uid",
       "targetField": "name",
@@ -191,6 +199,9 @@
           "localized": false
         }
       }
+    },
+    "altEmail": {
+      "type": "email"
     },
     "phone": {
       "type": "string"

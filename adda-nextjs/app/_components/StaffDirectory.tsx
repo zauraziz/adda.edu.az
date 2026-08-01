@@ -34,7 +34,13 @@ const LANG_LABEL: Record<string, string> = {
   diger: 'Digər',
 };
 
-/** Ada görə ilk hərf — soyad birinci gəldiyi üçün elə soyadın hərfidir. */
+/**
+ * Əlifba indeksi üçün ilk hərf.
+ *
+ * `displayName` ("Ad Ata Soyad") üzərində işləyir, `name` ("Soyad Ad Ata")
+ * üzərində YOX. Əks halda indeks ADA görə deyil, SOYADA görə filtrə çevrilirdi
+ * — istifadəçi "Eldar" axtarıb "Q" hərfinin altında tapmalı olurdu.
+ */
 function firstLetter(name: string): string {
   const ch = (name.trim()[0] ?? '').toUpperCase();
   return ALPHABET.includes(ch) ? ch : '#';
@@ -68,10 +74,11 @@ export default async function StaffDirectory({
     const roles = p.roles ?? [];
     // Bu görünüşə aid rol — yoxdursa birinci rol.
     const primary = (types ? roles.find((r) => types.includes(r.staffType)) : roles[0]) ?? roles[0];
+    const shown = p.displayName || p.name;
     return {
       slug: p.slug,
-      name: p.name,
-      letter: firstLetter(p.name),
+      name: shown,
+      letter: firstLetter(shown),
       position: tr(primary?.position ?? p.position ?? '', locale),
       unit: primary?.unitName ? tr(primary.unitName, locale) : p.unit ? tr(p.unit.name, locale) : null,
       building: p.building ? tr(p.building, locale) : null,

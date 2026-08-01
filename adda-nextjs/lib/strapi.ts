@@ -585,6 +585,8 @@ export interface Person {
   id: number;
   documentId: string;
   name: string;
+  /** "Ad Ata adı Soyad" — göstərmək üçün. `name` ştatdakı "Soyad Ad Ata"dır. */
+  displayName: string | null;
   slug: string;
   staffType: StaffType;
   position: string | null;
@@ -690,6 +692,7 @@ export interface PersonFull extends Person {
   academicTitle: string | null;
   academicDegree: AcademicDegree | null;
   phone: string | null;
+  altEmail: string | null;
   office: string | null;
   building: string | null;
   bio: string | null;

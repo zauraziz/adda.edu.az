@@ -63,6 +63,70 @@ if (planOnly || dryRun) {
 assertToken();
 await ping();
 
+// ── --contacts: e-poçt və doğum tarixi ────────────────────────────────────
+// E-poçt `person`-a yazılır (public — iş ünvanıdır).
+// Doğum tarixi AYRI content type-a yazılır: `person` public API-də oxunur,
+// ona görə orada saxlansaydı 157 nəfərin doğum tarixi
+// `GET /api/people` ilə hər kəsə açıq olardı.
+if (args.contacts) {
+  const cp = dataPath('staff-contacts.json');
+  if (!existsSync(cp)) {
+    console.error('\n  XETA: data/staff-contacts.json tapilmadi.');
+    console.error('  Once: node staff-contacts.mjs <HeyetAdGunu.csv> --write\n');
+    process.exit(1);
+  }
+  const { contacts } = JSON.parse(readFileSync(cp, 'utf8'));
+  let mail = 0;
+  let born = 0;
+  let skip = 0;
+  const errs = [];
+
+  for (const c of contacts) {
+    const documentId = state[`person:${c.slug}`] || (await findBySlug('people', c.slug));
+    if (!documentId) { skip++; continue; }
+
+    if (c.email || c.altEmail) {
+      const data = {};
+      if (c.email) data.email = c.email;
+      if (c.altEmail) data.altEmail = c.altEmail;
+      const res = await api('PUT', `/api/people/${documentId}?locale=${LOCALE}`, { data });
+      if (res.ok) mail++;
+      else errs.push(`people/${c.slug} HTTP ${res.status}`);
+    }
+
+    if (c.birthDate) {
+      const found = await api(
+        'GET',
+        `/api/staff-privates?filters[personSlug][$eq]=${encodeURIComponent(c.slug)}&pagination[pageSize]=1`,
+      );
+      // 404 = marşrut yoxdur (gözlənilən): `staff-private` REST-ə açılmayıb.
+      if (found.status === 404) {
+        errs.push('staff-private REST-de yoxdur -- dogum tarixi Strapi admin-den elave olunmalidir');
+        break;
+      }
+      const hit = found.ok && Array.isArray(found.data?.data) ? found.data.data[0] : null;
+      const payload = { personSlug: c.slug, birthDate: c.birthDate, person: documentId };
+      const res = hit
+        ? await api('PUT', `/api/staff-privates/${hit.documentId}`, { data: payload })
+        : await api('POST', '/api/staff-privates', { data: payload });
+      if (res.ok) born++;
+      else errs.push(`staff-private/${c.slug} HTTP ${res.status}`);
+    }
+  }
+
+  saveState(state);
+  console.log(`\n  e-poct yazildi   : ${mail}`);
+  console.log(`  dogum tarixi     : ${born}`);
+  console.log(`  atlandi (tapilmadi): ${skip}`);
+  if (errs.length) {
+    console.log('\n  XETALAR:');
+    for (const e of errs.slice(0, 15)) console.log(`    ${e}`);
+    if (errs.length > 15) console.log(`    ... +${errs.length - 15}`);
+  }
+  console.log('');
+  process.exit(errs.length ? 1 : 0);
+}
+
 // ── --verify: prod-da HƏQİQƏTƏN nə görünür ────────────────────────────────
 // Yazmadan əvvəl/sonra vəziyyəti oxuyur. `published` sayı 0-dırsa, qeydlər
 // draft qalıb və saytda görünməyəcək.
@@ -220,6 +284,8 @@ for (const p of staff) {
   const unitId = unitIds.get(p.unit) || null;
   const r = await upsert('people', `person:${p.slug}`, p.slug, {
     name: p.name,
+    // "Ad Ata Soyad" -- elifba indeksi buna gore isleyir.
+    displayName: p.displayName || p.name,
     slug: p.slug,
     publishedAt: new Date().toISOString(),
     staffType: p.staffType,

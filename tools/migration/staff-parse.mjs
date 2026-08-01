@@ -95,6 +95,41 @@ function normUnit(s) {
   return String(s || '').replace(/["\u201C\u201D]/g, '').replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * "Soyad Ad Ata adı" -> "Ad Ata adı Soyad".
+ *
+ * NİYƏ: ştat cədvəli soyadı önə yazır. Əlifba indeksi ilk hərfə baxdığı üçün
+ * bu, axtarışı SOYAD üzrə filtrə çevirir — istifadəçi isə adı gözləyir.
+ *
+ * Qayda: birinci söz soyaddır, qalanı ad + ata adıdır.
+ *   Qocayev Eldar Adıgözəl oğlu -> Eldar Adıgözəl oğlu Qocayev
+ *   Fatyanova Natalya Vladimirovna -> Natalya Vladimirovna Fatyanova
+ *
+ * MƏHDUDİYYƏT: mürəkkəb soyadlar (iki sözdən ibarət) səhv bölünər. Hazırkı
+ * 162 adda belə hal yoxdur; çıxsa `displayName` Strapi admin-də əl ilə
+ * düzəldilə bilər — ona görə ayrıca saxlanılır, hesablanmır.
+ */
+const SURNAME_END = /(ov|ova|yev|yeva|ev|eva|lı|li|lu|lü|zadə|oğlu|qızı|skaya|sky|enko|ich|na)$/i;
+
+function looksLikeSurname(token) {
+  return SURNAME_END.test(String(token || ''));
+}
+
+function displayOrder(full) {
+  const parts = String(full || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return parts.join(' ');
+
+  // İKİ SÖZLÜ AD AMBİQUDUR. Ştatda əksəriyyət "Soyad Ad"-dır, amma bir neçə
+  // qeyd artıq "Ad Soyad" kimi yazılıb (məs. `İradə Süleymanova`). Kor-koranə
+  // yerdəyişmə onları KORLAYARDI, ona görə soyad şəkilçisinə baxırıq.
+  if (parts.length === 2 && !looksLikeSurname(parts[0]) && looksLikeSurname(parts[1])) {
+    return parts.join(' ');
+  }
+
+  const [surname, ...rest] = parts;
+  return `${rest.join(' ')} ${surname}`;
+}
+
 // staffType — `person` sxemindəki enum ilə eyni olmalıdır.
 const UNIT_ALIAS = Object.fromEntries(
   Object.entries(UNIT_ALIAS_RAW).map(([k, v]) => [normUnit(k), v]),
@@ -161,11 +196,14 @@ const merged = new Map();
 for (const p of people) {
   if (!p.name) continue;
   if (!merged.has(p.slug)) {
-    merged.set(p.slug, { name: p.name, slug: p.slug, roles: [] });
+    merged.set(p.slug, { name: p.name, displayName: displayOrder(p.name), slug: p.slug, roles: [] });
   }
   const rec = merged.get(p.slug);
   // Eyni ad fərqli yazılışla gələ bilər — ən uzun variantı saxla (tam ata adı).
-  if (p.name.length > rec.name.length) rec.name = p.name;
+  if (p.name.length > rec.name.length) {
+    rec.name = p.name;
+    rec.displayName = displayOrder(p.name);
+  }
   rec.roles.push({ staffType: p.staffType, position: p.position, unitName: p.unit, sortOrder: p.ss });
 }
 for (const rec of merged.values()) {

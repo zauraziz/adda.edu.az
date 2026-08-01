@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "staff_privates",
+  "info": {
+    "singularName": "staff-private",
+    "pluralName": "staff-privates",
+    "displayName": "Heyət — məxfi",
+    "description": "İctimai API-də GÖRÜNMƏYƏN heyət məlumatı (doğum tarixi). `person` API folder-indədir, amma öz routes faylı YOXDUR — buna görə REST endpoint-i yaranmır."
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": { "i18n": { "localized": false } },
+  "attributes": {
+    "personSlug": { "type": "string", "required": true, "unique": true },
+    "birthDate": { "type": "date" },
+    "person": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::person.person"
+    }
+  }
+}
