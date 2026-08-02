@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { writeFileSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -175,6 +176,31 @@ function publicShape(p: Row): Row {
  * baxaraq sirri simvol-simvol tapa bilər. Uzunluqlar fərqlidirsə də tam
  * dövr işlədilir.
  */
+/**
+ * Sirrin barmaq izi — dəyəri açmadan iki tərəfi tutuşdurmaq üçün.
+ *
+ * Uyğunsuzluq olanda "hansı sirr səhvdir" sualına cavab vermək lazımdır, amma
+ * sirri nə loga, nə cavaba yazmaq olmaz. SHA-256-nın ilk 8 simvolu bunu həll
+ * edir: yüksək entropiyalı sirr üçün geri qaytarıla bilməz, müqayisə üçün isə
+ * kifayətdir.
+ */
+function fingerprint(v: string): string {
+  if (!v) return '(bos)';
+  return createHash('sha256').update(v, 'utf8').digest('hex').slice(0, 8);
+}
+
+/**
+ * Mühit dəyişəni və başlıq dəyəri təmizlənir.
+ *
+ * NİYƏ: Render-in interfeysindən kopyalanan dəyər sonda boşluq və ya sətir
+ * sonu gətirə bilər; PowerShell-də dəyişən təyin edərkən də eyni olur. Belə
+ * fərq gözlə görünmür, amma müqayisəni pozur — və "sirri düz kopyaladım,
+ * yenə işləmir" vəziyyəti yaradır.
+ */
+function cleanSecret(v: unknown): string {
+  return String(v ?? '').trim();
+}
+
 function timingSafeEqualStr(a: string, b: string): boolean {
   const len = Math.max(a.length, b.length);
   let diff = a.length ^ b.length;
@@ -323,16 +349,21 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
    * TAMAMİLƏ bağlıdır — boş sirr "hamıya açıq" demək olardı.
    */
   async adminMailTest(ctx: Ctx) {
-    const expected = process.env.ADMIN_IMPORT_SECRET || '';
+    const expected = cleanSecret(process.env.ADMIN_IMPORT_SECRET);
     if (!expected || expected.length < 16) {
       ctx.status = 503;
       ctx.body = { ok: false, error: 'admin_import_disabled' };
       return;
     }
-    if (!timingSafeEqualStr(headerOf(ctx, 'x-adda-admin-secret'), expected)) {
-      strapi.log.warn('[identity] admin/mail-test: sehv sirr');
+    const got = cleanSecret(headerOf(ctx, 'x-adda-admin-secret'));
+    if (!timingSafeEqualStr(got, expected)) {
+      // Barmaq izləri LOGA yazılır (Zaur görür), cavaba isə YALNIZ göndərənin
+      // öz izi qayıdır — server sirrinin izi qaytarılmır.
+      strapi.log.warn(
+        `[identity] admin/mail-test: sehv sirr | gozlenilen ${fingerprint(expected)} (${expected.length} simvol) | gelen ${fingerprint(got)} (${got.length} simvol)`,
+      );
       ctx.status = 403;
-      ctx.body = { ok: false, error: 'forbidden' };
+      ctx.body = { ok: false, error: 'forbidden', sentFingerprint: fingerprint(got), sentLength: got.length };
       return;
     }
 
@@ -797,13 +828,13 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
    * Boş sirr "hamıya açıq" demək olardı — ona görə açıq şəkildə 503 verilir.
    */
   async adminStaffPrivate(ctx: Ctx) {
-    const expected = process.env.ADMIN_IMPORT_SECRET || '';
+    const expected = cleanSecret(process.env.ADMIN_IMPORT_SECRET);
     if (!expected || expected.length < 16) {
       ctx.status = 503;
       ctx.body = { ok: false, error: 'admin_import_disabled' };
       return;
     }
-    if (!timingSafeEqualStr(headerOf(ctx, 'x-adda-admin-secret'), expected)) {
+    if (!timingSafeEqualStr(cleanSecret(headerOf(ctx, 'x-adda-admin-secret')), expected)) {
       strapi.log.warn('[identity] admin/staff-private: sehv sirr');
       ctx.status = 403;
       ctx.body = { ok: false, error: 'forbidden' };
