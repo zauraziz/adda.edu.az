@@ -65,6 +65,13 @@ const RULES: Rule[] = [
   { method: 'POST', path: '/api/identity/verify', ip: [intEnv('RL_IDENTITY_VERIFY_IP', 12), 15 * MIN] },
   { method: 'POST', path: '/api/identity/session', ip: [intEnv('RL_IDENTITY_SESSION_IP', 240), 15 * MIN] },
   { method: 'POST', path: '/api/identity/logout', ip: [intEnv('RL_IDENTITY_LOGOUT_IP', 30), 15 * MIN] },
+  // K26-13: profil oxunusu tez-tez olur (sehife her aciliste bir defe),
+  // yazi ise nadirdir. Ona gore iki ferqli limit.
+  { method: 'POST', path: '/api/identity/profile', ip: [intEnv('RL_PROFILE_READ_IP', 60), 15 * MIN] },
+  { method: 'POST', path: '/api/identity/profile/update', ip: [intEnv('RL_PROFILE_WRITE_IP', 20), 60 * MIN] },
+  // Admin-only yazi endpointi -- sirr basliqla qorunur, amma brute-force
+  // cehdini de mehdudlasdiririq.
+  { method: 'POST', path: '/api/identity/admin/staff-private', ip: [intEnv('RL_ADMIN_PRIVATE_IP', 30), 60 * MIN] },
   { method: 'POST', path: '/api/identity/submit/rsvp', ip: [intEnv('RL_SUBMIT_RSVP_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/identity/submit/correction', ip: [intEnv('RL_SUBMIT_CORRECTION_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/reactions', ip: [intEnv('RL_REACTIONS_IP', 30), 5 * MIN] },

@@ -43,7 +43,7 @@ export default function Hero({ locale }: { locale: Locale }) {
               <a href="#" className="link-quiet">{tr('Qəbul — 2026', locale)}</a>
             </div>
             <div className="hero-meta">
-              <span className="hm-est">EST · 1881</span>
+              <span className="hm-est">EST · 1996</span>
               <span className="hm-sep" />
               <span className="hm-coord">{tr('40.3653° N — 49.8407° E · Bakı', locale)}</span>
             </div>

@@ -144,6 +144,22 @@ function publicShape(p: Row): Row {
   };
 }
 
+/**
+ * Sabit vaxtlı sətir müqayisəsi.
+ *
+ * Adi `===` uyğunsuzluğu ilk fərqli baytda dayandırır; hücumçu cavab vaxtına
+ * baxaraq sirri simvol-simvol tapa bilər. Uzunluqlar fərqlidirsə də tam
+ * dövr işlədilir.
+ */
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const len = Math.max(a.length, b.length);
+  let diff = a.length ^ b.length;
+  for (let i = 0; i < len; i++) {
+    diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+  }
+  return diff === 0;
+}
+
 export default ({ strapi }: { strapi: StrapiLike }) => ({
   /** POST /api/identity/request — magic-link göndər. */
   async request(ctx: Ctx) {
@@ -429,5 +445,92 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     strapi.log.info('[identity] profil yenilendi: ' + String(person.slug));
     void svc.touch(identity.id);
     ctx.body = { ok: true };
+  },
+
+  /**
+   * POST /api/identity/admin/staff-private — doğum tarixlərinin toplu yazılması.
+   *
+   * NİYƏ AYRICA ENDPOINT: `staff-private` content type-ının REST marşrutu
+   * QƏSDƏN yoxdur — orada doğum tarixi saxlanılır və `person` kimi ictimai
+   * oxunmamalıdır. Amma 156 tarixi Strapi admin panelində əl ilə yazmaq
+   * real deyil. Bu endpoint həmin boşluğu bağlayır.
+   *
+   * YALNIZ YAZI. Oxu əməliyyatı YOXDUR — endpoint kompromis olunsa belə,
+   * mövcud tarixləri geri oxumaq mümkün deyil.
+   *
+   * `ADMIN_IMPORT_SECRET` təyin edilməyibsə endpoint TAMAMİLƏ bağlıdır.
+   * Boş sirr "hamıya açıq" demək olardı — ona görə açıq şəkildə 503 verilir.
+   */
+  async adminStaffPrivate(ctx: Ctx) {
+    const expected = process.env.ADMIN_IMPORT_SECRET || '';
+    if (!expected || expected.length < 16) {
+      ctx.status = 503;
+      ctx.body = { ok: false, error: 'admin_import_disabled' };
+      return;
+    }
+    if (!timingSafeEqualStr(headerOf(ctx, 'x-adda-admin-secret'), expected)) {
+      strapi.log.warn('[identity] admin/staff-private: sehv sirr');
+      ctx.status = 403;
+      ctx.body = { ok: false, error: 'forbidden' };
+      return;
+    }
+
+    const body = bodyOf(ctx);
+    const items = Array.isArray(body.items) ? body.items : [];
+    if (!items.length || items.length > 500) {
+      ctx.status = 400;
+      ctx.body = { ok: false, error: 'bad_items' };
+      return;
+    }
+
+    let created = 0;
+    let updated = 0;
+    let skipped = 0;
+
+    for (const raw of items) {
+      const it = (raw ?? {}) as Row;
+      const slug = String(it.personSlug ?? '').toLowerCase();
+      const birthDate = String(it.birthDate ?? '');
+      if (!SLUG_RE.test(slug) || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+        skipped++;
+        continue;
+      }
+
+      try {
+        const person = await strapi.documents('api::person.person').findMany({
+          locale: 'az',
+          filters: { slug: { $eq: slug } },
+          fields: ['documentId'],
+          limit: 1,
+        });
+        const personId = Array.isArray(person) && person[0] ? String(person[0].documentId) : null;
+        if (!personId) { skipped++; continue; }
+
+        const existing = await strapi.documents('api::person.staff-private').findMany({
+          filters: { personSlug: { $eq: slug } },
+          fields: ['documentId'],
+          limit: 1,
+        });
+
+        if (Array.isArray(existing) && existing[0]) {
+          await strapi.documents('api::person.staff-private').update({
+            documentId: String(existing[0].documentId),
+            data: { birthDate, person: personId },
+          });
+          updated++;
+        } else {
+          await strapi.documents('api::person.staff-private').create({
+            data: { personSlug: slug, birthDate, person: personId },
+          });
+          created++;
+        }
+      } catch (err) {
+        strapi.log.error('[identity] staff-private yazila bilmedi: ' + (err as Error).message);
+        skipped++;
+      }
+    }
+
+    strapi.log.info(`[identity] staff-private: ${created} yeni, ${updated} yenilendi, ${skipped} atlandi`);
+    ctx.body = { ok: true, created, updated, skipped };
   },
 });

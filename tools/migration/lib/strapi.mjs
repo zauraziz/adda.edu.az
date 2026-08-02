@@ -23,7 +23,12 @@ export function assertToken() {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** Cavab HEÇ VAXT throw etmir — uzun idxal bir xətadan dayanmasın. */
-export async function api(method, path, body, { retries = 3 } = {}) {
+/**
+ * `headers` — əlavə başlıqlar (məs. admin sirri). Authorization ÜSTÜNDƏN
+ * yazılmır: spread `Authorization`-dan SONRA gəlsə, çağıran onu təsadüfən
+ * silə bilərdi.
+ */
+export async function api(method, path, body, { retries = 3, headers = {} } = {}) {
   let lastError = null;
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -31,6 +36,7 @@ export async function api(method, path, body, { retries = 3 } = {}) {
         method,
         headers: {
           'Content-Type': 'application/json',
+          ...headers,
           Authorization: 'Bearer ' + TOKEN,
         },
         body: body === undefined ? undefined : JSON.stringify(body),

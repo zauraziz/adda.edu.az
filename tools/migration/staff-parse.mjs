@@ -52,11 +52,13 @@ const ORG = [
   { name: 'Personalın idarəedilməsi, əmək haqqı və kargüzarlıq şöbəsi', parent: null, kind: 'sobe' },
   { name: 'Mühasibat uçotu və hesabatı şöbəsi', parent: null, kind: 'sobe' },
   { name: 'Təlim Tədris Mərkəzi', parent: null, kind: 'merkez' },
-  // 2025 sxemində YOXDUR, ştatda 2 işçi ilə VAR. Zaur: sxem köhnədir, əlavə et.
-  // TABELİYİ NAMƏLUMDUR: nə sxemdə, nə ştatda göstərilib. Rektora birbaşa
-  // bağladım — ehtimal etmək yerinə bilmədiyimi açıq saxlayıram; dəqiqləşəndə
-  // `parent` dəyişdirilməlidir.
-  { name: 'Təhsil innovasiyaları və rəqəmsal həllər mərkəzi', parent: null, kind: 'merkez' },
+  // 2025 sxemində YOXDUR, ştatda 2 işçi ilə VAR — sxem köhnədir (Zaur).
+  // Tabeliyi Zaur tərəfindən dəqiqləşdirildi: tədris prorektorluğu.
+  {
+    name: 'Təhsil innovasiyaları və rəqəmsal həllər mərkəzi',
+    parent: 'Tədrisin təşkili və idarəedilməsi üzrə prorektorluq',
+    kind: 'merkez',
+  },
   { name: 'Azərbaycan Dənizçilik Kolleci PHŞ', parent: null, kind: 'tabeli_qurum' },
 ];
 
@@ -144,6 +146,18 @@ function classify(unitRaw, position) {
   return 'inzibati';
 }
 
+/**
+ * Ştatdakı yazı səhvləri.
+ *
+ * Ştat faylını redaktə ETMİRİK — o, kadrlar şöbəsindən gələn mənbədir və
+ * yenidən yüklənəndə düzəliş itərdi. Səhvlər burada, kodda saxlanılır ki,
+ * mənbə yeniləndikdə hansı düzəlişlərin tətbiq olunduğu görünsün.
+ */
+const NAME_FIX = {
+  // Ştatda `qızı`, HeyetAdGunu.csv-də `oğlu`. Zaur təsdiqlədi: oğlu.
+  'Əziz Zaur Vaqif qızı': 'Əziz Zaur Vaqif oğlu',
+};
+
 // ── Parse ─────────────────────────────────────────────────────────────────
 const raw = readFileSync(SRC, 'utf8').replace(/\r\n/g, '\n');
 const lines = raw.split('\n');
@@ -160,7 +174,8 @@ for (const line of lines) {
   const ss = (col[0] || '').trim();
   const unitRaw = (col[2] || '').trim();
   const position = (col[3] || '').trim();
-  const name = (col[4] || '').trim();
+  const rawName = (col[4] || '').trim();
+  const name = NAME_FIX[rawName] ?? rawName;
 
   // Başlıq sətri: s/s boşdur, bölmə adı var.
   if (!ss && unitRaw) { currentHeading = unitRaw; continue; }

@@ -983,6 +983,12 @@ const SEED = {
           "description": "STCW & Təlim mərkəzi",
           "url": "#",
           "icon": "certificate"
+        },
+        {
+          "label": "Profilim",
+          "description": "Əməkdaşlar üçün — öz səhifəni yenilə",
+          "url": "/profil",
+          "icon": "user-edit"
         }
       ]
     },

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: '%s | ADDA',
   },
   description:
-    '1881-ci ildən bəri dənizçilik təhsilinin lideri. Xəzər-Qara dəniz regionunun ən qabaqcıl dəniz akademiyası.',
+    '1996-cı ildə təsis olunmuş, kökləri 1881-ci ilə uzanan dənizçilik təhsili məktəbi. Xəzər-Qara dəniz regionunun ən qabaqcıl dəniz akademiyası.',
   metadataBase: new URL('https://adda.edu.az'),
   openGraph: {
     type: 'website',

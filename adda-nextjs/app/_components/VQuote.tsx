@@ -3,8 +3,10 @@
 // Mətnlər tr() (exact-match) ilə — 3/3 sətir T-də mövcuddur, tərcümələr
 // dəyişmir. Client JS yoxdur.
 //
-// ⚠ MƏZMUN FLAGI (Faza 12 — redaksiya): attribusiyada təsis ili 1996-dır,
-// hero/spotlight-da isə 1881 ("1881-dən gələn ənənə"). Mətn QƏSDƏN
+// K26-13 — HƏLL OLUNDU: təsis ili 1996-dır; 1881-də ADDA-nın SƏLƏFİ
+// yaradılıb. Ona görə attribusiyada 1996, Spotlight-da isə "1881-dən gələn
+// ənənə" — ikisi ziddiyyət deyil. Hero-dakı "EST · 1881" səhv idi, düzəldildi.
+// Aşağıdakı mətn QƏSDƏN
 // dəyişdirilməyib — rəsmi formul sifarişçidən gözlənilir.
 import { tr, type Locale } from '@/lib/i18n';
 

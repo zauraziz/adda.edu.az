@@ -94,23 +94,36 @@ if (args.contacts) {
       else errs.push(`people/${c.slug} HTTP ${res.status}`);
     }
 
-    if (c.birthDate) {
-      const found = await api(
-        'GET',
-        `/api/staff-privates?filters[personSlug][$eq]=${encodeURIComponent(c.slug)}&pagination[pageSize]=1`,
-      );
-      // 404 = marşrut yoxdur (gözlənilən): `staff-private` REST-ə açılmayıb.
-      if (found.status === 404) {
-        errs.push('staff-private REST-de yoxdur -- dogum tarixi Strapi admin-den elave olunmalidir');
-        break;
+  }
+
+  // ── Doğum tarixləri: ayrıca admin endpointi ─────────────────────────────
+  // `staff-private` REST-ə açılmayıb (public API-də oxunmasın deyə), ona görə
+  // adi CRUD ilə yazmaq mümkün deyil. `POST /api/identity/admin/staff-private`
+  // YALNIZ YAZAN endpointdir və `ADMIN_IMPORT_SECRET` ilə qorunur.
+  const withDates = contacts.filter((c) => c.birthDate);
+  if (withDates.length) {
+    const secret = process.env.ADMIN_IMPORT_SECRET || '';
+    if (secret.length < 16) {
+      errs.push('ADMIN_IMPORT_SECRET teyin edilmeyib (min 16 simvol) -- dogum tarixleri atlandi');
+    } else {
+      const CHUNK = 100;
+      for (let i = 0; i < withDates.length; i += CHUNK) {
+        const items = withDates
+          .slice(i, i + CHUNK)
+          .map((c) => ({ personSlug: c.slug, birthDate: c.birthDate }));
+        const res = await api('POST', '/api/identity/admin/staff-private', { items }, {
+          headers: { 'x-adda-admin-secret': secret },
+        });
+        if (res.ok) {
+          born += (res.data?.created ?? 0) + (res.data?.updated ?? 0);
+          if (res.data?.skipped) errs.push(`admin/staff-private: ${res.data.skipped} qeyd atlandi`);
+        } else if (res.status === 503) {
+          errs.push('admin/staff-private baglidir -- Render-de ADMIN_IMPORT_SECRET teyin et');
+          break;
+        } else {
+          errs.push(`admin/staff-private HTTP ${res.status}`);
+        }
       }
-      const hit = found.ok && Array.isArray(found.data?.data) ? found.data.data[0] : null;
-      const payload = { personSlug: c.slug, birthDate: c.birthDate, person: documentId };
-      const res = hit
-        ? await api('PUT', `/api/staff-privates/${hit.documentId}`, { data: payload })
-        : await api('POST', '/api/staff-privates', { data: payload });
-      if (res.ok) born++;
-      else errs.push(`staff-private/${c.slug} HTTP ${res.status}`);
     }
   }
 
