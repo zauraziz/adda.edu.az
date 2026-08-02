@@ -759,3 +759,25 @@ export async function getPersonBySlug(slug: string, locale: Locale = 'az'): Prom
 
 /** Statik generasiya üçün bütün slug-lar. */
 export const getPersonSlugs = (locale: Locale = 'az') => allSlugs('/people', locale);
+
+/**
+ * Bir struktur bölməsi — valideyn, alt bölmələr və heyəti ilə.
+ *
+ * `unit` (2025 təşkilati sxemi) və `department` (köhnə saytdan miqrasiya)
+ * EYNİ ŞEYİ modelləşdirir, amma cəmi 5 slug-da üst-üstə düşür. `unit`-də
+ * iyerarxiya və heyət var, `department`-də isə mətn məzmunu. Ona görə
+ * `/struktur/[slug]` HƏR İKİSİNƏ baxır və tapdığını birləşdirir.
+ */
+export async function getUnitBySlug(slug: string, locale: Locale = 'az'): Promise<OrgUnit | null> {
+  const json = await strapiFetch<StrapiList<OrgUnit>>('/units', {
+    locale,
+    'filters[slug][$eq]': slug,
+    'pagination[pageSize]': 1,
+    'populate[vacancies]': true,
+    'populate[parent][fields][0]': 'slug',
+    'populate[parent][fields][1]': 'name',
+  });
+  return json.data?.[0] ?? null;
+}
+
+export const getUnitSlugs = (locale: Locale = 'az') => allSlugs('/units', locale);

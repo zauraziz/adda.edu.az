@@ -17,6 +17,25 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataPath, ROOT } from './lib/paths.mjs';
+import { targetTypeFor } from './mapping.mjs';
+
+/**
+ * Hədəf tipi -> Next.js marşrut seqmenti.
+ *
+ * DİQQƏT: `redirects.json`-dakı `to` sahəsinə GÜVƏNMİRİK. O fayl bütün
+ * `content/*`-ı `/sehife/`-yə yönləndirir, halbuki `mapping.mjs` 12 sənədi
+ * `department`-ə (`/struktur/`), 4-ünü `program`-a (`/ixtisaslar/`) göndərir.
+ * Nəticədə 16 yönləndirmə 404-ə düşürdü. Ona görə seqment BURADA, tip
+ * xəritəsindən hesablanır.
+ */
+const SEGMENT = {
+  article: 'xeberler',
+  announcement: 'elanlar',
+  page: 'sehife',
+  faculty: 'fakulteler',
+  program: 'ixtisaslar',
+  department: 'struktur',
+};
 
 const OUT = join(ROOT, '..', '..', 'adda-nextjs', 'lib', 'legacy-redirects.ts');
 
@@ -37,8 +56,13 @@ const LOCALE_RE = /^\/(az|ru|en)\/([a-z]+)\/(\d+)$/;
  * izləyir, tarama büdcəsi yanır və köhnə URL indeksdə "sınıq" kimi qalır.
  * Birbaşa 404 isə təmiz siqnaldır.
  */
-const liveSlugs = new Set();
-const emptySlugs = new Set();
+/**
+ * (bölmə, legacyId) -> sənəd. HƏQİQƏT MƏNBƏYİ BUDUR.
+ *
+ * Həm slug, həm tip buradan gəlir — ikisi eyni yerdən gəlsin deyə.
+ * `redirects.json`-dan yalnız HANSI köhnə URL-lərin mövcud olduğunu götürürük.
+ */
+const docs = new Map();
 for (const f of ['content', 'faculty', 'news', 'announce']) {
   const fp = dataPath(`extracted/${f}.json`);
   if (!existsSync(fp)) {
@@ -47,7 +71,12 @@ for (const f of ['content', 'faculty', 'news', 'announce']) {
   }
   for (const r of JSON.parse(readFileSync(fp, 'utf8'))) {
     if (!r.slug) continue;
-    (r.isEmpty ? emptySlugs : liveSlugs).add(r.slug);
+    const k = `${r.section}/${r.legacyId}`;
+    if (!docs.has(k)) docs.set(k, { slug: r.slug, locales: new Map() });
+    const d = docs.get(k);
+    d.locales.set(r.locale, !r.isEmpty);
+    // az başlığı üstündür — slug dillərdə eynidir (K2), amma ehtiyat üçün.
+    if (r.locale === 'az') d.slug = r.slug;
   }
 }
 
@@ -60,15 +89,29 @@ for (const r of rows) {
   if (!m) continue;
   const [, , section, id] = m;
   const key = `${section}/${id}`;
-  // Hədəfdən dil prefiksini at: /az/xeberler/slug -> xeberler/slug
-  const target = r.to.replace(/^\/(az|ru|en)\//, '');
 
-  // Hədəf idxal olunmayıbsa yönləndirmə qurma.
-  const slug = target.split('/').pop();
-  if (!liveSlugs.has(slug)) {
-    dropped.push({ key, target, why: emptySlugs.has(slug) ? 'isEmpty' : 'tapilmadi' });
+  const doc = docs.get(key);
+  if (!doc) {
+    dropped.push({ key, target: r.to, why: 'cixarisda yoxdur' });
     continue;
   }
+
+  // XƏRİTƏ DİLSİZDİR, middleware mənbə dilini saxlayır. Deməli `az` versiyası
+  // yoxdursa `/az/content/22` -> `/az/sehife/...` = 301 -> 404. Ona görə
+  // yalnız az-da CANLI olan sənədlər xəritəyə düşür.
+  if (!doc.locales.get('az')) {
+    const only = [...doc.locales.entries()].filter(([, live]) => live).map(([l]) => l);
+    dropped.push({ key, target: r.to, why: only.length ? `az yoxdur (yalniz ${only.join(',')})` : 'butun diller isEmpty' });
+    continue;
+  }
+
+  const type = targetTypeFor(section, Number(id));
+  const seg = SEGMENT[type];
+  if (!seg) {
+    dropped.push({ key, target: r.to, why: `taninmayan tip: ${type}` });
+    continue;
+  }
+  const target = `${seg}/${doc.slug}`;
 
   const prev = map.get(key);
   if (prev && prev !== target) {
