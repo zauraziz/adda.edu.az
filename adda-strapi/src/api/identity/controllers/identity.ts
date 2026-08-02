@@ -37,7 +37,19 @@ interface StrapiLike {
     update(args: Row): Promise<Row>;
     findMany(args: Row): Promise<Row[]>;
   };
-  plugin(name: string): { service(name: string): { upload(args: Row): Promise<Row | Row[]> } };
+  /**
+   * Strapi plugin xidmətləri üçün struktur shim.
+   *
+   * `upload` və `email` fərqli xidmətlərdir, amma `service()` hər ikisi üçün
+   * eyni imza ilə çağırılır. Ayrı-ayrı tiplər üçün overload yazmaq bu shim-in
+   * verdiyi faydadan çox yer tutardı — hər iki metod eyni obyektdə elan olunur.
+   */
+  plugin(name: string): {
+    service(name: string): {
+      upload(args: Row): Promise<Row | Row[]>;
+      send(args: Row): Promise<unknown>;
+    };
+  };
   log: { info(m: string): void; warn(m: string): void; error(m: string): void };
 }
 
