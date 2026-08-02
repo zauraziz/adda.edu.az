@@ -73,6 +73,7 @@ const RULES: Rule[] = [
   // cehdini de mehdudlasdiririq.
   // Foto yukleme -- her cehd Cloudinary-ye gedir, ona gore daha sixdir.
   { method: 'POST', path: '/api/identity/profile/photo', ip: [intEnv('RL_PROFILE_PHOTO_IP', 12), 60 * MIN] },
+  { method: 'POST', path: '/api/identity/admin/mail-test', ip: [intEnv('RL_MAIL_TEST_IP', 20), 60 * MIN] },
   { method: 'POST', path: '/api/identity/admin/staff-private', ip: [intEnv('RL_ADMIN_PRIVATE_IP', 30), 60 * MIN] },
   { method: 'POST', path: '/api/identity/submit/rsvp', ip: [intEnv('RL_SUBMIT_RSVP_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/identity/submit/correction', ip: [intEnv('RL_SUBMIT_CORRECTION_IP', 10), 60 * MIN] },

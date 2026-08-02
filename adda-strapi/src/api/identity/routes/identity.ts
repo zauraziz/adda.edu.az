@@ -42,6 +42,12 @@ export default {
     },
     {
       method: 'POST',
+      path: '/identity/admin/mail-test',
+      handler: 'identity.adminMailTest',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
+      method: 'POST',
       path: '/identity/admin/staff-private',
       handler: 'identity.adminStaffPrivate',
       config: { auth: false, policies: [], middlewares: [] },

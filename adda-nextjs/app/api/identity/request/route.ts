@@ -50,6 +50,14 @@ export async function POST(req: NextRequest) {
   if (r.status === 502) {
     return NextResponse.json({ ok: false, error: 'upstream_unreachable' }, { status: 502 });
   }
+  // 503 = poçt xidməti işləmir (SMTP qurulmayıb və ya göndərmə uğursuz).
+  // Bu, istifadəçiyə aid məlumat DEYİL, ona görə enumeration müdafiəsini
+  // pozmadan açıq deyilir. Əks halda "Link göndərildi" yazılır və istifadəçi
+  // heç vaxt gəlməyəcək məktubu gözləyir.
+  if (r.status === 503) {
+    const error = typeof r.data.error === 'string' ? r.data.error : 'mail_unconfigured';
+    return NextResponse.json({ ok: false, error }, { status: 503 });
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -92,6 +92,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     badEmail: tr('Düzgün e-poçt ünvanı daxil edin.', locale),
     tooMany: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
     unconfigured: tr('Kimlik xidməti hazırda əlçatan deyil.', locale),
+    mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
     verified: tr('Təsdiqlənmiş', locale),
     gateRsvp: tr('Qeydiyyat üçün kimlik təsdiqi lazımdır', locale),
   };
@@ -131,6 +132,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     badEmail: tr('Düzgün e-poçt ünvanı daxil edin.', locale),
     tooMany: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
     unconfigured: tr('Kimlik xidməti hazırda əlçatan deyil.', locale),
+    mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
     verified: tr('Təsdiqlənmiş', locale),
     gateCorrection: tr('Düzəliş göndərmək üçün kimlik təsdiqi lazımdır', locale),
   };

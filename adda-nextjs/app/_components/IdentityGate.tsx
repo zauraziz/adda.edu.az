@@ -84,7 +84,13 @@ export default function IdentityGate({ locale, labels, redirect, heading }: Iden
         return;
       }
       if (!res.ok || !data.ok) {
-        setErr(data.error === "identity_unconfigured" ? L("unconfigured") : L("error"));
+        setErr(
+          data.error === "identity_unconfigured" || data.error === "mail_unconfigured"
+            ? L("unconfigured")
+            : data.error === "mail_failed"
+              ? L("mailFailed")
+              : L("error"),
+        );
         setPhase("error");
         return;
       }

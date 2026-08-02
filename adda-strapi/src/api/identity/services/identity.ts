@@ -158,7 +158,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
    * Magic-link sorğusu. Enumeration-a qarşı HƏMİŞƏ uğur qaytarır —
    * çağıran tərəf e-poçtun mövcudluğunu ayırd edə bilməməlidir.
    */
-  async requestMagic(input: { email: string; locale?: unknown; name?: unknown; redirect?: unknown }): Promise<void> {
+  async requestMagic(input: { email: string; locale?: unknown; name?: unknown; redirect?: unknown }): Promise<'sent' | 'unconfigured' | 'failed'> {
     const email = input.email;
     const locale = safeLocale(input.locale);
     const displayName = clean(input.name, 120);
@@ -170,7 +170,9 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       identity = await identities.create({ data: { email, displayName: displayName || null, locale } });
     } else if (identity.blocked === true) {
       strapi.log.warn('[identity] bloklanmis kimlik sorgusu: ' + redact(email));
-      return;
+      // Bloklanmış istifadəçiyə `sent` qaytarılır — ENUMERATION MÜDAFİƏSİ.
+      // Fərqli cavab "bu ünvan bloklanıb" məlumatını sızdırardı.
+      return 'sent';
     } else if (displayName && !identity.displayName) {
       await identities.update({ where: { id: identity.id as number }, data: { displayName } });
     }
@@ -190,16 +192,33 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
 
     const q = redirect ? '&r=' + encodeURIComponent(redirect) : '';
     const link = SITE_URL + '/' + locale + '/kimlik/tesdiq?t=' + encodeURIComponent(token) + q;
-    await this.sendMagicMail(email, locale, link);
+    const mail = await this.sendMagicMail(email, locale, link);
     void this.prune();
+    return mail;
   },
 
-  async sendMagicMail(email: string, locale: string, link: string): Promise<void> {
+  /**
+   * Magic link e-poçtu.
+   *
+   * NƏTİCƏ QAYTARILIR, UDULMUR. Əvvəl bu funksiya həm SMTP-siz halda, həm də
+   * göndərmə xətasında səssizcə qayıdırdı; çağıran bilmirdi və istifadəçi
+   * "Link göndərildi" görürdü — halbuki heç nə göndərilməmişdi. Belə nasazlıq
+   * yalnız Render loglarına baxanda üzə çıxırdı.
+   *
+   * ENUMERATION MÜDAFİƏSİ POZULMUR: burada qaytarılan nəticə e-poçtun
+   * qeydiyyatda olub-olmaması ilə bağlı DEYİL — o, infrastrukturun vəziyyətidir
+   * və heç bir şəxsi məlumat sızdırmır.
+   */
+  async sendMagicMail(
+    email: string,
+    locale: string,
+    link: string,
+  ): Promise<'sent' | 'unconfigured' | 'failed'> {
     const m = MAIL[locale] || MAIL.az;
     if (!process.env.SMTP_HOST) {
       // Dev rejimi: SMTP qurulmayıb. Link YALNIZ burada loglanır ki, lokal test mümkün olsun.
       strapi.log.warn('[identity] SMTP_HOST yoxdur — magic link loglanir (DEV): ' + link);
-      return;
+      return 'unconfigured';
     }
     try {
       await strapi.plugin('email').service('email').send({
@@ -209,8 +228,10 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         html: renderHtml(m, link),
       });
       strapi.log.info('[identity] magic link gonderildi: ' + redact(email));
+      return 'sent';
     } catch (err) {
       strapi.log.error('[identity] email gonderilmedi: ' + (err as Error).message);
+      return 'failed';
     }
   },
 

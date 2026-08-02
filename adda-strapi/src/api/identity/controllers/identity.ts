@@ -19,7 +19,8 @@ type Row = Record<string, unknown>;
 interface Identity { id: number; email: string; name: string; }
 
 interface IdentityService {
-  requestMagic(i: { email: string; locale?: unknown; name?: unknown; redirect?: unknown }): Promise<void>;
+  requestMagic(i: { email: string; locale?: unknown; name?: unknown; redirect?: unknown }): Promise<'sent' | 'unconfigured' | 'failed'>;
+  sendMagicMail(email: string, locale: string, link: string): Promise<'sent' | 'unconfigured' | 'failed'>;
   verifyMagic(t: unknown): Promise<{ ok: false } | { ok: true; email: string; name: string; session: string; expiresAt: string }>;
   resolveSession(t: unknown): Promise<Identity | null>;
   revokeSession(t: unknown): Promise<void>;
@@ -269,13 +270,101 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       ctx.body = { ok: false, error: 'invalid_email' };
       return;
     }
+    let mail: 'sent' | 'unconfigured' | 'failed' = 'failed';
     try {
-      await svc.requestMagic({ email, locale: body.locale, name: body.name, redirect: body.redirect });
+      mail = await svc.requestMagic({ email, locale: body.locale, name: body.name, redirect: body.redirect });
     } catch (err) {
       strapi.log.error('[identity] request xetasi: ' + (err as Error).message);
+      mail = 'failed';
     }
-    // Enumeration müdafiəsi: nəticədən asılı olmayaraq eyni cavab.
+
+    // ENUMERATION MÜDAFİƏSİ QORUNUR, NASAZLIQ İSƏ GİZLƏDİLMİR.
+    //
+    // İki fərqli sual var və onları qarışdırmaq olmaz:
+    //   1. "Bu e-poçt qeydiyyatdadırmı?" -> cavab HƏMİŞƏ eyni olmalıdır,
+    //      əks halda hücumçu ünvan siyahısı yığa bilər.
+    //   2. "Poçt xidməti işləyirmi?" -> bu, istifadəçiyə aid DEYİL və heç nə
+    //      sızdırmır. Gizlətmək isə zərərlidir: istifadəçi "Link göndərildi"
+    //      görüb gözləyir, halbuki heç nə göndərilməyib.
+    //
+    // Əvvəl hər iki hal `ok: true` verirdi. İndi yalnız birincisi.
+    if (mail === 'unconfigured') {
+      ctx.status = 503;
+      ctx.body = { ok: false, error: 'mail_unconfigured' };
+      return;
+    }
+    if (mail === 'failed') {
+      ctx.status = 503;
+      ctx.body = { ok: false, error: 'mail_failed' };
+      return;
+    }
     ctx.body = { ok: true };
+  },
+
+  /**
+   * POST /api/identity/admin/mail-test — SMTP diaqnostikası.
+   *
+   * Magic-link axını uğursuz olanda səbəbi tapmaq üçün. Real xəta mətnini
+   * qaytarır ki, Render loglarını qazmaq lazım gəlməsin.
+   *
+   * `ADMIN_IMPORT_SECRET` ilə qorunur. Sirr təyin edilməyibsə endpoint
+   * TAMAMİLƏ bağlıdır — boş sirr "hamıya açıq" demək olardı.
+   */
+  async adminMailTest(ctx: Ctx) {
+    const expected = process.env.ADMIN_IMPORT_SECRET || '';
+    if (!expected || expected.length < 16) {
+      ctx.status = 503;
+      ctx.body = { ok: false, error: 'admin_import_disabled' };
+      return;
+    }
+    if (!timingSafeEqualStr(headerOf(ctx, 'x-adda-admin-secret'), expected)) {
+      strapi.log.warn('[identity] admin/mail-test: sehv sirr');
+      ctx.status = 403;
+      ctx.body = { ok: false, error: 'forbidden' };
+      return;
+    }
+
+    const cfg = {
+      SMTP_HOST: Boolean(process.env.SMTP_HOST),
+      SMTP_PORT: process.env.SMTP_PORT || '587 (default)',
+      SMTP_SECURE: process.env.SMTP_SECURE || 'false (default)',
+      SMTP_USER: Boolean(process.env.SMTP_USER),
+      SMTP_PASS: Boolean(process.env.SMTP_PASS),
+      SMTP_FROM: process.env.SMTP_FROM || 'ADDA <no-reply@adda.edu.az> (default)',
+      SITE_URL: process.env.SITE_URL || 'https://demo.adda.edu.az (default)',
+    };
+
+    if (!cfg.SMTP_HOST) {
+      ctx.status = 503;
+      ctx.body = { ok: false, error: 'mail_unconfigured', config: cfg };
+      return;
+    }
+
+    const svc = strapi.service(SERVICE_UID);
+    const to = svc.normalizeEmail(bodyOf(ctx).to);
+    if (!to) {
+      // Yalnız konfiqurasiyanı göstər — göndərmə istənilmədi.
+      ctx.body = { ok: true, sent: false, config: cfg };
+      return;
+    }
+
+    try {
+      await strapi.plugin('email').service('email').send({
+        to,
+        subject: 'ADDA — SMTP yoxlamasi',
+        text: 'Bu, SMTP konfiqurasiyasinin yoxlanmasi ucun gonderilmis test mesajidir.',
+      });
+      strapi.log.info('[identity] mail-test ugurlu');
+      ctx.body = { ok: true, sent: true, config: cfg };
+    } catch (err) {
+      const message = (err as Error).message;
+      strapi.log.error('[identity] mail-test ugursuz: ' + message);
+      ctx.status = 502;
+      // XƏTA MƏTNİ AÇIQ QAYTARILIR: bu endpoint onsuz da sirrlə qorunur və
+      // "connection refused" ilə "auth failed" arasındakı fərq düzəlişin
+      // yeganə açarıdır.
+      ctx.body = { ok: false, error: 'mail_failed', message, config: cfg };
+    }
   },
 
   /** POST /api/identity/verify — magic tokeni sessiyaya çevir. */

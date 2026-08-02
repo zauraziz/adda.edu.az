@@ -54,6 +54,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ locale:
     badEmail: tr('Düzgün e-poçt ünvanı daxil edin.', locale),
     tooMany: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
     unconfigured: tr('Kimlik xidməti hazırda əlçatan deyil.', locale),
+    mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
     error: tr('Uğursuz əməliyyat', locale),
     // kart
     verified: tr('Təsdiqlənmiş', locale),
