@@ -29,8 +29,31 @@ if (!existsSync(src)) {
 const rows = JSON.parse(readFileSync(src, 'utf8'));
 const LOCALE_RE = /^\/(az|ru|en)\/([a-z]+)\/(\d+)$/;
 
+/**
+ * İDXAL OLUNMAYAN SƏNƏDLƏR XƏRİTƏYƏ DÜŞMÜR.
+ *
+ * `isEmpty` sənədlər Strapi-yə yazılmır. Onlara yönləndirmə qoysaq nəticə
+ * 301 → 404 zənciri olar — bu, birbaşa 404-dən DAHA PİSDİR: Google zənciri
+ * izləyir, tarama büdcəsi yanır və köhnə URL indeksdə "sınıq" kimi qalır.
+ * Birbaşa 404 isə təmiz siqnaldır.
+ */
+const liveSlugs = new Set();
+const emptySlugs = new Set();
+for (const f of ['content', 'faculty', 'news', 'announce']) {
+  const fp = dataPath(`extracted/${f}.json`);
+  if (!existsSync(fp)) {
+    console.error(`\n  XETA: data/extracted/${f}.json yoxdur. Evvelce: node extract.mjs\n`);
+    process.exit(1);
+  }
+  for (const r of JSON.parse(readFileSync(fp, 'utf8'))) {
+    if (!r.slug) continue;
+    (r.isEmpty ? emptySlugs : liveSlugs).add(r.slug);
+  }
+}
+
 const map = new Map();
 const conflicts = [];
+const dropped = [];
 
 for (const r of rows) {
   const m = LOCALE_RE.exec(r.from);
@@ -39,6 +62,13 @@ for (const r of rows) {
   const key = `${section}/${id}`;
   // Hədəfdən dil prefiksini at: /az/xeberler/slug -> xeberler/slug
   const target = r.to.replace(/^\/(az|ru|en)\//, '');
+
+  // Hədəf idxal olunmayıbsa yönləndirmə qurma.
+  const slug = target.split('/').pop();
+  if (!liveSlugs.has(slug)) {
+    dropped.push({ key, target, why: emptySlugs.has(slug) ? 'isEmpty' : 'tapilmadi' });
+    continue;
+  }
 
   const prev = map.get(key);
   if (prev && prev !== target) {
@@ -81,6 +111,12 @@ const bySection = {};
 for (const k of map.keys()) {
   const s = k.split('/')[0];
   bySection[s] = (bySection[s] || 0) + 1;
+}
+
+if (dropped.length) {
+  console.log(`\n  ATLANDI (hedef idxal olunmayib): ${dropped.length}`);
+  for (const d of dropped.slice(0, 10)) console.log(`    ${d.key} -> ${d.target}  [${d.why}]`);
+  if (dropped.length > 10) console.log(`    ... +${dropped.length - 10}`);
 }
 
 console.log(`\n  Menbe    : ${rows.length} setir (dil uzre)`);
