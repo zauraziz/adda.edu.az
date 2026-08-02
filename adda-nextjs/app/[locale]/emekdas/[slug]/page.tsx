@@ -130,6 +130,18 @@ export default async function PersonPage({
   // Göstərilən ad — "Ad Ata Soyad". `name` ştat sırasındadır (Soyad Ad Ata).
   const shownName = person.displayName || person.name;
   const photo = mediaUrl(person.photo);
+
+  /**
+   * "Son yeniləmə" — YALNIZ əməkdaşın öz redaktəsi.
+   *
+   * `updatedAt` işlətmirik: kütləvi idxal və ya admin düzəlişi onu təzələyir
+   * və məlumat təzə görünür, halbuki sahibi ona illərdir baxmayıb. Ona görə
+   * ayrıca `profileUpdatedAt` damğası var.
+   */
+  const stampRaw = person.profileUpdatedAt;
+  const stamp = stampRaw ? new Date(stampRaw) : null;
+  const monthsOld = stamp ? (Date.now() - stamp.getTime()) / (1000 * 60 * 60 * 24 * 30.4) : null;
+  const stale = monthsOld !== null && monthsOld >= 12;
   const degree = person.academicDegree ? DEGREE_LABEL[person.academicDegree] : '';
 
   // Tab-lar: yalnız məzmunu olanlar. `home` həmişə var.
@@ -412,6 +424,17 @@ export default async function PersonPage({
                   </div>
                 </section>
               ) : null}
+
+              <p className="prf-stamp">
+                {stamp ? (
+                  <>
+                    {tr('Son yeniləmə', locale)}: {fmtDate(stampRaw as string, locale)}
+                    {stale ? <span className="prf-stale">{tr('bir ildən çoxdur yenilənməyib', locale)}</span> : null}
+                  </>
+                ) : (
+                  tr('Bu profil hələ sahibi tərəfindən yenilənməyib.', locale)
+                )}
+              </p>
 
               <div className="prf-correction">
                 <CorrectionIsland

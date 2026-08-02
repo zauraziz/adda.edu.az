@@ -104,6 +104,18 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
     savedMsg: tr('Yadda saxlanıldı.', locale),
     saveFailed: tr('Saxlanmadı.', locale),
     viewPublic: tr('İctimai səhifəmə bax', locale),
+    lastUpdated: tr('Son yeniləmə', locale),
+    neverUpdated: tr('Hələ yenilənməyib', locale),
+    photoPick: tr('Şəkil seç', locale),
+    photoBusy: tr('Yüklənir…', locale),
+    photoRemove: tr('Şəkli sil', locale),
+    photoHint: tr('JPEG, PNG və ya WebP. Ən çox 4 MB. Kvadrata yaxın portret yaxşı görünür.', locale),
+    photoFailed: tr('Şəkil yüklənmədi.', locale),
+    photoErr_too_large: tr('Fayl çox böyükdür (ən çox 4 MB).', locale),
+    photoErr_bad_type: tr('Yalnız JPEG, PNG və WebP qəbul olunur.', locale),
+    photoErr_no_file: tr('Fayl seçilməyib.', locale),
+    photoErr_rate_limited: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
+    photoErr_upload_failed: tr('Şəkil serverə yüklənmədi.', locale),
   };
 
   const gateLabels: Record<string, string> = {

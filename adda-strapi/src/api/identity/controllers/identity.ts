@@ -1,3 +1,6 @@
+import { writeFileSync, unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 /**
  * F2.6e — Kimlik nəzarətçisi (controller).
  *
@@ -33,6 +36,7 @@ interface StrapiLike {
     update(args: Row): Promise<Row>;
     findMany(args: Row): Promise<Row[]>;
   };
+  plugin(name: string): { service(name: string): { upload(args: Row): Promise<Row | Row[]> } };
   log: { info(m: string): void; warn(m: string): void; error(m: string): void };
 }
 
@@ -110,7 +114,13 @@ async function findOwnPerson(strapi: StrapiLike, rawEmail: string): Promise<Row 
   const rows = await strapi.documents('api::person.person').findMany({
     locale: 'az',
     filters: { $or: [{ email: { $eqi: email } }, { altEmail: { $eqi: email } }] },
-    fields: ['documentId', 'slug', 'name', 'displayName', 'email', 'altEmail'],
+    // Audit izi üçün KÖHNƏ dəyərlər lazımdır — yazmadan əvvəl oxunmalıdır.
+    fields: [
+      'documentId', 'slug', 'name', 'displayName', 'email', 'altEmail',
+      'position', 'phone', 'office', 'building', 'academicTitle', 'academicDegree',
+      'bio', 'teaching', 'responsibilities', 'other', 'profileUpdatedAt',
+    ],
+    populate: ['languages', 'researchAreas', 'publications', 'experience', 'education', 'scholar'],
     limit: 2,
   });
 
@@ -141,6 +151,7 @@ function publicShape(p: Row): Row {
     experience: p.experience ?? [],
     education: p.education ?? [],
     scholar: p.scholar ?? null,
+    profileUpdatedAt: p.profileUpdatedAt ?? null,
   };
 }
 
@@ -158,6 +169,93 @@ function timingSafeEqualStr(a: string, b: string): boolean {
     diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
   }
   return diff === 0;
+}
+
+/**
+ * Şəkil formatı — MAGIC BAYTLARDAN oxunur, `Content-Type` başlığından YOX.
+ *
+ * Başlıq müştəri tərəfindən yazılır və istənilən dəyər ola bilər. `.php`
+ * faylını `image/jpeg` kimi göndərmək bir sətirlik işdir. Faylın ilk baytları
+ * isə saxtalaşdırılsa fayl artıq işləməz — ona görə yeganə etibarlı yoxlama
+ * budur.
+ *
+ * SVG QƏSDƏN YOXDUR: SVG icra oluna bilən `<script>` saxlaya bilər və eyni
+ * mənbədən verildiyi üçün XSS-ə çevrilir.
+ */
+function sniffImage(buf: Buffer): { mime: string; ext: string } | null {
+  if (buf.length < 12) return null;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
+    return { mime: 'image/jpeg', ext: 'jpg' };
+  }
+  if (
+    buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47 &&
+    buf[4] === 0x0d && buf[5] === 0x0a && buf[6] === 0x1a && buf[7] === 0x0a
+  ) {
+    return { mime: 'image/png', ext: 'png' };
+  }
+  if (
+    buf.toString('ascii', 0, 4) === 'RIFF' &&
+    buf.toString('ascii', 8, 12) === 'WEBP'
+  ) {
+    return { mime: 'image/webp', ext: 'webp' };
+  }
+  return null;
+}
+
+const MAX_PHOTO_BYTES = 4 * 1024 * 1024;
+
+/**
+ * Dəyişikliyin izi.
+ *
+ * NİYƏ `previous` SAXLANILIR, `next` YOX: yeni dəyər onsuz da `person`-dadır.
+ * Köhnəni saxlamaqla geri qaytarmaq mümkün olur — audit izinin əsas faydası
+ * "kim nə etdi" deyil, "necə geri qaytarım"dır.
+ */
+/**
+ * Müqayisə üçün normallaşdırma.
+ *
+ * `null`, `undefined` və `''` istifadəçi üçün eyni şeydir — boş sahə. Onları
+ * fərqli saysaq, boş sahəni boş qoyub saxlamaq "dəyişiklik" kimi yazılardı.
+ * Komponent massivlərində Strapi `id` sahəsi əlavə edir; müqayisədən çıxarılır.
+ */
+function normalizeForDiff(v: unknown): unknown {
+  if (v === null || v === undefined || v === '') return null;
+  if (Array.isArray(v)) return v.map((x) => normalizeForDiff(x));
+  if (typeof v === 'object') {
+    const out: Row = {};
+    for (const [k, val] of Object.entries(v as Row)) {
+      if (k === 'id' || k === '__component') continue;
+      out[k] = normalizeForDiff(val);
+    }
+    return out;
+  }
+  return v;
+}
+
+async function recordRevision(
+  strapi: StrapiLike,
+  person: Row,
+  actorEmail: string,
+  changed: string[],
+  previous: Row,
+  ip: string,
+) {
+  try {
+    await strapi.documents('api::person.profile-revision').create({
+      data: {
+        personSlug: String(person.slug ?? ''),
+        actorEmail,
+        changedFields: changed.join(','),
+        previous,
+        clientIp: ip.slice(0, 64),
+        person: String(person.documentId),
+      },
+    });
+  } catch (err) {
+    // Audit yazılmasa da profil yenilənməsi DAYANMAMALIDIR — istifadəçi üçün
+    // əsas əməliyyat odur. Sadəcə jurnala düşür.
+    strapi.log.error('[identity] audit yazila bilmedi: ' + (err as Error).message);
+  }
 }
 
 export default ({ strapi }: { strapi: StrapiLike }) => ({
@@ -429,6 +527,27 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
+    // HƏQİQƏTƏN dəyişən sahələr. Redaktor bütün formanı göndərir, ona görə
+    // müqayisə etmədən "hamısı dəyişdi" yazsaq audit izi mənasız olardı.
+    const changed: string[] = [];
+    const previous: Row = {};
+    for (const [k, v] of Object.entries(data)) {
+      const before = person[k] ?? null;
+      const same = JSON.stringify(normalizeForDiff(before)) === JSON.stringify(normalizeForDiff(v));
+      if (same) continue;
+      changed.push(k);
+      previous[k] = before;
+    }
+
+    if (!changed.length) {
+      // Dəyişiklik yoxdursa yazma. Boş revizyonlar tarixçəni doldurur və
+      // `profileUpdatedAt` damğasını yalançı şəkildə təzələyir.
+      ctx.body = { ok: true, changed: 0 };
+      return;
+    }
+
+    data.profileUpdatedAt = new Date().toISOString();
+
     try {
       await strapi.documents('api::person.person').update({
         documentId: String(person.documentId),
@@ -442,9 +561,124 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
-    strapi.log.info('[identity] profil yenilendi: ' + String(person.slug));
+    await recordRevision(strapi, person, identity.email, changed, previous, headerOf(ctx, 'x-adda-client-ip'));
+    strapi.log.info(`[identity] profil yenilendi: ${String(person.slug)} (${changed.join(',')})`);
     void svc.touch(identity.id);
     ctx.body = { ok: true };
+  },
+
+/**
+   * POST /api/identity/profile/photo — öz şəklini yüklə.
+   *
+   * Fayl base64 kimi JSON gövdəsində gəlir. Multipart əvəzinə bu seçildi:
+   * Next.js route handler-i faylı onsuz da yaddaşa oxuyur (validasiya üçün
+   * magic baytlar lazımdır), ona görə yenidən multipart qurmaq əlavə addımdır.
+   * 4 MB limit base64-də ~5.5 MB gövdə deməkdir — qəbul ediləndir.
+   */
+  async uploadPhoto(ctx: Ctx) {
+    const svc = strapi.service(SERVICE_UID);
+    const identity = await svc.resolveSession(headerOf(ctx, 'x-adda-identity'));
+    if (!identity) {
+      ctx.status = 401;
+      ctx.body = { ok: false, error: 'identity_required' };
+      return;
+    }
+
+    const person = await findOwnPerson(strapi, identity.email);
+    if (!person) {
+      ctx.status = 403;
+      ctx.body = { ok: false, error: 'not_staff' };
+      return;
+    }
+
+    const body = bodyOf(ctx);
+
+    // Şəkli silmək də bu endpointdən keçir — ayrıca marşrut açmağa dəyməz.
+    if (body.remove === true) {
+      try {
+        await strapi.documents('api::person.person').update({
+          documentId: String(person.documentId),
+          locale: 'az',
+          data: { photo: null, profileUpdatedAt: new Date().toISOString() },
+        });
+      } catch (err) {
+        strapi.log.error('[identity] foto silinmedi: ' + (err as Error).message);
+        ctx.status = 500;
+        ctx.body = { ok: false, error: 'write_failed' };
+        return;
+      }
+      await recordRevision(strapi, person, identity.email, ['photo'], { photo: 'silindi' }, headerOf(ctx, 'x-adda-client-ip'));
+      ctx.body = { ok: true, url: null };
+      return;
+    }
+
+    const b64 = typeof body.data === 'string' ? body.data.replace(/^data:[^;]+;base64,/, '') : '';
+    if (!b64) {
+      ctx.status = 400;
+      ctx.body = { ok: false, error: 'no_file' };
+      return;
+    }
+
+    let buf: Buffer;
+    try {
+      buf = Buffer.from(b64, 'base64');
+    } catch {
+      ctx.status = 400;
+      ctx.body = { ok: false, error: 'bad_encoding' };
+      return;
+    }
+    if (!buf.length || buf.length > MAX_PHOTO_BYTES) {
+      ctx.status = 400;
+      ctx.body = { ok: false, error: 'too_large' };
+      return;
+    }
+
+    const kind = sniffImage(buf);
+    if (!kind) {
+      ctx.status = 400;
+      ctx.body = { ok: false, error: 'bad_type' };
+      return;
+    }
+
+    // Ad İSTİFADƏÇİDƏN GƏLMİR: slug + vaxt damğası. Yüklənən fayl adı yol
+    // keçidi (`../`) və ya icra olunan uzantı daşıya bilər.
+    const name = `${String(person.slug)}-${Date.now()}.${kind.ext}`;
+    const tmp = join(tmpdir(), name);
+
+    let uploaded: Row | null = null;
+    try {
+      writeFileSync(tmp, buf);
+      const res = await strapi.plugin('upload').service('upload').upload({
+        data: { refId: person.documentId, ref: 'api::person.person', field: 'photo' },
+        files: { filepath: tmp, originalFileName: name, mimetype: kind.mime, size: buf.length },
+      });
+      uploaded = Array.isArray(res) ? res[0] : res;
+    } catch (err) {
+      strapi.log.error('[identity] foto yuklenmedi: ' + (err as Error).message);
+      ctx.status = 502;
+      ctx.body = { ok: false, error: 'upload_failed' };
+      return;
+    } finally {
+      try { unlinkSync(tmp); } catch { /* temizlik -- xetasi emeliyyati dayandirmir */ }
+    }
+
+    try {
+      await strapi.documents('api::person.person').update({
+        documentId: String(person.documentId),
+        locale: 'az',
+        data: { photo: uploaded?.id, profileUpdatedAt: new Date().toISOString() },
+      });
+    } catch (err) {
+      strapi.log.error('[identity] foto baglanmadi: ' + (err as Error).message);
+      ctx.status = 500;
+      ctx.body = { ok: false, error: 'write_failed' };
+      return;
+    }
+
+    await recordRevision(strapi, person, identity.email, ['photo'], { photo: 'evezlendi' }, headerOf(ctx, 'x-adda-client-ip'));
+    strapi.log.info('[identity] foto yenilendi: ' + String(person.slug));
+    void svc.touch(identity.id);
+    ctx.body = { ok: true, url: uploaded?.url ?? null };
   },
 
   /**

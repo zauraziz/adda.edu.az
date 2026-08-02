@@ -408,3 +408,24 @@
   .dir-search input { transition: none; }
   .dir-card:hover { transform: none; }
 }
+
+/* ── Son yeniləmə damğası (K26-15) ──────────────────── */
+.prf-stamp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--gray-200);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+.prf-stale {
+  font-weight: 700;
+  color: var(--navy-700);
+  background: var(--gold-100);
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+}

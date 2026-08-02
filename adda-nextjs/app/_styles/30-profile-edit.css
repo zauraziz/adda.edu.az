@@ -191,3 +191,59 @@
   .pe-item--wide { grid-template-columns: 1fr; }
   .pe-item--wide .pe-del { justify-self: end; }
 }
+
+/* ── Foto yükləmə (K26-15) ──────────────────────────── */
+.pe-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.15rem;
+  align-items: start;
+  padding: 0 0 1.15rem;
+  margin: 0 0 1.25rem;
+  border-bottom: 2px solid var(--gold-500);
+}
+.pe-photo {
+  width: 96px;
+  height: 118px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--navy-100);
+  flex: none;
+}
+.pe-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pe-photo-none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: var(--navy-600);
+}
+.pe-head-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.pe-photo-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+/* Fayl seçicisi gizlədilir — `label` düyməsi onu əvəz edir, çünki brauzerin
+   öz `input[type=file]` görünüşü stil qəbul etmir. */
+.pe-photo-btn { position: relative; overflow: hidden; cursor: pointer; }
+.pe-photo-btn input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.pe-photo-btn:focus-within { outline: 3px solid var(--gold-500); outline-offset: 2px; }
+
+.pe-stamp {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+.pe-stamp--never { color: var(--gold-600); font-weight: 600; }
+
+@media (max-width: 560px) {
+  .pe-head { grid-template-columns: 1fr; }
+}

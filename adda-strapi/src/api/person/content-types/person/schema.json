@@ -33,6 +33,9 @@
         }
       }
     },
+    "profileUpdatedAt": {
+      "type": "datetime"
+    },
     "slug": {
       "type": "uid",
       "targetField": "name",

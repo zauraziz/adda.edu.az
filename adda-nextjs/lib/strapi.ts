@@ -693,6 +693,8 @@ export interface PersonFull extends Person {
   academicDegree: AcademicDegree | null;
   phone: string | null;
   altEmail: string | null;
+  /** Əməkdaşın öz redaktəsinin vaxtı. Admin dəyişikliyi bunu təzələmir. */
+  profileUpdatedAt: string | null;
   office: string | null;
   building: string | null;
   bio: string | null;

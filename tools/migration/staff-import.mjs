@@ -143,6 +143,125 @@ if (args.contacts) {
 // ── --verify: prod-da HƏQİQƏTƏN nə görünür ────────────────────────────────
 // Yazmadan əvvəl/sonra vəziyyəti oxuyur. `published` sayı 0-dırsa, qeydlər
 // draft qalıb və saytda görünməyəcək.
+// ── --stale: kohnelmis profiller ──────────────────────────────────────────
+// Ozunexidmet yalniz yarim helldir: adami geri qaytaran mexanizm olmasa
+// melumat yene kohnelir. Bu hesabat kimin xatirladilmasi lazim oldugunu verir.
+// `--months N` ile hedd deyisir (default 12).
+if (args.stale) {
+  const months = Number(args.months) > 0 ? Number(args.months) : 12;
+  const cutoff = Date.now() - months * 30.4 * 24 * 3600 * 1000;
+
+  const rows = [];
+  let page = 1;
+  for (;;) {
+    const res = await api(
+      'GET',
+      `/api/people?locale=${LOCALE}&status=draft&pagination[page]=${page}&pagination[pageSize]=100` +
+        '&fields[0]=slug&fields[1]=name&fields[2]=displayName&fields[3]=email&fields[4]=profileUpdatedAt',
+    );
+    if (!res.ok) {
+      console.error(`\n  XETA: /api/people HTTP ${res.status}\n`);
+      process.exit(1);
+    }
+    for (const d of res.data?.data ?? []) rows.push(d);
+    const pg = res.data?.meta?.pagination;
+    if (!pg || page >= pg.pageCount) break;
+    page++;
+  }
+
+  const never = rows.filter((r) => !r.profileUpdatedAt);
+  const old = rows
+    .filter((r) => r.profileUpdatedAt && new Date(r.profileUpdatedAt).getTime() < cutoff)
+    .sort((a, b) => new Date(a.profileUpdatedAt) - new Date(b.profileUpdatedAt));
+  const fresh = rows.length - never.length - old.length;
+
+  console.log(`\n=== PROFIL AKTUALLIGI (hedd: ${months} ay) ===`);
+  console.log(`  cemi      : ${rows.length}`);
+  console.log(`  teze      : ${fresh}`);
+  console.log(`  kohnelmis : ${old.length}`);
+  console.log(`  hec vaxt  : ${never.length}`);
+
+  if (old.length) {
+    console.log(`\n  KOHNELMIS (${old.length}):`);
+    for (const r of old) {
+      console.log(`    ${String(r.profileUpdatedAt).slice(0, 10)}  ${(r.email || '-').padEnd(34)} ${r.displayName || r.name}`);
+    }
+  }
+  if (never.length) {
+    console.log(`\n  HEC VAXT YENILENMEYIB (${never.length}):`);
+    for (const r of never.slice(0, 40)) console.log(`    ${(r.email || '-').padEnd(34)} ${r.displayName || r.name}`);
+    if (never.length > 40) console.log(`    ... +${never.length - 40}`);
+  }
+
+  // Xatirlatma kampaniyasi ucun hazir siyahi (bend 17).
+  const targets = [...never, ...old].filter((r) => r.email).map((r) => r.email);
+  if (targets.length) {
+    console.log(`\n  XATIRLATMA UCUN E-POCT (${targets.length}):`);
+    console.log('  ' + targets.join('; '));
+  }
+  console.log('');
+  process.exit(0);
+}
+
+// ── --orphans / --delete-orphan ───────────────────────────────────────────
+// Strapi-də olub mənbədə olmayan `person` qeydləri. Adətən admin panelində
+// əl ilə yaradılmış sınaq qeydləridir (uid sahəsi default `person` qalır).
+//
+// SİLMƏDƏN ƏVVƏL ƏLAQƏLƏR YOXLANILIR: qeydə bağlı məqalə/elan/tədbir varsa
+// silmək həmin əlaqələri qırar. O halda skript İMTİNA edir — əvvəlcə əlaqələr
+// düzgün qeydə keçirilməlidir.
+if (args.orphans || args['delete-orphan']) {
+  const expected = new Set(staff.map((p) => p.slug));
+  const found = [];
+  let page = 1;
+  for (;;) {
+    const res = await api(
+      'GET',
+      `/api/people?locale=${LOCALE}&status=draft&fields[0]=slug&fields[1]=name` +
+        `&populate[articles][count]=true&populate[announcements][count]=true&populate[events][count]=true` +
+        `&pagination[page]=${page}&pagination[pageSize]=100`,
+    );
+    const list = res.ok && Array.isArray(res.data?.data) ? res.data.data : [];
+    for (const d of list) if (!expected.has(d.slug)) found.push(d);
+    const pg = res.data?.meta?.pagination;
+    if (!pg || page >= pg.pageCount) break;
+    page++;
+  }
+
+  const countOf = (v) => (v && typeof v === 'object' && 'count' in v ? v.count : Array.isArray(v) ? v.length : 0);
+
+  if (!args['delete-orphan']) {
+    console.log(`  menbede olmayan person qeydi: ${found.length}\n`);
+    for (const d of found) {
+      const rel = countOf(d.articles) + countOf(d.announcements) + countOf(d.events);
+      console.log(`    slug: ${d.slug}`);
+      console.log(`    ad  : ${d.name}`);
+      console.log(`    bagli qeyd: ${rel}${rel ? '  <-- silmek elaqeleri qirar' : '  (silmek tehlukesizdir)'}`);
+      console.log(`    silmek ucun: node staff-import.mjs --delete-orphan=${d.slug}\n`);
+    }
+    process.exit(0);
+  }
+
+  const target = String(args['delete-orphan']);
+  const hit = found.find((d) => d.slug === target);
+  if (!hit) {
+    console.error(`  XETA: "${target}" menbede olmayan qeydler arasinda tapilmadi.`);
+    console.error('  Menbede MOVCUD olan qeyd silinmir -- bu qesden belededir.\n');
+    process.exit(1);
+  }
+  const rel = countOf(hit.articles) + countOf(hit.announcements) + countOf(hit.events);
+  if (rel > 0) {
+    console.error(`  IMTINA: "${target}" qeydine ${rel} sened baglidir.`);
+    console.error('  Once hemin elaqeleri dogru qeyde kecir, sonra sil.\n');
+    process.exit(1);
+  }
+  // DIQQET: `?locale=` VACIBDIR. Locale-siz DELETE ingilis versiyasi olmayan
+  // sened ucun 404 verir (Strapi default locale `en`).
+  const del = await api('DELETE', `/api/people/${hit.documentId}?locale=${LOCALE}`);
+  console.log(del.ok ? `  Silindi: ${target} (${hit.name})\n` : `  XETA: HTTP ${del.status}\n`);
+  process.exit(del.ok ? 0 : 1);
+}
+
 if (args.verify || args.audit) {
   // DİQQƏT — Strapi 5-də `draft` sayı SƏNƏD SAYIDIR, dərc olunmamışların sayı
   // deyil: dərc olunmuş sənədin də draft versiyası qalır. Ona görə mənalı

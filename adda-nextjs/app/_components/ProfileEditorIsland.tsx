@@ -19,6 +19,8 @@ interface Row { [k: string]: unknown }
 interface Profile {
   slug: string;
   name: string;
+  photo?: string | null;
+  profileUpdatedAt?: string | null;
   displayName: string | null;
   email: string | null;
   position: string | null;
@@ -50,6 +52,8 @@ interface Props {
   langs: { value: string; label: string }[];
 }
 
+const MAX_PHOTO_BYTES = 4 * 1024 * 1024;
+
 const SCHOLAR_FIELDS = ['spin', 'orcid', 'researcherId', 'scopusAuthorId', 'googleScholar'] as const;
 const SCHOLAR_LABEL: Record<string, string> = {
   spin: 'SPIN-kod',
@@ -64,6 +68,8 @@ export default function ProfileEditorIsland({ locale, labels, gateLabels, redire
   const [phase, setPhase] = useState<Phase>('loading');
   const [p, setP] = useState<Profile | null>(null);
   const [err, setErr] = useState('');
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoErr, setPhotoErr] = useState('');
 
   const L = (k: string): string => labels[k] ?? k;
 
@@ -154,12 +160,49 @@ export default function ProfileEditorIsland({ locale, labels, gateLabels, redire
           },
         }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const data = (await res.json()) as { ok?: boolean; error?: string; updatedAt?: string };
       if (!res.ok || !data.ok) { setErr(data.error ?? ''); setPhase('error'); return; }
+      if (data.updatedAt) setP((cur) => (cur ? { ...cur, profileUpdatedAt: data.updatedAt } : cur));
       setPhase('saved');
     } catch {
       setPhase('error');
     }
+  }
+
+  async function sendPhoto(payload: Record<string, unknown>) {
+    setPhotoBusy(true);
+    setPhotoErr('');
+    try {
+      const res = await fetch('/api/profile/photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json()) as { ok?: boolean; url?: string | null; error?: string };
+      if (!res.ok || !data.ok) {
+        setPhotoErr(L('photoErr_' + (data.error ?? 'unknown')) || L('photoFailed'));
+        return;
+      }
+      setP((cur) => (cur ? { ...cur, photo: data.url ?? null } : cur));
+    } catch {
+      setPhotoErr(L('photoFailed'));
+    } finally {
+      setPhotoBusy(false);
+    }
+  }
+
+  function pickPhoto(file: File | null | undefined) {
+    if (!file) return;
+    // Böyük faylı base64-ə çevirmədən əvvəl kəs — 10 MB-lıq şəkli oxuyub
+    // sonra rədd etmək telefonda gözlə görünən donma yaradır.
+    if (file.size > MAX_PHOTO_BYTES) {
+      setPhotoErr(L('photoErr_too_large'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => void sendPhoto({ data: String(reader.result ?? '') });
+    reader.onerror = () => setPhotoErr(L('photoFailed'));
+    reader.readAsDataURL(file);
   }
 
   /** Təkrarlanan siyahılar üçün ümumi sətir idarəsi. */
@@ -187,9 +230,52 @@ export default function ProfileEditorIsland({ locale, labels, gateLabels, redire
 
   return (
     <div className="pe">
-      <div className="pe-who">
-        <span className="pe-who-name">{p.displayName || p.name}</span>
-        <span className="pe-who-mail">{p.email}</span>
+      <div className="pe-head">
+        <div className="pe-photo">
+          {p.photo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.photo} alt="" />
+          ) : (
+            <span className="pe-photo-none">{(p.displayName || p.name).trim()[0]}</span>
+          )}
+        </div>
+        <div className="pe-head-text">
+          <span className="pe-who-name">{p.displayName || p.name}</span>
+          <span className="pe-who-mail">{p.email}</span>
+          {p.profileUpdatedAt ? (
+            <span className="pe-stamp">
+              {L('lastUpdated')}: {new Date(p.profileUpdatedAt).toLocaleDateString(locale)}
+            </span>
+          ) : (
+            <span className="pe-stamp pe-stamp--never">{L('neverUpdated')}</span>
+          )}
+          <div className="pe-photo-actions">
+            <label className="pe-add pe-photo-btn">
+              {photoBusy ? L('photoBusy') : L('photoPick')}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                disabled={photoBusy}
+                onChange={(e) => {
+                  pickPhoto(e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+            {p.photo ? (
+              <button
+                type="button"
+                className="pe-add"
+                disabled={photoBusy}
+                onClick={() => void sendPhoto({ remove: true })}
+              >
+                {L('photoRemove')}
+              </button>
+            ) : null}
+          </div>
+          <p className="pe-hint">{L('photoHint')}</p>
+          {photoErr ? <p className="pe-err">{photoErr}</p> : null}
+        </div>
       </div>
 
       {/* Redaktə oluna BİLMƏYƏN sahələr — səbəbi ilə. Susmaq istifadəçini

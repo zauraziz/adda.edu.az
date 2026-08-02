@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "profile_revisions",
+  "info": {
+    "singularName": "profile-revision",
+    "pluralName": "profile-revisions",
+    "displayName": "Profil düzəlişi",
+    "description": "Əməkdaşın öz profilinə etdiyi dəyişikliyin izi. `person` API folder-indədir, amma öz routes faylı YOXDUR — REST endpoint-i yaranmır, yəni bu tarixçə ictimai oxunmur."
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": { "i18n": { "localized": false } },
+  "attributes": {
+    "personSlug": { "type": "string", "required": true },
+    "actorEmail": { "type": "string", "required": true },
+    "changedFields": { "type": "string" },
+    "previous": { "type": "json" },
+    "clientIp": { "type": "string" },
+    "person": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::person.person"
+    }
+  }
+}
