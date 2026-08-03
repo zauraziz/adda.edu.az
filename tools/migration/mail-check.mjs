@@ -47,8 +47,14 @@ async function main() {
   if (to) console.log(`  test mektubu: ${to}`);
   console.log('');
 
+  // TƏKRAR CƏHD YOXDUR. E-poçt göndərmək idempotent DEYİL: `retries: 3`
+  // uğursuz görünən, amma əslində işləyən bağlantıda üç məktub göndərərdi.
+  // Timeout uzundur, çünki SMTP əl sıxma + Render-in soyuq başlanğıcı
+  // birlikdə yarım dəqiqəyə qədər çəkə bilər.
   const res = await api('POST', '/api/identity/admin/mail-test', to ? { to } : {}, {
     headers: { 'x-adda-admin-secret': secret },
+    retries: 1,
+    timeoutMs: to ? 90000 : 30000,
   });
 
   const cfg = res.data?.config;
@@ -93,20 +99,39 @@ async function main() {
     console.error('    SITE_URL    https://demo.adda.edu.az\n');
     return 1;
   }
+  // HTTP 0 = server-e catmaq mumkun olmadi (cavab GELMEDI).
+  // Bunu server-in qaytardigi xetadan ayirmaq vacibdir: birincisi sebekə
+  // seviyyesindedir, ikincisi SMTP seviyyesinde.
+  if (res.status === 0) {
+    console.error('  NETICE: servere catmaq mumkun olmadi -- cavab gelmedi.');
+    console.error(`  SEBEB : ${res.error || 'namelum'}\n`);
+    console.error('  Ehtimallar:');
+    console.error('    timeout            -> SMTP bagintisi asilib. Ən çox rast gelinen:');
+    console.error('                          port 465 ucun SMTP_SECURE=true lazimdir,');
+    console.error('                          port 587 ucun ise false.');
+    console.error('    ECONNRESET / EOF   -> Render sorgunu kesib (SMTP cox uzun cekib)');
+    console.error('    fetch failed       -> STRAPI_URL sehvdir ve ya xidmet yatib\n');
+    console.error('  Render loglarinda AXTAR: "[identity] mail-test ugursuz"');
+    console.error('  Orada nodemailer-in oz xeta metni var.\n');
+    return 1;
+  }
   if (!res.ok) {
     console.error(`  NETICE: gonderme ugursuz (HTTP ${res.status}).`);
     if (res.data?.message) console.error(`  SEBEB : ${res.data.message}`);
+    if (res.data?.ms) console.error(`  MUDDET: ${res.data.ms} ms`);
+    if (res.error) console.error(`  SEBEB : ${res.error}`);
     console.error('');
     console.error('  Tez-tez rast gelinen sebebler:');
     console.error('    "Invalid login" / 535     -> SMTP_USER ve ya SMTP_PASS sehvdir');
     console.error('    "ECONNREFUSED"            -> host/port sehvdir ve ya blokdur');
+    console.error('    "Connection timeout"      -> SMTP_SECURE / SMTP_PORT uygunsuzlugu');
     console.error('    "self signed certificate" -> SMTP_SECURE deyerini yoxla');
-    console.error('    "Sender address rejected" -> SMTP_FROM domeni tesdiqlenmeyib\n');
+    console.error('    "Sender address rejected" -> SMTP_FROM SMTP_USER ile uygun deyil\n');
     return 1;
   }
 
   if (res.data?.sent) {
-    console.log(`  OK: test mektubu ${to} unvanina gonderildi.`);
+    console.log(`  OK: test mektubu ${to} unvanina gonderildi (${res.data.ms} ms).`);
     console.log('  Gelmediyse spam qovlugunu ve SMTP_FROM domeninin SPF/DKIM qeydlerini yoxla.\n');
   } else {
     console.log('  OK: SMTP konfiqurasiyasi tam gorunur.');

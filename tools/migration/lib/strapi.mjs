@@ -28,12 +28,18 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
  * yazılmır: spread `Authorization`-dan SONRA gəlsə, çağıran onu təsadüfən
  * silə bilərdi.
  */
-export async function api(method, path, body, { retries = 3, headers = {} } = {}) {
+export async function api(method, path, body, { retries = 3, headers = {}, timeoutMs = 60000 } = {}) {
   let lastError = null;
   for (let attempt = 1; attempt <= retries; attempt++) {
+    // TIMEOUT MƏCBURİDİR: Node-un `fetch`-ində default vaxt həddi YOXDUR.
+    // Server tərəf asılsa (məs. SMTP bağlantısı cavab vermir) bu döngə
+    // əbədi gözləyər və istifadəçi heç bir mesaj görməz.
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), timeoutMs);
     try {
       const res = await fetch(STRAPI_URL + path, {
         method,
+        signal: ac.signal,
         headers: {
           'Content-Type': 'application/json',
           ...headers,
@@ -58,8 +64,13 @@ export async function api(method, path, body, { retries = 3, headers = {} } = {}
       }
       return { ok: res.ok, status: res.status, data: json };
     } catch (err) {
-      lastError = String((err && err.message) || err);
+      lastError =
+        err && err.name === 'AbortError'
+          ? `${timeoutMs} ms icinde cavab gelmedi (timeout)`
+          : String((err && err.message) || err);
       if (attempt < retries) await sleep(500 * attempt);
+    } finally {
+      clearTimeout(timer);
     }
   }
   return { ok: false, status: 0, data: null, error: lastError };

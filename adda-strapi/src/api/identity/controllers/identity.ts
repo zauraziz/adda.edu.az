@@ -391,22 +391,32 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
+    const started = Date.now();
     try {
-      await strapi.plugin('email').service('email').send({
-        to,
-        subject: 'ADDA — SMTP yoxlamasi',
-        text: 'Bu, SMTP konfiqurasiyasinin yoxlanmasi ucun gonderilmis test mesajidir.',
-      });
-      strapi.log.info('[identity] mail-test ugurlu');
-      ctx.body = { ok: true, sent: true, config: cfg };
+      // SƏRT VAXT HƏDDİ. nodemailer-in öz timeout-ları varsa da, provayder
+      // dəyişdirilə bilər və hansısa mərhələ hələ də asıla bilər. Bu qat
+      // sorğunun HƏMİŞƏ cavab qaytarmasını təmin edir — asılan HTTP sorğusu
+      // çağıran tərəfə "şəbəkə xətası" kimi görünür və əsl səbəbi gizlədir.
+      await Promise.race([
+        strapi.plugin('email').service('email').send({
+          to,
+          subject: 'ADDA — SMTP yoxlamasi',
+          text: 'Bu, SMTP konfiqurasiyasinin yoxlanmasi ucun gonderilmis test mesajidir.',
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('SMTP 25 saniye icinde cavab vermedi')), 25000),
+        ),
+      ]);
+      strapi.log.info(`[identity] mail-test ugurlu (${Date.now() - started} ms)`);
+      ctx.body = { ok: true, sent: true, ms: Date.now() - started, config: cfg };
     } catch (err) {
       const message = (err as Error).message;
-      strapi.log.error('[identity] mail-test ugursuz: ' + message);
+      strapi.log.error(`[identity] mail-test ugursuz (${Date.now() - started} ms): ` + message);
       ctx.status = 502;
       // XƏTA MƏTNİ AÇIQ QAYTARILIR: bu endpoint onsuz da sirrlə qorunur və
       // "connection refused" ilə "auth failed" arasındakı fərq düzəlişin
       // yeganə açarıdır.
-      ctx.body = { ok: false, error: 'mail_failed', message, config: cfg };
+      ctx.body = { ok: false, error: 'mail_failed', message, ms: Date.now() - started, config: cfg };
     }
   },
 

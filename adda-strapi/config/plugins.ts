@@ -90,6 +90,14 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
           user: env('SMTP_USER', ''),
           pass: env('SMTP_PASS', ''),
         },
+        // TIMEOUT-LAR MƏCBURİDİR. nodemailer-in defaultu praktiki olaraq
+        // sonsuzdur: yanlış host/port verilsə bağlantı ASILIR, HTTP sorğusu
+        // heç vaxt bitmir və çağıran tərəf "şəbəkə xətası" görür — əsl səbəb
+        // isə gizli qalır. Bu dəyərlərlə nasazlıq aydın mesaja çevrilir
+        // ("Connection timeout"), asılmaq əvəzinə.
+        connectionTimeout: env.int('SMTP_CONN_TIMEOUT', 10000),
+        greetingTimeout: env.int('SMTP_GREETING_TIMEOUT', 10000),
+        socketTimeout: env.int('SMTP_SOCKET_TIMEOUT', 20000),
       },
       settings: {
         defaultFrom: env('SMTP_FROM', 'ADDA <no-reply@adda.edu.az>'),
