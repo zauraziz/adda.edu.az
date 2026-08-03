@@ -124,6 +124,124 @@ const MAIL: Record<string, Mail> = {
   },
 };
 
+/**
+ * HTTP API ilə e-poçt göndərilməsi.
+ *
+ * NİYƏ SMTP KİFAYƏT ETMİR: Render pulsuz web xidmətlərində 25/465/587
+ * portlarına çıxış trafikini bloklayır (26 sentyabr 2025-dən). Paketlər
+ * DROP olunur, REJECT yox — ona görə bağlantı `ECONNREFUSED` vermir, sadəcə
+ * ASILIR. Nə qədər SMTP parametri dəyişilsə də nəticə eynidir.
+ *
+ * HTTP API isə adi HTTPS-dir (443) və bloklanmır.
+ *
+ * SMTP KODU SİLİNMİR: ödənişli instansiyaya keçiləndə və ya akademiyanın öz
+ * poçt serverinə bağlananda yenidən lazım olacaq. Sıra: API varsa API,
+ * yoxsa SMTP, o da yoxsa dev rejimi.
+ */
+type MailApi = { name: string; url: string; headers: Record<string, string>; body: (m: OutMail) => unknown };
+
+interface OutMail {
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}
+
+function fromParts(): { email: string; name: string } {
+  const raw = (process.env.SMTP_FROM || 'ADDA <no-reply@adda.edu.az>').trim();
+  const m = raw.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  if (m) return { name: m[1] || 'ADDA', email: m[2].trim() };
+  return { name: 'ADDA', email: raw };
+}
+
+/** Hansı provayder qurulub — açarın mövcudluğuna görə. */
+function pickMailApi(): MailApi | null {
+  const brevo = (process.env.BREVO_API_KEY || '').trim();
+  if (brevo) {
+    return {
+      name: 'brevo',
+      url: 'https://api.brevo.com/v3/smtp/email',
+      headers: { 'api-key': brevo, 'content-type': 'application/json', accept: 'application/json' },
+      body: (m) => {
+        const from = fromParts();
+        return {
+          sender: { email: from.email, name: from.name },
+          to: [{ email: m.to }],
+          subject: m.subject,
+          textContent: m.text,
+          ...(m.html ? { htmlContent: m.html } : {}),
+        };
+      },
+    };
+  }
+  const resend = (process.env.RESEND_API_KEY || '').trim();
+  if (resend) {
+    return {
+      name: 'resend',
+      url: 'https://api.resend.com/emails',
+      headers: { authorization: `Bearer ${resend}`, 'content-type': 'application/json' },
+      body: (m) => {
+        const from = fromParts();
+        return {
+          from: `${from.name} <${from.email}>`,
+          to: [m.to],
+          subject: m.subject,
+          text: m.text,
+          ...(m.html ? { html: m.html } : {}),
+        };
+      },
+    };
+  }
+  return null;
+}
+
+/**
+ * Ümumi göndərmə: HTTP API -> SMTP -> dev rejimi.
+ *
+ * Xəta mətni QAYTARILIR, udulmur — çağıran tərəf istifadəçiyə nə deyəcəyini
+ * bilməlidir və diaqnostika endpointi əsl səbəbi göstərməlidir.
+ */
+async function deliver(m: OutMail): Promise<{ status: 'sent' | 'unconfigured' | 'failed'; via: string; error?: string }> {
+  const apiCfg = pickMailApi();
+
+  if (apiCfg) {
+    // TIMEOUT MƏCBURİDİR: Node `fetch`-in default vaxt həddi yoxdur.
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), 15000);
+    try {
+      const res = await fetch(apiCfg.url, {
+        method: 'POST',
+        signal: ac.signal,
+        headers: apiCfg.headers,
+        body: JSON.stringify(apiCfg.body(m)),
+      });
+      if (res.ok) return { status: 'sent', via: apiCfg.name };
+      const text = await res.text().catch(() => '');
+      return { status: 'failed', via: apiCfg.name, error: `HTTP ${res.status} ${text.slice(0, 300)}` };
+    } catch (err) {
+      const e = err as Error;
+      const msg = e.name === 'AbortError' ? '15 saniye icinde cavab gelmedi' : e.message;
+      return { status: 'failed', via: apiCfg.name, error: msg };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  if (!process.env.SMTP_HOST) return { status: 'unconfigured', via: 'yoxdur' };
+
+  try {
+    await strapi.plugin('email').service('email').send({
+      to: m.to,
+      subject: m.subject,
+      text: m.text,
+      ...(m.html ? { html: m.html } : {}),
+    });
+    return { status: 'sent', via: 'smtp' };
+  } catch (err) {
+    return { status: 'failed', via: 'smtp', error: (err as Error).message };
+  }
+}
+
 function renderHtml(m: Mail, link: string): string {
   return [
     '<div style="margin:0;padding:32px 16px;background:#F0F8FF;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;">',
@@ -215,24 +333,34 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     link: string,
   ): Promise<'sent' | 'unconfigured' | 'failed'> {
     const m = MAIL[locale] || MAIL.az;
-    if (!process.env.SMTP_HOST) {
-      // Dev rejimi: SMTP qurulmayıb. Link YALNIZ burada loglanır ki, lokal test mümkün olsun.
-      strapi.log.warn('[identity] SMTP_HOST yoxdur — magic link loglanir (DEV): ' + link);
+    const r = await deliver({
+      to: email,
+      subject: m.subject,
+      text: m.intro + '\n\n' + link + '\n\n' + m.note + '\n' + m.ignore,
+      html: renderHtml(m, link),
+    });
+
+    if (r.status === 'unconfigured') {
+      // Dev rejimi: nə API açarı, nə SMTP var. Link YALNIZ burada loglanır
+      // ki, lokal test mümkün olsun.
+      strapi.log.warn('[identity] poct qurulmayib — magic link loglanir (DEV): ' + link);
       return 'unconfigured';
     }
-    try {
-      await strapi.plugin('email').service('email').send({
-        to: email,
-        subject: m.subject,
-        text: m.intro + '\n\n' + link + '\n\n' + m.note + '\n' + m.ignore,
-        html: renderHtml(m, link),
-      });
-      strapi.log.info('[identity] magic link gonderildi: ' + redact(email));
-      return 'sent';
-    } catch (err) {
-      strapi.log.error('[identity] email gonderilmedi: ' + (err as Error).message);
+    if (r.status === 'failed') {
+      strapi.log.error(`[identity] email gonderilmedi (${r.via}): ${r.error}`);
       return 'failed';
     }
+    strapi.log.info(`[identity] magic link gonderildi (${r.via}): ` + redact(email));
+    return 'sent';
+  },
+
+  /** Diaqnostika endpointi üçün — eyni göndərmə yolu. */
+  async deliverTest(to: string): Promise<{ status: string; via: string; error?: string }> {
+    return deliver({
+      to,
+      subject: 'ADDA — poct yoxlamasi',
+      text: 'Bu, poct konfiqurasiyasinin yoxlanmasi ucun gonderilmis test mesajidir.',
+    });
   },
 
   /**

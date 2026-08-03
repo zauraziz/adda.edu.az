@@ -89,14 +89,14 @@ async function main() {
     return 1;
   }
   if (res.data?.error === 'mail_unconfigured') {
-    console.error('  NETICE: SMTP_HOST teyin edilmeyib -- magic link HEC VAXT gonderilmir.');
-    console.error('  Render -> Environment bolmesinde bunlari elave et:\n');
-    console.error('    SMTP_HOST   mes. smtp-relay.brevo.com');
-    console.error('    SMTP_PORT   587');
-    console.error('    SMTP_USER   <istifadeci>');
-    console.error('    SMTP_PASS   <sifre>');
-    console.error('    SMTP_FROM   ADDA <no-reply@adda.edu.az>');
-    console.error('    SITE_URL    https://demo.adda.edu.az\n');
+    console.error('  NETICE: poct xidmeti qurulmayib -- magic link HEC VAXT gonderilmir.\n');
+    console.error('  RENDER PULSUZ TARIFDE SMTP ISLEMIR: 25/465/587 portlari bloklanib');
+    console.error('  (26 sentyabr 2025-den). Ona gore HTTP API isledin -- adi HTTPS-dir,');
+    console.error('  bloklanmir. Render -> Environment:\n');
+    console.error('    BREVO_API_KEY   <Brevo -> SMTP & API -> API Keys>');
+    console.error('    SMTP_FROM       ADDA <no-reply@adda.edu.az>');
+    console.error('    SITE_URL        https://demo.adda.edu.az\n');
+    console.error('  Alternativ: RESEND_API_KEY (Resend). Ikisinden biri kifayetdir.\n');
     return 1;
   }
   // HTTP 0 = server-e catmaq mumkun olmadi (cavab GELMEDI).
@@ -121,17 +121,27 @@ async function main() {
     if (res.data?.ms) console.error(`  MUDDET: ${res.data.ms} ms`);
     if (res.error) console.error(`  SEBEB : ${res.error}`);
     console.error('');
+    const via = res.data?.via || '';
+    if (via === 'smtp') {
+      console.error('  DIQQET: hazirda SMTP isledilir.');
+      console.error('  RENDER PULSUZ TARIFDE SMTP BLOKLANIB (25/465/587, 26.09.2025-den).');
+      console.error('  Baglanti "asilir" -- ECONNREFUSED vermir, cunki paketler DROP olunur.');
+      console.error('  Nece parametr deyisilse de netice eyni olacaq.\n');
+      console.error('  HELL: HTTP API isledin (adi HTTPS, bloklanmir):');
+      console.error('    Render -> Environment -> BREVO_API_KEY = <Brevo API acari>');
+      console.error('  Elave edildikden sonra kod OZU API-ye kecir, SMTP deyisenlerine');
+      console.error('  toxunmaq lazim deyil.\n');
+      return 1;
+    }
     console.error('  Tez-tez rast gelinen sebebler:');
-    console.error('    "Invalid login" / 535     -> SMTP_USER ve ya SMTP_PASS sehvdir');
-    console.error('    "ECONNREFUSED"            -> host/port sehvdir ve ya blokdur');
-    console.error('    "Connection timeout"      -> SMTP_SECURE / SMTP_PORT uygunsuzlugu');
-    console.error('    "self signed certificate" -> SMTP_SECURE deyerini yoxla');
-    console.error('    "Sender address rejected" -> SMTP_FROM SMTP_USER ile uygun deyil\n');
+    console.error('    HTTP 401 / unauthorized   -> API acari sehvdir ve ya legv olunub');
+    console.error('    "sender ... not valid"    -> SMTP_FROM domeni provayderde tesdiqlenmeyib');
+    console.error('    HTTP 400                  -> gonderen unvan formati sehvdir\n');
     return 1;
   }
 
   if (res.data?.sent) {
-    console.log(`  OK: test mektubu ${to} unvanina gonderildi (${res.data.ms} ms).`);
+    console.log(`  OK: test mektubu ${to} unvanina gonderildi (${res.data.via}, ${res.data.ms} ms).`);
     console.log('  Gelmediyse spam qovlugunu ve SMTP_FROM domeninin SPF/DKIM qeydlerini yoxla.\n');
   } else {
     console.log('  OK: SMTP konfiqurasiyasi tam gorunur.');

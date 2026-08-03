@@ -22,6 +22,7 @@ interface Identity { id: number; email: string; name: string; }
 interface IdentityService {
   requestMagic(i: { email: string; locale?: unknown; name?: unknown; redirect?: unknown }): Promise<'sent' | 'unconfigured' | 'failed'>;
   sendMagicMail(email: string, locale: string, link: string): Promise<'sent' | 'unconfigured' | 'failed'>;
+  deliverTest(to: string): Promise<{ status: string; via: string; error?: string }>;
   verifyMagic(t: unknown): Promise<{ ok: false } | { ok: true; email: string; name: string; session: string; expiresAt: string }>;
   resolveSession(t: unknown): Promise<Identity | null>;
   revokeSession(t: unknown): Promise<void>;
@@ -367,7 +368,11 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
+    const hasApi = Boolean(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY);
     const cfg = {
+      // HTTP API üstündür: Render pulsuz tarifdə SMTP portları bloklanıb.
+      BREVO_API_KEY: Boolean(process.env.BREVO_API_KEY),
+      RESEND_API_KEY: Boolean(process.env.RESEND_API_KEY),
       SMTP_HOST: Boolean(process.env.SMTP_HOST),
       SMTP_PORT: process.env.SMTP_PORT || '587 (default)',
       SMTP_SECURE: process.env.SMTP_SECURE || 'false (default)',
@@ -375,9 +380,10 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       SMTP_PASS: Boolean(process.env.SMTP_PASS),
       SMTP_FROM: process.env.SMTP_FROM || 'ADDA <no-reply@adda.edu.az> (default)',
       SITE_URL: process.env.SITE_URL || 'https://demo.adda.edu.az (default)',
+      istifade_olunan: hasApi ? (process.env.BREVO_API_KEY ? 'brevo (HTTP API)' : 'resend (HTTP API)') : process.env.SMTP_HOST ? 'smtp' : 'yoxdur',
     };
 
-    if (!cfg.SMTP_HOST) {
+    if (!hasApi && !cfg.SMTP_HOST) {
       ctx.status = 503;
       ctx.body = { ok: false, error: 'mail_unconfigured', config: cfg };
       return;
@@ -392,32 +398,30 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     }
 
     const started = Date.now();
-    try {
-      // SƏRT VAXT HƏDDİ. nodemailer-in öz timeout-ları varsa da, provayder
-      // dəyişdirilə bilər və hansısa mərhələ hələ də asıla bilər. Bu qat
-      // sorğunun HƏMİŞƏ cavab qaytarmasını təmin edir — asılan HTTP sorğusu
-      // çağıran tərəfə "şəbəkə xətası" kimi görünür və əsl səbəbi gizlədir.
-      await Promise.race([
-        strapi.plugin('email').service('email').send({
-          to,
-          subject: 'ADDA — SMTP yoxlamasi',
-          text: 'Bu, SMTP konfiqurasiyasinin yoxlanmasi ucun gonderilmis test mesajidir.',
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('SMTP 25 saniye icinde cavab vermedi')), 25000),
-        ),
-      ]);
-      strapi.log.info(`[identity] mail-test ugurlu (${Date.now() - started} ms)`);
-      ctx.body = { ok: true, sent: true, ms: Date.now() - started, config: cfg };
-    } catch (err) {
-      const message = (err as Error).message;
-      strapi.log.error(`[identity] mail-test ugursuz (${Date.now() - started} ms): ` + message);
-      ctx.status = 502;
-      // XƏTA MƏTNİ AÇIQ QAYTARILIR: bu endpoint onsuz da sirrlə qorunur və
-      // "connection refused" ilə "auth failed" arasındakı fərq düzəlişin
-      // yeganə açarıdır.
-      ctx.body = { ok: false, error: 'mail_failed', message, ms: Date.now() - started, config: cfg };
+    // SƏRT VAXT HƏDDİ. `deliver()` içindəki timeout-lar varsa da, SMTP yolunda
+    // hansısa mərhələ hələ də asıla bilər. Bu qat sorğunun HƏMİŞƏ cavab
+    // qaytarmasını təmin edir — asılan HTTP sorğusu çağıran tərəfə "şəbəkə
+    // xətası" kimi görünür və əsl səbəbi gizlədir.
+    const timeout = new Promise<{ status: string; via: string; error?: string }>((resolve) =>
+      setTimeout(
+        () => resolve({ status: 'failed', via: cfg.istifade_olunan, error: 'poct xidmeti 25 saniye icinde cavab vermedi' }),
+        25000,
+      ),
+    );
+    const r = await Promise.race([svc.deliverTest(to), timeout]);
+    const ms = Date.now() - started;
+
+    if (r.status === 'sent') {
+      strapi.log.info(`[identity] mail-test ugurlu (${r.via}, ${ms} ms)`);
+      ctx.body = { ok: true, sent: true, via: r.via, ms, config: cfg };
+      return;
     }
+    strapi.log.error(`[identity] mail-test ugursuz (${r.via}, ${ms} ms): ${r.error}`);
+    ctx.status = 502;
+    // XƏTA MƏTNİ AÇIQ QAYTARILIR: bu endpoint onsuz da sirrlə qorunur və
+    // "connection refused" ilə "auth failed" arasındakı fərq düzəlişin
+    // yeganə açarıdır.
+    ctx.body = { ok: false, error: 'mail_failed', message: r.error, via: r.via, ms, config: cfg };
   },
 
   /** POST /api/identity/verify — magic tokeni sessiyaya çevir. */
