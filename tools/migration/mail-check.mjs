@@ -62,9 +62,27 @@ async function main() {
     console.log('  KONFIQURASIYA:');
     for (const [k, v] of Object.entries(cfg)) {
       const shown = v === true ? 'VAR' : v === false ? 'YOXDUR  <-- problem burada ola biler' : v;
-      console.log(`    ${k.padEnd(12)} ${shown}`);
+      console.log(`    ${k.padEnd(16)} ${shown}`);
     }
     console.log('');
+  }
+
+  // VERSIYA UYGUNLUGU.
+  //
+  // Lokal alət yenilənib, amma server köhnə kodu işlədirsə, aşağıdakı
+  // məsləhətlər BAŞQA kod yoluna aid olur və yanlış istiqamətə aparır.
+  // `istifade_olunan` sahəsi HTTP API dəstəyi ilə birlikdə gəlir — yoxdursa
+  // server hələ köhnədir.
+  if (cfg && cfg.istifade_olunan === undefined) {
+    console.error('  DAYANDIRILDI: server KOHNE kodu isledir.\n');
+    console.error('  Bu alət HTTP API destegini gozleyir, server ise hele SMTP-lidir.');
+    console.error('  Yerli commit yaradilib, amma PUSH EDILMEYIB ve ya deploy bitmeyib.\n');
+    console.error('    git log --oneline -1          # yerli son commit');
+    console.error('    git log --oneline -1 origin/main   # serverdeki');
+    console.error('    git push                      # ferq varsa');
+    console.error('');
+    console.error('  Render-de deploy bitdikden sonra bu emri tekrar isslet.\n');
+    return 1;
   }
 
   if (res.status === 403) {
