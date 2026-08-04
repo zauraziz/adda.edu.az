@@ -280,7 +280,37 @@ async function deliver(m: OutMail): Promise<{ status: 'sent' | 'unconfigured' | 
   }
 }
 
+/**
+ * HTML atribut və mətn üçün ekranlaşdırma.
+ *
+ * KRİTİK: `&` işarəsi atribut daxilində `&amp;` olmalıdır. Magic-link
+ * `?t=TOKEN&r=%2Faz%2Fprofil` formasındadır — xam `&r=` HTML parseri
+ * tərəfindən simvol istinadı kimi oxunmağa çalışılır. Brauzerlər buna
+ * güzəşt edir, e-poçt müştəriləri isə HTML-i sərt təmizləyir və link
+ * ya kəsilir, ya da tamamilə düşür.
+ */
+function esc(v: string): string {
+  return String(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Düymə CƏDVƏL əsaslıdır, `display:inline-block` DEYİL.
+ *
+ * Outlook (Windows) HTML-i Word mühərriki ilə render edir və `inline-block`
+ * dəstəklənmir: doldurma yığılır, bəzi versiyalarda isə element ümumiyyətlə
+ * klik qəbul etmir — düymə görünür, amma işləmir. Fon rəngi `<td>`-də,
+ * `<a>` isə onu tam dolduran blok kimi verilir; bu naxış bütün əsas
+ * müştərilərdə işləyir.
+ *
+ * Altdakı xam URL də KLİKLƏNƏNDİR: düymə hansısa müştəridə süzülsə,
+ * istifadəçinin əlində işlək ehtiyat qalır.
+ */
 function renderHtml(m: Mail, link: string): string {
+  const href = esc(link);
   return [
     '<div style="margin:0;padding:32px 16px;background:#F0F8FF;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;">',
     '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:14px;overflow:hidden;border:1px solid #E5E7EB;">',
@@ -289,15 +319,18 @@ function renderHtml(m: Mail, link: string): string {
     '<div style="color:#FFFFFF;font-size:18px;font-weight:700;margin-top:4px;">Azərbaycan Dövlət Dəniz Akademiyası</div>',
     '</td></tr>',
     '<tr><td style="padding:28px;">',
-    '<p style="margin:0 0 20px;color:#374151;font-size:15px;line-height:1.65;">' + m.intro + '</p>',
-    '<p style="margin:0 0 24px;">',
-    '<a href="' + link + '" style="display:inline-block;background:#0B3D5C;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:13px 26px;border-radius:9px;">' + m.cta + '</a>',
-    '</p>',
-    '<p style="margin:0 0 8px;color:#6B7280;font-size:13px;line-height:1.6;">' + m.note + '</p>',
-    '<p style="margin:0;color:#6B7280;font-size:13px;line-height:1.6;">' + m.ignore + '</p>',
+    '<p style="margin:0 0 20px;color:#374151;font-size:15px;line-height:1.65;">' + esc(m.intro) + '</p>',
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">',
+    '<tr><td align="center" bgcolor="#0B3D5C" style="background:#0B3D5C;border-radius:9px;">',
+    '<a href="' + href + '" style="display:block;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:13px 26px;border-radius:9px;">' + esc(m.cta) + '</a>',
+    '</td></tr></table>',
+    '<p style="margin:0 0 8px;color:#6B7280;font-size:13px;line-height:1.6;">' + esc(m.note) + '</p>',
+    '<p style="margin:0;color:#6B7280;font-size:13px;line-height:1.6;">' + esc(m.ignore) + '</p>',
     '</td></tr>',
     '<tr><td style="background:#F9FAFB;padding:16px 28px;border-top:1px solid #E5E7EB;">',
-    '<p style="margin:0;color:#6B7280;font-size:12px;word-break:break-all;">' + link + '</p>',
+    '<p style="margin:0;font-size:12px;line-height:1.6;word-break:break-all;">',
+    '<a href="' + href + '" style="color:#0B3D5C;text-decoration:underline;">' + href + '</a>',
+    '</p>',
     '</td></tr>',
     '</table></div>',
   ].join('');
