@@ -43,7 +43,47 @@ function intEnv(name: string, fallback: number): number {
 
 const MAGIC_TTL_MIN = intEnv('IDENTITY_MAGIC_TTL_MIN', 15);
 const SESSION_TTL_DAYS = intEnv('IDENTITY_SESSION_TTL_DAYS', 30);
-const SITE_URL = (process.env.SITE_URL || 'https://demo.adda.edu.az').replace(/\/+$/, '');
+/**
+ * `SITE_URL` təmizlənməsi və yoxlanması.
+ *
+ * REAL HADİSƏ: Render-ə dəyər markdown link sintaksisi ilə düşmüşdü —
+ *   SITE_URL = [https://demo.adda.edu.az](https://demo.adda.edu.az)
+ * Bu, çat və ya sənəddən kopyalayanda baş verir: mətn linkə çevrilib,
+ * kopyalananda isə markdown mənbəyi düşür.
+ *
+ * Nəticə: magic link `[https://…](https://…)/az/kimlik/tesdiq?t=…` olur —
+ * brauzer onu aça bilmir, düymə klik qəbul edir, amma heç nə etmir.
+ * Səhv NƏ log-da, NƏ də UI-da görünürdü.
+ *
+ * Ona görə iki qat: gələn dəyər təmizlənir, sonra `new URL()` ilə YOXLANIR.
+ * Yoxlamadan keçməzsə məktub GÖNDƏRİLMİR — sınıq link göndərmək,
+ * göndərməməkdən pisdir, çünki istifadəçi səbəbini bilmədən gözləyir.
+ */
+function cleanUrl(raw: unknown): string {
+  let v = String(raw ?? '').trim();
+  // Markdown: [mətn](url) -> url
+  const md = v.match(/^\[[^\]]*\]\(([^)]+)\)/);
+  if (md) v = md[1].trim();
+  // Açılı mötərizə: <url> -> url
+  v = v.replace(/^<+/, '').replace(/>+$/, '');
+  // Ətraf dırnaqlar
+  v = v.replace(/^["']+/, '').replace(/["']+$/, '');
+  return v.replace(/\/+$/, '').trim();
+}
+
+function isHttpUrl(v: string): boolean {
+  try {
+    const u = new URL(v);
+    return (u.protocol === 'https:' || u.protocol === 'http:') && Boolean(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
+const SITE_URL_RAW = process.env.SITE_URL || 'https://demo.adda.edu.az';
+const SITE_URL = cleanUrl(SITE_URL_RAW);
+export const SITE_URL_OK = isHttpUrl(SITE_URL);
+export const SITE_URL_INFO = { xam: SITE_URL_RAW, temizlenmis: SITE_URL, etibarli: SITE_URL_OK };
 
 /* ── Kriptoqrafiya ────────────────────────────────────────────────────── */
 function b64url(buf: Buffer): string {
@@ -380,6 +420,16 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     });
 
     const q = redirect ? '&r=' + encodeURIComponent(redirect) : '';
+    if (!SITE_URL_OK) {
+      // Sınıq link göndərmək, göndərməməkdən pisdir: istifadəçi səbəbini
+      // bilmədən gözləyir, token isə boş yerə yanır.
+      strapi.log.error(
+        `[identity] SITE_URL etibarsizdir: ${JSON.stringify(SITE_URL_RAW)} -> ` +
+          `${JSON.stringify(SITE_URL)}. Magic link gonderilmedi. ` +
+          'Render -> Environment -> SITE_URL duzeldilmelidir (yalniz URL, markdown/dirnaq olmadan).',
+      );
+      return 'failed';
+    }
     const link = SITE_URL + '/' + locale + '/kimlik/tesdiq?t=' + encodeURIComponent(token) + q;
     const mail = await this.sendMagicMail(email, locale, link);
     void this.prune();

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { SITE_URL_INFO, SITE_URL_OK } from '../services/identity';
 import { writeFileSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -423,7 +424,13 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       SMTP_USER: Boolean(process.env.SMTP_USER),
       SMTP_PASS: Boolean(process.env.SMTP_PASS),
       SMTP_FROM: process.env.SMTP_FROM || 'ADDA <no-reply@adda.edu.az> (default)',
-      SITE_URL: process.env.SITE_URL || 'https://demo.adda.edu.az (default)',
+      SITE_URL: SITE_URL_INFO.xam,
+      // Təmizlənmiş dəyər və nümunə link — sınıq URL-i GÖNDƏRMƏDƏN ƏVVƏL
+      // gözlə görmək üçün. Real hadisə: `SITE_URL`-ə markdown link sintaksisi
+      // düşmüşdü, nəticədə düymə klik qəbul edir, amma heç nə etmirdi.
+      SITE_URL_temizlenmis: SITE_URL_INFO.temizlenmis,
+      SITE_URL_etibarli: SITE_URL_OK ? 'BELI' : 'XEYR  <-- MAGIC LINK ISLEMEYECEK',
+      numune_link: `${SITE_URL_INFO.temizlenmis}/az/kimlik/tesdiq?t=NUMUNE_TOKEN&r=%2Faz%2Fprofil`,
       istifade_olunan: hasApi
         ? process.env.RESEND_API_KEY
           ? 'resend (HTTP API)'

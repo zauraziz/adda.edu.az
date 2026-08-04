@@ -176,6 +176,22 @@ async function main() {
     return 1;
   }
 
+  // SITE_URL etibarsizdirsa mektub gonderilse bele link ISLEMEYECEK.
+  // Bu, "duyme aktiv deyil" elametinin esl sebebi idi.
+  if (cfg && cfg.SITE_URL_etibarli && String(cfg.SITE_URL_etibarli).startsWith('XEYR')) {
+    console.error('  PROBLEM: SITE_URL etibarli URL deyil.\n');
+    console.error(`    xam           : ${cfg.SITE_URL}`);
+    console.error(`    temizlenmisi  : ${cfg.SITE_URL_temizlenmis}`);
+    console.error(`    yaranan link  : ${cfg.numune_link}\n`);
+    console.error('  Bu link brauzerde ACILMIR -- duyme klik qebul edir, amma hec ne etmir.');
+    console.error('  EN COX RAST GELINEN SEBEB: deyer cat/senedden kopyalanib ve markdown');
+    console.error('  sintaksisi dusub:  [https://demo.adda.edu.az](https://demo.adda.edu.az)\n');
+    console.error('  DUZELIS -- Render -> Environment -> SITE_URL:');
+    console.error('    https://demo.adda.edu.az');
+    console.error('  Moterize, dirnaq, bosluq VE sonda / OLMASIN. Sonra yeniden deploy.\n');
+    return 1;
+  }
+
   // Göndərən domen statusu — ən çox rast gəlinən nasazlığın mənbəyi.
   const sd = res.data?.gonderen_domen;
   if (sd) {
