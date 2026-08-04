@@ -298,6 +298,50 @@ async function recordRevision(
   }
 }
 
+/**
+ * Göndərən domenin provayderdə doğrulanıb-doğrulanmadığı.
+ *
+ * NİYƏ AYRICA YOXLAMA: "açar var, konfiqurasiya tamdır" demək kifayət deyil —
+ * Resend və Brevo doğrulanmamış domendən göndərməyə İCAZƏ VERMİR. Bu, ən çox
+ * rast gəlinən nasazlıqdır və yalnız göndərmə cəhdində üzə çıxır. Statusu
+ * öncədən oxumaqla bir gediş-gəliş qazanılır.
+ */
+async function senderDomainStatus(): Promise<Record<string, unknown> | null> {
+  const key = (process.env.RESEND_API_KEY || '').trim();
+  if (!key) return null;
+
+  const from = (process.env.SMTP_FROM || '').trim();
+  const m = from.match(/<([^>]+)>/);
+  const addr = (m ? m[1] : from).trim().toLowerCase();
+  const domain = addr.split('@')[1] || '';
+
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 10000);
+  try {
+    const res = await fetch('https://api.resend.com/domains', {
+      signal: ac.signal,
+      headers: { authorization: `Bearer ${key}` },
+    });
+    if (!res.ok) {
+      return { gonderen: addr, xeta: `domen siyahisi alinmadi (HTTP ${res.status})` };
+    }
+    const json = (await res.json()) as { data?: { name?: string; status?: string }[] };
+    const list = Array.isArray(json.data) ? json.data : [];
+    const hit = list.find((d) => String(d.name || '').toLowerCase() === domain);
+    return {
+      gonderen: addr,
+      domen: domain || '(yoxdur)',
+      status: hit ? hit.status : 'ELAVE EDILMEYIB',
+      resenddeki_domenler: list.map((d) => `${d.name} (${d.status})`).join(', ') || '(bos)',
+    };
+  } catch (err) {
+    const e = err as Error;
+    return { gonderen: addr, xeta: e.name === 'AbortError' ? 'timeout' : e.message };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export default ({ strapi }: { strapi: StrapiLike }) => ({
   /** POST /api/identity/request — magic-link göndər. */
   async request(ctx: Ctx) {
@@ -406,8 +450,11 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     const svc = strapi.service(SERVICE_UID);
     const to = svc.normalizeEmail(bodyOf(ctx).to);
     if (!to) {
-      // Yalnız konfiqurasiyanı göstər — göndərmə istənilmədi.
-      ctx.body = { ok: true, sent: false, config: cfg };
+      // Yalnız konfiqurasiya — göndərmə istənilmədi. Amma göndərən domenin
+      // statusu da buraya daxildir: onsuz "hər şey qaydasındadır" demək
+      // yanıldıcı olur, çünki doğrulanmamış domen göndərməni bloklayır.
+      const sender = await senderDomainStatus();
+      ctx.body = { ok: true, sent: false, config: cfg, ...(sender ? { gonderen_domen: sender } : {}) };
       return;
     }
 

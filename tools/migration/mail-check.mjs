@@ -176,6 +176,31 @@ async function main() {
     return 1;
   }
 
+  // Göndərən domen statusu — ən çox rast gəlinən nasazlığın mənbəyi.
+  const sd = res.data?.gonderen_domen;
+  if (sd) {
+    console.log('  GONDEREN DOMEN:');
+    for (const [k, v] of Object.entries(sd)) console.log(`    ${k.padEnd(20)} ${v}`);
+    console.log('');
+    if (sd.status && sd.status !== 'verified') {
+      console.error(`  PROBLEM: "${sd.domen}" domeni Resend-de "${sd.status}" veziyyetindedir.`);
+      console.error('  Dogrulanmamis domenden gonderme MUMKUN DEYIL.\n');
+      console.error('  ADDIMLAR:');
+      console.error('    1. resend.com -> Domains -> Add Domain -> adda.edu.az');
+      console.error('    2. Gosterilen DNS qeydlerini elave et:');
+      console.error('         TXT   send.adda.edu.az    (SPF)');
+      console.error('         TXT   resend._domainkey   (DKIM)');
+      console.error('       DIQQET: demo.adda.edu.az-a TOXUNMA -- sayt orada islenir.');
+      console.error('    3. Resend-de "Verify DNS Records" bas, status `verified` olsun');
+      console.error('    4. Bu emri tekrar isslet\n');
+      console.error('  MUVEQQETI HELL (dogrulama gozlenilirken):');
+      console.error('    Render -> SMTP_FROM = ADDA <onboarding@resend.dev>');
+      console.error('    Bu unvan Resend-in oz test domenidir, dogrulama teleb etmir.');
+      console.error('    ANCAQ yalniz Resend hesabinizin e-poctuna gonderile biler.\n');
+      return 1;
+    }
+  }
+
   if (res.data?.sent) {
     console.log(`  OK: test mektubu ${to} unvanina gonderildi (${res.data.via}, ${res.data.ms} ms).`);
     console.log('  Gelmediyse spam qovlugunu ve SMTP_FROM domeninin SPF/DKIM qeydlerini yoxla.\n');
