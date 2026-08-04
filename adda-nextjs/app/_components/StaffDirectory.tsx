@@ -35,6 +35,44 @@ const LANG_LABEL: Record<string, string> = {
 };
 
 /**
+ * Vəzifə dərəcəsi.
+ *
+ * Siyahı əvvəl Strapi-dən `name:asc` ilə gəlirdi — `name` isə ştatdakı
+ * "Soyad Ad Ata" formasıdır, yəni sıralama SOYAD üzrə idi və vəzifəni
+ * nəzərə almırdı. Kataloqda professorla müəllimin qarışıq durması
+ * oxunuşu çətinləşdirir.
+ *
+ * İndi: əvvəlcə vəzifə dərəcəsi, sonra göstərilən ad (əlifba, `az`).
+ *
+ * SIRALI NAXIŞLAR, sadə sətir axtarışı DEYİL. Sətir axtarışı iki tələ
+ * yaradırdı: `Rektor` ⊂ `Prorektor` (prorektor rektor səviyyəsinə qalxırdı)
+ * və `Müəllim` ⊂ `Baş müəllim`. Lövbərli və sıralı naxışlar bunu həll edir —
+ * siyahı yuxarıdan aşağı yoxlanılır, ilk uyğunluq qazanır. Ştatdakı
+ * qısaldılmış yazılışlar (`…üzrə pr.`) da nəzərə alınıb.
+ */
+const RANK_PATTERNS: [RegExp, number][] = [
+  [/^rektor$/i, 0],
+  [/prorektor|üzrə\s*pr\.?$/i, 1],
+  [/elmi katib/i, 2],
+  [/kafedra müdiri/i, 3],
+  [/dekan müavini/i, 5],
+  [/^dekan$/i, 4],
+  [/müdir müavini/i, 7],
+  [/şöbə müdiri|^müdir$/i, 6],
+  [/professor/i, 10],
+  [/dosent/i, 11],
+  [/baş müəllim/i, 12],
+  [/müəllim/i, 13],
+];
+
+/** Siyahıda olmayan vəzifə ortada qalır — sona atılıb gözdən itmir. */
+function rankOf(position: string): number {
+  const v = String(position || '').trim();
+  for (const [re, rank] of RANK_PATTERNS) if (re.test(v)) return rank;
+  return 50;
+}
+
+/**
  * Əlifba indeksi üçün ilk hərf.
  *
  * `displayName` ("Ad Ata Soyad") üzərində işləyir, `name` ("Soyad Ad Ata")
@@ -70,7 +108,20 @@ export default async function StaffDirectory({
     ? all.filter((p) => (p.roles ?? []).some((r) => types.includes(r.staffType)))
     : all;
 
-  const people: DirectoryPerson[] = filtered.map((p) => {
+  // Vəzifə dərəcəsi, sonra ad. `localeCompare(..., 'az')` Azərbaycan
+  // əlifbasını nəzərə alır: `Ç`, `Ə`, `Ğ`, `İ`, `Ö`, `Ş`, `Ü` düzgün yerə düşür.
+  const ordered = [...filtered].sort((a, b) => {
+    const rank = (x: PersonFull) => {
+      const own = (x.roles ?? []).filter((r) => !types || types.includes(r.staffType));
+      return own.length ? Math.min(...own.map((r) => rankOf(r.position))) : 99;
+    };
+    const ra = rank(a);
+    const rb = rank(b);
+    if (ra !== rb) return ra - rb;
+    return (a.displayName || a.name).localeCompare(b.displayName || b.name, 'az');
+  });
+
+  const people: DirectoryPerson[] = ordered.map((p) => {
     const roles = p.roles ?? [];
     // Bu görünüşə aid rol — yoxdursa birinci rol.
     const primary = (types ? roles.find((r) => types.includes(r.staffType)) : roles[0]) ?? roles[0];

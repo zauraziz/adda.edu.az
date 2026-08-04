@@ -39,6 +39,7 @@ interface StrapiLike {
     create(args: Row): Promise<Row>;
     update(args: Row): Promise<Row>;
     findMany(args: Row): Promise<Row[]>;
+    publish(args: Row): Promise<Row>;
   };
   /**
    * Strapi plugin xidmətləri üçün struktur shim.
@@ -271,6 +272,20 @@ function normalizeForDiff(v: unknown): unknown {
     return out;
   }
   return v;
+}
+
+/**
+ * Sənədi dərc et.
+ *
+ * Bütün dillər üçün: `person` lokallaşdırılmışdır və `az` dərc olunub `ru`
+ * qalsa, siyahılar dillər arasında fərqlənərdi.
+ */
+async function publishSafe(strapi: StrapiLike, documentId: string) {
+  try {
+    await strapi.documents('api::person.person').publish({ documentId, locale: '*' });
+  } catch (err) {
+    strapi.log.error('[identity] derc edilmedi: ' + (err as Error).message);
+  }
 }
 
 async function recordRevision(
@@ -775,6 +790,14 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
+    // DƏRC MƏCBURİDİR.
+    //
+    // `documents().update()` YALNIZ DRAFT-a yazır — Strapi mənbəyində
+    // `setStatusToDraft` statusu məcburi draft edir, `filterDataPublishedAt`
+    // isə `publishedAt`-i data-dan silir. Yəni dərc etmədən dəyişiklik
+    // admin paneldə görünür, İCTİMAİ SAYTA İSƏ HEÇ VAXT ÇATMIR.
+    await publishSafe(strapi, String(person.documentId));
+
     await recordRevision(strapi, person, identity.email, changed, previous, headerOf(ctx, 'x-adda-client-ip'));
     strapi.log.info(`[identity] profil yenilendi: ${String(person.slug)} (${changed.join(',')})`);
     void svc.touch(identity.id);
@@ -821,6 +844,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         ctx.body = { ok: false, error: 'write_failed' };
         return;
       }
+      await publishSafe(strapi, String(person.documentId));
       await recordRevision(strapi, person, identity.email, ['photo'], { photo: 'silindi' }, headerOf(ctx, 'x-adda-client-ip'));
       ctx.body = { ok: true, url: null };
       return;
@@ -862,9 +886,17 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     let uploaded: Row | null = null;
     try {
       writeFileSync(tmp, buf);
+      // `refId`/`ref`/`field` QƏSDƏN VERİLMİR.
+      //
+      // Strapi onları `entity.related = [{ id: refId, ... }]` kimi işlədir və
+      // ora RƏQƏMSAL entity id gözlənilir. `documentId` sətri ötürülsə
+      // əlaqə qurula bilmir və yükləmə tamamilə uğursuz olur.
+      // Əlaqəni aşağıda `documents().update()` özü qurur.
+      //
+      // Sahə adı `originalFilename`-dir (kiçik `n`) — Strapi məhz onu oxuyur.
       const res = await strapi.plugin('upload').service('upload').upload({
-        data: { refId: person.documentId, ref: 'api::person.person', field: 'photo' },
-        files: { filepath: tmp, originalFileName: name, mimetype: kind.mime, size: buf.length },
+        data: {},
+        files: { filepath: tmp, originalFilename: name, mimetype: kind.mime, size: buf.length },
       });
       uploaded = Array.isArray(res) ? res[0] : res;
     } catch (err) {
@@ -889,6 +921,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
+    await publishSafe(strapi, String(person.documentId));
     await recordRevision(strapi, person, identity.email, ['photo'], { photo: 'evezlendi' }, headerOf(ctx, 'x-adda-client-ip'));
     strapi.log.info('[identity] foto yenilendi: ' + String(person.slug));
     void svc.touch(identity.id);
