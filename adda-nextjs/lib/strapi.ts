@@ -205,15 +205,47 @@ async function oneBySlug<T>(
   return json.data?.[0] ?? null;
 }
 
+/**
+ * Bütün səhifələri yığır.
+ *
+ * `config/api.ts`-də `maxLimit: 100`-dür. `pagination[pageSize]` daha böyük
+ * verilsə Strapi onu SƏSSİZCƏ 100-ə kəsir — xəta vermir. Ona görə 163 nəfərdən
+ * yalnız 100-ü qayıdırdı və `name:asc` sırasında `Ə` ilə başlayan soyadlar
+ * kəsilən hissəyə düşürdü (əksər kollasiyalarda `Ə` `Z`-dən sonra gəlir).
+ *
+ * Həll server konfiqurasiyasını genişləndirmək DEYİL — bu, ictimai API-nin
+ * səthini artırardı. Səhifələmə isə `maxLimit` nə olursa-olsun işləyir.
+ *
+ * `id:asc` sıralanır: səhifələr arasında sabitlik üçün açar UNİKAL olmalıdır.
+ * Ad üzrə sıralasaq, eyni adlı iki qeyd səhifə sərhədində təkrarlana və ya
+ * itə bilərdi. Görünüş sırası onsuz da UI-da yenidən qurulur.
+ */
+async function fetchAllPages<T>(
+  path: string,
+  query: Record<string, string | number | boolean>,
+  hardCap = 3000,
+): Promise<T[]> {
+  const out: T[] = [];
+  for (let page = 1; page <= 60; page++) {
+    const json = await strapiFetch<StrapiList<T>>(path, {
+      ...query,
+      sort: 'id:asc',
+      'pagination[page]': page,
+      'pagination[pageSize]': 100,
+    });
+    const rows = json.data ?? [];
+    out.push(...rows);
+    const pc = json.meta?.pagination?.pageCount;
+    if (!rows.length || !pc || page >= pc || out.length >= hardCap) break;
+  }
+  return out;
+}
+
 /** Bir tipin bütün slug-ları — `generateStaticParams` üçün. */
 async function allSlugs(path: string, locale: Locale): Promise<string[]> {
   try {
-    const json = await strapiFetch<StrapiList<{ slug: string }>>(path, {
-      locale,
-      'pagination[pageSize]': 200,
-      'fields[0]': 'slug',
-    });
-    return (json.data ?? []).map((r) => r.slug).filter(Boolean);
+    const rows = await fetchAllPages<{ slug: string }>(path, { locale, 'fields[0]': 'slug' });
+    return rows.map((r) => r.slug).filter(Boolean);
   } catch {
     return [];
   }
@@ -613,15 +645,12 @@ export interface OrgUnit {
  * mümkün deyil. Düz siyahı + valideyn slug-ı həmişə işləyir.
  */
 export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
-  const json = await strapiFetch<StrapiList<OrgUnit>>('/units', {
+  return fetchAllPages<OrgUnit>('/units', {
     locale,
-    sort: 'id:asc',
-    'pagination[pageSize]': 200,
     'populate[vacancies]': true,
     'populate[parent][fields][0]': 'slug',
     'populate[parent][fields][1]': 'name',
   });
-  return json.data ?? [];
 }
 
 /**
@@ -632,13 +661,7 @@ export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
  * yazmasaq siyahılar səssizcə boş çıxar.
  */
 export async function getStaff(locale: Locale = 'az'): Promise<Person[]> {
-  const json = await strapiFetch<StrapiList<Person>>('/people', {
-    locale,
-    sort: 'name:asc',
-    'pagination[pageSize]': 300,
-    'populate[roles]': true,
-  });
-  return json.data ?? [];
+  return fetchAllPages<Person>('/people', { locale, 'populate[roles]': true });
 }
 
 /** Bütün fakültələr. */
@@ -721,10 +744,8 @@ export interface PersonFull extends Person {
  * vermir. Bir ad unudulsa həmin filtr səssizcə boş qalır.
  */
 export async function getStaffDirectory(locale: Locale = 'az'): Promise<PersonFull[]> {
-  const json = await strapiFetch<StrapiList<PersonFull>>('/people', {
+  return fetchAllPages<PersonFull>('/people', {
     locale,
-    sort: 'name:asc',
-    'pagination[pageSize]': 400,
     'populate[roles]': true,
     'populate[photo]': true,
     'populate[researchAreas]': true,
@@ -734,7 +755,6 @@ export async function getStaffDirectory(locale: Locale = 'az'): Promise<PersonFu
     'populate[faculty][fields][0]': 'name',
     'populate[faculty][fields][1]': 'slug',
   });
-  return json.data ?? [];
 }
 
 /** Bir əməkdaşın tam profili. */
