@@ -35,6 +35,9 @@
     "@types/react-dom": "^18",
     "typescript": "^5"
   },
+  "overrides": {
+    "@strapi/design-system": "2.2.3"
+  },
   "engines": {
     "node": ">=20.0.0 <=26.x.x",
     "npm": ">=6.0.0"
