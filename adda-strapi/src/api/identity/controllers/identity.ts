@@ -380,7 +380,21 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       SMTP_PASS: Boolean(process.env.SMTP_PASS),
       SMTP_FROM: process.env.SMTP_FROM || 'ADDA <no-reply@adda.edu.az> (default)',
       SITE_URL: process.env.SITE_URL || 'https://demo.adda.edu.az (default)',
-      istifade_olunan: hasApi ? (process.env.BREVO_API_KEY ? 'brevo (HTTP API)' : 'resend (HTTP API)') : process.env.SMTP_HOST ? 'smtp' : 'yoxdur',
+      istifade_olunan: hasApi
+        ? process.env.RESEND_API_KEY
+          ? 'resend (HTTP API)'
+          : 'brevo (HTTP API)'
+        : process.env.SMTP_HOST
+          ? 'smtp'
+          : 'yoxdur',
+      // Magic-link üçün yararlıdırmı — Brevo linkləri yenidən yazır.
+      magic_link_ucun: !hasApi
+        ? process.env.SMTP_HOST
+          ? 'BELI'
+          : 'XEYR (poct qurulmayib)'
+        : process.env.RESEND_API_KEY
+          ? 'BELI'
+          : 'XEYR (brevo linkleri yeniden yazir)',
     };
 
     if (!hasApi && !cfg.SMTP_HOST) {

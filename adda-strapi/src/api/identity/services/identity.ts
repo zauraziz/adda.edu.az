@@ -138,7 +138,14 @@ const MAIL: Record<string, Mail> = {
  * poçt serverinə bağlananda yenidən lazım olacaq. Sıra: API varsa API,
  * yoxsa SMTP, o da yoxsa dev rejimi.
  */
-type MailApi = { name: string; url: string; headers: Record<string, string>; body: (m: OutMail) => unknown };
+type MailApi = {
+  name: string;
+  url: string;
+  /** Provayder məktubdakı linkləri izləmə üçün YENİDƏN YAZIRMI. */
+  rewritesLinks: boolean;
+  headers: Record<string, string>;
+  body: (m: OutMail) => unknown;
+};
 
 interface OutMail {
   to: string;
@@ -154,31 +161,31 @@ function fromParts(): { email: string; name: string } {
   return { name: 'ADDA', email: raw };
 }
 
-/** Hansı provayder qurulub — açarın mövcudluğuna görə. */
+/**
+ * Hansı provayder işlədiləcək.
+ *
+ * SIRA TƏSADÜFİ DEYİL — Resend ƏVVƏLDİR.
+ *
+ * Brevo tranzaksiya məktublarında bütün linkləri öz izləmə domeninə YENİDƏN
+ * YAZIR və bunu söndürmək mümkün deyil (rəsmi mövqe: belə seçim
+ * planlaşdırılmır). Magic-link üçün bu üç səbəbdən yararsızdır:
+ *   1. Linki izləmə serveri açır — bir addım artıq nasazlıq nöqtəsi.
+ *   2. Birdəfəlik token üçüncü tərəfin URL-indən keçir və orada saxlanılır.
+ *   3. Korporativ poçt skanerləri linkləri ÖNCƏDƏN açır — birdəfəlik token
+ *      istifadəçi klikləməmiş yanır və "link etibarsızdır" xətası verir.
+ *
+ * Resend-də klik izləmə domen səviyyəsindədir və DEFOLT SÖNDÜRÜLÜDÜR.
+ *
+ * Hər iki açar varsa Resend seçilir — əks halda Brevo-nu silmədən Resend
+ * əlavə etmək heç nəyi dəyişməzdi.
+ */
 function pickMailApi(): MailApi | null {
-  const brevo = (process.env.BREVO_API_KEY || '').trim();
-  if (brevo) {
-    return {
-      name: 'brevo',
-      url: 'https://api.brevo.com/v3/smtp/email',
-      headers: { 'api-key': brevo, 'content-type': 'application/json', accept: 'application/json' },
-      body: (m) => {
-        const from = fromParts();
-        return {
-          sender: { email: from.email, name: from.name },
-          to: [{ email: m.to }],
-          subject: m.subject,
-          textContent: m.text,
-          ...(m.html ? { htmlContent: m.html } : {}),
-        };
-      },
-    };
-  }
   const resend = (process.env.RESEND_API_KEY || '').trim();
   if (resend) {
     return {
       name: 'resend',
       url: 'https://api.resend.com/emails',
+      rewritesLinks: false,
       headers: { authorization: `Bearer ${resend}`, 'content-type': 'application/json' },
       body: (m) => {
         const from = fromParts();
@@ -192,7 +199,38 @@ function pickMailApi(): MailApi | null {
       },
     };
   }
+  const brevo = (process.env.BREVO_API_KEY || '').trim();
+  if (brevo) {
+    return {
+      name: 'brevo',
+      url: 'https://api.brevo.com/v3/smtp/email',
+      rewritesLinks: true,
+      headers: { 'api-key': brevo, 'content-type': 'application/json', accept: 'application/json' },
+      body: (m) => {
+        const from = fromParts();
+        return {
+          sender: { email: from.email, name: from.name },
+          to: [{ email: m.to }],
+          subject: m.subject,
+          textContent: m.text,
+          ...(m.html ? { htmlContent: m.html } : {}),
+        };
+      },
+    };
+  }
   return null;
+}
+
+/** Magic-link göndərməyə yararlı provayder varmı. */
+export function linkSafeMailer(): { ok: boolean; via: string; reason?: string } {
+  const api = pickMailApi();
+  if (api) {
+    return api.rewritesLinks
+      ? { ok: false, via: api.name, reason: 'provayder linkleri izleme domenine yeniden yazir' }
+      : { ok: true, via: api.name };
+  }
+  if (process.env.SMTP_HOST) return { ok: true, via: 'smtp' };
+  return { ok: false, via: 'yoxdur', reason: 'poct xidmeti qurulmayib' };
 }
 
 /**
@@ -349,6 +387,15 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     if (r.status === 'failed') {
       strapi.log.error(`[identity] email gonderilmedi (${r.via}): ${r.error}`);
       return 'failed';
+    }
+    const safety = linkSafeMailer();
+    if (!safety.ok && safety.via === r.via) {
+      // Məktub GEDİR, amma link işləməyə bilər. Səssiz qalmaq olmaz —
+      // istifadəçi "link açılmır" deyəndə səbəb loga baxmadan tapılmaz.
+      strapi.log.warn(
+        `[identity] DIQQET: ${r.via} magic-link ucun yararsizdir -- ${safety.reason}. ` +
+          'RESEND_API_KEY teyin edin.',
+      );
     }
     strapi.log.info(`[identity] magic link gonderildi (${r.via}): ` + redact(email));
     return 'sent';

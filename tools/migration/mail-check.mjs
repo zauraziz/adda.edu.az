@@ -73,6 +73,24 @@ async function main() {
   // məsləhətlər BAŞQA kod yoluna aid olur və yanlış istiqamətə aparır.
   // `istifade_olunan` sahəsi HTTP API dəstəyi ilə birlikdə gəlir — yoxdursa
   // server hələ köhnədir.
+  // Provayder linkleri yeniden yazirsa magic link ISLEMEYECEK -- mektub
+  // gonderilse bele. Bunu ugurlu netice kimi gostermek yaniltici olardi.
+  if (cfg && cfg.magic_link_ucun && String(cfg.magic_link_ucun).startsWith('XEYR')) {
+    console.error(`  XEBERDARLIQ: ${cfg.magic_link_ucun}\n`);
+    console.error('  Brevo tranzaksiya mektublarinda BUTUN linkleri oz izleme domenine');
+    console.error('  yeniden yazir ve bunu sondurmek MUMKUN DEYIL (resmi movqe).');
+    console.error('  Magic-link ucun bu uc sebebden yararsizdir:');
+    console.error('    1. link izleme serverinden kecir -- artiq nasazliq noqtesi');
+    console.error('    2. birdefelik token ucuncu terefde saxlanilir');
+    console.error('    3. korporativ poct skanerleri linkleri ONCEDEN acir --');
+    console.error('       token istifadeci klikleməmis yanir\n');
+    console.error('  HELL -- Resend (klik izleme DEFOLT sondurulub):');
+    console.error('    1. resend.com -> Domains -> adda.edu.az elave et, DNS qeydlerini qur');
+    console.error('    2. API Keys -> yeni acar');
+    console.error('    3. Render -> Environment -> RESEND_API_KEY = <acar>');
+    console.error('    4. BREVO_API_KEY-i SILME LAZIM DEYIL -- Resend varsa o secilir\n');
+  }
+
   if (cfg && cfg.istifade_olunan === undefined) {
     console.error('  DAYANDIRILDI: server KOHNE kodu isledir.\n');
     console.error('  Bu alət HTTP API destegini gozleyir, server ise hele SMTP-lidir.');
