@@ -24,12 +24,47 @@
 
 import { STRAPI_URL, api } from './lib/strapi.mjs';
 
-const args = Object.fromEntries(
-  process.argv.slice(2).map((a) => {
-    const m = a.match(/^--([^=]+)(?:=(.*))?$/);
-    return m ? [m[1], m[2] ?? true] : [a, true];
-  }),
-);
+// Deyer goturen bayraqlar. `--search=metn` DE, `--search metn` DE islemelidir.
+//
+// KOHNE PARSER SESSIZ SEHV VERIRDI: `--search "sual"` formasinda bayraq
+// `true` olurdu ve servere sorgu kimi "true" gedirdi -- netice qaytarilirdi,
+// yalniz tamam basqa sual ucun. Sessiz olmasi ucun indi deyeri catismayan
+// bayraq XETA verir.
+const VALUE_FLAGS = new Set(['search', 'source', 'locale', 'limit', 'max-items', 'max-wait']);
+
+const args = (() => {
+  const out = {};
+  const argv = process.argv.slice(2);
+  const loose = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    const m = a.match(/^--([^=]+)(?:=([\s\S]*))?$/);
+    if (!m) {
+      loose.push(a);
+      continue;
+    }
+    const key = m[1];
+    if (m[2] !== undefined) {
+      out[key] = m[2];
+    } else if (VALUE_FLAGS.has(key)) {
+      const next = argv[i + 1];
+      if (next === undefined || /^--/.test(next)) {
+        console.error(`\n  XETA: --${key} deyer teleb edir.  Menual: --${key}=<deyer>  ve ya  --${key} <deyer>\n`);
+        process.exit(1);
+      }
+      out[key] = next;
+      i++;
+    } else {
+      out[key] = true;
+    }
+  }
+  if (loose.length) {
+    console.error(`\n  XETA: taninmayan arqument(ler): ${loose.join(' ')}`);
+    console.error('  Deyerli bayraqlar: --' + Array.from(VALUE_FLAGS).join(' --') + '\n');
+    process.exit(1);
+  }
+  return out;
+})();
 
 const SECRET = (process.env.ADMIN_IMPORT_SECRET || '').trim();
 if (SECRET.length < 16) {
@@ -246,13 +281,23 @@ async function runSearch(q) {
 
   console.log(`\n  sorgu : ${d.query}   (${locale})`);
   console.log(`  qollar: ${d.arms.join(' + ') || 'YOX'}   rejim: ${d.mode}   ${d.tookMs} ms${d.cachedQuery ? '   [sorgu vektoru kesden]' : ''}`);
-  if (d.counts) console.log(`  namized: leksik ${d.counts.lexical}, vektor ${d.counts.vector} sened (${d.counts.chunks} parca)`);
+  console.log(`  cavab verile biler: ${d.answerable ? 'BELI' : 'XEYR'}`);
+  if (d.counts) console.log(`  namized: leksik ${d.counts.lexical}, vektor ${d.counts.vector} sened (${d.counts.chunks} parca, ${d.counts.candidates} xam)`);
+  if (d.similarity) {
+    const s2 = d.similarity;
+    console.log(`  oxsarliq: top ${s2.top}  median ${s2.median}  alt ${s2.bottom}  sapma ${s2.stdev}  gapZ ${s2.gapZ}`);
+    console.log(`  qapi    : simZ=${d.gate.simZ}  simDrop=${d.gate.simDrop}  simFloor=${d.gate.simFloor}`);
+  }
   for (const n of d.notes || []) console.log(`  QEYD  : ${n}`);
   console.log('');
 
   if (!d.hits.length) {
     console.log('  netice yoxdur.\n');
     return;
+  }
+  if (d.similarity && d.similarity.gapZ < 2 && d.counts && d.counts.lexical === 0) {
+    console.log('  DIQQET: gapZ asagidir ve leksik uygunluq yoxdur -- bu, yeqin ki,');
+    console.log('          "hec ne uygun gelmir" halidir. RAG_SIM_Z ile kesilmelidir.\n');
   }
   let i = 0;
   for (const h of d.hits) {

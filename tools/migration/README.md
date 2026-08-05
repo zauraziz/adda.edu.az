@@ -554,3 +554,38 @@ keçir, yalançı müsbət varsa naxışı dəqiqləşdir.
 indekslənmiş parçalar itməsin deyə. Köhnə sətirlərdə `signals` NULL qalır
 («təmiz»); yenidən indeksləmə isə hash dəyişdiyi üçün **avtomatik** baş verir,
 `--force` lazım deyil.
+
+## Kalibrləmə (F2.7-2a)
+
+**CLI parseri düzəldildi.** Əvvəl `--search "sual"` (boşluqlu) forması **səssiz
+səhv** verirdi: bayraq `true` olur, servere sorğu kimi `true` gedirdi və
+nəticələr qaytarılırdı — sadəcə tamam başqa sual üçün. İndi hər iki forma
+işləyir, dəyəri çatışmayan bayraq isə **xəta verir**.
+
+### Kosinus paylanması — prod ölçüsü
+
+Real indeksdə cəfəngiyat sorğusu üçün 60 namizədin hamısı `0.551 … 0.577`
+zolağında oturdu. Nəticə: **mütləq hədlər bu paylanmada faydasızdır.**
+`RAG_SIM_DROP=0.15` heç vaxt işə düşməzdi, `RAG_SIM_FLOOR=0.5` isə hər şeyi
+keçirərdi. Hər ikisinin defoltu indi `0`-dır — səssizcə heç nə etməyən defolt
+açıq şəkildə sönülü olandan pisdir.
+
+### `RAG_SIM_Z` — küyə nisbətən
+
+Namizədlərin öz paylanması küy səviyyəsini müəyyən edir; yalnız ondan kəskin
+ayrılan nəticə saxlanılır. `gapZ = (top − mean) / stdev`. Miqyasdan asılı
+deyil, provayder dəyişəndə yenidən kalibrləmə tələb etmir.
+
+```bash
+node rag-index.mjs --search "gəmi mexanikası ixtisasına qəbul"   # gapZ = ?
+node rag-index.mjs --search "kvant kriptoqrafiyası qara dəlik"    # gapZ = ?
+```
+
+İki rəqəm arasındakı sərhədi `RAG_SIM_Z`-ə yaz. Statistika **kəsimdən əvvəlki**
+namizədlər üzərində hesablanır — kəsimdən sonrakına baxmaq dairəvi olardı.
+
+### `answerable`
+
+Cavabda `answerable` sahəsi var: leksik uyğunluq varsa, və ya vektor qolu
+`RAG_SIM_Z` qapısını keçirsə `true`. **F2.7-4-də imtina qərarı birbaşa buna
+görə veriləcək** — «mənbə yoxdursa cavab da yoxdur».

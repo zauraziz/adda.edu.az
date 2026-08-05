@@ -20,7 +20,15 @@ import { createHash } from 'node:crypto';
 import { SOURCES, sourceByKey, buildChunks, type ChunkRecord } from '../lib/chunk';
 import { embedConfig, embedReadiness, embedTexts, pacerLoad } from '../lib/embed';
 import { lexicalSearch, type LexicalHit } from '../lib/lexical';
-import { embedQuery, vectorSearch, rrfFuse, resetVectorCache, type VectorHit } from '../lib/retrieve';
+import {
+  embedQuery,
+  vectorSearch,
+  rrfFuse,
+  resetVectorCache,
+  similarityStats,
+  lastCandidates,
+  type VectorHit,
+} from '../lib/retrieve';
 import {
   ensureSchema,
   counts,
@@ -588,6 +596,16 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         };
       });
 
+    // «Əsaslandırılmış cavab varmı» — F2.7-4 imtina qərarını buna görə verir.
+    // Statistika KƏSİMDƏN ƏVVƏLKİ namizədlər üzərindədir: küy səviyyəsini
+    // məhz onlar müəyyən edir.
+    const raw = lastCandidates();
+    const sim = similarityStats(raw);
+    const zGate = Number(process.env.RAG_SIM_Z || '0');
+    const answerable =
+      lexKeys.length > 0 ||
+      (vec.length > 0 && (zGate <= 0 || (sim ? sim.gapZ >= zGate : false)));
+
     ctx.body = {
       ok: true,
       query: q,
@@ -595,17 +613,26 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       arms,
       mode: info.mode,
       cachedQuery,
+      answerable,
       tookMs: Date.now() - started,
       total: fused.size,
       hits: ranked,
       notes,
       ...(debug
         ? {
-            counts: { lexical: lexKeys.length, vector: vecKeys.length, chunks: vec.length },
-            // Kəsimi kalibrləmək üçün: real oxşarlıq aralığı burada görünür.
-            similarity: vec.length
-              ? { top: vec[0].similarity, bottom: vec[vec.length - 1].similarity }
+            counts: { lexical: lexKeys.length, vector: vecKeys.length, chunks: vec.length, candidates: raw.length },
+            // Kalibrləmə üçün TAM paylanma. `gapZ` — ən yaxşı nəticənin küy
+            // səviyyəsindən neçə standart sapma yuxarıda olması.
+            similarity: sim
+              ? {
+                  top: Math.round(sim.top * 1e4) / 1e4,
+                  median: Math.round(sim.median * 1e4) / 1e4,
+                  bottom: Math.round(sim.bottom * 1e4) / 1e4,
+                  stdev: Math.round(sim.stdev * 1e5) / 1e5,
+                  gapZ: Math.round(sim.gapZ * 100) / 100,
+                }
               : null,
+            gate: { simZ: zGate, simDrop: Number(process.env.RAG_SIM_DROP || '0'), simFloor: Number(process.env.RAG_SIM_FLOOR || '0') },
           }
         : {}),
     };

@@ -163,6 +163,8 @@ async function loadJsonRows(strapi: StrapiDbLike, locale: string): Promise<Cache
 
 /* ── Vektor axtarışı ──────────────────────────────────────────────────── */
 
+let lastRaw: VectorHit[] = [];
+
 export interface VectorOptions {
   locale: string;
   limit: number;
@@ -175,30 +177,81 @@ export interface VectorOptions {
 }
 
 /**
+ * Oxşarlıq statistikası — kalibrləmə və «cavab varmı» qərarı üçün.
+ */
+export interface SimStats {
+  count: number;
+  top: number;
+  median: number;
+  bottom: number;
+  mean: number;
+  stdev: number;
+  /** Ən yaxşı nəticənin küy səviyyəsindən neçə standart sapma yuxarıda olması. */
+  gapZ: number;
+}
+
+export function similarityStats(hits: VectorHit[]): SimStats | null {
+  if (!hits.length) return null;
+  const v = hits.map((h) => h.similarity).sort((a, b) => b - a);
+  const mean = v.reduce((a, b) => a + b, 0) / v.length;
+  const varc = v.reduce((a, b) => a + (b - mean) * (b - mean), 0) / v.length;
+  const stdev = Math.sqrt(varc);
+  const mid = Math.floor(v.length / 2);
+  return {
+    count: v.length,
+    top: v[0],
+    median: v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2,
+    bottom: v[v.length - 1],
+    mean,
+    stdev,
+    gapZ: stdev > 1e-9 ? (v[0] - mean) / stdev : 0,
+  };
+}
+
+/**
  * Oxşarlıq kəsimi — ƏLAQƏSİZ PARÇALARI ATIR.
  *
  * NİYƏ VACİB: vektor axtarışı HƏMİŞƏ `limit` qədər nəticə qaytarır, sorğu ilə
- * heç bir əlaqəsi olmasa belə — sadəcə "ən az uzaq" olanları. F2.7-4-də bu
- * parçalar birbaşa prompta düşəcək və modelə əlaqəsiz kontekst vermək
- * hallüsinasiyanın birbaşa səbəbidir.
+ * heç bir əlaqəsi olmasa belə. F2.7-4-də bu parçalar birbaşa prompta düşəcək,
+ * əlaqəsiz kontekst isə hallüsinasiyanın birbaşa səbəbidir.
  *
- * NİYƏ MÜTLƏQ HƏDD DEFOLTDA SÖNÜLÜDÜR: kosinus dəyərlərinin paylanması
- * modeldən və dildən asılıdır — Gemini embedding-ləri sıfır ətrafında
- * mərkəzlənmir, ona görə "0.5-dən aşağı = əlaqəsiz" kimi sehrli rəqəm
- * uydurmaq yanlışdır. Əvəzinə NİSBİ kəsim işlədilir: ən yaxşı nəticədən
- * `RAG_SIM_DROP` qədər geri qalan atılır. Zaur real rəqəmləri `?debug=1`-də
- * görəndən sonra `RAG_SIM_FLOOR` ilə mütləq həddi də qoya bilər.
+ * ─── PROD MƏLUMATINDAN ÖYRƏNİLƏN ───────────────────────────────────────
+ * Gemini kosinusu sıfır ətrafında MƏRKƏZLƏNMİR. Real indeksdə cəfəngiyat
+ * sorğusu üçün 60 namizədin hamısı `0.551 … 0.577` zolağında oturdu —
+ * fərq cəmi 0.026. Yəni `RAG_SIM_DROP=0.15` kimi MÜTLƏQ fərq heç vaxt işə
+ * düşmür, `RAG_SIM_FLOOR=0.5` isə hər şeyi keçirir.
+ *
+ * Ona görə əsas mexanizm indi NİSBİ-KÜYƏ-GÖRƏdir (`RAG_SIM_Z`): namizədlərin
+ * öz paylanması küy səviyyəsini müəyyən edir, yalnız ondan kəskin ayrılan
+ * nəticə saxlanılır. Miqyasdan asılı deyil, provayder dəyişəndə də işləyir.
+ *
+ * DROP və FLOOR saxlanılır, amma DEFOLTU 0-dir (SÖNÜLÜ) — səssizcə heç nə
+ * etməyən defolt açıq şəkildə sönülü olandan pisdir.
+ * ───────────────────────────────────────────────────────────────────────
  */
 function cutoff(hits: VectorHit[]): VectorHit[] {
   if (!hits.length) return hits;
-  const drop = Number(process.env.RAG_SIM_DROP || '0.15');
+  const drop = Number(process.env.RAG_SIM_DROP || '0');
   const floor = Number(process.env.RAG_SIM_FLOOR || '0');
-  const top = hits[0].similarity;
-  const min = Math.max(
-    Number.isFinite(floor) ? floor : 0,
-    Number.isFinite(drop) && drop > 0 ? top - drop : -Infinity,
-  );
-  return hits.filter((h) => h.similarity >= min);
+  const z = Number(process.env.RAG_SIM_Z || '0');
+
+  let out = hits;
+  if (Number.isFinite(floor) && floor > 0) out = out.filter((h) => h.similarity >= floor);
+  if (Number.isFinite(drop) && drop > 0 && out.length) {
+    const top = out[0].similarity;
+    out = out.filter((h) => h.similarity >= top - drop);
+  }
+  if (Number.isFinite(z) && z > 0 && out.length > 2) {
+    // Statistika TAM namizəd dəsti üzərində hesablanır — küy səviyyəsini
+    // məhz o müəyyən edir. Süzgəcdən sonra hesablasaq öz quyruğumuzu yeyərdik.
+    const st = similarityStats(out);
+    if (st && st.stdev > 1e-9) {
+      const kept = out.filter((h) => (h.similarity - st.mean) / st.stdev >= z);
+      // Heç nə keçmirsə BOŞ qaytarılır: «uyğun nəticə yoxdur» dürüst cavabdır.
+      out = kept;
+    }
+  }
+  return out;
 }
 
 export async function vectorSearch(
@@ -234,7 +287,7 @@ export async function vectorSearch(
       ORDER BY embedding <=> ?::vector
       LIMIT ?`;
     const rows = rowsOf(await strapi.db.connection.raw(sql, [lit, ...args, lit, limit]));
-    return cutoff(rows.map((r) => ({
+    lastRaw = rows.map((r) => ({
       source: str(r.source),
       docId: str(r.doc_id),
       locale: str(r.locale),
@@ -244,7 +297,8 @@ export async function vectorSearch(
       chunkIx: Number(r.chunk_ix) || 0,
       text: str(r.text),
       similarity: 1 - (Number(r.distance) || 0),
-    })));
+    }));
+    return cutoff(lastRaw);
   }
 
   // ── JSON rejimi ──
@@ -261,7 +315,7 @@ export async function vectorSearch(
     scored.push({ row, sim: dot });
   }
   scored.sort((a, b) => b.sim - a.sim);
-  return cutoff(scored.slice(0, limit).map(({ row, sim }) => ({
+  lastRaw = scored.slice(0, limit).map(({ row, sim }) => ({
     source: row.source,
     docId: row.docId,
     locale: row.locale,
@@ -271,7 +325,18 @@ export async function vectorSearch(
     chunkIx: row.chunkIx,
     text: row.text,
     similarity: sim,
-  })));
+  }));
+  return cutoff(lastRaw);
+}
+
+/**
+ * Sonuncu axtarışın KƏSİMDƏN ƏVVƏLKİ namizədləri.
+ *
+ * Kalibrləmə üçün lazımdır: kəsimdən sonrakı paylanmaya baxmaq dairəvi
+ * arqumentdir — kəsimin nə qədər sərt olduğunu göstərməz.
+ */
+export function lastCandidates(): VectorHit[] {
+  return lastRaw;
 }
 
 /* ── RRF ──────────────────────────────────────────────────────────────── */
