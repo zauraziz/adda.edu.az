@@ -367,3 +367,45 @@ Generator dil üzrə slug fərqi tapsa **dayanır**: sıxılma o halda etibarsı
 
 `lib/legacy-redirects.ts` **boş** göndərilir — generator işlədilənə qədər
 yönləndirmə yoxdur, amma sayt normal işləyir.
+
+## RAG indeksi (F2.7-1)
+
+```bash
+$env:ADMIN_IMPORT_SECRET = '<Render-dəki sirr>'
+node rag-index.mjs --status     # rejim + provayder + əhatə
+node rag-index.mjs --plan       # nə embed olunacaq (yazma yox)
+node rag-index.mjs --run        # indekslə
+```
+
+`rag_chunks` **Strapi content type deyil** — `strapi.db.connection` (knex)
+üzərində öz cədvəlimizdir. Səbəb: 5000 parça admin panelində zibil olardı,
+`schema.json`-da `vector` tipi yoxdur, draft/publish maşını isə burada mənasız.
+
+**İki rejim:** Neon-da `vector(768)` + HNSW indeksi (pgvector), lokal SQLite-da
+JSON. Rejim `--status` çıxışında görünür — pgvector qurulmasa deqradasiya
+səssiz olmur.
+
+**Embedding server tərəfdədir.** CLI yalnız kursoru sürür. Açar Render-də
+qalır, çünki F2.7-4-də sorğu vektoru üçün onsuz da orada lazımdır.
+
+**İdempotentdir:** hər parçanın SHA-256-sı saxlanılır, dəyişməyən parça
+yenidən embed olunmur. İkinci run `atlandi: <hamısı>` verir və provaydere
+sıfır sorğu göndərir.
+
+| bayraq | təyinat |
+|---|---|
+| `--status` | anbar rejimi, provayder hazırlığı, mənbə/dil üzrə əhatə |
+| `--plan` | quru gediş — açar olmadan da işləyir |
+| `--run` | indekslə (`--source=`, `--locale=`, `--force`) |
+| `--purge` | parçaları sil (`--source=`, `--locale=` ilə süzülür) |
+| `--purge-hard` | cədvəli at — **`RAG_EMBED_DIMS` dəyişəndə məcburidir** |
+
+**Ölçü dəyişməsi susmur:** `vector(768)` DDL-də sabitdir. Env-də ölçü
+dəyişilsə köhnə vektorlar yeni sorğularla müqayisə oluna bilməz — nəticə
+mənasız olardı, xəta isə çıxmazdı. Ona görə `rag_meta` cədvəli ölçünü/modeli
+yadda saxlayır və uyğunsuzluqda indeksləmə **dayanır**.
+
+**PII:** `person` yalnız metadata kimi indekslənir — ad, vəzifə, elmi ad/dərəcə,
+bölmə, fakültə. Bio, e-poçt, telefon, doğum tarixi **düşmür**. Bütün mənbələrdə
+mətndən e-poçt/telefon naxışları da silinir (`RAG_SCRUB_CONTACTS=false` ilə
+söndürülür).
