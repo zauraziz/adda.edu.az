@@ -465,3 +465,36 @@ node rag-index.mjs --search="kvant kriptoqrafiyasi qara delik"   # cefengiyat
 ```
 
 İki halın `top` dəyərləri arasındakı sərhədi `RAG_SIM_FLOOR`-a yaz.
+
+## Kvota tənzimləməsi (F2.7-1a)
+
+**Kvota HTTP sorğusunu yox, hər mətn elementini sayır.** Metrik adı bunu
+birbaşa deyir: `embed_content_free_tier_requests`. Praktik sübut: `batch=50`
+ilə 681 parça cəmi ~14 HTTP sorğusudur, lakin 1000-lik gündəlik hədd doldu.
+Nəticə: `RAG_EMBED_BATCH`-i böyütmək kvotaya **qənaət etmir** — yalnız şəbəkə
+gedişlərini azaldır.
+
+| dəyişən | defolt | nə edir |
+|---|---|---|
+| `RAG_EMBED_RPM` | `90` | element/dəqiqə; sürüşən 60 s pəncərəsi. `0` = sönülü |
+| `RAG_EMBED_RETRIES` | `6` | 429/5xx üçün cəhd sayı |
+
+**Provayderin dediyi qədər gözlənilir.** Əvvəlki sabit `1000 × cəhd²` sxemi
+4 cəhddə cəmi ~14 s verirdi, Google isə «retry in 43s» deyirdi — imtina
+qaçılmaz idi. İndi cavabdakı `retryDelay` oxunur.
+
+**429 artıq mənbəni tərk etmir.** Əvvəl kvota xətası 502 kimi qaytarılırdı və
+CLI mənbəni atırdı (`article/az` 811 sənəddən 75-də dayanmışdı). İndi server
+429 qaytarır, CLI gözləyib **eyni kursordan** davam edir.
+
+```bash
+node rag-index.mjs --run --max-items=900   # gunluk kvota budcesi
+node rag-index.mjs --run --max-wait=1800   # umumi gozleme haddi (saniye)
+```
+
+Hədd dolanda skript təmiz dayanır və nə qədər element göndərildiyini yazır.
+Eyni əmri sabah işlət — idempotentdir, qaldığı yerdən davam edir.
+
+**Pulsuz tarifin arifmetikası:** ~4300 parça ÷ 1000 element/gün ≈ 5 gün.
+Ödənişli tarifə keçmək bunu bir gedişə endirir; `RAG_EMBED_RPM` orada da
+lazımdır, çünki dəqiqəlik hədd ödənişlidə də var.

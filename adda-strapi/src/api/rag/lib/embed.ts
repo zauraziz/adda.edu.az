@@ -30,14 +30,32 @@ export interface EmbedConfig {
   batch: number;
   timeoutMs: number;
   hasKey: boolean;
+  /** Dəqiqədə maksimum MƏTN ELEMENTİ. 0 = tənzimləmə yoxdur. */
+  rpm: number;
+  retries: number;
+}
+
+export interface EmbedCallResult {
+  vectors: number[][];
+  error?: string;
+  /** 429 — kvota. Çağıran tərəf bunu ADİ XƏTADAN AYIRMALIDIR. */
+  rateLimited?: boolean;
+  /** Provayderin tövsiyə etdiyi gözləmə. */
+  retryAfterMs?: number;
 }
 
 export interface EmbedOutcome {
   ok: boolean;
   vectors: number[][];
   error?: string;
-  /** Sorğu sayı — kvota izləmək üçün. */
+  /** HTTP sorğu sayı. QEYD: kvota bunu yox, ELEMENT sayını sayır. */
   calls: number;
+  /** Embed olunmuş element sayı — kvota büdcəsi budur. */
+  items: number;
+  rateLimited?: boolean;
+  retryAfterMs?: number;
+  /** Tənzimləyicidə gözlənilən ümumi vaxt. */
+  pacedMs?: number;
 }
 
 const DEFAULT_MODEL = 'gemini-embedding-001';
@@ -69,7 +87,76 @@ export function embedConfig(): EmbedConfig {
     batch: Math.min(100, intEnv('RAG_EMBED_BATCH', 50)),
     timeoutMs: intEnv('RAG_EMBED_TIMEOUT_MS', 60_000),
     hasKey: Boolean((process.env.GEMINI_API_KEY || '').trim()),
+    // 90 — pulsuz tarifin 100/dəq həddinin altında qalmaq üçün. Ödənişli
+    // tarifdə yüksəldilə bilər; 0 tənzimləməni söndürür.
+    rpm: intEnv('RAG_EMBED_RPM', 90),
+    retries: Math.min(10, intEnv('RAG_EMBED_RETRIES', 6)),
   };
+}
+
+/* ── Sürət tənzimləyicisi ─────────────────────────────────────────────────
+ * KVOTA HTTP SORĞUSUNU YOX, MƏTN ELEMENTİNİ SAYIR.
+ *
+ * Metrik adı bunu birbaşa deyir: `embed_content_free_tier_requests`. Praktik
+ * sübut: batch=50 ilə 681 parça cəmi ~14 HTTP sorğusudur, lakin 1000-lik
+ * gündəlik hədd doldu. Deməli `batchEmbedContents`-i böyütmək kvotaya
+ * QƏNAƏT ETMİR — yalnız şəbəkə gedişlərini azaldır.
+ *
+ * Ona görə tənzimləmə element sayına görə aparılır: son 60 saniyədə
+ * göndərilmiş elementlərin sürüşən pəncərəsi saxlanılır və hədd dolanda
+ * gözlənilir. Render-də Strapi tək instansdır, modul səviyyəsində sayğac
+ * kifayətdir (eyni əsaslandırma `rate-limit.ts`-dədir).
+ * ─────────────────────────────────────────────────────────────────────── */
+
+const ITEM_LOG: number[] = [];
+
+/** Göndərməzdən əvvəl yer aç. Gözlənilən millisaniyəni qaytarır. */
+async function pace(count: number, rpm: number): Promise<number> {
+  if (rpm <= 0 || count <= 0) return 0;
+  let waited = 0;
+  for (let guard = 0; guard < 240; guard++) {
+    const now = Date.now();
+    while (ITEM_LOG.length && now - ITEM_LOG[0] > 60_000) ITEM_LOG.shift();
+    if (ITEM_LOG.length + count <= rpm) break;
+    // Paket özü hədddən böyükdürsə gözləmək kömək etmir — pəncərə boşalan
+    // kimi buraxılır (çağıran tərəf `batch`-i `rpm`-ə görə kiçildir).
+    if (count >= rpm && ITEM_LOG.length === 0) break;
+    const need = ITEM_LOG.length + count - rpm;
+    const idx = Math.min(Math.max(0, need - 1), ITEM_LOG.length - 1);
+    const wait = Math.min(61_000, Math.max(300, 60_000 - (now - ITEM_LOG[idx]) + 100));
+    await sleep(wait);
+    waited += wait;
+  }
+  const t = Date.now();
+  for (let i = 0; i < count; i++) ITEM_LOG.push(t);
+  return waited;
+}
+
+/** Son 60 saniyədə göndərilmiş element sayı — diaqnostika üçün. */
+export function pacerLoad(): number {
+  const now = Date.now();
+  while (ITEM_LOG.length && now - ITEM_LOG[0] > 60_000) ITEM_LOG.shift();
+  return ITEM_LOG.length;
+}
+
+/**
+ * Google-un dediyi gözləmə müddətini oxu.
+ *
+ * KÖHNƏ DAVRANIŞ SƏHV İDİ: sabit `1000 * attempt²` ilə 4 cəhddə cəmi ~14 s
+ * gözlənilirdi, Google isə «retry in 43s» deyirdi — yəni imtina qaçılmaz idi.
+ * İndi provayderin öz rəqəmi işlədilir.
+ */
+function retryAfterMs(json: GeminiResponse, raw: string): number {
+  const details = (json.error && json.error.details) || [];
+  for (const d of details) {
+    const rd = d && typeof d.retryDelay === 'string' ? d.retryDelay : '';
+    const m = rd.match(/^([0-9.]+)s$/);
+    if (m) return Math.ceil(parseFloat(m[1]) * 1000);
+  }
+  // Ehtiyat: mesaj mətnindəki «Please retry in 6.47s».
+  const m2 = raw.match(/retry in ([0-9.]+)s/i);
+  if (m2) return Math.ceil(parseFloat(m2[1]) * 1000);
+  return 0;
 }
 
 /** L2 normallaşdırma — bax yuxarıdakı 2-ci tələ. */
@@ -88,14 +175,14 @@ interface GeminiEmbedding {
 }
 interface GeminiResponse {
   embeddings?: GeminiEmbedding[];
-  error?: { message?: string; status?: string };
+  error?: { message?: string; status?: string; details?: Array<{ retryDelay?: string }> };
 }
 
 async function geminiBatch(
   texts: string[],
   kind: EmbedKind,
   cfg: EmbedConfig,
-): Promise<{ vectors: number[][]; error?: string }> {
+): Promise<EmbedCallResult> {
   const key = (process.env.GEMINI_API_KEY || '').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
@@ -112,10 +199,12 @@ async function geminiBatch(
     })),
   };
 
-  // 429 / 5xx üçün eksponensial gözləmə. Pulsuz deyil, ödənişli tarifdir,
-  // amma RPM həddi ödənişlidə də var.
   let lastError = '';
-  for (let attempt = 1; attempt <= 4; attempt++) {
+  let lastRetryMs = 0;
+  const maxAttempt = cfg.retries;
+  for (let attempt = 1; attempt <= maxAttempt; attempt++) {
+    // Göndərməzdən ƏVVƏL yer aç — 429-u yeyib sonra gözləmək əvəzinə.
+    await pace(texts.length, cfg.rpm);
     const ac = new AbortController();
     const timer = setTimeout(() => ac.abort(), cfg.timeoutMs);
     try {
@@ -135,11 +224,19 @@ async function geminiBatch(
 
       if (!res.ok) {
         lastError = 'HTTP ' + res.status + ': ' + ((json.error && json.error.message) || text.slice(0, 200));
-        if ((res.status === 429 || res.status >= 500) && attempt < 4) {
-          await sleep(1000 * attempt * attempt);
+        const advised = retryAfterMs(json, text);
+        if (res.status === 429) lastRetryMs = advised || 30_000;
+        if ((res.status === 429 || res.status >= 500) && attempt < maxAttempt) {
+          // Provayderin dediyi qədər + kiçik ehtiyat; yoxdursa eksponensial.
+          await sleep(advised ? advised + 500 : 1000 * attempt * attempt);
           continue;
         }
-        return { vectors: [], error: lastError };
+        return {
+          vectors: [],
+          error: lastError,
+          rateLimited: res.status === 429,
+          retryAfterMs: lastRetryMs || undefined,
+        };
       }
 
       const raw = json.embeddings || [];
@@ -164,15 +261,15 @@ async function geminiBatch(
     } catch (err) {
       const e = err as Error;
       lastError = e && e.name === 'AbortError' ? `timeout (${cfg.timeoutMs} ms)` : String((e && e.message) || err);
-      if (attempt < 4) await sleep(1000 * attempt * attempt);
+      if (attempt < maxAttempt) await sleep(1000 * attempt * attempt);
     } finally {
       clearTimeout(timer);
     }
   }
-  return { vectors: [], error: lastError };
+  return { vectors: [], error: lastError, rateLimited: lastRetryMs > 0, retryAfterMs: lastRetryMs || undefined };
 }
 
-type Embedder = (texts: string[], kind: EmbedKind, cfg: EmbedConfig) => Promise<{ vectors: number[][]; error?: string }>;
+type Embedder = (texts: string[], kind: EmbedKind, cfg: EmbedConfig) => Promise<EmbedCallResult>;
 
 const EMBEDDERS: Record<string, Embedder> = {
   gemini: geminiBatch,
@@ -191,18 +288,27 @@ export function embedReadiness(cfg: EmbedConfig): string | null {
 export async function embedTexts(texts: string[], kind: EmbedKind): Promise<EmbedOutcome> {
   const cfg = embedConfig();
   const notReady = embedReadiness(cfg);
-  if (notReady) return { ok: false, vectors: [], error: notReady, calls: 0 };
-  if (!texts.length) return { ok: true, vectors: [], calls: 0 };
+  if (notReady) return { ok: false, vectors: [], error: notReady, calls: 0, items: 0 };
+  if (!texts.length) return { ok: true, vectors: [], calls: 0, items: 0 };
 
   const fn = EMBEDDERS[cfg.provider];
+  // Paket tənzimləyici pəncərəsindən böyük olmamalıdır — yoxsa heç vaxt
+  // yer açıla bilməz.
+  const batch = cfg.rpm > 0 ? Math.min(cfg.batch, cfg.rpm) : cfg.batch;
   const out: number[][] = [];
   let calls = 0;
-  for (let i = 0; i < texts.length; i += cfg.batch) {
-    const slice = texts.slice(i, i + cfg.batch);
+  const t0 = Date.now();
+  for (let i = 0; i < texts.length; i += batch) {
+    const slice = texts.slice(i, i + batch);
     const res = await fn(slice, kind, cfg);
     calls++;
-    if (res.error) return { ok: false, vectors: [], error: res.error, calls };
+    if (res.error) {
+      return {
+        ok: false, vectors: [], error: res.error, calls, items: i,
+        rateLimited: res.rateLimited, retryAfterMs: res.retryAfterMs,
+      };
+    }
     out.push(...res.vectors);
   }
-  return { ok: true, vectors: out, calls };
+  return { ok: true, vectors: out, calls, items: texts.length, pacedMs: Date.now() - t0 };
 }

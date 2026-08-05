@@ -18,7 +18,7 @@
  */
 import { createHash } from 'node:crypto';
 import { SOURCES, sourceByKey, buildChunks, type ChunkRecord } from '../lib/chunk';
-import { embedConfig, embedReadiness, embedTexts } from '../lib/embed';
+import { embedConfig, embedReadiness, embedTexts, pacerLoad } from '../lib/embed';
 import { lexicalSearch, type LexicalHit } from '../lib/lexical';
 import { embedQuery, vectorSearch, rrfFuse, resetVectorCache, type VectorHit } from '../lib/retrieve';
 import {
@@ -172,6 +172,10 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         batch: cfg.batch,
         hasKey: cfg.hasKey,
         blocker: embedReadiness(cfg),
+        // Kvota ELEMENT sayır, HTTP sorğusu yox — `rpm` element/dəqiqədir.
+        rpm: cfg.rpm,
+        retries: cfg.retries,
+        pacerLoad: pacerLoad(),
       },
       scrubContacts: (process.env.RAG_SCRUB_CONTACTS || 'true').toLowerCase() !== 'false',
       sources: SOURCES.map((s) => ({ key: s.key, uid: s.uid, metaOnly: Boolean(s.metaOnly), route: s.route })),
@@ -236,7 +240,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
-    const stats = { docs: entries.length, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0 };
+    const stats = { docs: entries.length, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, items: 0 };
     const pending: ChunkRecord[] = [];
     const perDoc: Array<{ docId: string; count: number }> = [];
 
@@ -271,9 +275,21 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     if (pending.length) {
       const res = await embedTexts(pending.map((c) => c.embedText), 'document');
       stats.calls = res.calls;
+      stats.items = res.items;
       if (!res.ok) {
-        ctx.status = 502;
-        ctx.body = { ok: false, error: 'embed_failed', detail: res.error, cursor, source: src.key, locale };
+        // KVOTA XƏTASI KEÇİCİDİR — sənəd/sxem xətası ilə eyni sinifdə deyil.
+        // 429 qaytarılır ki, CLI gözləyib EYNİ KURSORDAN davam etsin; 502-də
+        // isə o, mənbəni tərk edirdi (`article/az` 75-də dayanmışdı).
+        ctx.status = res.rateLimited ? 429 : 502;
+        ctx.body = {
+          ok: false,
+          error: res.rateLimited ? 'embed_rate_limited' : 'embed_failed',
+          detail: res.error,
+          retryAfterMs: res.retryAfterMs || null,
+          cursor,
+          source: src.key,
+          locale,
+        };
         return;
       }
       const rows: StoredChunk[] = pending.map((c, i) => ({

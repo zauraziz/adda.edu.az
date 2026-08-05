@@ -16,6 +16,7 @@
 //   node rag-index.mjs --run                 # indeksle
 //   node rag-index.mjs --run --source=page --locale=az
 //   node rag-index.mjs --run --force         # hamısını yenidən embed et
+//   node rag-index.mjs --run --max-items=900 # kvota budcesi (element sayi)
 //   node rag-index.mjs --purge --source=page
 //   node rag-index.mjs --purge-hard          # cedveli at (olcu deyisende)
 //   node rag-index.mjs --search="deniz naqliyyati" --locale=az
@@ -38,6 +39,13 @@ if (SECRET.length < 16) {
 
 const HEADERS = { 'x-adda-admin-secret': SECRET };
 const LOCALES = ['az', 'ru', 'en'];
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function hhmmss(ms) {
+  const t = Math.round(ms / 1000);
+  return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
 
 async function call(path, body) {
   // Indeksleme paketi embedding-i gozleyir -- 60 s bezen azdir.
@@ -127,10 +135,17 @@ async function runIndex({ dryRun }) {
     process.exit(1);
   }
 
-  const grand = { docs: 0, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, batches: 0 };
+  const grand = { docs: 0, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, items: 0, batches: 0, waitedMs: 0, quotaHits: 0 };
   const t0 = Date.now();
 
+  // Kvota budcesi: pulsuz tarifde gunluk element haddi var, ona gore bir
+  // gedisi qesden kesmek olur. 0 = limitsiz.
+  const maxItems = args['max-items'] ? parseInt(String(args['max-items']), 10) : 0;
+  const maxWaitMs = (args['max-wait'] ? parseInt(String(args['max-wait']), 10) : 900) * 1000;
+  let stop = false;
+
   for (const pair of pairs) {
+    if (stop) break;
     let cursor = 0;
     let guard = 0;
     process.stdout.write(`  ${pad(pair.source + '/' + pair.locale, 20)}`);
@@ -146,6 +161,25 @@ async function runIndex({ dryRun }) {
         dryRun,
         force,
       });
+
+      // KVOTA (429) KECICIDIR -- menbeni terk etmirik, gozleyib EYNI
+      // kursordan davam edirik. Kohne davranis 502 kimi baxib `article/az`-i
+      // 75-ci senedde atirdi.
+      if (res.status === 429) {
+        const advised = res.data?.retryAfterMs || 30000;
+        if (grand.waitedMs + advised > maxWaitMs) {
+          console.log(`\n    KVOTA @${cursor}: umumi gozleme haddi (${hhmmss(maxWaitMs)}) asildi -- dayanildi.`);
+          console.log(`    Novbeti gedisde eyni emr qaldigi yerden davam edecek.`);
+          stop = true;
+          break;
+        }
+        process.stdout.write(`[kvota ${Math.round(advised / 1000)}s]`);
+        grand.waitedMs += advised;
+        grand.quotaHits++;
+        await sleep(advised + 500);
+        continue;   // EYNI kursor
+      }
+
       if (!res.ok) {
         console.log(`\n    XETA @${cursor}: HTTP ${res.status} ${res.data?.error || ''} ${res.data?.detail || ''}`);
         break;
@@ -157,8 +191,14 @@ async function runIndex({ dryRun }) {
       grand.skipped += s.skipped;
       grand.trimmed += s.trimmed;
       grand.calls += s.calls;
+      grand.items += s.items || 0;
       grand.batches++;
       process.stdout.write('.');
+      if (maxItems && grand.items >= maxItems) {
+        console.log(`\n    BUDCE: ${grand.items} element gonderildi (--max-items=${maxItems}) -- dayanildi.`);
+        stop = true;
+        break;
+      }
       if (res.data.done) break;
       cursor = res.data.next;
     }
@@ -172,8 +212,13 @@ async function runIndex({ dryRun }) {
   console.log(`    ${dryRun ? 'embed olunacaq' : 'embed olundu'} : ${dryRun ? grand.chunks - grand.skipped : grand.embedded}`);
   console.log(`    atlandi    : ${grand.skipped}  (deyismeyib)`);
   console.log(`    silindi    : ${grand.trimmed}  (qisalmis senedlerin quyrugu)`);
-  if (!dryRun) console.log(`    API sorgu  : ${grand.calls}`);
+  if (!dryRun) {
+    console.log(`    API sorgu  : ${grand.calls}`);
+    console.log(`    element    : ${grand.items}   <- KVOTA BUNU SAYIR (HTTP sorgusunu yox)`);
+    if (grand.quotaHits) console.log(`    kvota gozlemesi: ${grand.quotaHits} defe, cemi ${hhmmss(grand.waitedMs)}`);
+  }
   console.log('');
+  if (stop) console.log('  Eyni emri tekrar isle sal -- qaldigi yerden davam edecek.\n');
 }
 
 /* ── --search (F2.7-2) ────────────────────────────────────────────────── */
@@ -250,6 +295,7 @@ else if (args.plan) await runIndex({ dryRun: true });
 else if (args.status) await showStatus();
 else {
   console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --purge | --purge-hard');
-  console.log('  Elave: --source=<menbe> --locale=az|ru|en --limit=<n> --force\n');
+  console.log('  Elave: --source=<menbe> --locale=az|ru|en --limit=<n> --force');
+  console.log('         --max-items=<n> (kvota budcesi)  --max-wait=<saniye, defolt 900)\n');
   process.exit(1);
 }
