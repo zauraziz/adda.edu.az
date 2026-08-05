@@ -18,6 +18,7 @@
 //   node rag-index.mjs --run --force         # hamısını yenidən embed et
 //   node rag-index.mjs --purge --source=page
 //   node rag-index.mjs --purge-hard          # cedveli at (olcu deyisende)
+//   node rag-index.mjs --search="deniz naqliyyati" --locale=az
 
 import { STRAPI_URL, api } from './lib/strapi.mjs';
 
@@ -175,6 +176,50 @@ async function runIndex({ dryRun }) {
   console.log('');
 }
 
+/* ── --search (F2.7-2) ────────────────────────────────────────────────── */
+
+async function runSearch(q) {
+  const locale = args.locale ? String(args.locale) : 'az';
+  const limit = args.limit ? parseInt(String(args.limit), 10) : 8;
+  const sources = args.source ? `&sources=${encodeURIComponent(String(args.source))}` : '';
+  const path =
+    `/api/rag-search?q=${encodeURIComponent(q)}&locale=${locale}&limit=${limit}&debug=1${sources}`;
+
+  // GET-dir, amma sirr basligi eyni sekilde otururulur (RAG_SEARCH_PUBLIC
+  // acilmayibsa yegane yoldur).
+  const res = await api('GET', path, undefined, { headers: HEADERS, timeoutMs: 120000 });
+  if (!res.ok) {
+    console.error(`\n  XETA: HTTP ${res.status} — ${JSON.stringify(res.data)?.slice(0, 300)}\n`);
+    process.exit(1);
+  }
+  const d = res.data;
+
+  console.log(`\n  sorgu : ${d.query}   (${locale})`);
+  console.log(`  qollar: ${d.arms.join(' + ') || 'YOX'}   rejim: ${d.mode}   ${d.tookMs} ms${d.cachedQuery ? '   [sorgu vektoru kesden]' : ''}`);
+  if (d.counts) console.log(`  namized: leksik ${d.counts.lexical}, vektor ${d.counts.vector} sened (${d.counts.chunks} parca)`);
+  for (const n of d.notes || []) console.log(`  QEYD  : ${n}`);
+  console.log('');
+
+  if (!d.hits.length) {
+    console.log('  netice yoxdur.\n');
+    return;
+  }
+  let i = 0;
+  for (const h of d.hits) {
+    i++;
+    const r = h.scores || {};
+    const rank = `L${r.lexicalRank ?? '-'}/V${r.vectorRank ?? '-'}`;
+    console.log(`  ${String(i).padStart(2)}. [${h.source}] ${h.title}`);
+    console.log(`      ${h.url}   ${pad(rank, 12)}rrf ${r.rrf ?? '-'}`);
+    const snip = (h.snippet || '').replace(/\s+/g, ' ').slice(0, 150);
+    if (snip) console.log(`      ${snip}`);
+    for (const e of h.evidence || []) {
+      console.log(`      · parca ${e.chunkIx} (oxsarliq ${e.similarity}): ${e.text.replace(/\s+/g, ' ').slice(0, 110)}`);
+    }
+    console.log('');
+  }
+}
+
 /* ── --purge ──────────────────────────────────────────────────────────── */
 
 async function runPurge(hard) {
@@ -197,13 +242,14 @@ if (args.locale && LOCALES.indexOf(String(args.locale)) === -1) {
   process.exit(1);
 }
 
-if (args['purge-hard']) await runPurge(true);
+if (args.search) await runSearch(String(args.search));
+else if (args['purge-hard']) await runPurge(true);
 else if (args.purge) await runPurge(false);
 else if (args.run) await runIndex({ dryRun: false });
 else if (args.plan) await runIndex({ dryRun: true });
 else if (args.status) await showStatus();
 else {
-  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --purge | --purge-hard');
-  console.log('  Elave: --source=<menbe> --locale=az|ru|en --force\n');
+  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --purge | --purge-hard');
+  console.log('  Elave: --source=<menbe> --locale=az|ru|en --limit=<n> --force\n');
   process.exit(1);
 }

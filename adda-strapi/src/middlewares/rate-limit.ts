@@ -81,6 +81,15 @@ const RULES: Rule[] = [
   { method: 'POST', path: '/api/rag/admin/status', ip: [intEnv('RL_RAG_STATUS_IP', 30), 60 * MIN] },
   { method: 'POST', path: '/api/rag/admin/index', ip: [intEnv('RL_RAG_INDEX_IP', 600), 60 * MIN] },
   { method: 'POST', path: '/api/rag/admin/purge', ip: [intEnv('RL_RAG_PURGE_IP', 10), 60 * MIN] },
+  // F2.7-2: hibrid axtaris. Her sorgu embedding provaydere PULLU gedisdir
+  // (keslenmeyibse), ona gore `site-search`-den xeyli sixdir. `global` tavan
+  // budce ucundur -- tek istifadeci deyil, butun instans uzre.
+  {
+    method: 'GET',
+    path: '/api/rag-search',
+    ip: [intEnv('RL_RAG_SEARCH_IP', 30), 15 * MIN],
+    global: [intEnv('RL_RAG_SEARCH_GLOBAL', 1200), 60 * MIN],
+  },
   { method: 'POST', path: '/api/identity/submit/rsvp', ip: [intEnv('RL_SUBMIT_RSVP_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/identity/submit/correction', ip: [intEnv('RL_SUBMIT_CORRECTION_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/reactions', ip: [intEnv('RL_REACTIONS_IP', 30), 5 * MIN] },

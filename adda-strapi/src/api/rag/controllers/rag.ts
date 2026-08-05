@@ -19,6 +19,8 @@
 import { createHash } from 'node:crypto';
 import { SOURCES, sourceByKey, buildChunks, type ChunkRecord } from '../lib/chunk';
 import { embedConfig, embedReadiness, embedTexts } from '../lib/embed';
+import { lexicalSearch, type LexicalHit } from '../lib/lexical';
+import { embedQuery, vectorSearch, rrfFuse, resetVectorCache, type VectorHit } from '../lib/retrieve';
 import {
   ensureSchema,
   counts,
@@ -45,8 +47,10 @@ interface StrapiLike extends StrapiDbLike {
 interface Ctx {
   request: { body?: unknown };
   headers: Record<string, string | string[] | undefined>;
+  query: Record<string, string | string[] | undefined>;
   body: unknown;
   status: number;
+  set(field: string, value: string): void;
 }
 
 const LOCALES = ['az', 'ru', 'en'];
@@ -343,10 +347,196 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     try {
       await purge(strapi, { source, locale });
       resetCache();
+      resetVectorCache();
       ctx.body = { ok: true, purged: { source: source || '*', locale: locale || '*' }, indexed: await counts(strapi) };
     } catch (err) {
       ctx.status = 500;
       ctx.body = { ok: false, error: 'purge_failed', detail: String((err as Error).message).slice(0, 300) };
     }
+  },
+
+  /**
+   * GET /api/rag-search?q=…&locale=az&limit=8[&sources=article,page][&debug=1]
+   *
+   * HİBRİD axtarış: leksik + vektor, RRF ilə birləşdirilir. YALNIZ MƏNBƏ
+   * qaytarır — cavab generasiyası YOXDUR (o, F2.7-4-dür). Bu endpoint tək
+   * başına yoxlanıla bilir: retrieval pisdirsə heç bir prompt onu düzəltməz,
+   * ona görə əvvəlcə bu qat oturmalıdır.
+   *
+   * İCTİMAİLİK QAPISI: defolt BAĞLIDIR. Hər sorğu provaydere pullu gediş
+   * deməkdir, guardrails isə F2.7-3-dədir — açıq qoymaq büdcəni yandırmaq
+   * üçün dəvətdir. `RAG_SEARCH_PUBLIC=true` ilə açılır; admin sirri isə
+   * həmişə işləyir.
+   */
+  async search(ctx: Ctx) {
+    const isPublic = (process.env.RAG_SEARCH_PUBLIC || '').toLowerCase() === 'true';
+    if (!isPublic) {
+      const expected = cleanSecret(process.env.ADMIN_IMPORT_SECRET);
+      const got = cleanSecret(headerOf(ctx, 'x-adda-admin-secret'));
+      if (!expected || expected.length < 16 || !timingSafeEqualStr(got, expected)) {
+        ctx.status = 403;
+        ctx.body = { ok: false, error: 'rag_search_disabled', detail: 'RAG_SEARCH_PUBLIC=true deyil' };
+        return;
+      }
+    }
+
+    const started = Date.now();
+    const rawQ = ctx.query.q;
+    const q = (typeof rawQ === 'string' ? rawQ : '').trim().slice(0, 200);
+    const locale = LOCALES.indexOf(String(ctx.query.locale)) !== -1 ? String(ctx.query.locale) : 'az';
+    const limit = Math.min(20, Math.max(1, intOf(ctx.query.limit, 8)));
+    const debug = String(ctx.query.debug || '') === '1';
+    const sources = String(ctx.query.sources || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s && sourceByKey(s));
+
+    ctx.set('Cache-Control', 'public, max-age=30');
+
+    if (q.length < 2) {
+      ctx.body = { ok: true, query: q, locale, hits: [], arms: [], notes: ['sorgu cox qisadir'] };
+      return;
+    }
+
+    const cfg = embedConfig();
+    const info = await ensureSchema(strapi, cfg.dims, cfg.model);
+    const notes: string[] = [];
+    const arms: string[] = [];
+
+    /* ── Leksik qol ── */
+    let lex: LexicalHit[] = [];
+    try {
+      lex = await lexicalSearch(strapi, q, { locale, perType: 20, sources });
+      arms.push('lexical');
+    } catch (err) {
+      notes.push('leksik qol sindi: ' + String((err as Error).message).slice(0, 160));
+    }
+
+    /* ── Vektor qolu ── */
+    // Deqradasiya SƏSSİZ DEYİL: səbəb `notes`-da qayıdır. Vektor qolu
+    // düşəndə nəticələr hələ də gəlir, sadəcə parafraz sorğular zəifləyir.
+    let vec: VectorHit[] = [];
+    let cachedQuery = false;
+    if (!info.ready) {
+      notes.push('anbar hazir deyil: ' + (info.mismatch || 'bilinmir'));
+    } else {
+      const blocker = embedReadiness(cfg);
+      if (blocker) {
+        notes.push('vektor qolu sondurulub: ' + blocker);
+      } else {
+        const qv = await embedQuery(q);
+        if (!qv.vector) {
+          notes.push('sorgu embed olunmadi: ' + (qv.error || 'bilinmir'));
+        } else {
+          cachedQuery = qv.cached;
+          try {
+            vec = await vectorSearch(strapi, info, qv.vector, { locale, limit: 60, sources });
+            arms.push('vector');
+          } catch (err) {
+            notes.push('vektor axtarisi sindi: ' + String((err as Error).message).slice(0, 160));
+          }
+        }
+      }
+    }
+
+    /* ── Sənəd səviyyəsinə yığ ── */
+    // Parça sıralaması sənəd sıralamasına çevrilir: sənədin İLK görünüşü
+    // onun rütbəsidir (ən yaxın parçası). Qalan parçalar sübut kimi saxlanılır
+    // — F2.7-4-də sitat mətni məhz oradan gələcək.
+    interface Doc {
+      source: string;
+      docId: string;
+      title: string;
+      url: string;
+      slug: string;
+      snippet: string;
+      evidence: Array<{ chunkIx: number; text: string; similarity: number }>;
+      lexRank?: number;
+      vecRank?: number;
+    }
+    const docs = new Map<string, Doc>();
+    const keyOf = (s: string, d: string): string => s + ':' + d;
+
+    const lexKeys: string[] = [];
+    for (const h of lex) {
+      const k = keyOf(h.source, h.docId);
+      if (!docs.has(k)) {
+        docs.set(k, {
+          source: h.source, docId: h.docId, title: h.title, url: h.url,
+          slug: h.slug, snippet: h.snippet, evidence: [],
+        });
+        lexKeys.push(k);
+        docs.get(k)!.lexRank = lexKeys.length;
+      }
+    }
+
+    const vecKeys: string[] = [];
+    for (const h of vec) {
+      const k = keyOf(h.source, h.docId);
+      let d = docs.get(k);
+      if (!d) {
+        d = {
+          source: h.source, docId: h.docId, title: h.title, url: h.url,
+          slug: h.slug, snippet: '', evidence: [],
+        };
+        docs.set(k, d);
+      }
+      if (vecKeys.indexOf(k) === -1) {
+        vecKeys.push(k);
+        d.vecRank = vecKeys.length;
+      }
+      if (d.evidence.length < 3) {
+        d.evidence.push({ chunkIx: h.chunkIx, text: h.text, similarity: Math.round(h.similarity * 1000) / 1000 });
+      }
+      if (!d.snippet) d.snippet = h.text.slice(0, 200);
+    }
+
+    const wLex = Number(process.env.RAG_W_LEXICAL || '1') || 1;
+    const wVec = Number(process.env.RAG_W_VECTOR || '1') || 1;
+    const fused = rrfFuse([
+      { keys: lexKeys, weight: wLex },
+      { keys: vecKeys, weight: wVec },
+    ]);
+
+    const ranked = Array.from(fused.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([k, rrf]) => {
+        const d = docs.get(k)!;
+        return {
+          source: d.source,
+          documentId: d.docId,
+          title: d.title,
+          url: d.url,
+          slug: d.slug,
+          snippet: d.snippet,
+          evidence: d.evidence,
+          ...(debug
+            ? { scores: { lexicalRank: d.lexRank ?? null, vectorRank: d.vecRank ?? null, rrf: Math.round(rrf * 1e6) / 1e6 } }
+            : {}),
+        };
+      });
+
+    ctx.body = {
+      ok: true,
+      query: q,
+      locale,
+      arms,
+      mode: info.mode,
+      cachedQuery,
+      tookMs: Date.now() - started,
+      total: fused.size,
+      hits: ranked,
+      notes,
+      ...(debug
+        ? {
+            counts: { lexical: lexKeys.length, vector: vecKeys.length, chunks: vec.length },
+            // Kəsimi kalibrləmək üçün: real oxşarlıq aralığı burada görünür.
+            similarity: vec.length
+              ? { top: vec[0].similarity, bottom: vec[vec.length - 1].similarity }
+              : null,
+          }
+        : {}),
+    };
   },
 });

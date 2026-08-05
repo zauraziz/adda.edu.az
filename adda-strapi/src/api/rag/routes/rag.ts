@@ -5,8 +5,9 @@
  * type DEYİL — ona görə heç bir CRUD endpoint-i yaranmır. Parçalar HTTP
  * üzərindən oxunmur.
  *
- * BU FAZADA İCTİMAİ ENDPOINT YOXDUR. Axtarış F2.7-2-də (`/api/rag-search`),
- * cavab generasiyası F2.7-4-də gəlir. Burada yalnız indeksləmə var.
+ * F2.7-2 ilə `/rag-search` əlavə olundu. O, `auth: false`-dur, amma defolt
+ * BAĞLIDIR: `RAG_SEARCH_PUBLIC=true` olmayana qədər yalnız admin sirri ilə
+ * cavab verir (bax nəzarətçidəki `search`). Cavab generasiyası F2.7-4-dədir.
  *
  * `auth: false` = users-permissions yoxlaması keçilir; icazə nəzarətçidə
  * `ADMIN_IMPORT_SECRET` ilə verilir (identity/admin naxışı ilə eyni).
@@ -29,6 +30,13 @@ export default {
       method: 'POST',
       path: '/rag/admin/purge',
       handler: 'rag.purgeIndex',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
+      // GET — `site-search` ilə eyni forma: keşlənə bilir, yazma yoxdur.
+      method: 'GET',
+      path: '/rag-search',
+      handler: 'rag.search',
       config: { auth: false, policies: [], middlewares: [] },
     },
   ],

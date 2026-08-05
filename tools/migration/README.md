@@ -409,3 +409,59 @@ yadda saxlayır və uyğunsuzluqda indeksləmə **dayanır**.
 bölmə, fakültə. Bio, e-poçt, telefon, doğum tarixi **düşmür**. Bütün mənbələrdə
 mətndən e-poçt/telefon naxışları da silinir (`RAG_SCRUB_CONTACTS=false` ilə
 söndürülür).
+
+## Hibrid axtarış (F2.7-2)
+
+```bash
+node rag-index.mjs --search="gəmi mühərrikləri üzrə işə düzəlmək" --locale=az
+```
+
+`GET /api/rag-search?q=…&locale=az&limit=8[&sources=…][&debug=1]` —
+**yalnız mənbə qaytarır**, cavab generasiyası yoxdur (o, F2.7-4-dür).
+
+**Niyə iki qol:** çoxdilli embedding modelləri Azərbaycan dilində az-resurslu
+rejimdə işləyir. Xüsusi adlar və kodlar (`AZCON`, `ASCO`, `6231`) vektor
+fəzasında pis ayrılır — leksik qol orada dayaq olur. Əksinə, «gəmi mühərrikləri
+üzrə işə düzəlmək» sorğusunda leksik qol **sıfır** nəticə verir, çünki bu sözlər
+mətndə yoxdur; vektor qolu «Gəmi mexanikası ixtisası»nı tapır.
+
+**RRF, bal normallaşdırması yox:** leksik bal 0..1030, kosinus isə -1..1
+aralığındadır. Onları eyni şkalaya gətirən hər çevirmə özbaşınadır və məlumat
+paylanması dəyişəndə sürüşür. RRF yalnız **sıraya** baxır — miqyasdan asılı
+deyil. `RAG_W_LEXICAL` / `RAG_W_VECTOR` ilə çəkilər tənzimlənir, indeksi
+yenidən qurmadan.
+
+**`person` artıq axtarılır.** `site-search` heyəti ümumiyyətlə axtarmırdı
+(K25-dən qalan boşluq). Burada həm `displayName` («Ad Ata Soyad»), həm `name`
+(ştatdakı «Soyad Ad Ata») sorğulanır — istifadəçi hər iki sıra ilə yaza bilər.
+
+**Endpoint defolt BAĞLIDIR.** Hər sorğu keşlənməyibsə provaydere pullu
+gedişdir və guardrails F2.7-3-dədir. `RAG_SEARCH_PUBLIC=true` ilə açılır; admin
+sirri həmişə işləyir. Sorğu vektorları yaddaşda keşlənir (500 sorğu, LRU) —
+təkrar sual provaydere getmir.
+
+### Oxşarlıq kəsimi — KALİBRLƏNMƏLİDİR
+
+Vektor axtarışı **həmişə** `limit` qədər nəticə qaytarır, sorğu ilə heç bir
+əlaqəsi olmasa belə. Bu parçalar F2.7-4-də birbaşa prompta düşəcək, ona görə
+kəsim var:
+
+| dəyişən | defolt | nə edir |
+|---|---|---|
+| `RAG_SIM_DROP` | `0.15` | **nisbi**: ən yaxşıdan bu qədər geri qalanı atır |
+| `RAG_SIM_FLOOR` | `0` (sönülü) | **mütləq**: bu həddin altını atır |
+
+**Nisbi kəsim «heç nə uyğun gəlmir» halını TUTA BİLMİR** — bütün nəticələr
+eyni dərəcədə zəif olanda ən zəifi də keçir. Bunun üçün mütləq hədd lazımdır,
+onu isə real rəqəmlərə baxmadan təyin etmək olmaz: Gemini embedding-lərinin
+kosinus paylanması sıfır ətrafında mərkəzlənmir, «0.5-dən aşağı = əlaqəsiz»
+kimi sehrli rəqəm uydurmaq yanlış olardı.
+
+**Kalibrləmə addımı (indeks qurulandan sonra):**
+
+```bash
+node rag-index.mjs --search="<real sual>"        # oxsarliq: top / bottom
+node rag-index.mjs --search="kvant kriptoqrafiyasi qara delik"   # cefengiyat
+```
+
+İki halın `top` dəyərləri arasındakı sərhədi `RAG_SIM_FLOOR`-a yaz.
