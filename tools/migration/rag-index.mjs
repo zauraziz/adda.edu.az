@@ -20,6 +20,7 @@
 //   node rag-index.mjs --purge --source=page
 //   node rag-index.mjs --purge-hard          # cedveli at (olcu deyisende)
 //   node rag-index.mjs --search="deniz naqliyyati" --locale=az
+//   node rag-index.mjs --audit               # isarelenmis (subheli) parcalar
 
 import { STRAPI_URL, api } from './lib/strapi.mjs';
 
@@ -89,7 +90,11 @@ async function showStatus() {
   if (d.store.mismatch) console.log(`          UYGUNSUZLUQ: ${d.store.mismatch}`);
   console.log(`  embed : ${d.embed.provider}/${d.embed.model}  acar: ${d.embed.hasKey ? 'var' : 'YOX'}`);
   if (d.embed.blocker) console.log(`          MANE: ${d.embed.blocker}`);
-  console.log(`  temizleme (e-poct/telefon): ${d.scrubContacts ? 'aciq' : 'SONULU'}\n`);
+  const gd = d.guard || {};
+  console.log(`  guard : e-poct/telefon=${gd.contacts !== false ? 'aciq' : 'SONULU'}  FIN/IBAN/kart=${gd.identifiers !== false ? 'aciq' : 'SONULU'}  inyeksiya=${gd.injection !== false ? 'aciq' : 'SONULU'}`);
+  const flagged = d.indexed.reduce((a, r) => a + (r.flagged || 0), 0);
+  if (flagged) console.log(`          ${flagged} parca ISARELENIB -> node rag-index.mjs --audit\n`);
+  else console.log('');
 
   const indexed = new Map(d.indexed.map((r) => [`${r.source}:${r.locale}`, r]));
   console.log(`  ${pad('menbe', 14)}${pad('dil', 5)}${pad('sened', 8)}${pad('indeks', 8)}${pad('parca', 8)}`);
@@ -265,6 +270,36 @@ async function runSearch(q) {
   }
 }
 
+/* ── --audit (F2.7-3) ─────────────────────────────────────────────────── */
+
+async function runAudit() {
+  const res = await call('/api/rag/admin/audit', { limit: args.limit ? parseInt(String(args.limit), 10) : 100 });
+  if (!res.ok) {
+    console.error(`\n  XETA: HTTP ${res.status} — ${JSON.stringify(res.data)?.slice(0, 300)}\n`);
+    process.exit(1);
+  }
+  const d = res.data;
+  console.log(`\n  guardrail: e-poct/telefon=${d.guard.contacts}  FIN/IBAN/kart=${d.guard.identifiers}  inyeksiya=${d.guard.injection}  dropFlagged=${d.guard.dropFlagged}`);
+  console.log(`  isarelenmis parca: ${d.total}\n`);
+  if (!d.total) {
+    console.log('  Temizdir.\n');
+    return;
+  }
+  for (const [sig, n] of Object.entries(d.bySignal).sort((a, b) => b[1] - a[1])) {
+    console.log(`    ${pad(sig, 24)}${n}`);
+  }
+  console.log('');
+  for (const c of d.chunks) {
+    console.log(`  [${c.source}] ${c.title}  (parca ${c.chunkIx})`);
+    console.log(`    ${c.url}`);
+    console.log(`    siqnal: ${c.signals}`);
+    console.log(`    ${c.text.replace(/\s+/g, ' ').slice(0, 160)}`);
+    console.log('');
+  }
+  console.log('  YALANCI MUSBET gorursensa naxislar deqiqlesdirilmelidir --');
+  console.log('  hemin parcalar hazirda axtarisdan TAMAMILE cixarilir.\n');
+}
+
 /* ── --purge ──────────────────────────────────────────────────────────── */
 
 async function runPurge(hard) {
@@ -287,14 +322,15 @@ if (args.locale && LOCALES.indexOf(String(args.locale)) === -1) {
   process.exit(1);
 }
 
-if (args.search) await runSearch(String(args.search));
+if (args.audit) await runAudit();
+else if (args.search) await runSearch(String(args.search));
 else if (args['purge-hard']) await runPurge(true);
 else if (args.purge) await runPurge(false);
 else if (args.run) await runIndex({ dryRun: false });
 else if (args.plan) await runIndex({ dryRun: true });
 else if (args.status) await showStatus();
 else {
-  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --purge | --purge-hard');
+  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --audit | --purge | --purge-hard');
   console.log('  Elave: --source=<menbe> --locale=az|ru|en --limit=<n> --force');
   console.log('         --max-items=<n> (kvota budcesi)  --max-wait=<saniye, defolt 900)\n');
   process.exit(1);

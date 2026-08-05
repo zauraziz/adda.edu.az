@@ -158,6 +158,11 @@ export async function ensureSchema(strapi: StrapiDbLike, dims: number, model: st
     return cached;
   }
 
+  // F2.7-3: inyeksiya siqnalları sütunu. Mövcud sətirlərdə NULL qalır —
+  // «təmiz» sayılır, çünki onlar köhnə qaydalarla indekslənib. Yenidən
+  // indeksləmə hash dəyişdiyi üçün AVTOMATİK baş verir, `--force` lazım deyil.
+  await ensureColumn(strapi, 'signals', 'text');
+
   // ── Ölçü/model uyğunluğu ───────────────────────────────────────────────
   // `vector(768)` DDL-də sabitdir. Env-də ölçü dəyişilsə köhnə vektorlar
   // yeni sorğularla MÜQAYİSƏ OLUNA BİLMƏZ — nəticə mənasız olardı, xəta isə
@@ -178,6 +183,33 @@ export async function ensureSchema(strapi: StrapiDbLike, dims: number, model: st
 
   cached = { mode, client, dims, model, ready: !mismatch, mismatch };
   return cached;
+}
+
+/**
+ * Sütunu əlavə et — İDEMPOTENT.
+ *
+ * NİYƏ ALTER, YENİDƏN QURMA DEYİL: prodda artıq indekslənmiş parçalar var
+ * (681 və artmaqda). Cədvəli atmaq onların hamısını yenidən embed etmək
+ * demək olardı — pulsuz tarifdə günlərlə kvota.
+ *
+ * Postgres `ADD COLUMN IF NOT EXISTS` dəstəkləyir; SQLite yox, ona görə
+ * xəta udulur. Hər iki halda ikinci çağırış zərərsizdir.
+ */
+async function ensureColumn(strapi: StrapiDbLike, col: string, ddl: string): Promise<void> {
+  const db = strapi.db.connection;
+  try {
+    if (isPostgres(db)) {
+      await db.raw(`ALTER TABLE ${TABLE} ADD COLUMN IF NOT EXISTS ${col} ${ddl}`);
+    } else {
+      await db.raw(`ALTER TABLE ${TABLE} ADD COLUMN ${col} ${ddl}`);
+    }
+  } catch (err) {
+    // SQLite: "duplicate column name" — normaldır.
+    const m = String((err as Error).message || '');
+    if (!/duplicate column|already exists/i.test(m)) {
+      strapi.log.warn(`[rag] ${col} sutunu elave olunmadi: ` + m.slice(0, 160));
+    }
+  }
 }
 
 async function readMeta(strapi: StrapiDbLike): Promise<{ dims?: number; model?: string; mode?: string }> {
@@ -215,6 +247,8 @@ export interface StoredChunk {
   text: string;
   hash: string;
   vector: number[];
+  /** Aşkarlanan inyeksiya siqnalları (F2.7-3). Boş = təmiz. */
+  signals?: string[];
 }
 
 /** Postgres `vector` literal formatı: `[0.1,0.2,...]` */
@@ -233,28 +267,31 @@ export async function upsertChunks(
   let n = 0;
 
   for (const r of rows) {
+    const sig = r.signals && r.signals.length ? r.signals.join(',') : '';
     const common = [r.source, r.docId, r.locale, r.slug, r.title, r.url, r.chunkIx, r.text, r.hash, info.model, info.dims];
     if (info.mode === 'pgvector') {
       await db.raw(
         `INSERT INTO ${TABLE}
-           (source, doc_id, locale, slug, title, url, chunk_ix, text, hash, model, dims, embedding, updated_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?::vector,?)
+           (source, doc_id, locale, slug, title, url, chunk_ix, text, hash, model, dims, embedding, signals, updated_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?::vector,?,?)
          ON CONFLICT (source, doc_id, locale, chunk_ix) DO UPDATE SET
            slug = excluded.slug, title = excluded.title, url = excluded.url,
            text = excluded.text, hash = excluded.hash, model = excluded.model,
-           dims = excluded.dims, embedding = excluded.embedding, updated_at = excluded.updated_at`,
-        [...common, vecLiteral(r.vector), now],
+           dims = excluded.dims, embedding = excluded.embedding,
+           signals = excluded.signals, updated_at = excluded.updated_at`,
+        [...common, vecLiteral(r.vector), sig, now],
       );
     } else {
       await db.raw(
         `INSERT INTO ${TABLE}
-           (source, doc_id, locale, slug, title, url, chunk_ix, text, hash, model, dims, embedding_json, updated_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+           (source, doc_id, locale, slug, title, url, chunk_ix, text, hash, model, dims, embedding_json, signals, updated_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
          ON CONFLICT (source, doc_id, locale, chunk_ix) DO UPDATE SET
            slug = excluded.slug, title = excluded.title, url = excluded.url,
            text = excluded.text, hash = excluded.hash, model = excluded.model,
-           dims = excluded.dims, embedding_json = excluded.embedding_json, updated_at = excluded.updated_at`,
-        [...common, JSON.stringify(r.vector), now],
+           dims = excluded.dims, embedding_json = excluded.embedding_json,
+           signals = excluded.signals, updated_at = excluded.updated_at`,
+        [...common, JSON.stringify(r.vector), sig, now],
       );
     }
     n++;
@@ -328,12 +365,49 @@ export interface CountRow {
   locale: string;
   chunks: number;
   docs: number;
+  flagged: number;
+}
+
+export interface FlaggedRow {
+  source: string;
+  docId: string;
+  locale: string;
+  title: string;
+  url: string;
+  chunkIx: number;
+  signals: string;
+  text: string;
+}
+
+/** İşarələnmiş parçalar — Zaurun nəzərdən keçirməsi üçün (F2.7-3 audit). */
+export async function flaggedChunks(strapi: StrapiDbLike, limit = 100): Promise<FlaggedRow[]> {
+  const rows = rowsOf(
+    await strapi.db.connection.raw(
+      `SELECT source, doc_id, locale, title, url, chunk_ix, signals, text
+       FROM ${TABLE}
+       WHERE signals IS NOT NULL AND signals <> ''
+       ORDER BY source, doc_id, chunk_ix
+       LIMIT ?`,
+      [Math.min(500, Math.max(1, limit))],
+    ),
+  );
+  return rows.map((r) => ({
+    source: String(r.source),
+    docId: String(r.doc_id),
+    locale: String(r.locale),
+    title: String(r.title ?? ''),
+    url: String(r.url ?? ''),
+    chunkIx: Number(r.chunk_ix) || 0,
+    signals: String(r.signals ?? ''),
+    text: String(r.text ?? '').slice(0, 400),
+  }));
 }
 
 export async function counts(strapi: StrapiDbLike): Promise<CountRow[]> {
   const rows = rowsOf(
     await strapi.db.connection.raw(
-      `SELECT source, locale, COUNT(*) AS chunks, COUNT(DISTINCT doc_id) AS docs
+      `SELECT source, locale, COUNT(*) AS chunks, COUNT(DISTINCT doc_id) AS docs,
+              SUM(CASE WHEN signals IS NOT NULL AND signals <> '' THEN 1 ELSE 0 END) AS flagged
        FROM ${TABLE} GROUP BY source, locale ORDER BY source, locale`,
     ),
   );
@@ -342,5 +416,6 @@ export async function counts(strapi: StrapiDbLike): Promise<CountRow[]> {
     locale: String(r.locale),
     chunks: Number(r.chunks) || 0,
     docs: Number(r.docs) || 0,
+    flagged: Number(r.flagged) || 0,
   }));
 }

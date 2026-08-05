@@ -12,6 +12,7 @@
  * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
  */
 import { createHash } from 'node:crypto';
+import { guard, inspectInjection, scrubPII } from './guard';
 
 /* ── Mənbələr ─────────────────────────────────────────────────────────── */
 
@@ -159,14 +160,14 @@ export function toPlain(raw: unknown): string {
  * kütləvi şəkildə sadalaya bilmir.
  *
  * `RAG_SCRUB_CONTACTS=false` ilə söndürülür (defolt: AÇIQ).
- * F2.7-3-də bu qat genişlənəcək (şəxsi ID nömrələri, ünvanlar).
+ *
+ * F2.7-3-dən etibarən əsl iş `guard.ts`-dədir (FIN, IBAN, kart, pasport,
+ * doğum tarixi + inyeksiya aşkarlanması). Bu funksiya geriyə uyğunluq üçün
+ * saxlanılır.
  */
 export function scrubContacts(text: string, enabled = true): string {
   if (!enabled || !text) return text;
-  return text
-    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[e-poct]')
-    // AZ nömrə formatları: +994 XX XXX XX XX / (012) 123-45-67 / 050-123-45-67
-    .replace(/(?:\+994|00994|0)[\s-]?\(?\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}\b/g, '[telefon]');
+  return scrubPII(text, { contacts: true, identifiers: false }).text;
 }
 
 /* ── Parçalama ────────────────────────────────────────────────────────── */
@@ -254,6 +255,13 @@ export interface ChunkRecord {
   embedText: string;
   /** `embedText`-in SHA-256-sı — dəyişməyən parça yenidən embed olunmur. */
   hash: string;
+  /**
+   * Aşkarlanan inyeksiya siqnalları. Boş deyilsə parça ŞÜBHƏLİDİR və
+   * F2.7-4-də LLM kontekstinə buraxılmır.
+   */
+  signals: string[];
+  /** Silinmiş PII növləri — audit üçün. */
+  removed: string[];
 }
 
 function str(v: unknown): string {
@@ -311,12 +319,23 @@ export function sha256(s: string): string {
  * keçmir, prefiks olmasa vektor "hansı sənəd" məlumatını itirir və
  * «Dəniz Nəqliyyat fakültəsi nə vaxt yaradılıb» tipli suallar tapılmır.
  */
+export interface BuildOptions {
+  /** E-poçt/telefon silinsin (`RAG_SCRUB_CONTACTS`). */
+  contacts?: boolean;
+  /** FIN/IBAN/kart/pasport/doğum tarixi silinsin (`RAG_SCRUB_IDENTIFIERS`). */
+  identifiers?: boolean;
+  /** İnyeksiya naxışları yoxlanılsın (`RAG_GUARD_INJECTION`). */
+  injection?: boolean;
+}
+
 export function buildChunks(
   src: SourceDef,
   entry: Record<string, unknown>,
   locale: string,
-  scrub: boolean,
+  opts: BuildOptions | boolean = {},
 ): ChunkRecord[] {
+  // Köhnə imza (`scrub: boolean`) hələ dəstəklənir.
+  const o: BuildOptions = typeof opts === 'boolean' ? { contacts: opts } : opts;
   const docId = str(entry.documentId);
   const slug = str(entry.slug);
   const title = str(entry[src.title]) || str(entry.name) || slug;
@@ -326,19 +345,31 @@ export function buildChunks(
   const url = '/' + locale + src.route + slug;
 
   let texts: string[];
+  let removed: string[] = [];
   if (src.metaOnly) {
-    texts = [metaText(entry)];
+    // `metaOnly` mətni struktur olaraq qurulur — sərbəst istifadəçi girişi
+    // deyil, amma `position` sahəsi `/profil`-dən redaktə oluna bilir.
+    const g = guard(metaText(entry), o);
+    texts = [g.text];
+    removed = g.removed;
   } else {
     const body = toPlain(src.body ? entry[src.body] : '');
     const lead = src.excerpt ? toPlain(entry[src.excerpt]) : '';
     const full = lead && !body.startsWith(lead) ? lead + '\n\n' + body : body;
-    texts = splitChunks(scrubContacts(full, scrub));
+    // PII BÖLMƏDƏN ƏVVƏL silinir: naxış iki parçanın tikişinə düşsə
+    // yarısı indeksdə qalardı.
+    const g = guard(full, o);
+    removed = g.removed;
+    texts = splitChunks(g.text);
     // Gövdəsi boş sənəd (miqrasiyada var) — heç olmasa başlıq indekslənsin.
     if (!texts.length) texts = [title];
   }
 
   return texts.map((text, i) => {
     const embedText = `[${label}] ${title}\n\n${text}`;
+    // İnyeksiya PARÇA SƏVİYYƏSİNDƏ yoxlanılır: bir zəhərli abzas bütün
+    // sənədi indeksdən çıxarmamalıdır.
+    const sig = o.injection === false ? { signals: [] } : inspectInjection(embedText);
     return {
       source: src.key,
       docId,
@@ -350,6 +381,8 @@ export function buildChunks(
       text,
       embedText,
       hash: sha256(embedText),
+      signals: sig.signals,
+      removed,
     };
   });
 }

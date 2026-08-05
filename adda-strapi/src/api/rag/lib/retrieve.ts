@@ -88,6 +88,7 @@ interface CachedRow {
   url: string;
   chunkIx: number;
   text: string;
+  flagged: boolean;
   vec: Float32Array;
 }
 
@@ -129,7 +130,7 @@ async function loadJsonRows(strapi: StrapiDbLike, locale: string): Promise<Cache
 
   const raw = rowsOf(
     await strapi.db.connection.raw(
-      `SELECT source, doc_id, locale, slug, title, url, chunk_ix, text, embedding_json
+      `SELECT source, doc_id, locale, slug, title, url, chunk_ix, text, signals, embedding_json
        FROM ${TABLE} WHERE locale = ? AND embedding_json IS NOT NULL`,
       [locale],
     ),
@@ -152,6 +153,7 @@ async function loadJsonRows(strapi: StrapiDbLike, locale: string): Promise<Cache
       url: str(r.url),
       chunkIx: Number(r.chunk_ix) || 0,
       text: str(r.text),
+      flagged: Boolean(str(r.signals)),
       vec: normalized(vec),
     });
   }
@@ -165,6 +167,11 @@ export interface VectorOptions {
   locale: string;
   limit: number;
   sources?: string[];
+  /**
+   * İşarələnmiş (şübhəli) parçalar nəticədən çıxarılsın.
+   * Defolt AÇIQ — bu parçalar F2.7-4-də LLM promptuna düşəcək.
+   */
+  dropFlagged?: boolean;
 }
 
 /**
@@ -208,6 +215,7 @@ export async function vectorSearch(
     const lit = '[' + query.join(',') + ']';
     let where = 'locale = ?';
     args.push(opts.locale);
+    if (opts.dropFlagged !== false) where += " AND (signals IS NULL OR signals = '')";
     if (wanted) {
       where += ' AND source IN (' + wanted.map(() => '?').join(',') + ')';
       args.push(...wanted);
@@ -245,6 +253,7 @@ export async function vectorSearch(
   const scored: Array<{ row: CachedRow; sim: number }> = [];
   for (const row of rows) {
     if (wanted && wanted.indexOf(row.source) === -1) continue;
+    if (opts.dropFlagged !== false && row.flagged) continue;
     if (row.vec.length !== q.length) continue;
     // Hər iki vektor normallaşdırılıb → kosinus = skalyar hasil.
     let dot = 0;

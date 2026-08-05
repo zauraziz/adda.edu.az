@@ -498,3 +498,59 @@ Eyni əmri sabah işlət — idempotentdir, qaldığı yerdən davam edir.
 **Pulsuz tarifin arifmetikası:** ~4300 parça ÷ 1000 element/gün ≈ 5 gün.
 Ödənişli tarifə keçmək bunu bir gedişə endirir; `RAG_EMBED_RPM` orada da
 lazımdır, çünki dəqiqəlik hədd ödənişlidə də var.
+
+## Guardrails (F2.7-3)
+
+**Təhdid modeli:** indekslənən mətn **etibarsız girişdir**. Məzmunun bir hissəsi
+istifadəçi düzəlişlərindən gəlir (`/profil`, correction inbox). F2.7-4-də həmin
+mətn birbaşa LLM promptuna düşəcək — yəni istifadəçinin yazdığı sətir modelin
+göstərişi kimi oxuna bilər.
+
+Müdafiə iki qatdır: indeksləmə vaxtı naxış aşkarlanması (`guard.ts`) + prompt
+vaxtı struktur çərçivə (F2.7-4). Tək qat kifayət deyil — naxışlar həmişə
+keçirilə bilər, çərçivə isə tək başına yaxşı gizlədilmiş göstərişi tutmur.
+
+### PII — kontekstə lövbərlənib
+
+| növ | necə tutulur |
+|---|---|
+| e-poçt, telefon | birbaşa naxış |
+| IBAN (`AZ…`), pasport | birbaşa naxış |
+| kart nömrəsi | **Luhn yoxlanışı** ilə — yoxsa hər 16 rəqəmli kod silinərdi |
+| FIN | **yalnız** «FİN», «ş.v.», «şəxsiyyət vəsiqəsi» sözünün yanında |
+| doğum tarixi | **yalnız** «doğum tarixi», «təvəllüdlü» kontekstində |
+
+Lövbər olmasa fəlakət olardı: FIN 7 simvollu alfanumerik koddur, lövbərsiz
+`STCW-95`, `GEMI123`, ixtisas kodları da silinərdi. `12.05.2024` tədbir
+tarixidir, `12.05.1980-ci il təvəllüdlü` isə PII.
+
+### İnyeksiya
+
+Naxışlar **üç dildə**: `ignore previous instructions`, `əvvəlki göstərişləri
+nəzərə alma`, `игнорируй … инструкции`, `system prompt`, `you are now`,
+`<|im_start|>`, saxta növbə başlıqları, HTML şərhləri, görünməz Unicode.
+
+> **JS tələsi:** `\b` yalnız ASCII hərflər üzərində işləyir — `ə`, `İ`, `и`
+> üçün söz sərhədi **heç vaxt yaranmır** və naxış səssizcə heç nə tutmur.
+> Ona görə AZ/RU naxışlarında `(?<![\p{L}])` + `u` bayrağı işlədilir.
+
+### Nəticə: işarələnmiş parça axtarışa DÜŞMÜR
+
+```bash
+node rag-index.mjs --audit        # ne tutulub, hansi siqnalla
+```
+
+| dəyişən | defolt |
+|---|---|
+| `RAG_SCRUB_IDENTIFIERS` | `true` |
+| `RAG_GUARD_INJECTION` | `true` |
+| `RAG_DROP_FLAGGED` | `true` |
+
+**Yalançı müsbətin qiyməti realdır:** işarələnən parça çıxarılır, yəni sənəd
+co-pilot üçün görünməz olur. `--audit` məhz buna görə var — siyahını nəzərdən
+keçir, yalançı müsbət varsa naxışı dəqiqləşdir.
+
+**Sütun ALTER ilə əlavə olunur, cədvəl yenidən qurulmur** — prodda artıq
+indekslənmiş parçalar itməsin deyə. Köhnə sətirlərdə `signals` NULL qalır
+(«təmiz»); yenidən indeksləmə isə hash dəyişdiyi üçün **avtomatik** baş verir,
+`--force` lazım deyil.

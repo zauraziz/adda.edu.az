@@ -24,6 +24,7 @@ import { embedQuery, vectorSearch, rrfFuse, resetVectorCache, type VectorHit } f
 import {
   ensureSchema,
   counts,
+  flaggedChunks,
   hashesFor,
   trimChunks,
   upsertChunks,
@@ -66,6 +67,21 @@ const LOCALES = ['az', 'ru', 'en'];
  */
 const DOC_BATCH = 25;
 const MAX_BATCH = 50;
+
+function boolEnv(name: string, dflt: boolean): boolean {
+  const v = (process.env[name] || '').trim().toLowerCase();
+  if (!v) return dflt;
+  return v !== 'false' && v !== '0' && v !== 'no';
+}
+
+/** F2.7-3 guardrail konfiqurasiyası — hamısı defolt AÇIQDIR. */
+function guardOptions(): { contacts: boolean; identifiers: boolean; injection: boolean } {
+  return {
+    contacts: boolEnv('RAG_SCRUB_CONTACTS', true),
+    identifiers: boolEnv('RAG_SCRUB_IDENTIFIERS', true),
+    injection: boolEnv('RAG_GUARD_INJECTION', true),
+  };
+}
 
 /* ── Sirr yoxlaması ───────────────────────────────────────────────────── */
 
@@ -177,7 +193,10 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         retries: cfg.retries,
         pacerLoad: pacerLoad(),
       },
-      scrubContacts: (process.env.RAG_SCRUB_CONTACTS || 'true').toLowerCase() !== 'false',
+      guard: {
+        ...guardOptions(),
+        dropFlagged: boolEnv('RAG_DROP_FLAGGED', true),
+      },
       sources: SOURCES.map((s) => ({ key: s.key, uid: s.uid, metaOnly: Boolean(s.metaOnly), route: s.route })),
       totals,
       indexed: await counts(strapi),
@@ -206,7 +225,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     const limit = Math.min(MAX_BATCH, Math.max(1, intOf(body.limit, DOC_BATCH)));
     const dryRun = body.dryRun === true;
     const force = body.force === true;
-    const scrub = (process.env.RAG_SCRUB_CONTACTS || 'true').toLowerCase() !== 'false';
+    const gopts = guardOptions();
 
     const cfg = embedConfig();
     const info: StoreInfo = await ensureSchema(strapi, cfg.dims, cfg.model);
@@ -240,18 +259,20 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
-    const stats = { docs: entries.length, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, items: 0 };
+    const stats = { docs: entries.length, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, items: 0, flagged: 0, scrubbed: 0 };
     const pending: ChunkRecord[] = [];
     const perDoc: Array<{ docId: string; count: number }> = [];
 
     for (const entry of entries) {
-      const chunks = buildChunks(src, entry, locale, scrub);
+      const chunks = buildChunks(src, entry, locale, gopts);
       if (!chunks.length) continue;
       stats.chunks += chunks.length;
       perDoc.push({ docId: chunks[0].docId, count: chunks.length });
 
       const known = force ? new Map<number, string>() : await hashesFor(strapi, src.key, chunks[0].docId, locale);
+      if (chunks[0].removed.length) stats.scrubbed++;
       for (const c of chunks) {
+        if (c.signals.length) stats.flagged++;
         if (known.get(c.chunkIx) === c.hash) stats.skipped++;
         else pending.push(c);
       }
@@ -303,6 +324,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         text: c.text,
         hash: c.hash,
         vector: res.vectors[i],
+        signals: c.signals,
       }));
       try {
         stats.embedded = await upsertChunks(strapi, info, rows);
@@ -369,6 +391,34 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       ctx.status = 500;
       ctx.body = { ok: false, error: 'purge_failed', detail: String((err as Error).message).slice(0, 300) };
     }
+  },
+
+  /**
+   * POST /api/rag/admin/audit — işarələnmiş parçaların siyahısı.
+   *
+   * Guardrail-in NƏ TUTDUĞUNU görmədən ona güvənmək olmaz. Yalançı müsbətlər
+   * (məsələn sitat gətirən xəbər) burada görünməli və naxışlar ona görə
+   * dəqiqləşdirilməlidir. Düzəlişdən əvvəl diaqnostika prinsipi.
+   */
+  async audit(ctx: Ctx) {
+    if (!authorize(strapi, ctx)) return;
+    const body = bodyOf(ctx);
+    const cfg = embedConfig();
+    await ensureSchema(strapi, cfg.dims, cfg.model);
+    const rows = await flaggedChunks(strapi, intOf(body.limit, 100));
+    const bySignal: Record<string, number> = {};
+    for (const r of rows) {
+      for (const sig of r.signals.split(',')) {
+        if (sig) bySignal[sig] = (bySignal[sig] || 0) + 1;
+      }
+    }
+    ctx.body = {
+      ok: true,
+      guard: { ...guardOptions(), dropFlagged: boolEnv('RAG_DROP_FLAGGED', true) },
+      total: rows.length,
+      bySignal,
+      chunks: rows,
+    };
   },
 
   /**
@@ -446,7 +496,12 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         } else {
           cachedQuery = qv.cached;
           try {
-            vec = await vectorSearch(strapi, info, qv.vector, { locale, limit: 60, sources });
+            vec = await vectorSearch(strapi, info, qv.vector, {
+              locale,
+              limit: 60,
+              sources,
+              dropFlagged: boolEnv('RAG_DROP_FLAGGED', true),
+            });
             arms.push('vector');
           } catch (err) {
             notes.push('vektor axtarisi sindi: ' + String((err as Error).message).slice(0, 160));

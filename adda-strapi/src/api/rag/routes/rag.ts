@@ -33,6 +33,12 @@ export default {
       config: { auth: false, policies: [], middlewares: [] },
     },
     {
+      method: 'POST',
+      path: '/rag/admin/audit',
+      handler: 'rag.audit',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
       // GET — `site-search` ilə eyni forma: keşlənə bilir, yazma yoxdur.
       method: 'GET',
       path: '/rag-search',
