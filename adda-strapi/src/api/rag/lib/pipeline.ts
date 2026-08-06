@@ -21,6 +21,7 @@ import {
   type VectorHit,
 } from './retrieve';
 import { ensureSchema, type StoreMode, type StrapiDbLike } from './store';
+import { getGazetteer, findEntities, uniqueEntities, type EntityMatch } from './entities';
 
 export type StrapiRagLike = StrapiDbLike & StrapiDocsLike;
 
@@ -52,8 +53,10 @@ export interface RetrieveResult {
   /** Əsaslandırılmış cavab üçün kifayət qədər mənbə varmı. */
   answerable: boolean;
   sim: SimStats | null;
-  counts: { lexical: number; vector: number; chunks: number; candidates: number };
+  counts: { lexical: number; vector: number; chunks: number; candidates: number; entity: number };
   total: number;
+  /** Sualda tanınan varlıqlar (F2.7-5). */
+  entities: EntityMatch[];
 }
 
 export interface RetrieveOptions {
@@ -128,6 +131,21 @@ export async function retrieve(
     }
   }
 
+  /* ── Varlıq qolu (F2.7-5) ── */
+  // Dəqiq ad uyğunluğu ÇOX GÜCLÜ siqnaldır: «Rafiq Əsgərov kimdir» sualında
+  // vektor qolu bənzər adları qarışdıra bilər, leksik qol isə ştatdakı sıra
+  // ilə yazılmış adı tapmaya bilər. Qazettir ikisini də keçir.
+  //
+  // `unit` RAG mənbəsi DEYİL (parçalanmır), ona görə RRF qoluna düşmür —
+  // amma linkləmə üçün siyahıda qalır.
+  let ents: EntityMatch[] = [];
+  try {
+    const gaz = await getGazetteer(strapi, locale);
+    ents = uniqueEntities(findEntities(gaz, q));
+  } catch (err) {
+    notes.push('varliq tanima sindi: ' + String((err as Error).message).slice(0, 140));
+  }
+
   /* ── Sənəd səviyyəsinə yığ ── */
   // Parça sıralaması sənəd sıralamasına çevrilir: sənədin İLK görünüşü onun
   // rütbəsidir. Qalan parçalar SÜBUT kimi saxlanılır — cavab generasiyasında
@@ -170,11 +188,33 @@ export async function retrieve(
     if (!d.snippet) d.snippet = h.text.slice(0, 200);
   }
 
+  // Varlıq uyğunluqları sənəd siyahısına əlavə olunur — retrieval onları
+  // qaçırsa belə, dəqiq ad uyğunluğu nəticəyə düşməlidir.
+  const RAG_SOURCE_OF: Record<string, string> = {
+    person: 'person', program: 'program', faculty: 'faculty', department: 'department',
+  };
+  const entKeys: string[] = [];
+  for (const e of ents) {
+    const src = RAG_SOURCE_OF[e.kind];
+    if (!src) continue;
+    const k = keyOf(src, e.docId);
+    if (!docs.has(k)) {
+      docs.set(k, {
+        source: src, docId: e.docId, title: e.title, url: e.url,
+        slug: '', snippet: '', evidence: [], rrf: 0,
+      });
+    }
+    if (entKeys.indexOf(k) === -1) entKeys.push(k);
+  }
+
   const wLex = Number(process.env.RAG_W_LEXICAL || '1') || 1;
   const wVec = Number(process.env.RAG_W_VECTOR || '1') || 1;
+  // Çəki 1.5 — dəqiq ad uyğunluğu ehtimal əsaslı iki qoldan güclüdür.
+  const wEnt = Number(process.env.RAG_W_ENTITY || '1.5') || 1.5;
   const fused = rrfFuse([
     { keys: lexKeys, weight: wLex },
     { keys: vecKeys, weight: wVec },
+    { keys: entKeys, weight: wEnt },
   ]);
 
   const hits: RetrievedDoc[] = Array.from(fused.entries())
@@ -191,8 +231,11 @@ export async function retrieve(
   const raw = lastCandidates();
   const sim = similarityStats(raw);
   const zGate = Number(process.env.RAG_SIM_Z || '0');
+  // Varlıq uyğunluğu da əsaslandırma sayılır: «Rafiq Əsgərov kimdir»
+  // sualında sənəd var, sadəcə vektor oxşarlığı aşağı ola bilər.
   const answerable =
     lexKeys.length > 0 ||
+    entKeys.length > 0 ||
     (vec.length > 0 && (zGate <= 0 || (sim ? sim.gapZ >= zGate : false)));
 
   return {
@@ -203,7 +246,14 @@ export async function retrieve(
     cachedQuery,
     answerable,
     sim,
-    counts: { lexical: lexKeys.length, vector: vecKeys.length, chunks: vec.length, candidates: raw.length },
+    counts: {
+      lexical: lexKeys.length,
+      vector: vecKeys.length,
+      chunks: vec.length,
+      candidates: raw.length,
+      entity: entKeys.length,
+    },
     total: fused.size,
+    entities: ents,
   };
 }

@@ -31,7 +31,7 @@ import { STRAPI_URL, api } from './lib/strapi.mjs';
 // `true` olurdu ve servere sorgu kimi "true" gedirdi -- netice qaytarilirdi,
 // yalniz tamam basqa sual ucun. Sessiz olmasi ucun indi deyeri catismayan
 // bayraq XETA verir.
-const VALUE_FLAGS = new Set(['search', 'ask', 'source', 'locale', 'limit', 'max-items', 'max-wait']);
+const VALUE_FLAGS = new Set(['search', 'ask', 'probe', 'source', 'locale', 'limit', 'max-items', 'max-wait']);
 
 const args = (() => {
   const out = {};
@@ -316,6 +316,31 @@ async function runSearch(q) {
   }
 }
 
+/* ── --entities (F2.7-5) ──────────────────────────────────────────────── */
+
+async function runEntities() {
+  const res = await call('/api/rag/admin/entities', {
+    locale: args.locale ? String(args.locale) : 'az',
+    refresh: Boolean(args.refresh),
+    ...(args.probe ? { probe: String(args.probe) } : {}),
+  });
+  if (!res.ok) {
+    console.error(`\n  XETA: HTTP ${res.status} — ${JSON.stringify(res.data)?.slice(0, 300)}\n`);
+    process.exit(1);
+  }
+  const d = res.data;
+  console.log(`\n  qazettir : ${d.total} varliq, ${d.keys} acar   (${d.locale}, qurulub ${d.builtAt})`);
+  for (const [k, n] of Object.entries(d.byKind)) console.log(`    ${pad(k, 14)}${n}`);
+  console.log(`\n  en uzun acar : ${d.longestKeys[0]}`);
+  console.log(`  en qisa acar : ${d.shortestKeys[d.shortestKeys.length - 1]}`);
+  if (d.probe !== undefined) {
+    console.log(`\n  sinaq metni: "${d.probe}"`);
+    if (!d.matches.length) console.log('    heç nə tanınmadı.');
+    for (const m of d.matches) console.log(`    [${m.kind}] "${m.surface}" -> ${m.title}  ${m.url}`);
+  }
+  console.log('');
+}
+
 /* ── --ask (F2.7-4) ───────────────────────────────────────────────────── */
 
 async function runAsk(q) {
@@ -346,6 +371,11 @@ async function runAsk(q) {
   if (d.sources?.length) {
     console.log('  Menbeler:');
     for (const s2 of d.sources) console.log(`    [${s2.n}] ${s2.title}\n         ${s2.url}`);
+    console.log('');
+  }
+  if (d.entities?.length) {
+    console.log('  Tanınan varlıqlar:');
+    for (const en of d.entities) console.log(`    [${en.kind}] "${en.surface}" -> ${en.url}`);
     console.log('');
   }
   if (d.invalidCitations?.length) {
@@ -410,7 +440,8 @@ if (args.locale && LOCALES.indexOf(String(args.locale)) === -1) {
   process.exit(1);
 }
 
-if (args.ask) await runAsk(String(args.ask));
+if (args.entities) await runEntities();
+else if (args.ask) await runAsk(String(args.ask));
 else if (args.audit) await runAudit();
 else if (args.search) await runSearch(String(args.search));
 else if (args['purge-hard']) await runPurge(true);
@@ -419,7 +450,8 @@ else if (args.run) await runIndex({ dryRun: false });
 else if (args.plan) await runIndex({ dryRun: true });
 else if (args.status) await showStatus();
 else {
-  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --ask=<sual> | --audit | --purge | --purge-hard');
+  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --ask=<sual>');
+  console.log('                   --entities [--probe=<metn>] [--refresh] | --audit | --purge | --purge-hard');
   console.log('  Elave: --source=<menbe> --locale=az|ru|en --limit=<n> --force');
   console.log('         --max-items=<n> (kvota budcesi)  --max-wait=<saniye, defolt 900)\n');
   process.exit(1);

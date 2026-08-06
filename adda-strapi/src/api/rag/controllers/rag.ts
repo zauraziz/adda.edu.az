@@ -20,7 +20,8 @@ import { createHash } from 'node:crypto';
 import { SOURCES, sourceByKey, buildChunks, type ChunkRecord } from '../lib/chunk';
 import { embedConfig, embedReadiness, embedTexts, pacerLoad } from '../lib/embed';
 import { resetVectorCache } from '../lib/retrieve';
-import { retrieve, normalizeSources, type RetrievedDoc, type StrapiRagLike } from '../lib/pipeline';
+import { retrieve, normalizeSources, type StrapiRagLike } from '../lib/pipeline';
+import { getGazetteer, findEntities, uniqueEntities, resetGazetteer } from '../lib/entities';
 import {
   chat,
   chatConfig,
@@ -459,6 +460,39 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
   },
 
   /**
+   * POST /api/rag/admin/entities   { locale?, refresh?, probe? }
+   *
+   * Qazettir diaqnostikası. `probe` verilsə həmin mətndə nəyin tanındığını
+   * göstərir — yalançı uyğunluqları görmədən qazettirə güvənmək olmaz.
+   */
+  async entities(ctx: Ctx) {
+    if (!authorize(strapi, ctx)) return;
+    const body = bodyOf(ctx);
+    const locale = LOCALES.indexOf(String(body.locale ?? '')) !== -1 ? String(body.locale) : 'az';
+    if (body.refresh === true) resetGazetteer();
+
+    const gaz = await getGazetteer(strapi, locale, body.refresh === true);
+    const byKind: Record<string, number> = {};
+    for (const e of gaz.entities) byKind[e.kind] = (byKind[e.kind] || 0) + 1;
+
+    const probe = typeof body.probe === 'string' ? body.probe : '';
+    ctx.body = {
+      ok: true,
+      locale,
+      builtAt: new Date(gaz.builtAt).toISOString(),
+      total: gaz.entities.length,
+      keys: gaz.keyIndex.length,
+      byKind,
+      // Ən uzun açarlar — qısaldılmış variantların düzgün qurulduğunu göstərir.
+      longestKeys: gaz.keyIndex.slice(0, 5).map((k) => k.key),
+      shortestKeys: gaz.keyIndex.slice(-5).map((k) => k.key),
+      ...(probe
+        ? { probe, matches: findEntities(gaz, probe).map((m) => ({ kind: m.kind, surface: m.surface, title: m.title, url: m.url })) }
+        : {}),
+    };
+  },
+
+  /**
    * GET /api/rag-search?q=…&locale=az&limit=8[&sources=article,page][&debug=1]
    *
    * HİBRİD axtarış: leksik + vektor, RRF ilə birləşdirilir. YALNIZ MƏNBƏ
@@ -508,6 +542,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         evidence: d.evidence,
         ...(debug ? { scores: { lexicalRank: d.lexRank ?? null, vectorRank: d.vecRank ?? null, rrf: d.rrf } } : {}),
       })),
+      entities: r.entities.map((e) => ({ kind: e.kind, title: e.title, url: e.url, surface: e.surface })),
       notes: r.notes,
       ...(debug
         ? {
@@ -656,10 +691,25 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
+    // Cavab MƏTNİNDƏ tanınan varlıqlar — UI onları linkə çevirə bilsin.
+    // Sualdakılarla eyni deyil: model cavabında başqa fakültə və ya ixtisas
+    // adı çəkə bilər.
+    const finalText = scrubAnswer(chk.text);
+    let answerEntities: Array<{ kind: string; title: string; url: string; surface: string }> = [];
+    try {
+      const gaz = await getGazetteer(strapi, locale);
+      answerEntities = uniqueEntities(findEntities(gaz, finalText)).map((e) => ({
+        kind: e.kind, title: e.title, url: e.url, surface: e.surface,
+      }));
+    } catch {
+      answerEntities = [];
+    }
+
     const payload = {
       ok: true,
       answered: true,
-      answer: scrubAnswer(chk.text),
+      answer: finalText,
+      entities: answerEntities,
       query: q,
       locale,
       // YALNIZ istifadə olunan mənbələr qaytarılır — istifadəçi hər iddianı

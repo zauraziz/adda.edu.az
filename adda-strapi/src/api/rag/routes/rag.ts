@@ -39,6 +39,12 @@ export default {
       config: { auth: false, policies: [], middlewares: [] },
     },
     {
+      method: 'POST',
+      path: '/rag/admin/entities',
+      handler: 'rag.entities',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
       // GET — `site-search` ilə eyni forma: keşlənə bilir, yazma yoxdur.
       method: 'GET',
       path: '/rag-search',

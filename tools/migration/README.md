@@ -639,3 +639,45 @@ istifadəçi hər iddianı linkə baxıb yoxlaya bilsin.
 
 Hədd qoyulmayıbsa (`0`), `answerable` demək olar ki, həmişə `true` olur və
 1-ci qapı işləmir. **Kalibrləmə F2.7-4-ün ön şərtidir**, əlavə deyil.
+
+## Varlıq tanıma (F2.7-5)
+
+```bash
+node rag-index.mjs --entities
+node rag-index.mjs --entities --probe "Əsgərov Rafiqin fakültəsi"
+node rag-index.mjs --entities --refresh     # qazettiri yenidən qur
+```
+
+**Niyə qazettir, maşın öyrənməsi deyil.** Varlıq dəsti qapalıdır və tam
+bilinir: 163 şəxs, 4 ixtisas, 2 fakültə, ~23 bölmə. Belə halda hazır siyahı
+üzərində dəqiq uyğunluq statistik modeldən hər cəhətdən üstündür — Azərbaycan
+dili üçün etibarlı NER modeli praktiki olaraq yoxdur, xərci sıfırdır, auditə
+açıqdır, və yanlış tanıma «uydurma link» yaradır (model burada risklidir).
+
+### Üç dil tələsi, üçü də koddadır
+
+**`toLowerCase()` tək başına yanlışdır.** `İ` → `i̇` (i + birləşən nöqtə),
+`I` → `i` (Azərbaycan dilində `I`-nin kiçiyi `ı`-dır). Bu iki hərf əvvəlcə əl
+ilə əvəzlənir.
+
+**Şəkilçi dözümlülüyü.** Dil aqqlütinativdir: «Əsgərovun», «fakültəsinin»,
+«Mərkəzinin». Açardan sonra 10 simvola qədər hərf qəbul olunur; daha uzunu
+rədd edilir, yoxsa «Əsgərovlaşdırılmasınadək» də uyğun gələrdi.
+
+**Uzun açar əvvəl.** «Gəmi mexanikası və elektromexanikası fakültəsi» «Gəmi
+mexanikası»ndan əvvəl yoxlanılır. Eyni tələ `Rektor` ⊂ `Prorektor` halındadır.
+
+**Ad sırası.** `name` = ştatdakı «Soyad Ad Ata», `displayName` = «Ad Ata
+Soyad». Hər ikisi + qısaldılmış variantlar açar kimi qeydə alınır, çünki
+istifadəçi istənilən sıra ilə yaza bilər.
+
+### Retrieval-a təsiri
+
+Varlıq uyğunluqları **üçüncü RRF qoludur** (`RAG_W_ENTITY=1.5`) və
+`answerable` hesabına daxildir: «Rafiq Əsgərov kimdir» sualında sənəd var,
+sadəcə vektor oxşarlığı aşağı ola bilər.
+
+Cavabda `entities` massivi qayıdır — UI mətndəki adları linkə çevirə bilər.
+Sualdakılarla eyni deyil: model cavabında başqa fakültə adı çəkə bilər.
+
+Qazettir 15 dəqiqə keşlənir. Yeni əməkdaş əlavə olunanda `--refresh`.
