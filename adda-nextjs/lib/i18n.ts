@@ -12,6 +12,23 @@ export function isLocale(x: string): x is Locale {
 
 // [az, ru, en]
 const T: Array<[string, string, string]> = [
+  // --- F2.7-6 AI komekci (az, ru, en) ---
+  ['AI köməkçi', 'AI-помощник', 'AI assistant'],
+  ['Sayt məzmunu üzrə suallarınıza mənbə göstərməklə cavab verir.', 'Отвечает на вопросы по содержанию сайта со ссылками на источники.', 'Answers questions about the site content, with sources.'],
+  ['Sualınızı yazın…', 'Введите вопрос…', 'Type your question…'],
+  ['Soruş', 'Спросить', 'Ask'],
+  ['Axtarılır…', 'Идёт поиск…', 'Working…'],
+  ['Nümunə:', 'Например:', 'Try:'],
+  ['Mənbələr axtarılır…', 'Поиск источников…', 'Finding sources…'],
+  ['Cavab hazırlanır…', 'Готовится ответ…', 'Writing the answer…'],
+  ['Mənbələr', 'Источники', 'Sources'],
+  ['Əlaqəli səhifələr', 'Связанные страницы', 'Related pages'],
+  ['Sualı başqa sözlərlə yazmağa cəhd edin və ya axtarışdan istifadə edin.', 'Попробуйте переформулировать вопрос или воспользуйтесь поиском.', 'Try rephrasing the question, or use search instead.'],
+  ['Cavab yalnız saytdakı məzmuna əsaslanır. Mühüm məsələlərdə mənbə səhifəsini yoxlayın.', 'Ответ основан только на содержании сайта. По важным вопросам проверьте страницу-источник.', 'The answer is based only on site content. For important matters, check the source page.'],
+  ['Çox sayda sorğu göndərildi. Bir az sonra yenidən cəhd edin.', 'Слишком много запросов. Повторите попытку позже.', 'Too many requests. Please try again shortly.'],
+  ['Sual çox qısadır.', 'Вопрос слишком короткий.', 'The question is too short.'],
+  ['Xidmət hazırda əlçatmazdır.', 'Сервис сейчас недоступен.', 'The service is currently unavailable.'],
+  ['Xəta baş verdi. Yenidən cəhd edin.', 'Произошла ошибка. Попробуйте ещё раз.', 'Something went wrong. Please try again.'],
   // --- K18 mezmun sehifeleri i18n (az, ru, en) ---
   ['Səhifə', 'Страница', 'Page'],
   ['Struktur', 'Структура', 'Structure'],
