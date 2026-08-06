@@ -48,6 +48,31 @@ export function azLower(s: string): string {
   return s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
 }
 
+/**
+ * Diakritikanı ASCII-yə qatla.
+ *
+ * NİYƏ MƏCBURİDİR: istifadəçi «Esgerov Rafiq» yazır, qazettirdə isə
+ * «əsgərov rafiq» var — dəqiq uyğunluq HEÇ NƏ tapmır. Azərbaycan hərfləri
+ * olmayan klaviaturada bu, istisna deyil, normadır.
+ *
+ * XƏRİTƏ 1:1-DİR və elə qalmalıdır: mətndəki mövqe (`at`) qatlanmış sətir
+ * üzərində hesablanır, sonra ORİJİNAL mətndən kəsilir. Bir simvol iki
+ * simvola çevrilsə bütün ofsetlər sürüşərdi.
+ */
+// REGİSTR SAXLANILIR: `foldAz` YALNIZ diakritikanı qatlayır. Registr işi
+// `azLower`-indir — iki məsuliyyəti bir funksiyaya yığmaq `foldAz`-ı tək
+// başına çağıran kodu gözlənilməz nəticə ilə qarşılaşdırardı.
+const FOLD: Record<string, string> = {
+  ə: 'e', ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u',
+  Ə: 'E', Ç: 'C', Ğ: 'G', İ: 'I', Ö: 'O', Ş: 'S', Ü: 'U',
+};
+
+export function foldAz(s: string): string {
+  let out = '';
+  for (const ch of s) out += FOLD[ch] !== undefined ? FOLD[ch] : ch;
+  return out;
+}
+
 /** Hərf sayılan simvollar — Azərbaycan əlifbası daxil. */
 const LETTER = /[0-9a-zA-ZəƏçÇğĞıIİöÖşŞüÜ]/;
 
@@ -60,6 +85,11 @@ function norm(s: string): string {
     .replace(/[«»""'']/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/** Açar və mətn EYNİ funksiyadan keçir — yoxsa uyğunluq asimmetrik olar. */
+function matchKey(s: string): string {
+  return foldAz(norm(s));
 }
 
 /* ── Qazettir qurulması ───────────────────────────────────────────────── */
@@ -119,7 +149,7 @@ function personVariants(full: string): string[] {
 const MIN_KEY = 6;
 
 /** Ümumi sözlərdən ibarət açarlar — bunlar link kimi faydasızdır. */
-const STOPKEYS = new Set(['akademiya', 'fakulte', 'fakültə', 'kafedra', 'şöbə', 'sobe', 'mərkəz', 'merkez']);
+const STOPKEYS = new Set(['akademiya', 'fakulte', 'kafedra', 'sobe', 'merkez', 'metbee', 'anbar']);
 
 export async function buildGazetteer(strapi: StrapiDocsLike, locale: string): Promise<Gazetteer> {
   const entities: EntityDef[] = [];
@@ -157,7 +187,8 @@ export async function buildGazetteer(strapi: StrapiDocsLike, locale: string): Pr
         for (const v of raw.slice()) raw.push(...personVariants(v));
       }
 
-      const keys = Array.from(new Set(raw.map(norm)))
+      // Açarlar QATLANMIŞ formada saxlanılır (diakritikasız yazılış üçün).
+      const keys = Array.from(new Set(raw.map(matchKey)))
         .filter((k) => k.length >= MIN_KEY && !STOPKEYS.has(k));
       if (!keys.length) continue;
 
@@ -212,7 +243,10 @@ const MAX_SUFFIX = 10;
 
 export function findEntities(gaz: Gazetteer, text: string): EntityMatch[] {
   if (!text) return [];
-  const hay = azLower(text);
+  // Qatlama 1:1 olduğu üçün `hay` uzunluğu `text` ilə eynidir və ofsetlər
+  // orijinal mətnə birbaşa tətbiq olunur. Qoruyucu yoxlama:
+  const hay = foldAz(azLower(text));
+  if (hay.length !== text.length) return [];
   const taken: Array<[number, number]> = [];
   const out: EntityMatch[] = [];
 

@@ -681,3 +681,30 @@ Cavabda `entities` massivi qayıdır — UI mətndəki adları linkə çevirə b
 Sualdakılarla eyni deyil: model cavabında başqa fakültə adı çəkə bilər.
 
 Qazettir 15 dəqiqə keşlənir. Yeni əməkdaş əlavə olunanda `--refresh`.
+
+## F2.7-6a — üç düzəliş
+
+**1. Diakritikasız axtarış.** `--probe "Esgerov Rafiqin fakultesi"` heç nə
+tapmırdı: qazettirdəki açar `əsgərov rafiq`-dir. Azərbaycan hərfləri olmayan
+klaviaturada bu istisna deyil, normadır. İndi həm açar, həm mətn ASCII-yə
+qatlanır (`ə→e`, `ş→s`, `İ→I`…).
+
+Xəritə **1:1-dir və elə qalmalıdır** — mövqe qatlanmış sətir üzərində
+hesablanır, sonra orijinal mətndən kəsilir. Bir simvol ikiyə çevrilsə bütün
+ofsetlər sürüşərdi. Kodda uzunluq yoxlaması var.
+
+`foldAz` **registri saxlayır** — registr işi `azLower`-indir. İki məsuliyyəti
+bir funksiyaya yığmaq onu tək çağıran kodu gözlənilməz nəticə ilə üzləşdirərdi.
+
+**2. Model adı sürüşəndir.** Google `gemini-2.5-*` seriyasını elan olunmuş
+bağlanma tarixindən (16.10.2026) **əvvəl** yeni açarlara bağladı — 404 «no
+longer available to new users». Ad `RAG_CHAT_MODEL` env-indədir, kod
+toxunulmur. Yeni defolt: `gemini-3.5-flash`.
+
+Belə 404 artıq **təkrar cəhd etmir** və səbəbi açıq yazır — model adı
+köhnəldisə gözləmək mənasızdır.
+
+**3. `HTTP 0` keçicidir.** Şəbəkə kəsilməsi (timeout, bağlı bağlantı) Render
+pulsuz tarifdə baş verir. Əvvəl CLI bunu ölümcül sayıb mənbəni tərk edirdi
+(`article/az` 350-də dayandı). İndi 429 kimi davranır: 4 cəhd, artan gözləmə,
+**eyni kursordan** davam.

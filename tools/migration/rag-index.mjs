@@ -189,6 +189,7 @@ async function runIndex({ dryRun }) {
     if (stop) break;
     let cursor = 0;
     let guard = 0;
+    let netTries = 0;
     process.stdout.write(`  ${pad(pair.source + '/' + pair.locale, 20)}`);
     for (;;) {
       if (++guard > 500) {
@@ -220,6 +221,25 @@ async function runIndex({ dryRun }) {
         await sleep(advised + 500);
         continue;   // EYNI kursor
       }
+
+      // HTTP 0 = sebeke kesilmesi (timeout / bagli baglanti). Render pulsuz
+      // tarifde bu OLUR. 429 kimi KECICIDIR -- menbeni terk etmek yanlisdir,
+      // cunki emel olunmus is itmir, sadece kursor dayanir.
+      if (res.status === 0 || res.status >= 500) {
+        netTries++;
+        if (netTries > 4) {
+          console.log(`\n    SEBEKE @${cursor}: 4 cehdden sonra dayanildi (HTTP ${res.status}).`);
+          console.log('    Eyni emri tekrar isle sal -- qaldigi yerden davam edecek.');
+          stop = true;
+          break;
+        }
+        const wait = 5000 * netTries;
+        process.stdout.write(`[sebeke ${wait / 1000}s]`);
+        grand.waitedMs += wait;
+        await sleep(wait);
+        continue;   // EYNI kursor
+      }
+      netTries = 0;
 
       if (!res.ok) {
         console.log(`\n    XETA @${cursor}: HTTP ${res.status} ${res.data?.error || ''} ${res.data?.detail || ''}`);

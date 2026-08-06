@@ -41,7 +41,11 @@ export function chatConfig(): ChatConfig {
     provider: (process.env.RAG_CHAT_PROVIDER || 'gemini').trim().toLowerCase(),
     // Flash seçilib: cavab qısadır və kontekst kiçikdir — güclü model üçün
     // əsas yoxdur, qiymət isə sorğu başına hiss olunur.
-    model: (process.env.RAG_CHAT_MODEL || 'gemini-2.5-flash').trim(),
+    //
+    // MODEL ADI SÜRÜŞƏNDİR. Google 2.5 seriyasını elan olunmuş bağlanma
+    // tarixindən ƏVVƏL yeni açarlara bağladı (404: «no longer available to
+    // new users»). Ona görə ad env-dədir — dəyişəndə KOD TOXUNULMUR.
+    model: (process.env.RAG_CHAT_MODEL || 'gemini-3.5-flash').trim(),
     maxTokens: intEnv('RAG_CHAT_MAX_TOKENS', 800),
     // 0.2 — sıfır deyil (cavab quru və təkrarlı olur), amma sərbəst də deyil.
     temperature: Number(process.env.RAG_CHAT_TEMPERATURE || '0.2'),
@@ -231,6 +235,15 @@ async function geminiChat(system: string, user: string, cfg: ChatConfig): Promis
 
       if (!res.ok) {
         lastError = 'HTTP ' + res.status + ': ' + ((json.error && json.error.message) || raw.slice(0, 200));
+        // 404 + «no longer available» = model adı köhnəlib. Təkrar cəhd
+        // mənasızdır; səbəbi açıq yazırıq ki, env düzəlişi dərhal aydın olsun.
+        if (res.status === 404 && /no longer available|not found/i.test(lastError)) {
+          return {
+            ok: false,
+            text: '',
+            error: lastError + '  >>> RAG_CHAT_MODEL kohnelib. Render env-de yenile (mes. gemini-3.5-flash).',
+          };
+        }
         const advised = retryAfterMs(json, raw);
         if (res.status === 429) lastRetry = advised || 30_000;
         if ((res.status === 429 || res.status >= 500) && attempt < cfg.retries) {
