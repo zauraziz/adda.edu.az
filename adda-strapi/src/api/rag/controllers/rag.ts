@@ -19,16 +19,19 @@
 import { createHash } from 'node:crypto';
 import { SOURCES, sourceByKey, buildChunks, type ChunkRecord } from '../lib/chunk';
 import { embedConfig, embedReadiness, embedTexts, pacerLoad } from '../lib/embed';
-import { lexicalSearch, type LexicalHit } from '../lib/lexical';
+import { resetVectorCache } from '../lib/retrieve';
+import { retrieve, normalizeSources, type RetrievedDoc, type StrapiRagLike } from '../lib/pipeline';
 import {
-  embedQuery,
-  vectorSearch,
-  rrfFuse,
-  resetVectorCache,
-  similarityStats,
-  lastCandidates,
-  type VectorHit,
-} from '../lib/retrieve';
+  chat,
+  chatConfig,
+  chatReadiness,
+  checkCitations,
+  refusalText,
+  scrubAnswer,
+  systemPrompt,
+  userPrompt,
+  type SourceBlock,
+} from '../lib/chat';
 import {
   ensureSchema,
   counts,
@@ -50,7 +53,9 @@ interface DocService {
   findMany(args: Row): Promise<Row[]>;
   count?(args: Row): Promise<number>;
 }
-interface StrapiLike extends StrapiDbLike {
+// `StrapiRagLike` = StrapiDbLike & StrapiDocsLike. Hər ikisini ayrıca
+// genişləndirmək `log` sahəsinin iki fərqli tərifini toqquşdururdu.
+interface StrapiLike extends StrapiRagLike {
   documents(uid: string): DocService;
 }
 interface Ctx {
@@ -114,6 +119,30 @@ function timingSafeEqualStr(a: string, b: string): boolean {
 function fingerprint(s: string): string {
   return createHash('sha256').update(s, 'utf8').digest('hex').slice(0, 8);
 }
+
+/**
+ * İctimai qapı: `<FLAG>=true` olmasa yalnız admin sirri ilə cavab verilir.
+ *
+ * Hər iki endpoint pullu provayder çağırışıdır, ona görə defolt BAĞLIDIR.
+ */
+function gateOpen(strapi: StrapiLike, ctx: Ctx, flag: string): boolean {
+  if ((process.env[flag] || '').trim().toLowerCase() === 'true') return true;
+  const expected = cleanSecret(process.env.ADMIN_IMPORT_SECRET);
+  const got = cleanSecret(headerOf(ctx, 'x-adda-admin-secret'));
+  if (!expected || expected.length < 16 || !timingSafeEqualStr(got, expected)) {
+    ctx.status = 403;
+    ctx.body = { ok: false, error: 'endpoint_disabled', detail: `${flag}=true deyil` };
+    return false;
+  }
+  return true;
+}
+
+/** Cavab keşi — generasiya embedding-dən bahalıdır, keş burada daha çox qazandırır. */
+const ANSWER_CACHE = new Map<string, Record<string, unknown>>();
+const ANSWER_CACHE_MAX = 300;
+
+/** Prompta düşən maksimum mənbə sayı. */
+const MAX_SOURCES = 6;
 
 /** true = icazə verildi. Əks halda `ctx` artıq doldurulub. */
 function authorize(strapi: StrapiLike, ctx: Ctx): boolean {
@@ -443,198 +472,213 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
    * həmişə işləyir.
    */
   async search(ctx: Ctx) {
-    const isPublic = (process.env.RAG_SEARCH_PUBLIC || '').toLowerCase() === 'true';
-    if (!isPublic) {
-      const expected = cleanSecret(process.env.ADMIN_IMPORT_SECRET);
-      const got = cleanSecret(headerOf(ctx, 'x-adda-admin-secret'));
-      if (!expected || expected.length < 16 || !timingSafeEqualStr(got, expected)) {
-        ctx.status = 403;
-        ctx.body = { ok: false, error: 'rag_search_disabled', detail: 'RAG_SEARCH_PUBLIC=true deyil' };
-        return;
-      }
-    }
+    if (!gateOpen(strapi, ctx, 'RAG_SEARCH_PUBLIC')) return;
 
     const started = Date.now();
-    const rawQ = ctx.query.q;
-    const q = (typeof rawQ === 'string' ? rawQ : '').trim().slice(0, 200);
+    const q = (typeof ctx.query.q === 'string' ? ctx.query.q : '').trim().slice(0, 200);
     const locale = LOCALES.indexOf(String(ctx.query.locale)) !== -1 ? String(ctx.query.locale) : 'az';
     const limit = Math.min(20, Math.max(1, intOf(ctx.query.limit, 8)));
     const debug = String(ctx.query.debug || '') === '1';
-    const sources = String(ctx.query.sources || '')
-      .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s && sourceByKey(s));
+    const sources = normalizeSources(ctx.query.sources);
 
     ctx.set('Cache-Control', 'public, max-age=30');
-
     if (q.length < 2) {
-      ctx.body = { ok: true, query: q, locale, hits: [], arms: [], notes: ['sorgu cox qisadir'] };
+      ctx.body = { ok: true, query: q, locale, hits: [], arms: [], answerable: false, notes: ['sorgu cox qisadir'] };
       return;
     }
 
-    const cfg = embedConfig();
-    const info = await ensureSchema(strapi, cfg.dims, cfg.model);
-    const notes: string[] = [];
-    const arms: string[] = [];
-
-    /* ── Leksik qol ── */
-    let lex: LexicalHit[] = [];
-    try {
-      lex = await lexicalSearch(strapi, q, { locale, perType: 20, sources });
-      arms.push('lexical');
-    } catch (err) {
-      notes.push('leksik qol sindi: ' + String((err as Error).message).slice(0, 160));
-    }
-
-    /* ── Vektor qolu ── */
-    // Deqradasiya SƏSSİZ DEYİL: səbəb `notes`-da qayıdır. Vektor qolu
-    // düşəndə nəticələr hələ də gəlir, sadəcə parafraz sorğular zəifləyir.
-    let vec: VectorHit[] = [];
-    let cachedQuery = false;
-    if (!info.ready) {
-      notes.push('anbar hazir deyil: ' + (info.mismatch || 'bilinmir'));
-    } else {
-      const blocker = embedReadiness(cfg);
-      if (blocker) {
-        notes.push('vektor qolu sondurulub: ' + blocker);
-      } else {
-        const qv = await embedQuery(q);
-        if (!qv.vector) {
-          notes.push('sorgu embed olunmadi: ' + (qv.error || 'bilinmir'));
-        } else {
-          cachedQuery = qv.cached;
-          try {
-            vec = await vectorSearch(strapi, info, qv.vector, {
-              locale,
-              limit: 60,
-              sources,
-              dropFlagged: boolEnv('RAG_DROP_FLAGGED', true),
-            });
-            arms.push('vector');
-          } catch (err) {
-            notes.push('vektor axtarisi sindi: ' + String((err as Error).message).slice(0, 160));
-          }
-        }
-      }
-    }
-
-    /* ── Sənəd səviyyəsinə yığ ── */
-    // Parça sıralaması sənəd sıralamasına çevrilir: sənədin İLK görünüşü
-    // onun rütbəsidir (ən yaxın parçası). Qalan parçalar sübut kimi saxlanılır
-    // — F2.7-4-də sitat mətni məhz oradan gələcək.
-    interface Doc {
-      source: string;
-      docId: string;
-      title: string;
-      url: string;
-      slug: string;
-      snippet: string;
-      evidence: Array<{ chunkIx: number; text: string; similarity: number }>;
-      lexRank?: number;
-      vecRank?: number;
-    }
-    const docs = new Map<string, Doc>();
-    const keyOf = (s: string, d: string): string => s + ':' + d;
-
-    const lexKeys: string[] = [];
-    for (const h of lex) {
-      const k = keyOf(h.source, h.docId);
-      if (!docs.has(k)) {
-        docs.set(k, {
-          source: h.source, docId: h.docId, title: h.title, url: h.url,
-          slug: h.slug, snippet: h.snippet, evidence: [],
-        });
-        lexKeys.push(k);
-        docs.get(k)!.lexRank = lexKeys.length;
-      }
-    }
-
-    const vecKeys: string[] = [];
-    for (const h of vec) {
-      const k = keyOf(h.source, h.docId);
-      let d = docs.get(k);
-      if (!d) {
-        d = {
-          source: h.source, docId: h.docId, title: h.title, url: h.url,
-          slug: h.slug, snippet: '', evidence: [],
-        };
-        docs.set(k, d);
-      }
-      if (vecKeys.indexOf(k) === -1) {
-        vecKeys.push(k);
-        d.vecRank = vecKeys.length;
-      }
-      if (d.evidence.length < 3) {
-        d.evidence.push({ chunkIx: h.chunkIx, text: h.text, similarity: Math.round(h.similarity * 1000) / 1000 });
-      }
-      if (!d.snippet) d.snippet = h.text.slice(0, 200);
-    }
-
-    const wLex = Number(process.env.RAG_W_LEXICAL || '1') || 1;
-    const wVec = Number(process.env.RAG_W_VECTOR || '1') || 1;
-    const fused = rrfFuse([
-      { keys: lexKeys, weight: wLex },
-      { keys: vecKeys, weight: wVec },
-    ]);
-
-    const ranked = Array.from(fused.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, limit)
-      .map(([k, rrf]) => {
-        const d = docs.get(k)!;
-        return {
-          source: d.source,
-          documentId: d.docId,
-          title: d.title,
-          url: d.url,
-          slug: d.slug,
-          snippet: d.snippet,
-          evidence: d.evidence,
-          ...(debug
-            ? { scores: { lexicalRank: d.lexRank ?? null, vectorRank: d.vecRank ?? null, rrf: Math.round(rrf * 1e6) / 1e6 } }
-            : {}),
-        };
-      });
-
-    // «Əsaslandırılmış cavab varmı» — F2.7-4 imtina qərarını buna görə verir.
-    // Statistika KƏSİMDƏN ƏVVƏLKİ namizədlər üzərindədir: küy səviyyəsini
-    // məhz onlar müəyyən edir.
-    const raw = lastCandidates();
-    const sim = similarityStats(raw);
-    const zGate = Number(process.env.RAG_SIM_Z || '0');
-    const answerable =
-      lexKeys.length > 0 ||
-      (vec.length > 0 && (zGate <= 0 || (sim ? sim.gapZ >= zGate : false)));
-
+    const r = await retrieve(strapi, q, { locale, limit, sources });
     ctx.body = {
       ok: true,
       query: q,
       locale,
-      arms,
-      mode: info.mode,
-      cachedQuery,
-      answerable,
+      arms: r.arms,
+      mode: r.mode,
+      cachedQuery: r.cachedQuery,
+      answerable: r.answerable,
       tookMs: Date.now() - started,
-      total: fused.size,
-      hits: ranked,
-      notes,
+      total: r.total,
+      hits: r.hits.map((d) => ({
+        source: d.source,
+        documentId: d.docId,
+        title: d.title,
+        url: d.url,
+        slug: d.slug,
+        snippet: d.snippet,
+        evidence: d.evidence,
+        ...(debug ? { scores: { lexicalRank: d.lexRank ?? null, vectorRank: d.vecRank ?? null, rrf: d.rrf } } : {}),
+      })),
+      notes: r.notes,
       ...(debug
         ? {
-            counts: { lexical: lexKeys.length, vector: vecKeys.length, chunks: vec.length, candidates: raw.length },
-            // Kalibrləmə üçün TAM paylanma. `gapZ` — ən yaxşı nəticənin küy
-            // səviyyəsindən neçə standart sapma yuxarıda olması.
-            similarity: sim
+            counts: r.counts,
+            similarity: r.sim
               ? {
-                  top: Math.round(sim.top * 1e4) / 1e4,
-                  median: Math.round(sim.median * 1e4) / 1e4,
-                  bottom: Math.round(sim.bottom * 1e4) / 1e4,
-                  stdev: Math.round(sim.stdev * 1e5) / 1e5,
-                  gapZ: Math.round(sim.gapZ * 100) / 100,
+                  top: Math.round(r.sim.top * 1e4) / 1e4,
+                  median: Math.round(r.sim.median * 1e4) / 1e4,
+                  bottom: Math.round(r.sim.bottom * 1e4) / 1e4,
+                  stdev: Math.round(r.sim.stdev * 1e5) / 1e5,
+                  gapZ: Math.round(r.sim.gapZ * 100) / 100,
                 }
               : null,
-            gate: { simZ: zGate, simDrop: Number(process.env.RAG_SIM_DROP || '0'), simFloor: Number(process.env.RAG_SIM_FLOOR || '0') },
+            gate: {
+              simZ: Number(process.env.RAG_SIM_Z || '0'),
+              simDrop: Number(process.env.RAG_SIM_DROP || '0'),
+              simFloor: Number(process.env.RAG_SIM_FLOOR || '0'),
+            },
           }
         : {}),
     };
+  },
+
+  /**
+   * POST /api/rag/answer   { q, locale?, sources? }
+   *
+   * ƏSASLANDIRILMIŞ cavab. Üç qapı — hamısı KODDA, prompta güvənməklə deyil:
+   *   1. `answerable=false` → model ÇAĞIRILMIR. Ən ucuz və ən təhlükəsiz
+   *      imtina: uydurmaq üçün heç bir imkan yaranmır.
+   *   2. Cavabda ən azı bir DÜZGÜN sitat olmalıdır, yoxsa imtina.
+   *   3. Mövcud olmayan mənbəyə sitat atılır (uydurulmuş istinad).
+   *
+   * Defolt BAĞLIDIR (`RAG_ANSWER_PUBLIC`) — hər sorğu pullu generasiyadır.
+   */
+  async answer(ctx: Ctx) {
+    if (!gateOpen(strapi, ctx, 'RAG_ANSWER_PUBLIC')) return;
+
+    const started = Date.now();
+    const body = bodyOf(ctx);
+    const q = String(body.q ?? '').trim().slice(0, 300);
+    const locale = LOCALES.indexOf(String(body.locale ?? '')) !== -1 ? String(body.locale) : 'az';
+    const sources = normalizeSources(body.sources);
+    const debug = body.debug === true;
+
+    if (q.length < 3) {
+      ctx.status = 400;
+      ctx.body = { ok: false, error: 'query_too_short' };
+      return;
+    }
+
+    const ccfg = chatConfig();
+    const blocker = chatReadiness(ccfg);
+    if (blocker) {
+      ctx.status = 503;
+      ctx.body = { ok: false, error: 'chat_not_ready', detail: blocker };
+      return;
+    }
+
+    // ── Keş ──
+    // Eyni sual → eyni cavab. Generasiya embedding-dən BAHALIDIR, keş isə
+    // burada daha çox qazandırır.
+    const cacheKey = `${ccfg.model}|${locale}|${sources.join(',')}|${q}`;
+    const cached = ANSWER_CACHE.get(cacheKey);
+    if (cached) {
+      ANSWER_CACHE.delete(cacheKey);
+      ANSWER_CACHE.set(cacheKey, cached);
+      ctx.body = { ...cached, cached: true, tookMs: Date.now() - started };
+      return;
+    }
+
+    const r = await retrieve(strapi, q, { locale, limit: MAX_SOURCES, sources });
+
+    /* ── 1-ci qapı: mənbə yoxdursa model çağırılmır ── */
+    if (!r.answerable || !r.hits.length) {
+      ctx.body = {
+        ok: true,
+        answered: false,
+        reason: 'no_grounded_source',
+        answer: refusalText(locale),
+        query: q,
+        locale,
+        sources: [],
+        notes: r.notes,
+        tookMs: Date.now() - started,
+      };
+      return;
+    }
+
+    /* ── Sübut blokları ── */
+    // Büdcə: kontekst nə qədər böyükdürsə, model bir o qədər "orta hesab"
+    // cavab verir və qiymət artır. Sənəd başına ən yaxşı 2 parça kifayətdir.
+    const blocks: SourceBlock[] = [];
+    let budget = intOf(process.env.RAG_CONTEXT_CHARS, 6000);
+    for (const d of r.hits) {
+      if (budget <= 0) break;
+      const text = d.evidence.length
+        ? d.evidence.slice(0, 2).map((e) => e.text).join('\n…\n')
+        : d.snippet;
+      if (!text) continue;
+      const clipped = text.slice(0, Math.min(1400, budget));
+      budget -= clipped.length;
+      blocks.push({
+        n: blocks.length + 1,
+        title: d.title,
+        url: d.url,
+        kind: d.source,
+        text: clipped,
+      });
+    }
+
+    if (!blocks.length) {
+      ctx.body = {
+        ok: true, answered: false, reason: 'no_evidence_text',
+        answer: refusalText(locale), query: q, locale, sources: [],
+        notes: r.notes, tookMs: Date.now() - started,
+      };
+      return;
+    }
+
+    const res = await chat(systemPrompt(locale), userPrompt(q, blocks));
+    if (!res.ok) {
+      ctx.status = res.rateLimited ? 429 : 502;
+      ctx.body = {
+        ok: false,
+        error: res.rateLimited ? 'chat_rate_limited' : 'chat_failed',
+        detail: res.error,
+        retryAfterMs: res.retryAfterMs || null,
+      };
+      return;
+    }
+
+    /* ── 2-ci və 3-cü qapı: sitat yoxlaması ── */
+    const chk = checkCitations(res.text, blocks.length);
+    if (!chk.used.length) {
+      // Model cavab verdi, amma heç bir mənbəyə istinad etmədi — yəni
+      // əsaslandırılmamışdır. Belə cavabı GÖSTƏRMƏK olmaz: istifadəçi onu
+      // yoxlaya bilmir və doğru görünən uydurma ən təhlükəli haldır.
+      strapi.log.warn('[rag/answer] sitatsiz cavab atildi: ' + q.slice(0, 80));
+      ctx.body = {
+        ok: true, answered: false, reason: 'ungrounded_answer',
+        answer: refusalText(locale), query: q, locale, sources: [],
+        notes: r.notes.concat('model sitat gostermedi'),
+        tookMs: Date.now() - started,
+        ...(debug ? { rawAnswer: res.text } : {}),
+      };
+      return;
+    }
+
+    const payload = {
+      ok: true,
+      answered: true,
+      answer: scrubAnswer(chk.text),
+      query: q,
+      locale,
+      // YALNIZ istifadə olunan mənbələr qaytarılır — istifadəçi hər iddianı
+      // linkə baxıb yoxlaya bilsin.
+      sources: chk.used.map((n) => {
+        const b = blocks[n - 1];
+        return { n, title: b.title, url: b.url, kind: b.kind };
+      }),
+      invalidCitations: chk.invalid,
+      notes: r.notes,
+      ...(debug ? { blocks: blocks.length, similarity: r.sim, counts: r.counts } : {}),
+    };
+
+    if (ANSWER_CACHE.size >= ANSWER_CACHE_MAX) {
+      const oldest = ANSWER_CACHE.keys().next().value;
+      if (oldest !== undefined) ANSWER_CACHE.delete(oldest);
+    }
+    ANSWER_CACHE.set(cacheKey, payload);
+
+    ctx.body = { ...payload, cached: false, tookMs: Date.now() - started };
   },
 });

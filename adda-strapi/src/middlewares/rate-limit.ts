@@ -85,6 +85,13 @@ const RULES: Rule[] = [
   // F2.7-2: hibrid axtaris. Her sorgu embedding provaydere PULLU gedisdir
   // (keslenmeyibse), ona gore `site-search`-den xeyli sixdir. `global` tavan
   // budce ucundur -- tek istifadeci deyil, butun instans uzre.
+  // F2.7-4: cavab generasiyasi axtarisdan XEYLI bahalidir -- hedd sixdir.
+  {
+    method: 'POST',
+    path: '/api/rag/answer',
+    ip: [intEnv('RL_RAG_ANSWER_IP', 12), 15 * MIN],
+    global: [intEnv('RL_RAG_ANSWER_GLOBAL', 300), 60 * MIN],
+  },
   {
     method: 'GET',
     path: '/api/rag-search',

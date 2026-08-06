@@ -21,6 +21,7 @@
 //   node rag-index.mjs --purge-hard          # cedveli at (olcu deyisende)
 //   node rag-index.mjs --search="deniz naqliyyati" --locale=az
 //   node rag-index.mjs --audit               # isarelenmis (subheli) parcalar
+//   node rag-index.mjs --ask "Gemi mexanikasi ixtisasina qebul necedir?" 
 
 import { STRAPI_URL, api } from './lib/strapi.mjs';
 
@@ -30,7 +31,7 @@ import { STRAPI_URL, api } from './lib/strapi.mjs';
 // `true` olurdu ve servere sorgu kimi "true" gedirdi -- netice qaytarilirdi,
 // yalniz tamam basqa sual ucun. Sessiz olmasi ucun indi deyeri catismayan
 // bayraq XETA verir.
-const VALUE_FLAGS = new Set(['search', 'source', 'locale', 'limit', 'max-items', 'max-wait']);
+const VALUE_FLAGS = new Set(['search', 'ask', 'source', 'locale', 'limit', 'max-items', 'max-wait']);
 
 const args = (() => {
   const out = {};
@@ -315,6 +316,48 @@ async function runSearch(q) {
   }
 }
 
+/* ── --ask (F2.7-4) ───────────────────────────────────────────────────── */
+
+async function runAsk(q) {
+  const locale = args.locale ? String(args.locale) : 'az';
+  const res = await call('/api/rag/answer', {
+    q,
+    locale,
+    debug: true,
+    ...(args.source ? { sources: String(args.source) } : {}),
+  });
+  if (res.status === 429) {
+    console.error(`\n  KVOTA: ${Math.round((res.data?.retryAfterMs || 30000) / 1000)}s sonra tekrarla.\n`);
+    process.exit(1);
+  }
+  if (!res.ok) {
+    console.error(`\n  XETA: HTTP ${res.status} — ${JSON.stringify(res.data)?.slice(0, 300)}\n`);
+    process.exit(1);
+  }
+  const d = res.data;
+
+  console.log(`\n  sual  : ${d.query}   (${locale})`);
+  console.log(`  cavab : ${d.answered ? 'VERILDI' : 'IMTINA — ' + d.reason}   ${d.tookMs} ms${d.cached ? '   [kesden]' : ''}`);
+  for (const n of d.notes || []) console.log(`  QEYD  : ${n}`);
+  console.log('');
+  console.log('  ' + String(d.answer).split('\n').join('\n  '));
+  console.log('');
+
+  if (d.sources?.length) {
+    console.log('  Menbeler:');
+    for (const s2 of d.sources) console.log(`    [${s2.n}] ${s2.title}\n         ${s2.url}`);
+    console.log('');
+  }
+  if (d.invalidCitations?.length) {
+    console.log(`  DIQQET: model uydurulmus istinad yazdi -> [${d.invalidCitations.join('], [')}]  (atildi)\n`);
+  }
+  if (!d.answered && d.rawAnswer) {
+    console.log('  Atilmis xam cavab (debug):');
+    console.log('    ' + String(d.rawAnswer).slice(0, 400).split('\n').join('\n    '));
+    console.log('');
+  }
+}
+
 /* ── --audit (F2.7-3) ─────────────────────────────────────────────────── */
 
 async function runAudit() {
@@ -367,7 +410,8 @@ if (args.locale && LOCALES.indexOf(String(args.locale)) === -1) {
   process.exit(1);
 }
 
-if (args.audit) await runAudit();
+if (args.ask) await runAsk(String(args.ask));
+else if (args.audit) await runAudit();
 else if (args.search) await runSearch(String(args.search));
 else if (args['purge-hard']) await runPurge(true);
 else if (args.purge) await runPurge(false);
@@ -375,7 +419,7 @@ else if (args.run) await runIndex({ dryRun: false });
 else if (args.plan) await runIndex({ dryRun: true });
 else if (args.status) await showStatus();
 else {
-  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --audit | --purge | --purge-hard');
+  console.log('\n  Bayraq lazimdir: --status | --plan | --run | --search=<sorgu> | --ask=<sual> | --audit | --purge | --purge-hard');
   console.log('  Elave: --source=<menbe> --locale=az|ru|en --limit=<n> --force');
   console.log('         --max-items=<n> (kvota budcesi)  --max-wait=<saniye, defolt 900)\n');
   process.exit(1);

@@ -45,5 +45,12 @@ export default {
       handler: 'rag.search',
       config: { auth: false, policies: [], middlewares: [] },
     },
+    {
+      // POST — sual uzun ola bilər və keşlənməsi arzuolunmazdır.
+      method: 'POST',
+      path: '/rag/answer',
+      handler: 'rag.answer',
+      config: { auth: false, policies: [], middlewares: [] },
+    },
   ],
 };
