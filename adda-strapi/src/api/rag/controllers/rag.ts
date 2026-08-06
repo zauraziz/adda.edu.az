@@ -28,6 +28,7 @@ import {
   chatReadiness,
   checkCitations,
   refusalText,
+  repairPrompt,
   scrubAnswer,
   systemPrompt,
   userPrompt,
@@ -298,6 +299,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     }
 
     const stats = { docs: entries.length, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, items: 0, flagged: 0, scrubbed: 0 };
+    let partial = false;
     const pending: ChunkRecord[] = [];
     const perDoc: Array<{ docId: string; count: number }> = [];
 
@@ -351,7 +353,11 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         };
         return;
       }
-      const rows: StoredChunk[] = pending.map((c, i) => ({
+      // Yarımçıq nəticə: yalnız embed olunmuş parçalar saxlanılır. Qalanı
+      // növbəti çağırışda tamamlanır — hash mexanizmi təkrar işi atlayır.
+      const embeddedCount = res.vectors.length;
+      const done0 = pending.slice(0, embeddedCount);
+      const rows: StoredChunk[] = done0.map((c, i) => ({
         source: c.source,
         docId: c.docId,
         locale: c.locale,
@@ -364,6 +370,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         vector: res.vectors[i],
         signals: c.signals,
       }));
+      partial = res.partial === true && embeddedCount < pending.length;
       try {
         stats.embedded = await upsertChunks(strapi, info, rows);
       } catch (err) {
@@ -374,18 +381,24 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     }
 
     // Sənəd qısalıbsa köhnə quyruq parçaları silinməlidir.
-    for (const d of perDoc) {
-      stats.trimmed += await trimChunks(strapi, src.key, d.docId, locale, d.count);
+    // YARIMÇIQ gedişdə BU EDİLMİR: hələ embed olunmamış parçalar «artıq»
+    // sayılıb silinərdi və sənəd yarımçıq indekslənmiş qalardı.
+    if (!partial) {
+      for (const d of perDoc) {
+        stats.trimmed += await trimChunks(strapi, src.key, d.docId, locale, d.count);
+      }
     }
 
-    const done = entries.length < limit;
+    const done = !partial && entries.length < limit;
     ctx.body = {
       ok: true,
       source: src.key,
       locale,
       cursor,
-      next: done ? null : cursor + limit,
+      // Yarımçıqdırsa EYNİ kursor qaytarılır — qalan parçalar tamamlansın.
+      next: done ? null : partial ? cursor : cursor + limit,
       done,
+      partial,
       stats,
     };
   },
@@ -675,7 +688,23 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     }
 
     /* ── 2-ci və 3-cü qapı: sitat yoxlaması ── */
-    const chk = checkCitations(res.text, blocks.length);
+    let chk = checkCitations(res.text, blocks.length);
+    let repaired = false;
+
+    // TƏMİR CƏHDİ. Müşahidə: model doğru, əsaslandırılmış cavab yazır, amma
+    // `[1]` formatını unudur. Belə cavabı dərhal atmaq istifadəçiyə əsassız
+    // «bilmirəm» demək olardı. Bir cəhd — sonra qapı yenə bağlanır.
+    if (!chk.used.length && boolEnv('RAG_CITATION_REPAIR', true)) {
+      const fix = await chat(systemPrompt(locale), userPrompt(q, blocks) + '\n\n' + repairPrompt(res.text, blocks.length));
+      if (fix.ok) {
+        const chk2 = checkCitations(fix.text, blocks.length);
+        if (chk2.used.length) {
+          chk = chk2;
+          repaired = true;
+        }
+      }
+    }
+
     if (!chk.used.length) {
       // Model cavab verdi, amma heç bir mənbəyə istinad etmədi — yəni
       // əsaslandırılmamışdır. Belə cavabı GÖSTƏRMƏK olmaz: istifadəçi onu
@@ -684,7 +713,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       ctx.body = {
         ok: true, answered: false, reason: 'ungrounded_answer',
         answer: refusalText(locale), query: q, locale, sources: [],
-        notes: r.notes.concat('model sitat gostermedi'),
+        notes: r.notes.concat('model sitat gostermedi (temir cehdi de alinmadi)'),
         tookMs: Date.now() - started,
         ...(debug ? { rawAnswer: res.text } : {}),
       };
@@ -719,7 +748,8 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         return { n, title: b.title, url: b.url, kind: b.kind };
       }),
       invalidCitations: chk.invalid,
-      notes: r.notes,
+      repaired,
+      notes: repaired ? r.notes.concat('sitatlar temir cehdi ile elave olundu') : r.notes,
       ...(debug ? { blocks: blocks.length, similarity: r.sim, counts: r.counts } : {}),
     };
 

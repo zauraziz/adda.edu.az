@@ -190,6 +190,10 @@ async function runIndex({ dryRun }) {
     let cursor = 0;
     let guard = 0;
     let netTries = 0;
+    // UYGUNLASAN PAKET OLCUSU. Serverde tenzimleyici sorgunun icinde gozleyir;
+    // boyuk paket vaxt budcesini asir ve baglanti qirilir (`HTTP 0`).
+    // Her sebeke xetasinda paket yariya bolunur -- sistem ozunu tənzimləyir.
+    let docLimit = args.limit ? parseInt(String(args.limit), 10) : 25;
     process.stdout.write(`  ${pad(pair.source + '/' + pair.locale, 20)}`);
     for (;;) {
       if (++guard > 500) {
@@ -200,6 +204,7 @@ async function runIndex({ dryRun }) {
         source: pair.source,
         locale: pair.locale,
         cursor,
+        limit: docLimit,
         dryRun,
         force,
       });
@@ -227,8 +232,14 @@ async function runIndex({ dryRun }) {
       // cunki emel olunmus is itmir, sadece kursor dayanir.
       if (res.status === 0 || res.status >= 500) {
         netTries++;
+        // EVVELCE PAKETI KICILT, sonra gozle. Sebeb adeten vaxtdir, sebeke yox.
+        if (docLimit > 1) {
+          docLimit = Math.max(1, Math.floor(docLimit / 2));
+          process.stdout.write(`[paket->${docLimit}]`);
+          continue;   // EYNI kursor, kicik paketle
+        }
         if (netTries > 4) {
-          console.log(`\n    SEBEKE @${cursor}: 4 cehdden sonra dayanildi (HTTP ${res.status}).`);
+          console.log(`\n    SEBEKE @${cursor}: paket 1-e enib, yene alinmir (HTTP ${res.status}).`);
           console.log('    Eyni emri tekrar isle sal -- qaldigi yerden davam edecek.');
           stop = true;
           break;
@@ -237,7 +248,7 @@ async function runIndex({ dryRun }) {
         process.stdout.write(`[sebeke ${wait / 1000}s]`);
         grand.waitedMs += wait;
         await sleep(wait);
-        continue;   // EYNI kursor
+        continue;
       }
       netTries = 0;
 
@@ -255,6 +266,22 @@ async function runIndex({ dryRun }) {
       grand.items += s.items || 0;
       grand.batches++;
       process.stdout.write('.');
+      // Server vaxt budcesine gore isi yarimciq qaytardi -- eyni kursordan
+      // davam edirik. Irelileyis sifirdirsa dongeye dusmemek ucun dayaniriq.
+      if (res.data.partial) {
+        process.stdout.write('~');
+        if (!s.embedded) {
+          console.log(`\n    DAYANDI @${cursor}: yarimciq gedis, amma hec ne embed olunmadi.`);
+          stop = true;
+          break;
+        }
+        if (maxItems && grand.items >= maxItems) {
+          console.log(`\n    BUDCE: ${grand.items} element gonderildi (--max-items=${maxItems}).`);
+          stop = true;
+        }
+        continue;
+      }
+
       if (maxItems && grand.items >= maxItems) {
         console.log(`\n    BUDCE: ${grand.items} element gonderildi (--max-items=${maxItems}) -- dayanildi.`);
         stop = true;

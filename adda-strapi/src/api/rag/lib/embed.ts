@@ -33,6 +33,14 @@ export interface EmbedConfig {
   /** Dəqiqədə maksimum MƏTN ELEMENTİ. 0 = tənzimləmə yoxdur. */
   rpm: number;
   retries: number;
+  /**
+   * Bir HTTP sorğusu daxilində tənzimləyicinin gözləyə biləcəyi maksimum vaxt.
+   *
+   * 20 s seçilib: CLI timeout-u 180 s, Render-in öz həddi daha aşağıdır.
+   * Bundan artıq gözləmək lazım gələrsə iş yarımçıq qaytarılır və çağıran
+   * tərəf eyni kursordan davam edir.
+   */
+  maxWaitMs: number;
 }
 
 export interface EmbedCallResult {
@@ -56,6 +64,11 @@ export interface EmbedOutcome {
   retryAfterMs?: number;
   /** Tənzimləyicidə gözlənilən ümumi vaxt. */
   pacedMs?: number;
+  /**
+   * true = vaxt büdcəsi bitdi, `vectors` girişin YALNIZ BİR HİSSƏSİDİR.
+   * Çağıran tərəf embed olunanı saxlayıb eyni yerdən davam etməlidir.
+   */
+  partial?: boolean;
 }
 
 const DEFAULT_MODEL = 'gemini-embedding-001';
@@ -91,6 +104,7 @@ export function embedConfig(): EmbedConfig {
     // tarifdə yüksəldilə bilər; 0 tənzimləməni söndürür.
     rpm: intEnv('RAG_EMBED_RPM', 90),
     retries: Math.min(10, intEnv('RAG_EMBED_RETRIES', 6)),
+    maxWaitMs: intEnv('RAG_EMBED_MAX_WAIT_MS', 20_000),
   };
 }
 
@@ -109,6 +123,24 @@ export function embedConfig(): EmbedConfig {
  * ─────────────────────────────────────────────────────────────────────── */
 
 const ITEM_LOG: number[] = [];
+
+/**
+ * Tənzimləyici nə qədər gözlədəcək — GÖZLƏMƏDƏN ƏVVƏL bilmək üçün.
+ *
+ * NİYƏ LAZIMDIR: `pace()` sorğu emalçısının İÇİNDƏ yatır. Böyük paketdə bu
+ * dəqiqələrlə ola bilər və HTTP bağlantısı qırılır (`HTTP 0`). Buna görə
+ * gözləmə büdcədən artıqdırsa iş YARIMÇIQ qaytarılır — sındırmaq yox.
+ */
+function projectedWait(count: number, rpm: number): number {
+  if (rpm <= 0 || count <= 0) return 0;
+  const now = Date.now();
+  const live = ITEM_LOG.filter((t) => now - t <= 60_000);
+  if (live.length + count <= rpm) return 0;
+  const need = live.length + count - rpm;
+  const idx = Math.min(Math.max(0, need - 1), live.length - 1);
+  if (idx < 0) return 0;
+  return Math.max(0, 60_000 - (now - live[idx]) + 100);
+}
 
 /** Göndərməzdən əvvəl yer aç. Gözlənilən millisaniyəni qaytarır. */
 async function pace(count: number, rpm: number): Promise<number> {
@@ -300,6 +332,15 @@ export async function embedTexts(texts: string[], kind: EmbedKind): Promise<Embe
   const t0 = Date.now();
   for (let i = 0; i < texts.length; i += batch) {
     const slice = texts.slice(i, i + batch);
+
+    // VAXT BÜDCƏSİ. Gözləmə həddi aşırsa sorğu emalçısı dəqiqələrlə yatardı
+    // və bağlantı qırılardı — məhz bu `HTTP 0` verirdi. Ən azı bir paket
+    // emal olunubsa yarımçıq qayıdırıq; heç nə emal olunmayıbsa dayanmaq
+    // mənasızdır (irəliləyiş sıfır olar), ona görə ilk paket həmişə gedir.
+    if (i > 0 && projectedWait(slice.length, cfg.rpm) + (Date.now() - t0) > cfg.maxWaitMs) {
+      return { ok: true, vectors: out, calls, items: out.length, pacedMs: Date.now() - t0, partial: true };
+    }
+
     const res = await fn(slice, kind, cfg);
     calls++;
     if (res.error) {

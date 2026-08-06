@@ -708,3 +708,44 @@ köhnəldisə gözləmək mənasızdır.
 pulsuz tarifdə baş verir. Əvvəl CLI bunu ölümcül sayıb mənbəni tərk edirdi
 (`article/az` 350-də dayandı). İndi 429 kimi davranır: 4 cəhd, artan gözləmə,
 **eyni kursordan** davam.
+
+## F2.7-6b — `HTTP 0`-ın əsl səbəbi və sitat təmiri
+
+### `HTTP 0` keçici deyildi — struktur səhv idi
+
+Ölçü: **14 paket / 1907 s ≈ paket başına 136 s**, CLI timeout-u isə 180 s.
+Səbəb: sürət tənzimləyicisi **sorğu emalçısının içində yatır**. `RPM=90` ilə
+bir paketdə 300 element varsa server 3+ dəqiqə gözləyir və bağlantı qırılır.
+Kursor 350-də paket sadəcə həddi keçdi — ona görə təkrar cəhdlər də eyni
+yerdə sınırdı.
+
+**Həll — vaxt büdcəsi.** `RAG_EMBED_MAX_WAIT_MS` (defolt 20 s) aşılacaqsa iş
+**yarımçıq** qaytarılır:
+
+```
+{ "partial": true, "next": 0, "stats": { "embedded": 20, ... } }
+```
+
+`next` **eyni kursordur**. Embed olunan saxlanılır, qalanı növbəti çağırışda
+tamamlanır — hash mexanizmi təkrar işi atlayır.
+
+**Yarımçıq gedişdə `trim` EDİLMİR.** Hələ embed olunmamış parçalar «artıq»
+sayılıb silinərdi və sənəd yarımçıq indekslənmiş qalardı.
+
+**CLI özünü tənzimləyir:** hər şəbəkə xətasında paket ölçüsü yarıya bölünür
+(25→12→6→3→1). Səbəb adətən vaxtdır, şəbəkə deyil — ona görə əvvəlcə paket
+kiçilir, yalnız sonra gözlənilir.
+
+### Sitatsız cavab artıq dərhal atılmır
+
+Müşahidə olunan hal: model **doğru, əsaslandırılmış** cavab yazdı, sadəcə
+`[1]` formatını unutdu — və qapı onu atdı. İstifadəçi üçün bu «bilmirəm»
+deməkdir, halbuki mənbə var idi.
+
+İki düzəliş:
+1. Sistem göstərişinə **işlənmiş nümunə** əlavə olundu (format birbaşa göstərilir).
+2. Bir **təmir cəhdi** (`RAG_CITATION_REPAIR=true`): «eyni məzmunu saxla,
+   sitatları yerləşdir, yeni fakt əlavə etmə».
+
+**Təminat pozulmur:** təmir də sitatsız qayıdarsa cavab yenə atılır. Təmir
+işə düşəndə cavabda `repaired: true` və qeyd olur.
