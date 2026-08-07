@@ -93,18 +93,258 @@ header.scrolled{position:fixed;top:0;left:0;right:0;animation:navDown .35s var(-
 /* ── BURGER + mobil menyu düzəlişi ── */
 .burger{display:none;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;margin-left:auto;padding:8px;border-radius:8px;transition:background var(--nav-dur-fast) var(--nav-ease)}
 .burger:hover{background:rgba(255,255,255,.12)}
-@media(max-width:980px){
-  /* JS inline stil köhnə teal qradiyenti inject edir — CSS-only override */
-  .mainnav[style]{background:linear-gradient(100deg,var(--navy-900) 0%,var(--navy-700) 100%)!important}
-  .mainnav[style]>.nav-item{width:100%;height:auto}
-  .mainnav[style]>.nav-item>a{width:100%;padding:14px 12px;border-radius:10px}
-  .mainnav[style]>.nav-item>a::after{display:none}
-  .mainnav[style] .nav-portal{margin:14px 4px 4px;justify-content:center}
-}
 /* ── ƏLÇATANLIQ: focus-visible (WCAG 2.1 AA) ── */
 .mainnav a:focus-visible,.nav-portal:focus-visible,.burger:focus-visible,.infofor-btn:focus-visible{outline:2px solid var(--gold-400);outline-offset:2px;border-radius:6px}
 .utility-left a:focus-visible,.lang-group a:focus-visible,.util-icon:focus-visible,.dropdown a:focus-visible,.eacad-card:focus-visible,.infofor-menu a:focus-visible{outline:2px solid var(--navy-500);outline-offset:2px;border-radius:6px}
 /* ── Reduced motion (yalnız nav sahəsi) ── */
 @media(prefers-reduced-motion:reduce){
   .gov-banner *,.utility *,#siteHeader,#siteHeader *{transition:none!important;animation:none!important}
+}
+
+/* ═══════ K28 — MOBİL NAVİQASİYA ÇEKMƏCƏSİ (`mnav-*`) ═══════
+   Yalnız ≤980px-də görünür. Desktop `.mainnav` toxunulmur.
+   Köhnə burger `.mainnav`-a inline stil yazırdı; o yamaq silindi. */
+
+.mnav { display: none; }
+.mnav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 30, 46, 0.55);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity var(--nav-dur) var(--nav-ease);
+}
+.mnav-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(92vw, 420px);
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, var(--navy-900) 0%, var(--navy-800) 100%);
+  box-shadow: -18px 0 48px rgba(7, 30, 46, 0.45);
+  transform: translateX(100%);
+  transition: transform var(--nav-dur-slow) var(--nav-ease),
+              visibility var(--nav-dur-slow) var(--nav-ease);
+}
+
+@media (max-width: 980px) {
+  .mnav {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    pointer-events: none;
+  }
+  .mnav.is-open { pointer-events: auto; }
+  /* Bağlı vəziyyətdə linklər Tab sırasından da çıxır */
+  .mnav:not(.is-open) .mnav-backdrop,
+  .mnav:not(.is-open) .mnav-panel { visibility: hidden; }
+  .mnav.is-open .mnav-backdrop { opacity: 1; }
+  .mnav.is-open .mnav-panel { transform: translateX(0); }
+
+  /* 44px toxunuş hədəfi. `.header-inner .burger` seçicisi ona görədir ki,
+     `15-responsive.css` sonra yüklənir və `.burger{display:block}` yazır —
+     eyni spesifiklikdə sonuncu qalib gəlirdi. */
+  .header-inner .burger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ── Başlıq ── */
+.mnav-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+.mnav-title {
+  font-family: var(--nav-font);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+.mnav-close {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+.mnav-close:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* ── Sürüşən gövdə ── */
+.mnav-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 12px calc(24px + env(safe-area-inset-bottom));
+}
+.mnav-kicker {
+  margin: 18px 8px 6px;
+  font-family: var(--nav-font);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+.mnav-kicker:first-child { margin-top: 6px; }
+
+/* ── Akkordeon ── */
+.mnav-acc { border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+.mnav-acc-btn {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 8px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--nav-font);
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.94);
+}
+.mnav-acc-btn i {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--gold-400);
+  transition: transform var(--nav-dur) var(--nav-ease);
+}
+.mnav-acc-btn.is-open { color: var(--gold-300); }
+.mnav-acc-btn.is-open i { transform: rotate(180deg); }
+
+.mnav-acc-body {
+  padding: 0 0 12px 8px;
+  animation: mnavFade var(--nav-dur) var(--nav-ease);
+}
+@keyframes mnavFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mnav-overview {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-bottom: 4px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: rgba(201, 169, 97, 0.16);
+  color: var(--gold-300);
+  font-family: var(--nav-font);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.mnav-overview:hover { background: rgba(201, 169, 97, 0.26); }
+
+.mnav-grp { padding-top: 10px; }
+.mnav-grp-h {
+  display: block;
+  padding: 0 4px 2px;
+  font-family: var(--nav-font);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+.mnav-link,
+.mnav-flat {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--nav-font);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  line-height: 1.35;
+}
+.mnav-link:hover,
+.mnav-flat:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
+.mnav-flat {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.94);
+  min-height: 52px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0;
+  padding: 12px 8px;
+}
+
+/* ── E-Akademiya portalı (desktopda yalnız :hover ilə açılırdı) ── */
+.mnav-portal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 4px 0 8px;
+}
+.mnav-portal-card {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 169, 97, 0.3);
+  background: rgba(201, 169, 97, 0.1);
+  color: var(--gold-300);
+  font-family: var(--nav-font);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.3;
+}
+.mnav-portal-card:hover { background: rgba(201, 169, 97, 0.2); color: #fff; }
+
+.mnav a:focus-visible,
+.mnav button:focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mnav-backdrop, .mnav-panel { transition: none !important; }
+  .mnav-panel { transform: translateX(100%); }
+  .mnav.is-open .mnav-panel { transform: translateX(0); }
+  .mnav-acc-body { animation: none !important; }
+}
+
+/* ═══════ Mobil utility zolağı ═══════ */
+@media (max-width: 980px) {
+  .gov-banner-inner, .utility-inner, .header-inner { padding: 0 20px; }
+}
+@media (max-width: 600px) {
+  /* «Bunlar üçün» artıq çekməcədədir — burada yer tutmasın deyə gizlədilir.
+     Əvvəl bu düymə + dil qrupu + 4 ikon 360px ekrana sığmırdı. */
+  .infofor { display: none; }
+  .util-icon { width: 38px; height: 38px; }
+  .lang-group a { padding: 7px 10px; }
+  .gov-banner-inner, .utility-inner, .header-inner { padding: 0 16px; }
 }

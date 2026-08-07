@@ -2,7 +2,9 @@
 
 // ── Faza 1b: header interaktivliyi ────────────────────────────────────
 // Markup server-də (SiteHeaderStack) qalır — bu ada yalnız davranış qoşur:
-// scrolled · şrift · kontrast · infofor · burger · meganav · axtarış.
+// scrolled · şrift · kontrast · infofor · meganav · axtarış.
+// Burger ARTIQ BURADA DEYİL — mobil çekməcə `MobileNav` komponentindədir
+// (vəziyyət React-də, görünüş CSS-də; inline stil injeksiyası aradan qalxdı).
 // ui.js/HomeClient variantından fərqi: tiplənmiş, bundle-da (ayrıca sorğu yox),
 // hər effektdə tam cleanup (naviqasiyada listener yığılmır), locale props-dan
 // gəlir (pathname parse YOX). Contract ID/selektorlar dəyişməyib.
@@ -67,27 +69,6 @@ export default function HeaderIsland({ locale }: { locale: Locale }) {
       document.removeEventListener('click', onDoc);
       document.removeEventListener('keydown', onKey);
     };
-  }, []);
-
-  // ── Burger (≤980px): .mainnav açılışı — top:82px header hündürlüyünə bağlıdır ──
-  useEffect(() => {
-    const burger = document.querySelector<HTMLElement>('.burger');
-    const nav = document.querySelector<HTMLElement>('.mainnav');
-    if (!burger || !nav) return;
-    const PANEL: Array<[string, string]> = [
-      ['position', 'absolute'], ['top', '82px'], ['left', '0'], ['right', '0'],
-      ['background', 'linear-gradient(100deg,#053A52,#02546F)'],
-      ['flex-direction', 'column'], ['padding', '16px'], ['height', 'auto'],
-      ['z-index', '200'], ['box-shadow', '0 20px 40px rgba(2,75,102,.3)'],
-    ];
-    const onClick = () => {
-      const open = nav.style.display === 'flex';
-      nav.style.display = open ? 'none' : 'flex';
-      if (!open) PANEL.forEach(([k, v]) => nav.style.setProperty(k, v));
-      burger.setAttribute('aria-expanded', String(!open));
-    };
-    burger.addEventListener('click', onClick);
-    return () => burger.removeEventListener('click', onClick);
   }, []);
 
   // ── Mega menyu drill-down: .mg-item[data-mi] → .mega-panel[data-mp] ──

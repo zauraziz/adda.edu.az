@@ -11,6 +11,7 @@ import { menuHref } from '@/lib/menu-href';
 import { FALLBACK_MENU, FALLBACK_EACAD } from '@/lib/menu-fallback';
 import { SEARCH_UI } from '@/lib/search-ui';
 import HeaderIsland from './HeaderIsland';
+import MobileNav, { type MNavData, type MNavSection } from './MobileNav';
 
 // ── Paylaşılan SVG-lər (orijinal markup ilə eyni) ──
 const MegaChevH = () => (
@@ -34,6 +35,54 @@ const MEGA_CTA: Record<Locale, { eyebrow: string; btn: string; tx: string }> = {
 };
 
 const byOrder = (a: MenuCategory, b: MenuCategory) => (a.order ?? 0) - (b.order ?? 0);
+
+// ── Mobil çekməcə üçün ağac ──
+// Server tərəfdə QURULUR: bütün mətnlər burada `tr()`-dən keçir, klient
+// adasına yalnız hazır sətirlər gedir (i18n lüğəti bundle-a düşmür).
+function buildMobileNav(
+  esas: MenuCategory[],
+  ust: MenuCategory[],
+  eacad: MenuPortal | null,
+  qruplar: MenuLink[],
+  locale: Locale,
+): MNavData {
+  const section = (c: MenuCategory): MNavSection => ({
+    label: tr(c.label, locale),
+    href: menuHref(c.url, locale),
+    groups: (c.groups ?? []).map((g) => ({
+      title: tr(g.title, locale),
+      links: (g.links ?? []).map((l) => ({
+        label: tr(l.label, locale),
+        href: menuHref(l.url, locale),
+      })),
+    })),
+  });
+  return {
+    main: esas.slice().sort(byOrder).map(section),
+    utility: ust.slice().sort(byOrder).map(section),
+    portal: eacad
+      ? {
+          title: tr(eacad.title || 'E-Akademiya', locale),
+          cards: (eacad.cards ?? []).map((c) => ({
+            label: tr(c.label, locale),
+            href: menuHref(c.url, locale),
+          })),
+        }
+      : null,
+    audiences: qruplar.map((l) => ({
+      label: tr(l.label, locale),
+      href: menuHref(l.url, locale),
+    })),
+    labels: {
+      menu: tr('Menyu', locale),
+      close: tr('Bağla', locale),
+      sections: tr('Bölmələr', locale),
+      more: tr('Digər bölmələr', locale),
+      audiences: tr('Bunlar üçün', locale),
+      overview: MEGA_CTA[locale].btn,
+    },
+  };
+}
 
 // ── Gov Banner ──
 function GovBanner({ locale }: { locale: Locale }) {
@@ -195,6 +244,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
   const ust = menu && menu.ustMenyu.length ? menu.ustMenyu : FALLBACK_MENU.ustMenyu;
   const eacad = (menu && menu.eAkademiya) || FALLBACK_EACAD;
   const qruplar = menu && menu.istifadeciQruplari.length ? menu.istifadeciQruplari : FALLBACK_MENU.istifadeciQruplari;
+  const mobileNav = buildMobileNav(esas, ust, eacad, qruplar, locale);
 
   return (
     <>
@@ -251,7 +301,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
             <MainNav cats={esas} locale={locale} />
             <EacadMega eacad={eacad} locale={locale} />
           </nav>
-          <button className="burger" aria-label="Menyu" aria-expanded={false}><i className="ti ti-menu-2" /></button>
+          <MobileNav data={mobileNav} />
         </div>
       </header>
 
