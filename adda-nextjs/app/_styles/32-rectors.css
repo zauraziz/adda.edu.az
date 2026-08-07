@@ -1,0 +1,284 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — K27a / Sabiq rektorlar (`rk-*`)
+   İki səhifə: kart şəbəkəsi (siyahı) + detal.
+   Yalnız mövcud tokenlər: --navy-*, --gold-*, --ink*, --line, --radius-*,
+   --font-display (Fraunces), --font-body (Manrope). Yeni rəng YOXDUR.
+   Hero `19-news-page.css`-in `np-*` siniflərini təkrar işlədir.
+   ═══════════════════════════════════════════════════════ */
+
+.rk-wrap { padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem); }
+
+/* ═══ 1. Siyahı — kart şəbəkəsi ═══ */
+
+.rk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rk-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              transform var(--nav-dur) var(--nav-ease),
+              box-shadow var(--nav-dur) var(--nav-ease);
+}
+.rk-card:hover,
+.rk-card:focus-visible {
+  border-color: var(--gold-400);
+  transform: translateY(-3px);
+  box-shadow: var(--nav-sh-lg);
+}
+.rk-card:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 2px; }
+
+.rk-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1.1rem 1.15rem 1.25rem;
+}
+
+.rk-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.22rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--navy-800);
+  transition: color var(--nav-dur-fast) var(--nav-ease);
+}
+.rk-card:hover .rk-name { color: var(--navy-600); }
+
+.rk-degree {
+  margin-top: 0.35rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.rk-excerpt {
+  margin-top: 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.rk-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--navy-600);
+}
+.rk-more i { transition: transform var(--nav-dur) var(--nav-ease); }
+.rk-card:hover .rk-more i { transform: translateX(3px); }
+
+/* ── Monoqram lövhəsi (portret arxivi hələ yoxdur) ── */
+.rk-plate {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  background: var(--gradient-navy);
+  overflow: hidden;
+}
+.rk-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(90% 70% at 50% 0%, rgba(201, 169, 97, 0.22), transparent 65%);
+  pointer-events: none;
+}
+.rk-plate--now::after {
+  background: radial-gradient(90% 70% at 50% 0%, rgba(201, 169, 97, 0.4), transparent 70%);
+}
+.rk-monogram {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--gold-300);
+}
+.rk-plate-term {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.4rem 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--navy-900);
+  background: var(--gold-400);
+}
+
+/* Hazırkı rəhbərlik kartı — siyahının sonunda, vizual olaraq ayrılır */
+.rk-card--now { border-style: dashed; }
+.rk-card--now:hover { border-style: solid; }
+
+/* ═══ 2. Detal səhifəsi ═══ */
+
+.rk-back {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+  text-decoration: none;
+}
+.rk-back:hover { color: var(--white); }
+
+.rk-detail {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+.rk-side { position: sticky; top: 6.5rem; }
+.rk-plate--lg { aspect-ratio: 3 / 4; border-radius: var(--radius-lg); }
+.rk-plate--lg .rk-monogram { font-size: 3.4rem; }
+.rk-plate--lg .rk-plate-term { padding: 0.55rem 0.6rem; font-size: 0.85rem; }
+
+.rk-facts { margin: 1.25rem 0 0; }
+.rk-fact-k {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy-600);
+}
+.rk-fact-v {
+  margin: 0.2rem 0 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.rk-fact-v:last-child { margin-bottom: 0; }
+
+.rk-main { min-width: 0; }
+.rk-sec-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+  color: var(--navy-800);
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--gold-500);
+  margin: 0 0 1.4rem;
+}
+
+.rk-bio { max-width: 68ch; }
+.rk-bio p {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+.rk-bio p:last-child { margin-bottom: 0; }
+
+.rk-note {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  background: var(--navy-50);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+}
+
+/* ── Əvvəlki / sonrakı ── */
+.rk-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.rk-nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: border-color var(--nav-dur) var(--nav-ease);
+}
+.rk-nav-item:hover { border-color: var(--gold-400); }
+.rk-nav-item--next { text-align: right; align-items: flex-end; }
+.rk-nav-dir {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.rk-nav-name {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--navy-800);
+}
+
+/* ═══ Responsiv ═══ */
+
+@media (max-width: 900px) {
+  .rk-detail { grid-template-columns: minmax(0, 1fr); }
+  .rk-side {
+    position: static;
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .rk-facts { margin-top: 0; }
+}
+
+@media (max-width: 560px) {
+  .rk-grid { grid-template-columns: minmax(0, 1fr); }
+  .rk-plate { aspect-ratio: 16 / 9; }
+  .rk-side { grid-template-columns: minmax(0, 1fr); }
+  .rk-plate--lg { aspect-ratio: 4 / 3; }
+  .rk-nav { grid-template-columns: minmax(0, 1fr); }
+  .rk-nav-item--next { text-align: left; align-items: flex-start; }
+}
+
+@media print {
+  .rk-plate { background: none; border: 1px solid var(--line); }
+  .rk-monogram { color: var(--navy-800); }
+  .rk-nav, .rk-back { display: none; }
+}

@@ -74,7 +74,7 @@ const SEED = {
               },
               {
                 "label": "Sabiq rektorlarımız",
-                "url": "/hazirlanir/sabiq-rektorlarimiz"
+                "url": "/sabiq-rektorlar"
               },
               {
                 "label": "ADDA Qəhrəmanları",

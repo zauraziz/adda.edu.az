@@ -5,7 +5,7 @@ import type { SiteMenu, MenuPortal } from './strapi';
 export const FALLBACK_MENU: SiteMenu = {
   esasMenyu: [
     { label: 'Akademiya', order: 1, url: '#', groups: [
-      { title: 'Akademik irs və missiya', links: [{label:'Akademiya haqqında',url:'#'},{label:'Akademiyanın tarixi',url:'#'},{label:'Sabiq rektorlarımız',url:'#'},{label:'ADDA Qəhrəmanları',url:'#'},{label:'Fəxri doktorlarımız',url:'#'},{label:'Fəxri məzunlar',url:'#'},{label:'ADDA reytinqlərdə',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
+      { title: 'Akademik irs və missiya', links: [{label:'Akademiya haqqında',url:'#'},{label:'Akademiyanın tarixi',url:'#'},{label:'Sabiq rektorlarımız',url:'/sabiq-rektorlar'},{label:'ADDA Qəhrəmanları',url:'#'},{label:'Fəxri doktorlarımız',url:'#'},{label:'Fəxri məzunlar',url:'#'},{label:'ADDA reytinqlərdə',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
       { title: 'Rəhbərlik və idarəetmə', links: [{label:'Rektor',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Elmi Şura',url:'#'},{label:'Himayəçilər Şurası',url:'#'},{label:'Təşkilati struktur',url:'#'}] },
       { title: 'Hüquqi baza, etika və keyfiyyət', links: [{label:'Təhsil müəssisəsi haqqında',url:'#'},{label:'Normativ-hüquqi sənədlər',url:'#'},{label:'Akademik dürüstlük bəyannaməsi',url:'#'},{label:'ADDA etika kodeksi',url:'#'},{label:'Keyfiyyətin monitorinqi',url:'#'},{label:'Dayanıqlı inkişaf',url:'#'}] },
       { title: 'Heyət', links: [{label:'Professor-müəllim heyəti',url:'#'},{label:'Təlimçi-texniki heyət',url:'#'},{label:'İnzibati heyət',url:'#'}] },
