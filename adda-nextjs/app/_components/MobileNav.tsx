@@ -1,34 +1,35 @@
 'use client';
 
-// ── K28: mobil naviqasiya çekməcəsi ──────────────────────────────────
+// ── K29: mobil naviqasiya — hse.ru məntiqi ───────────────────────────
 //
-// NİYƏ YAZILDI. Mobildə menyunun 148 bəndindən yalnız 6-sı əlçatan idi:
-//   • `.mega{display:none}`      ≤980px → əsas menyunun bütün alt linkləri
-//   • `.util-menu{display:none}` ≤980px → üst menyunun alt qrupları
-//   • `.eacad-menu` yalnız `:hover` → toxunuş cihazında heç vaxt açılmır,
-//     üstəlik düymənin `href`-i `#` idi
-//   • `.utility-left{display:none}` ≤600px → üst menyu tamamilə yoxa çıxırdı
-// Burger yalnız 6 üst səviyyə başlığını göstərirdi. Bu komponent tam ağacı
-// akkordeon şəklində açır.
+// STRUKTUR (hse.ru-dan): bölmə → adlandırılmış qruplar → linklər.
+// Panelin başında bölmənin ÖZ linki durur ("Bölməyə keç"), sonra qrup
+// başlıqları və altındakı linklər. Portal kartlarının təsviri də göstərilir —
+// hse.ru-da hər qrupda bir seçilmiş bənd izahla verilir.
 //
-// KÖHNƏ YANAŞMA NİYƏ ATILDI. Əvvəl burger `HeaderIsland`-dan `.mainnav`-a
-// INLINE STİL yazırdı (`display:flex`, `position:absolute`, `top:82px` və
-// sabit `#053A52` qradiyenti — palitradan kənar). Üç problemi vardı:
-//   1. inline stil breakpoint dəyişəndə QALIRDI — telefonu yan çevirəndə
-//      desktop header sınırdı (CSS-də `.mainnav[style]{...!important}`
-//      adlı yamaq bunun izidir, indi silinir);
-//   2. linkə klikdən sonra panel bağlanmırdı;
-//   3. `top:82px` header hündürlüyünə əl ilə bağlı idi.
-// İndi vəziyyət React-dədir, görünüş isə tam CSS-dədir.
+// AKKORDEON DEYİL, SƏVİYYƏ. Əvvəlki variant bölmələri yerindəcə açırdı;
+// 107 bənd bir siyahıda uzun sürüşməyə çevrilirdi və istifadəçi hansı
+// bölmədə olduğunu itirirdi. İndi bölməyə toxunanda panel sürüşür və yalnız
+// həmin bölmə görünür — desktopdakı mega panelin mobil qarşılığı. Geri
+// düyməsi valideynin adını daşıyır.
+//
+// PORTAL (createPortal) MƏCBURİDİR. `header{position:relative;z-index:90}`
+// stacking context yaradır; çekməcə header-in içində render olunanda onun
+// `z-index:500`-ü həmin kontekstin İÇİNDƏ qalırdı və kənarda hələ də 90
+// sayılırdı. `.gov-banner` və `.utility` isə 95-dədir — çekməcənin üstünə
+// çıxıb bağlama düyməsini yarıya qədər örtürdü. `document.body`-yə portal
+// bu zənciri tamamilə qırır.
 //
 // Mətnlər PROPS ilə gəlir — server komponentində `tr()`-dən keçir.
-// Klient adası i18n lüğətini dəyər kimi import etmir (bundle qaydası).
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 
 export interface MNavLink {
   label: string;
   href: string;
+  /** hse.ru-dakı seçilmiş bənd kimi — yalnız portal kartlarında var. */
+  description?: string;
 }
 export interface MNavGroup {
   title: string;
@@ -39,9 +40,16 @@ export interface MNavSection {
   href: string;
   groups: MNavGroup[];
 }
+export interface MNavLang {
+  code: string;
+  label: string;
+  href: string;
+  active: boolean;
+}
 export interface MNavLabels {
   menu: string;
   close: string;
+  back: string;
   sections: string;
   more: string;
   audiences: string;
@@ -52,36 +60,52 @@ export interface MNavData {
   utility: MNavSection[];
   portal: { title: string; cards: MNavLink[] } | null;
   audiences: MNavLink[];
+  languages: MNavLang[];
   labels: MNavLabels;
 }
 
 export default function MobileNav({ data }: { data: MNavData }) {
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [section, setSection] = useState<MNavSection | null>(null);
   const burgerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { labels } = data;
 
-  // Marşrut dəyişəndə bağlanır. Linklər `<a>` olduğu üçün adətən tam
-  // yenilənmə olur, amma bu, gələcəkdə <Link>-ə keçsək də qoruyur.
+  useEffect(() => setMounted(true), []);
+
+  // Bağlananda səviyyə kökə qayıdır — növbəti açılış yarımçıq qalmasın.
+  const close = () => {
+    setOpen(false);
+    setSection(null);
+  };
+
   useEffect(() => {
     setOpen(false);
+    setSection(null);
   }, [pathname]);
 
-  // Escape · fon kliki · fokus tələsi
+  // Səviyyə dəyişəndə sürüşmə yuxarı qayıdır.
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [section]);
+
+  // Escape: əvvəlcə bir səviyyə geri, kökdədirsə bağlanır.
+  // Tab: fokus panel daxilində qapalı dövrədə qalır.
   useEffect(() => {
     if (!open) return;
-    const panel = panelRef.current;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setOpen(false);
+        if (section) setSection(null);
+        else close();
         return;
       }
-      if (e.key !== 'Tab' || !panel) return;
-      const f = panel.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])',
-      );
+      if (e.key !== 'Tab') return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const f = panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
       if (!f.length) return;
       const first = f[0];
       const last = f[f.length - 1];
@@ -95,9 +119,8 @@ export default function MobileNav({ data }: { data: MNavData }) {
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, section]);
 
-  // Arxa fonun sürüşməsi kilidlənir (çekməcə öz daxilində sürüşür).
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -107,70 +130,140 @@ export default function MobileNav({ data }: { data: MNavData }) {
     };
   }, [open]);
 
-  // Ekran desktop enişinə çatanda bağlanır — açıq çekməcə orada mənasızdır.
   useEffect(() => {
     if (!open) return;
     const mq = window.matchMedia('(min-width: 981px)');
     const onChange = () => {
-      if (mq.matches) setOpen(false);
+      if (mq.matches) close();
     };
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, [open]);
 
-  // Açılanda fokus panelə keçir, bağlananda burger-ə qayıdır.
   useEffect(() => {
     if (open) panelRef.current?.querySelector<HTMLElement>('button')?.focus();
     else burgerRef.current?.focus({ preventScroll: true });
   }, [open]);
 
-  const toggleSection = (key: string) =>
-    setExpanded((cur) => (cur === key ? null : key));
+  const rows = (list: MNavSection[], keyPrefix: string) =>
+    list.map((s, i) =>
+      s.groups.length ? (
+        <button
+          type="button"
+          key={`${keyPrefix}-${i}`}
+          className="mnav-row"
+          onClick={() => setSection(s)}
+        >
+          <span>{s.label}</span>
+          <i className="ti ti-chevron-right" aria-hidden="true" />
+        </button>
+      ) : (
+        <a key={`${keyPrefix}-${i}`} className="mnav-row" href={s.href}>
+          <span>{s.label}</span>
+          <i className="ti ti-arrow-up-right" aria-hidden="true" />
+        </a>
+      ),
+    );
 
-  const renderSections = (sections: MNavSection[], prefix: string) =>
-    sections.map((s, i) => {
-      const key = `${prefix}-${i}`;
-      if (!s.groups.length) {
-        return (
-          <a key={key} className="mnav-flat" href={s.href}>
-            {s.label}
-          </a>
-        );
-      }
-      const isOpen = expanded === key;
-      return (
-        <div className="mnav-acc" key={key}>
-          <button
-            type="button"
-            className={isOpen ? 'mnav-acc-btn is-open' : 'mnav-acc-btn'}
-            aria-expanded={isOpen}
-            aria-controls={`${key}-body`}
-            onClick={() => toggleSection(key)}
-          >
-            <span>{s.label}</span>
-            <i className="ti ti-chevron-down" aria-hidden="true" />
+  const drawer = (
+    <div className={open ? 'mnav is-open' : 'mnav'} id="mobileNav">
+      <div className="mnav-backdrop" onClick={close} aria-hidden="true" />
+      <div
+        className="mnav-panel"
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={labels.menu}
+      >
+        <div className="mnav-top">
+          {section ? (
+            <button type="button" className="mnav-back" onClick={() => setSection(null)}>
+              <i className="ti ti-chevron-left" aria-hidden="true" />
+              <span>{labels.back}</span>
+            </button>
+          ) : (
+            <span className="mnav-title">{labels.menu}</span>
+          )}
+          <button type="button" className="mnav-close" aria-label={labels.close} onClick={close}>
+            <i className="ti ti-x" aria-hidden="true" />
           </button>
-          {isOpen ? (
-            <div className="mnav-acc-body" id={`${key}-body`}>
-              <a className="mnav-overview" href={s.href}>
+        </div>
+
+        <div className="mnav-scroll" ref={scrollRef}>
+          {section ? (
+            <div className="mnav-view" key={section.href + section.label}>
+              <h2 className="mnav-h">{section.label}</h2>
+              <a className="mnav-overview" href={section.href}>
                 {labels.overview}
                 <i className="ti ti-arrow-right" aria-hidden="true" />
               </a>
-              {s.groups.map((g, gi) => (
-                <div className="mnav-grp" key={`${key}-g${gi}`}>
+              {section.groups.map((g, gi) => (
+                <div className="mnav-grp" key={`g-${gi}`}>
                   <span className="mnav-grp-h">{g.title}</span>
                   {g.links.map((l, li) => (
-                    <a key={`${key}-g${gi}-l${li}`} className="mnav-link" href={l.href}>
+                    <a key={`g-${gi}-l-${li}`} className="mnav-link" href={l.href}>
                       {l.label}
                     </a>
                   ))}
                 </div>
               ))}
             </div>
-          ) : null}
+          ) : (
+            <div className="mnav-view" key="root">
+              <p className="mnav-kicker">{labels.sections}</p>
+              {rows(data.main, 'm')}
+
+              {data.portal && data.portal.cards.length ? (
+                <>
+                  <p className="mnav-kicker">{data.portal.title}</p>
+                  {data.portal.cards.map((c, i) => (
+                    <a key={`p-${i}`} className="mnav-feature" href={c.href}>
+                      <b>{c.label}</b>
+                      {c.description ? <small>{c.description}</small> : null}
+                    </a>
+                  ))}
+                </>
+              ) : null}
+
+              {data.utility.length ? (
+                <>
+                  <p className="mnav-kicker">{labels.more}</p>
+                  {rows(data.utility, 'u')}
+                </>
+              ) : null}
+
+              {data.audiences.length ? (
+                <>
+                  <p className="mnav-kicker">{labels.audiences}</p>
+                  {data.audiences.map((l, i) => (
+                    <a key={`a-${i}`} className="mnav-row" href={l.href}>
+                      <span>{l.label}</span>
+                      <i className="ti ti-arrow-up-right" aria-hidden="true" />
+                    </a>
+                  ))}
+                </>
+              ) : null}
+
+              {data.languages.length ? (
+                <div className="mnav-langs">
+                  {data.languages.map((l) => (
+                    <a
+                      key={l.code}
+                      href={l.href}
+                      className={l.active ? 'is-active' : undefined}
+                      lang={l.code}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
-      );
-    });
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -185,65 +278,8 @@ export default function MobileNav({ data }: { data: MNavData }) {
       >
         <i className="ti ti-menu-2" aria-hidden="true" />
       </button>
-
-      <div className={open ? 'mnav is-open' : 'mnav'} id="mobileNav">
-        <div className="mnav-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />
-        <div
-          className="mnav-panel"
-          ref={panelRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={labels.menu}
-        >
-          <div className="mnav-top">
-            <span className="mnav-title">{labels.menu}</span>
-            <button
-              type="button"
-              className="mnav-close"
-              aria-label={labels.close}
-              onClick={() => setOpen(false)}
-            >
-              <i className="ti ti-x" aria-hidden="true" />
-            </button>
-          </div>
-
-          <nav className="mnav-scroll" aria-label={labels.menu}>
-            <p className="mnav-kicker">{labels.sections}</p>
-            {renderSections(data.main, 'm')}
-
-            {data.portal && data.portal.cards.length ? (
-              <>
-                <p className="mnav-kicker">{data.portal.title}</p>
-                <div className="mnav-portal">
-                  {data.portal.cards.map((c, i) => (
-                    <a key={`p-${i}`} className="mnav-portal-card" href={c.href}>
-                      {c.label}
-                    </a>
-                  ))}
-                </div>
-              </>
-            ) : null}
-
-            {data.utility.length ? (
-              <>
-                <p className="mnav-kicker">{labels.more}</p>
-                {renderSections(data.utility, 'u')}
-              </>
-            ) : null}
-
-            {data.audiences.length ? (
-              <>
-                <p className="mnav-kicker">{labels.audiences}</p>
-                {data.audiences.map((l, i) => (
-                  <a key={`a-${i}`} className="mnav-flat" href={l.href}>
-                    {l.label}
-                  </a>
-                ))}
-              </>
-            ) : null}
-          </nav>
-        </div>
-      </div>
+      {/* Portal: header-in stacking context-indən çıxmaq üçün — bax yuxarıdakı qeyd. */}
+      {mounted ? createPortal(drawer, document.body) : null}
     </>
   );
 }

@@ -776,9 +776,9 @@ const T: Array<[string, string, string]> = [
   ['International Admissions',
    'Приём иностранных студентов',
    'International Admissions'],
-  // --- K28 mobil naviqasiya (az, ru, en) ---
+  // --- K29 mobil naviqasiya (az, ru, en) ---
   ['Menyu', 'Меню', 'Menu'],
-  ['Bağla', 'Закрыть', 'Close'],
+  ['Geri', 'Назад', 'Back'],
   ['Bölmələr', 'Разделы', 'Sections'],
   ['Digər bölmələr', 'Другие разделы', 'More sections'],
   // --- K27c sabiq rektorlar (az, ru, en) ---

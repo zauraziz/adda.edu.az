@@ -66,6 +66,7 @@ function buildMobileNav(
           cards: (eacad.cards ?? []).map((c) => ({
             label: tr(c.label, locale),
             href: menuHref(c.url, locale),
+            description: c.description ? tr(c.description, locale) : undefined,
           })),
         }
       : null,
@@ -73,9 +74,16 @@ function buildMobileNav(
       label: tr(l.label, locale),
       href: menuHref(l.url, locale),
     })),
+    languages: (['az', 'ru', 'en'] as const).map((l) => ({
+      code: l,
+      label: l.toUpperCase(),
+      href: `/${l}`,
+      active: l === locale,
+    })),
     labels: {
       menu: tr('Menyu', locale),
       close: tr('Bağla', locale),
+      back: tr('Geri', locale),
       sections: tr('Bölmələr', locale),
       more: tr('Digər bölmələr', locale),
       audiences: tr('Bunlar üçün', locale),
