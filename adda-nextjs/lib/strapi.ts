@@ -575,10 +575,14 @@ export interface Rector {
 }
 
 /**
- * Bütün sabiq rektorlar, `sortOrder` üzrə.
+ * Bütün rektorlar, XRONOLOJİ sıra ilə (`termFrom`).
  *
  * Detal səhifəsi də bu siyahını çəkir (tək qeyd yox): əvvəlki/sonrakı keçidi
  * üçün qonşular onsuz da lazımdır, dörd qeyd üçün ikinci sorğu mənasızdır.
+ *
+ * `sortOrder` ƏSAS açar DEYİL: Strapi-də yeni qeydin defolt dəyəri 0-dır və
+ * belə qeyd siyahının başına düşürdü. Xronologiya məlumatın öz xassəsidir,
+ * `sortOrder` yalnız eyni ildə başlayan qeydlər üçün əl ilə düzəlişdir.
  *
  * Xəta halında boş massiv qaytarır — çağıran tərəf `RECTORS_FALLBACK`-a keçir.
  */
@@ -586,7 +590,8 @@ export async function getRectors(locale: Locale = 'az'): Promise<Rector[]> {
   try {
     const json = await strapiFetch<StrapiList<Rector>>('/rectors', {
       locale,
-      sort: 'sortOrder:asc',
+      'sort[0]': 'termFrom:asc',
+      'sort[1]': 'sortOrder:asc',
       'pagination[pageSize]': 100,
       'populate[photo]': true,
     });

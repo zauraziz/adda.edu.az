@@ -1,4 +1,4 @@
-// K27b — /[locale]/sabiq-rektorlar/[slug]
+// K27c — /[locale]/sabiq-rektorlar/[slug]
 //
 // Bir rektorun səhifəsi: portret/monoqram lövhəsi + faktlar (yapışqan yan
 // sütun) və tam bioqrafiya. Altda əvvəlki/sonrakı keçidi — varislik sırası
@@ -37,14 +37,15 @@ import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
 import { getMenu, getRectors, mediaUrl, type Rector, type SiteMenu } from '@/lib/strapi';
 import { fmtDate } from '@/lib/format';
-import { RECTORS_FALLBACK, monogram } from '@/lib/rectors';
+import { RECTORS_FALLBACK, bySuccession, isCurrent, monogram, termLabel } from '@/lib/rectors';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
 
 async function listFor(locale: Locale): Promise<Rector[]> {
   const fetched = await getRectors(locale);
-  return fetched.length ? fetched : RECTORS_FALLBACK[locale];
+  const list = fetched.length ? fetched : RECTORS_FALLBACK[locale];
+  return [...list].sort(bySuccession);
 }
 
 export async function generateStaticParams() {
@@ -116,15 +117,16 @@ export default async function RectorDetailPage({
                     {monogram(r.name)}
                   </span>
                 )}
-                <span className="rk-plate-term">
-                  {r.termFrom}&ndash;{r.termTo ?? ''}
-                </span>
+                <span className="rk-plate-term">{termLabel(r.termFrom, r.termTo)}</span>
               </div>
 
               <dl className="rk-facts">
                 <dt className="rk-fact-k">{tr('Rektorluq dövrü', locale)}</dt>
                 <dd className="rk-fact-v">
-                  {r.termFrom}&ndash;{r.termTo ?? ''}
+                  {termLabel(r.termFrom, r.termTo)}
+                  {isCurrent(r.termTo) ? (
+                    <span className="rk-badge rk-badge--inline">{tr('Hazırda', locale)}</span>
+                  ) : null}
                 </dd>
                 {r.degree ? (
                   <>

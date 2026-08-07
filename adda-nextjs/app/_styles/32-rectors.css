@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   ADDA — K27b / Sabiq rektorlar (`rk-*`)
+   ADDA — K27c / Sabiq rektorlar (`rk-*`)
    İki səhifə: kart şəbəkəsi (siyahı) + detal.
    Yalnız mövcud tokenlər: --navy-*, --gold-*, --ink*, --line, --radius-*,
    --font-display (Fraunces), --font-body (Manrope). Yeni rəng YOXDUR.
@@ -106,9 +106,6 @@
   background: radial-gradient(90% 70% at 50% 0%, rgba(201, 169, 97, 0.22), transparent 65%);
   pointer-events: none;
 }
-.rk-plate--now::after {
-  background: radial-gradient(90% 70% at 50% 0%, rgba(201, 169, 97, 0.4), transparent 70%);
-}
 .rk-monogram {
   position: relative;
   z-index: 1;
@@ -143,9 +140,28 @@
   background: var(--gold-400);
 }
 
-/* Hazırkı rəhbərlik kartı — siyahının sonunda, vizual olaraq ayrılır */
-.rk-card--now { border-style: dashed; }
-.rk-card--now:hover { border-style: solid; }
+/* Vəzifədə olan rektor — siyahıda qalır, amma qızılı haşiyə ilə ayrılır.
+   Yer dəyişmir: xronologiya pozulmasın deyə sırada öz ilindədir. */
+.rk-card--current { border-color: var(--gold-400); }
+
+.rk-badge {
+  align-self: flex-start;
+  margin-top: 0.45rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: var(--gold-100);
+  color: var(--gold-600);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.rk-badge--inline {
+  display: inline-block;
+  margin: 0 0 0 0.4rem;
+  vertical-align: 1px;
+}
 
 /* ═══ 2. Detal səhifəsi ═══ */
 

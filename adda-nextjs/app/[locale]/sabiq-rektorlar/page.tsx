@@ -1,10 +1,14 @@
-// K27b — /[locale]/sabiq-rektorlar
+// K27c — /[locale]/sabiq-rektorlar
 //
 // Kart şəbəkəsi. Hər kart öz səhifəsinə aparır: /sabiq-rektorlar/{slug}
 //
 // MƏNBƏ: Strapi `api::rector.rector` (admin panelindən redaktə olunur).
 // Strapi cavab verməsə `RECTORS_FALLBACK` işə düşür — Render pulsuz tarifdə
 // yuxuya getdiyi üçün soyuq startda səhifə boş qalmamalıdır.
+//
+// SIRA `bySuccession` ilə İKİNCİ DƏFƏ tətbiq olunur. Strapi sorğusu onsuz da
+// xronoloji sıralayır, amma fallback və gözlənilməz məlumat eyni qaydaya
+// düşməlidir — sıra bir yerdə qərarlaşdırılır, iki yerdə yox.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -30,7 +34,7 @@ import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import { getMenu, getRectors, mediaUrl, type SiteMenu } from '@/lib/strapi';
-import { RECTORS_FALLBACK, RECTORS_LEAD, monogram } from '@/lib/rectors';
+import { RECTORS_FALLBACK, RECTORS_LEAD, bySuccession, isCurrent, monogram, termLabel } from '@/lib/rectors';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
@@ -64,7 +68,7 @@ export default async function FormerRectorsPage({
     getMenu(locale).catch(() => null as SiteMenu | null),
     getRectors(locale),
   ]);
-  const rectors = fetched.length ? fetched : RECTORS_FALLBACK[locale];
+  const rectors = [...(fetched.length ? fetched : RECTORS_FALLBACK[locale])].sort(bySuccession);
 
   return (
     <>
@@ -83,9 +87,13 @@ export default async function FormerRectorsPage({
             <ul className="rk-grid">
               {rectors.map((r) => {
                 const photo = mediaUrl(r.photo);
+                const current = isCurrent(r.termTo);
                 return (
                   <li key={r.slug}>
-                    <Link href={`/${locale}/sabiq-rektorlar/${r.slug}`} className="rk-card">
+                    <Link
+                      href={`/${locale}/sabiq-rektorlar/${r.slug}`}
+                      className={current ? 'rk-card rk-card--current' : 'rk-card'}
+                    >
                       <span className="rk-plate">
                         {photo ? (
                           <img className="rk-photo" src={photo} alt="" loading="lazy" />
@@ -94,12 +102,11 @@ export default async function FormerRectorsPage({
                             {monogram(r.name)}
                           </span>
                         )}
-                        <span className="rk-plate-term">
-                          {r.termFrom}&ndash;{r.termTo ?? ''}
-                        </span>
+                        <span className="rk-plate-term">{termLabel(r.termFrom, r.termTo)}</span>
                       </span>
                       <span className="rk-card-body">
                         <span className="rk-name">{r.name}</span>
+                        {current ? <span className="rk-badge">{tr('Hazırda', locale)}</span> : null}
                         {r.degree ? <span className="rk-degree">{r.degree}</span> : null}
                         {r.summary ? <span className="rk-excerpt">{r.summary}</span> : null}
                         <span className="rk-more">
@@ -111,27 +118,6 @@ export default async function FormerRectorsPage({
                   </li>
                 );
               })}
-
-              <li>
-                <Link href={`/${locale}/sehife/rektor`} className="rk-card rk-card--now">
-                  <span className="rk-plate rk-plate--now">
-                    <span className="rk-monogram" aria-hidden="true">
-                      <i className="ti ti-anchor" />
-                    </span>
-                    <span className="rk-plate-term">2024&ndash;</span>
-                  </span>
-                  <span className="rk-card-body">
-                    <span className="rk-name">{tr('Hazırkı rektor', locale)}</span>
-                    <span className="rk-excerpt">
-                      {tr('Akademiyanın hazırkı rəhbərliyi barədə məlumat rektorun səhifəsindədir.', locale)}
-                    </span>
-                    <span className="rk-more">
-                      {tr('Rektor', locale)}
-                      <i className="ti ti-arrow-right" aria-hidden="true" />
-                    </span>
-                  </span>
-                </Link>
-              </li>
             </ul>
           </div>
         </section>
