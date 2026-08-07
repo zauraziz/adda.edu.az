@@ -740,7 +740,15 @@ export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
     suggestedValue: Schema.Attribute.Text & Schema.Attribute.Required;
     targetSlug: Schema.Attribute.String;
     targetType: Schema.Attribute.Enumeration<
-      ['article', 'announcement', 'event', 'milestone', 'page', 'general']
+      [
+        'article',
+        'announcement',
+        'event',
+        'milestone',
+        'person',
+        'page',
+        'general',
+      ]
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'general'>;
@@ -1421,12 +1429,33 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    academicDegree: Schema.Attribute.Enumeration<
+      ['elmler_doktoru', 'felsefe_doktoru', 'yoxdur']
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    academicTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    altEmail: Schema.Attribute.Email;
     announcements: Schema.Attribute.Relation<
       'oneToMany',
       'api::announcement.announcement'
     >;
     articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
     bio: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    building: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1439,6 +1468,18 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::department.department'
     >;
+    displayName: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    education: Schema.Attribute.Component<'staff.education', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     email: Schema.Attribute.Email &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1446,7 +1487,14 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
         };
       }>;
     events: Schema.Attribute.Relation<'oneToMany', 'api::event.event'>;
+    experience: Schema.Attribute.Component<'staff.experience', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     faculty: Schema.Attribute.Relation<'manyToOne', 'api::faculty.faculty'>;
+    languages: Schema.Attribute.Component<'staff.language', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::person.person'>;
     name: Schema.Attribute.String &
@@ -1456,6 +1504,19 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    office: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    other: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    phone: Schema.Attribute.String;
     photo: Schema.Attribute.Media<'images'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1468,7 +1529,33 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    profileUpdatedAt: Schema.Attribute.DateTime;
+    publications: Schema.Attribute.Component<'staff.publication', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     publishedAt: Schema.Attribute.DateTime;
+    researchAreas: Schema.Attribute.Component<'staff.tag', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    responsibilities: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    roles: Schema.Attribute.Component<'staff.role', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    scholar: Schema.Attribute.Component<'staff.scholar', false>;
     slug: Schema.Attribute.UID<'name'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
@@ -1485,7 +1572,90 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
         };
       }> &
       Schema.Attribute.DefaultTo<'akademik'>;
+    teaching: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     unit: Schema.Attribute.Relation<'manyToOne', 'api::unit.unit'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPersonProfileRevision extends Struct.CollectionTypeSchema {
+  collectionName: 'profile_revisions';
+  info: {
+    description: '\u018Fm\u0259kda\u015F\u0131n \u00F6z profilin\u0259 etdiyi d\u0259yi\u015Fikliyin izi. `person` API folder-ind\u0259dir, amma \u00F6z routes fayl\u0131 YOXDUR \u2014 REST endpoint-i yaranm\u0131r, y\u0259ni bu tarix\u00E7\u0259 ictimai oxunmur.';
+    displayName: 'Profil d\u00FCz\u0259li\u015Fi';
+    pluralName: 'profile-revisions';
+    singularName: 'profile-revision';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    actorEmail: Schema.Attribute.String & Schema.Attribute.Required;
+    changedFields: Schema.Attribute.String;
+    clientIp: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::person.profile-revision'
+    > &
+      Schema.Attribute.Private;
+    person: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
+    personSlug: Schema.Attribute.String & Schema.Attribute.Required;
+    previous: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPersonStaffPrivate extends Struct.CollectionTypeSchema {
+  collectionName: 'staff_privates';
+  info: {
+    description: '\u0130ctimai API-d\u0259 G\u00D6R\u00DCNM\u018FY\u018FN hey\u0259t m\u0259lumat\u0131 (do\u011Fum tarixi). `person` API folder-ind\u0259dir, amma \u00F6z routes fayl\u0131 YOXDUR \u2014 buna g\u00F6r\u0259 REST endpoint-i yaranm\u0131r.';
+    displayName: 'Hey\u0259t \u2014 m\u0259xfi';
+    pluralName: 'staff-privates';
+    singularName: 'staff-private';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    birthDate: Schema.Attribute.Date;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::person.staff-private'
+    > &
+      Schema.Attribute.Private;
+    person: Schema.Attribute.Relation<'oneToOne', 'api::person.person'>;
+    personSlug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1732,6 +1902,125 @@ export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiRectorRector extends Struct.CollectionTypeSchema {
+  collectionName: 'rectors';
+  info: {
+    description: 'Akademiyaya r\u0259hb\u0259rlik etmi\u015F sabiq rektorlar \u2014 /sabiq-rektorlar s\u0259hif\u0259si';
+    displayName: 'Sabiq rektor';
+    pluralName: 'rectors';
+    singularName: 'rector';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    bio: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    degree: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    died: Schema.Attribute.Date &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::rector.rector'>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    photo: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    sortOrder: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<0>;
+    summary: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    termFrom: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 2200;
+          min: 1800;
+        },
+        number
+      >;
+    termTo: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 2200;
+          min: 1800;
+        },
+        number
+      >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiRsvpRsvp extends Struct.CollectionTypeSchema {
   collectionName: 'rsvps';
   info: {
@@ -1878,6 +2167,12 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    vacancies: Schema.Attribute.Component<'staff.vacancy', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
@@ -2405,10 +2700,13 @@ declare module '@strapi/strapi' {
       'api::milestone.milestone': ApiMilestoneMilestone;
       'api::page.page': ApiPagePage;
       'api::person.person': ApiPersonPerson;
+      'api::person.profile-revision': ApiPersonProfileRevision;
+      'api::person.staff-private': ApiPersonStaffPrivate;
       'api::program.program': ApiProgramProgram;
       'api::push.push-broadcast': ApiPushPushBroadcast;
       'api::push.push-subscription': ApiPushPushSubscription;
       'api::reaction.reaction': ApiReactionReaction;
+      'api::rector.rector': ApiRectorRector;
       'api::rsvp.rsvp': ApiRsvpRsvp;
       'api::tag.tag': ApiTagTag;
       'api::unit.unit': ApiUnitUnit;

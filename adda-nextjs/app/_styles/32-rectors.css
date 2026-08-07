@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   ADDA — K27a / Sabiq rektorlar (`rk-*`)
+   ADDA — K27b / Sabiq rektorlar (`rk-*`)
    İki səhifə: kart şəbəkəsi (siyahı) + detal.
    Yalnız mövcud tokenlər: --navy-*, --gold-*, --ink*, --line, --radius-*,
    --font-display (Fraunces), --font-body (Manrope). Yeni rəng YOXDUR.
@@ -119,6 +119,14 @@
   letter-spacing: 0.04em;
   color: var(--gold-300);
 }
+.rk-photo {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .rk-plate-term {
   position: absolute;
   z-index: 1;
@@ -206,6 +214,10 @@
   margin: 0 0 1rem;
 }
 .rk-bio p:last-child { margin-bottom: 0; }
+.rk-bio strong { font-weight: 700; color: var(--navy-800); }
+.rk-bio em { font-style: italic; }
+.rk-bio a { color: var(--navy-600); text-decoration: underline; text-underline-offset: 2px; }
+.rk-bio ul, .rk-bio ol { margin: 0 0 1rem 1.25rem; font-family: var(--font-body); line-height: 1.8; }
 
 .rk-note {
   margin-top: 1.5rem;

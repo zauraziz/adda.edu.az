@@ -104,6 +104,119 @@ export interface NavQuicklink extends Struct.ComponentSchema {
   };
 }
 
+export interface StaffEducation extends Struct.ComponentSchema {
+  collectionName: 'components_staff_educations';
+  info: {
+    displayName: 'T\u0259hsil';
+    icon: 'manyToOne';
+  };
+  attributes: {
+    institution: Schema.Attribute.String & Schema.Attribute.Required;
+    period: Schema.Attribute.String & Schema.Attribute.Required;
+    qualification: Schema.Attribute.String;
+    sortYear: Schema.Attribute.Integer;
+  };
+}
+
+export interface StaffExperience extends Struct.ComponentSchema {
+  collectionName: 'components_staff_experiences';
+  info: {
+    displayName: '\u0130\u015F t\u0259cr\u00FCb\u0259si';
+    icon: 'briefcase';
+  };
+  attributes: {
+    organization: Schema.Attribute.String & Schema.Attribute.Required;
+    period: Schema.Attribute.String & Schema.Attribute.Required;
+    position: Schema.Attribute.String;
+    sortYear: Schema.Attribute.Integer;
+  };
+}
+
+export interface StaffLanguage extends Struct.ComponentSchema {
+  collectionName: 'components_staff_languages';
+  info: {
+    displayName: 'Dil bilikl\u0259ri';
+    icon: 'earth';
+  };
+  attributes: {
+    lang: Schema.Attribute.Enumeration<['az', 'tr', 'en', 'ru', 'diger']> &
+      Schema.Attribute.Required;
+    level: Schema.Attribute.String;
+  };
+}
+
+export interface StaffPublication extends Struct.ComponentSchema {
+  collectionName: 'components_staff_publications';
+  info: {
+    displayName: 'N\u0259\u015Fr';
+    icon: 'book';
+  };
+  attributes: {
+    source: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    url: Schema.Attribute.String;
+    year: Schema.Attribute.Integer;
+  };
+}
+
+export interface StaffRole extends Struct.ComponentSchema {
+  collectionName: 'components_staff_roles';
+  info: {
+    description: 'Bir \u015F\u0259xsin bir v\u0259zif\u0259si. Bir adam\u0131n bird\u0259n \u00E7ox v\u0259zif\u0259si ola bil\u0259r (m\u0259s. dekan + professor).';
+    displayName: 'V\u0259zif\u0259';
+    icon: 'briefcase';
+  };
+  attributes: {
+    position: Schema.Attribute.String & Schema.Attribute.Required;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    staffType: Schema.Attribute.Enumeration<
+      ['akademik', 'telimci_texniki', 'inzibati', 'rehberlik', 'diger']
+    > &
+      Schema.Attribute.Required;
+    unitName: Schema.Attribute.String;
+  };
+}
+
+export interface StaffScholar extends Struct.ComponentSchema {
+  collectionName: 'components_staff_scholars';
+  info: {
+    displayName: 'Elmi identifikatorlar';
+    icon: 'link';
+  };
+  attributes: {
+    googleScholar: Schema.Attribute.String;
+    orcid: Schema.Attribute.String;
+    researcherId: Schema.Attribute.String;
+    scopusAuthorId: Schema.Attribute.String;
+    spin: Schema.Attribute.String;
+  };
+}
+
+export interface StaffTag extends Struct.ComponentSchema {
+  collectionName: 'components_staff_tags';
+  info: {
+    description: '\u0130xtisas v\u0259 t\u0259dqiqat sah\u0259si';
+    displayName: 'Etiket';
+    icon: 'priceTag';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface StaffVacancy extends Struct.ComponentSchema {
+  collectionName: 'components_staff_vacancies';
+  info: {
+    description: '\u015Etatda m\u00F6vcud, haz\u0131rda tutulmam\u0131\u015F v\u0259zif\u0259.';
+    displayName: 'Vakansiya';
+    icon: 'userMinus';
+  };
+  attributes: {
+    note: Schema.Attribute.String;
+    position: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
@@ -115,6 +228,14 @@ declare module '@strapi/strapi' {
       'nav.portal': NavPortal;
       'nav.portalcard': NavPortalcard;
       'nav.quicklink': NavQuicklink;
+      'staff.education': StaffEducation;
+      'staff.experience': StaffExperience;
+      'staff.language': StaffLanguage;
+      'staff.publication': StaffPublication;
+      'staff.role': StaffRole;
+      'staff.scholar': StaffScholar;
+      'staff.tag': StaffTag;
+      'staff.vacancy': StaffVacancy;
     }
   }
 }

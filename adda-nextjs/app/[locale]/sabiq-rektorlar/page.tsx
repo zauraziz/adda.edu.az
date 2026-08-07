@@ -1,11 +1,10 @@
-// K27a — /[locale]/sabiq-rektorlar
+// K27b — /[locale]/sabiq-rektorlar
 //
-// Kart şəbəkəsi. Hər kart öz səhifəsinə aparır: /sabiq-rektorlar/{id}
-// Tam bioqrafiya BURADA GÖSTƏRİLMİR — dörd uzun mətn bir səhifədə
-// oxunmurdu, siyahı isə cavab verməli olduğu suala («kim, nə vaxt»)
-// bir ekranda cavab verir.
+// Kart şəbəkəsi. Hər kart öz səhifəsinə aparır: /sabiq-rektorlar/{slug}
 //
-// Məlumat mənbəyi: `lib/rectors.ts`.
+// MƏNBƏ: Strapi `api::rector.rector` (admin panelindən redaktə olunur).
+// Strapi cavab verməsə `RECTORS_FALLBACK` işə düşür — Render pulsuz tarifdə
+// yuxuya getdiyi üçün soyuq startda səhifə boş qalmamalıdır.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -30,11 +29,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import { getMenu, type SiteMenu } from '@/lib/strapi';
-import { RECTORS, RECTORS_LEAD } from '@/lib/rectors';
+import { getMenu, getRectors, mediaUrl, type SiteMenu } from '@/lib/strapi';
+import { RECTORS_FALLBACK, RECTORS_LEAD, monogram } from '@/lib/rectors';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];
@@ -60,7 +59,12 @@ export default async function FormerRectorsPage({
 }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const menu = await getMenu(locale).catch(() => null as SiteMenu | null);
+
+  const [menu, fetched] = await Promise.all([
+    getMenu(locale).catch(() => null as SiteMenu | null),
+    getRectors(locale),
+  ]);
+  const rectors = fetched.length ? fetched : RECTORS_FALLBACK[locale];
 
   return (
     <>
@@ -77,29 +81,36 @@ export default async function FormerRectorsPage({
         <section className="rk-wrap">
           <div className="container">
             <ul className="rk-grid">
-              {RECTORS.map((r) => (
-                <li key={r.id}>
-                  <Link href={`/${locale}/sabiq-rektorlar/${r.id}`} className="rk-card">
-                    <span className="rk-plate">
-                      <span className="rk-monogram" aria-hidden="true">
-                        {r.monogram}
+              {rectors.map((r) => {
+                const photo = mediaUrl(r.photo);
+                return (
+                  <li key={r.slug}>
+                    <Link href={`/${locale}/sabiq-rektorlar/${r.slug}`} className="rk-card">
+                      <span className="rk-plate">
+                        {photo ? (
+                          <img className="rk-photo" src={photo} alt="" loading="lazy" />
+                        ) : (
+                          <span className="rk-monogram" aria-hidden="true">
+                            {monogram(r.name)}
+                          </span>
+                        )}
+                        <span className="rk-plate-term">
+                          {r.termFrom}&ndash;{r.termTo ?? ''}
+                        </span>
                       </span>
-                      <span className="rk-plate-term">
-                        {r.termFrom}&ndash;{r.termTo}
+                      <span className="rk-card-body">
+                        <span className="rk-name">{r.name}</span>
+                        {r.degree ? <span className="rk-degree">{r.degree}</span> : null}
+                        {r.summary ? <span className="rk-excerpt">{r.summary}</span> : null}
+                        <span className="rk-more">
+                          {tr('Ətraflı', locale)}
+                          <i className="ti ti-arrow-right" aria-hidden="true" />
+                        </span>
                       </span>
-                    </span>
-                    <span className="rk-card-body">
-                      <span className="rk-name">{r.name[locale]}</span>
-                      <span className="rk-degree">{r.degree[locale]}</span>
-                      <span className="rk-excerpt">{r.summary[locale]}</span>
-                      <span className="rk-more">
-                        {tr('Ətraflı', locale)}
-                        <i className="ti ti-arrow-right" aria-hidden="true" />
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
+                    </Link>
+                  </li>
+                );
+              })}
 
               <li>
                 <Link href={`/${locale}/sehife/rektor`} className="rk-card rk-card--now">

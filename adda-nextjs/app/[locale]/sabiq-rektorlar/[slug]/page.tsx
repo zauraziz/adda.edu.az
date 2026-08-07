@@ -1,10 +1,14 @@
-// K27a — /[locale]/sabiq-rektorlar/[slug]
+// K27b — /[locale]/sabiq-rektorlar/[slug]
 //
-// Bir rektorun səhifəsi: portret lövhəsi + faktlar (yan sütun, yapışqan) və
-// tam bioqrafiya. Altda əvvəlki/sonrakı keçidi — varislik sırası naviqasiya
-// kimi işləyir, istifadəçi siyahıya qayıtmadan davam edə bilir.
+// Bir rektorun səhifəsi: portret/monoqram lövhəsi + faktlar (yapışqan yan
+// sütun) və tam bioqrafiya. Altda əvvəlki/sonrakı keçidi — varislik sırası
+// naviqasiyaya çevrilir.
 //
-// Slug `RECTORS`-dədir; olmayan slug 404 verir — uydurma URL 200 qaytarmır.
+// SİYAHI ÇƏKİLİR, TƏK QEYD YOX: qonşular onsuz da lazımdır və dörd qeyd üçün
+// ikinci sorğu mənasızdır.
+//
+// `dynamicParams` AÇIQDIR: admin panelində yeni rektor əlavə olunanda səhifə
+// yenidən build etmədən görünməlidir. Slug siyahıda yoxdursa 404.
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -28,18 +32,27 @@ import '../../../_styles/32-rectors.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
-import { getMenu, type SiteMenu } from '@/lib/strapi';
+import { getMenu, getRectors, mediaUrl, type Rector, type SiteMenu } from '@/lib/strapi';
 import { fmtDate } from '@/lib/format';
-import { RECTORS } from '@/lib/rectors';
+import { RECTORS_FALLBACK, monogram } from '@/lib/rectors';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 3600;
-export const dynamicParams = false;
+export const revalidate = 300;
 
-export function generateStaticParams() {
-  return LOCALES.flatMap((locale) => RECTORS.map((r) => ({ locale, slug: r.id })));
+async function listFor(locale: Locale): Promise<Rector[]> {
+  const fetched = await getRectors(locale);
+  return fetched.length ? fetched : RECTORS_FALLBACK[locale];
+}
+
+export async function generateStaticParams() {
+  const out: Array<{ locale: string; slug: string }> = [];
+  for (const locale of LOCALES) {
+    for (const r of await listFor(locale)) out.push({ locale, slug: r.slug });
+  }
+  return out;
 }
 
 export async function generateMetadata({
@@ -49,11 +62,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const r = RECTORS.find((x) => x.id === slug);
+  const r = (await listFor(locale)).find((x) => x.slug === slug);
   if (!r) return { title: tr('Sabiq rektorlarımız', locale) };
   return {
-    title: `${r.name[locale]} — ${tr('Sabiq rektorlarımız', locale)}`,
-    description: r.summary[locale],
+    title: `${r.name} — ${tr('Sabiq rektorlarımız', locale)}`,
+    description: r.summary ?? undefined,
   };
 }
 
@@ -65,16 +78,17 @@ export default async function RectorDetailPage({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
 
-  const idx = RECTORS.findIndex((x) => x.id === slug);
+  const list = await listFor(locale);
+  const idx = list.findIndex((x) => x.slug === slug);
   if (idx < 0) notFound();
-  const r = RECTORS[idx];
-  const prev = idx > 0 ? RECTORS[idx - 1] : null;
-  const next = idx < RECTORS.length - 1 ? RECTORS[idx + 1] : null;
+  const r = list[idx];
+  const prev = idx > 0 ? list[idx - 1] : null;
+  const next = idx < list.length - 1 ? list[idx + 1] : null;
 
   const menu = await getMenu(locale).catch(() => null as SiteMenu | null);
   const listHref = `/${locale}/sabiq-rektorlar`;
-  const paragraphs = r.bio[locale] ?? r.bio.az;
-  const translated = r.bio[locale] !== null;
+  const photo = mediaUrl(r.photo);
+  const bioHtml = r.bio ? await marked.parse(r.bio) : '';
 
   return (
     <>
@@ -86,8 +100,8 @@ export default async function RectorDetailPage({
               <i className="ti ti-arrow-left" aria-hidden="true" />
               {' ' + tr('Sabiq rektorlarımız', locale)}
             </Link>
-            <h1 className="np-h1">{r.name[locale]}</h1>
-            <p className="np-lead">{r.summary[locale]}</p>
+            <h1 className="np-h1">{r.name}</h1>
+            {r.summary ? <p className="np-lead">{r.summary}</p> : null}
           </div>
         </section>
 
@@ -95,21 +109,29 @@ export default async function RectorDetailPage({
           <div className="container rk-detail">
             <aside className="rk-side">
               <div className="rk-plate rk-plate--lg">
-                <span className="rk-monogram" aria-hidden="true">
-                  {r.monogram}
-                </span>
+                {photo ? (
+                  <img className="rk-photo" src={photo} alt={r.name} />
+                ) : (
+                  <span className="rk-monogram" aria-hidden="true">
+                    {monogram(r.name)}
+                  </span>
+                )}
                 <span className="rk-plate-term">
-                  {r.termFrom}&ndash;{r.termTo}
+                  {r.termFrom}&ndash;{r.termTo ?? ''}
                 </span>
               </div>
 
               <dl className="rk-facts">
                 <dt className="rk-fact-k">{tr('Rektorluq dövrü', locale)}</dt>
                 <dd className="rk-fact-v">
-                  {r.termFrom}&ndash;{r.termTo}
+                  {r.termFrom}&ndash;{r.termTo ?? ''}
                 </dd>
-                <dt className="rk-fact-k">{tr('Elmi dərəcə', locale)}</dt>
-                <dd className="rk-fact-v">{r.degree[locale]}</dd>
+                {r.degree ? (
+                  <>
+                    <dt className="rk-fact-k">{tr('Elmi dərəcə', locale)}</dt>
+                    <dd className="rk-fact-v">{r.degree}</dd>
+                  </>
+                ) : null}
                 {r.died ? (
                   <>
                     <dt className="rk-fact-k">{tr('Vəfat edib', locale)}</dt>
@@ -121,37 +143,31 @@ export default async function RectorDetailPage({
 
             <div className="rk-main">
               <h2 className="rk-sec-title">{tr('Bioqrafiya', locale)}</h2>
-              <div className="rk-bio" lang={translated ? locale : 'az'}>
-                {paragraphs.map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
-
-              {translated ? null : (
-                <p className="rk-note">
-                  {tr('Tam bioqrafiya hazırda yalnız Azərbaycan dilində mövcuddur.', locale)}
-                </p>
+              {bioHtml ? (
+                <div className="rk-bio" dangerouslySetInnerHTML={{ __html: bioHtml }} />
+              ) : (
+                <p className="rk-note">{tr('Bu səhifənin məzmunu hazırlanır.', locale)}</p>
               )}
 
               <nav className="rk-nav" aria-label={tr('Sabiq rektorlarımız', locale)}>
                 {prev ? (
-                  <Link href={`/${locale}/sabiq-rektorlar/${prev.id}`} className="rk-nav-item">
+                  <Link href={`/${locale}/sabiq-rektorlar/${prev.slug}`} className="rk-nav-item">
                     <span className="rk-nav-dir">
                       <i className="ti ti-arrow-left" aria-hidden="true" />
                       {' ' + tr('Əvvəlki', locale)}
                     </span>
-                    <span className="rk-nav-name">{prev.name[locale]}</span>
+                    <span className="rk-nav-name">{prev.name}</span>
                   </Link>
                 ) : (
                   <span />
                 )}
                 {next ? (
-                  <Link href={`/${locale}/sabiq-rektorlar/${next.id}`} className="rk-nav-item rk-nav-item--next">
+                  <Link href={`/${locale}/sabiq-rektorlar/${next.slug}`} className="rk-nav-item rk-nav-item--next">
                     <span className="rk-nav-dir">
                       {tr('Sonrakı', locale) + ' '}
                       <i className="ti ti-arrow-right" aria-hidden="true" />
                     </span>
-                    <span className="rk-nav-name">{next.name[locale]}</span>
+                    <span className="rk-nav-name">{next.name}</span>
                   </Link>
                 ) : (
                   <span />

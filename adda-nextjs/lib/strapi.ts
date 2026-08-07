@@ -556,6 +556,47 @@ export async function getMilestones(locale: Locale = 'az'): Promise<Milestone[]>
 }
 
 
+/** ── Sabiq rektorlar (K27b) ── */
+export interface Rector {
+  documentId?: string;
+  slug: string;
+  name: string;
+  termFrom: number;
+  /** Hazırda vəzifədə olan üçün boş qala bilər. */
+  termTo: number | null;
+  degree: string | null;
+  summary: string | null;
+  /** Markdown — abzaslar boş sətirlə ayrılır. */
+  bio: string | null;
+  died: string | null;
+  photo?: StrapiMedia | null;
+  sortOrder: number;
+  locale: Locale;
+}
+
+/**
+ * Bütün sabiq rektorlar, `sortOrder` üzrə.
+ *
+ * Detal səhifəsi də bu siyahını çəkir (tək qeyd yox): əvvəlki/sonrakı keçidi
+ * üçün qonşular onsuz da lazımdır, dörd qeyd üçün ikinci sorğu mənasızdır.
+ *
+ * Xəta halında boş massiv qaytarır — çağıran tərəf `RECTORS_FALLBACK`-a keçir.
+ */
+export async function getRectors(locale: Locale = 'az'): Promise<Rector[]> {
+  try {
+    const json = await strapiFetch<StrapiList<Rector>>('/rectors', {
+      locale,
+      sort: 'sortOrder:asc',
+      'pagination[pageSize]': 100,
+      'populate[photo]': true,
+    });
+    return json.data ?? [];
+  } catch (err) {
+    console.error('[rectors] cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
 /** ── Menyu (Strapi single-type "Menyu") ── */
 export interface MenuLink { label: string; url: string; }
 export interface MenuGroup { title: string; links: MenuLink[]; }

@@ -776,7 +776,7 @@ const T: Array<[string, string, string]> = [
   ['International Admissions',
    'Приём иностранных студентов',
    'International Admissions'],
-  // --- K27a sabiq rektorlar (az, ru, en) ---
+  // --- K27b sabiq rektorlar (az, ru, en) ---
   ['Rektorluq dövrü', 'Период ректорства', 'Term of office'],
   ['Elmi dərəcə', 'Учёная степень', 'Academic degree'],
   ['Bioqrafiya', 'Биография', 'Biography'],
@@ -785,8 +785,7 @@ const T: Array<[string, string, string]> = [
   ['Sonrakı', 'Следующий', 'Next'],
   ['Hazırkı rektor', 'Действующий ректор', 'Current rector'],
   ['Vəfat edib', 'Скончался', 'Deceased'],
-  ['Tam bioqrafiya hazırda yalnız Azərbaycan dilində mövcuddur.', 'Полная биография пока доступна только на азербайджанском языке.', 'The full biography is currently available in Azerbaijani only.'],
-  ['Akademiyanın hazırkı rəhbərliyi barədə məlumat rektorun səhifəsindədir.', 'Информация о действующем руководстве Академии — на странице ректора.', 'Information about the Academy\u2019s current leadership is on the rector\u2019s page.'],
+  ['Akademiyanın hazırkı rəhbərliyi barədə məlumat rektorun səhifəsindədir.', 'Информация о действующем руководстве Академии — на странице ректора.', 'Information about the Academy\\u2019s current leadership is on the rector\\u2019s page.'],
   ['Akademiyaya 1997–2024-cü illərdə rəhbərlik etmiş dörd rektor: fəaliyyət dövrləri, elmi dərəcələri və bioqrafiyaları.', 'Четыре ректора, возглавлявшие Академию в 1997–2024 годах: сроки полномочий, учёные степени и биографии.', 'The four rectors who led the Academy between 1997 and 2024 — terms of office, academic degrees and biographies.'],
 ];
 
