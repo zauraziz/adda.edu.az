@@ -4,6 +4,7 @@
   "private": true,
   "description": "Azərbaycan Dövlət Dəniz Akademiyası — Rəqəmsal Platforma",
   "scripts": {
+    "check:audiences": "node ../tools/check-audiences.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

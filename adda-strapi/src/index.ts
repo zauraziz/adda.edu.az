@@ -996,27 +996,27 @@ const SEED = {
     "istifadeciQruplari": [
       {
         "label": "Abituriyentlər",
-        "url": "/hazirlanir/abituriyentler"
+        "url": "/bunlar-ucun/abituriyentler"
       },
       {
         "label": "Tələbələr",
-        "url": "/hazirlanir/telebeler"
+        "url": "/bunlar-ucun/telebeler"
       },
       {
         "label": "Məzunlar",
-        "url": "/hazirlanir/mezunlar"
+        "url": "/bunlar-ucun/mezunlar"
       },
       {
         "label": "Əməkdaşlar",
-        "url": "/hazirlanir/emekdaslar"
+        "url": "/bunlar-ucun/emekdaslar"
       },
       {
         "label": "Beynəlxalq tələbələr",
-        "url": "/sehife/ecnebi-telebelerin-tehsili"
+        "url": "/bunlar-ucun/beynelxalq-telebeler"
       },
       {
         "label": "Valideynlər",
-        "url": "/hazirlanir/valideynler"
+        "url": "/bunlar-ucun/valideynler"
       }
     ],
     "suretliKecidler": [

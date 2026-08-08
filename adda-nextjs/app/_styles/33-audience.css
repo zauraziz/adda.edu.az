@@ -1,0 +1,227 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — K30 / «Bunlar üçün» auditoriya səhifələri (`aud-*`)
+   Yalnız mövcud tokenlər. Hero `np-*` siniflərini təkrar işlədir.
+   ═══════════════════════════════════════════════════════ */
+
+.aud-wrap { padding: clamp(2rem, 4vw, 3rem) 0 clamp(4rem, 8vw, 6rem); }
+
+/* ── Auditoriya dəyişdirici ── */
+.aud-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: clamp(1.75rem, 4vw, 2.5rem);
+  border-bottom: 1px solid var(--line);
+}
+.aud-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              color var(--nav-dur) var(--nav-ease);
+}
+.aud-chip i { font-size: 17px; color: var(--navy-500); }
+.aud-chip:hover { border-color: var(--gold-400); color: var(--navy-700); }
+.aud-chip.is-active {
+  background: var(--navy-800);
+  border-color: var(--navy-800);
+  color: #fff;
+}
+.aud-chip.is-active i { color: var(--gold-400); }
+
+.aud-h {
+  margin: clamp(2.25rem, 5vw, 3rem) 0 1.1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gold-500);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  letter-spacing: -0.01em;
+  color: var(--navy-800);
+}
+
+/* ── İlk addımlar ── */
+.aud-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.aud-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 100%;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  text-decoration: none;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              transform var(--nav-dur) var(--nav-ease),
+              box-shadow var(--nav-dur) var(--nav-ease);
+}
+.aud-step:hover {
+  border-color: var(--gold-400);
+  transform: translateY(-2px);
+  box-shadow: var(--nav-sh-lg);
+}
+.aud-step-n {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--gold-100);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-600);
+}
+.aud-step-b { flex: 1 1 auto; min-width: 0; }
+.aud-step-b b {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--navy-800);
+}
+.aud-step-b small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.aud-step > i {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--navy-500);
+  transition: transform var(--nav-dur) var(--nav-ease);
+}
+.aud-step:hover > i { transform: translateX(3px); }
+
+/* ── Bölmə qrupları ── */
+.aud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+.aud-grp-h {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy-600);
+}
+.aud-grp ul { list-style: none; margin: 0; padding: 0; }
+.aud-grp li { border-bottom: 1px solid var(--line); }
+.aud-grp li:last-child { border-bottom: 0; }
+.aud-grp a {
+  display: block;
+  padding: 10px 0;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink);
+  text-decoration: none;
+}
+.aud-grp a:hover { color: var(--navy-600); }
+
+/* ── Son xəbərlər ── */
+.aud-news { list-style: none; margin: 0; padding: 0; }
+.aud-news li { border-bottom: 1px solid var(--line); }
+.aud-news a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  padding: 13px 0;
+  text-decoration: none;
+}
+.aud-news time {
+  flex-shrink: 0;
+  min-width: 110px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold-600);
+}
+.aud-news span {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.aud-news a:hover span { color: var(--navy-600); }
+
+/* ── Əlaqə çağırışı ── */
+.aud-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: var(--radius-lg);
+  background: var(--gradient-navy);
+}
+.aud-cta b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+}
+.aud-cta small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.68);
+}
+.aud-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  text-decoration: none;
+}
+.aud-cta-btn:hover { filter: brightness(1.08); }
+
+.aud-wrap a:focus-visible {
+  outline: 2px solid var(--navy-600);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .aud-switch { gap: 6px; }
+  .aud-chip { font-size: 0.8rem; padding: 0 11px; }
+  .aud-news time { min-width: 100%; }
+}

@@ -70,8 +70,9 @@ export const FALLBACK_MENU: SiteMenu = {
     { label: 'Sertifikatlar', description: 'STCW & Təlim mərkəzi', url: '#', icon: 'certificate' },
   ]},
   istifadeciQruplari: [
-    { label: 'Abituriyentlər', url: '#' }, { label: 'Tələbələr', url: '#' }, { label: 'Məzunlar', url: '#' },
-    { label: 'Əməkdaşlar', url: '#' }, { label: 'Beynəlxalq tələbələr', url: '#' }, { label: 'Valideynlər', url: '#' },
+    { label: 'Abituriyentlər', url: '/bunlar-ucun/abituriyentler' }, { label: 'Tələbələr', url: '/bunlar-ucun/telebeler' },
+    { label: 'Məzunlar', url: '/bunlar-ucun/mezunlar' }, { label: 'Əməkdaşlar', url: '/bunlar-ucun/emekdaslar' },
+    { label: 'Beynəlxalq tələbələr', url: '/bunlar-ucun/beynelxalq-telebeler' }, { label: 'Valideynlər', url: '/bunlar-ucun/valideynler' },
   ],
   suretliKecidler: [
     { label: 'Tələbə kabineti', url: '#', icon: 'device-laptop' }, { label: 'Elektron jurnal', url: '#', icon: 'notebook' },
