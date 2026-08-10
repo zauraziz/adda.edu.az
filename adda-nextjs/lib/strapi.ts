@@ -602,6 +602,76 @@ export async function getRectors(locale: Locale = 'az'): Promise<Rector[]> {
   }
 }
 
+/** ── Sosial bölmə (K31) ── */
+export interface SocialBlock {
+  eyebrow: string | null;
+  /** `<em>` icazəlidir — başlığın vurğulu hissəsi. */
+  title: string | null;
+  lead: string | null;
+  /** `<em>` və `<br>` icazəlidir. */
+  ctaText: string | null;
+  ctaTag: string | null;
+  /** Sətir-sətir və ya vergüllə ayrılmış heşteqlər. */
+  hashtags: string | null;
+  instagramUrl: string | null;
+  tiktokUrl: string | null;
+  youtubeUrl: string | null;
+  facebookUrl: string | null;
+  linkedinUrl: string | null;
+}
+
+export type SocialNetwork = 'instagram' | 'tiktok' | 'youtube' | 'facebook' | 'linkedin';
+
+export interface SocialPost {
+  documentId?: string;
+  network: SocialNetwork;
+  handle: string;
+  url: string;
+  image?: StrapiMedia | null;
+  caption: string | null;
+  hashtag: string | null;
+  video: boolean;
+  duration: string | null;
+  likes: number | null;
+  comments: number | null;
+  views: number | null;
+  shares: number | null;
+  sortOrder: number;
+}
+
+export async function getSocialBlock(locale: Locale = 'az'): Promise<SocialBlock | null> {
+  try {
+    const json = await strapiFetch<{ data: SocialBlock | null }>('/social-block', { locale });
+    return json.data ?? null;
+  } catch (err) {
+    console.error('[social-block] cekilmedi: ' + (err as Error).message);
+    return null;
+  }
+}
+
+/**
+ * Karusel kartları.
+ *
+ * SIRA: `sortOrder` artan, sonra ən yenisi əvvəldə. Sxemdə defolt dəyər
+ * 100-dür — yəni yeni paylaşım heç nəyi qabaqlamır, sadəcə tarixə görə
+ * yuxarı düşür. Bir kartı önə sancmaq üçün redaktor daha KİÇİK rəqəm yazır.
+ */
+export async function getSocialPosts(locale: Locale = 'az', limit = 12): Promise<SocialPost[]> {
+  try {
+    const json = await strapiFetch<StrapiList<SocialPost>>('/social-posts', {
+      locale,
+      'sort[0]': 'sortOrder:asc',
+      'sort[1]': 'createdAt:desc',
+      'pagination[pageSize]': limit,
+      'populate[image]': true,
+    });
+    return json.data ?? [];
+  } catch (err) {
+    console.error('[social-posts] cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
 /** ── Menyu (Strapi single-type "Menyu") ── */
 export interface MenuLink { label: string; url: string; }
 export interface MenuGroup { title: string; links: MenuLink[]; }

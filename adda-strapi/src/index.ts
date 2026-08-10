@@ -25,6 +25,8 @@ const PUBLIC_READ_UIDS = [
   'api::person.person',
   'api::program.program',
   'api::rector.rector',
+  'api::social-block.social-block',
+  'api::social-post.social-post',
   'api::reaction.reaction',
   'api::tag.tag',
   'api::unit.unit',
@@ -1295,6 +1297,41 @@ const RECTOR_SEED: RectorSeed[] = [
   },
 ];
 
+
+// ── K31 · Sosial blok ──
+// Bölmənin başlıq mətni onsuz da yazılmışdı (Social.tsx-də sabit idi) —
+// buraya köçürülür ki, redaktor admin paneldən dəyişə bilsin.
+// Hesab linkləri BOŞ gəlir: rəsmi ünvanları redaktor doldurur.
+const SOCIAL_BLOCK_SEED = {
+  shared: {
+    ctaTag: '#ADDAlife',
+    hashtags: '#ADDAlife\n#DənizçiOl\n#ADDA2026',
+    instagramUrl: '',
+    tiktokUrl: '',
+    youtubeUrl: '',
+    facebookUrl: '',
+    linkedinUrl: '',
+  },
+  az: {
+    eyebrow: 'ADDA sosial şəbəkələrdə',
+    title: 'Kampusun nəbzi — <em>canlı yayımda</em>',
+    lead: 'Tələbələrimizin gözü ilə ADDA: dəniz klubundan yataqxana axşamlarına, simulyator sessiyalarından məzun gününə. İzlə, bəyən, sabah özün paylaş.',
+    ctaText: 'Sən də <em>izlə</em> —<br>sabah bu kadrlarda ol',
+  },
+  ru: {
+    eyebrow: 'АГМА в социальных сетях',
+    title: 'Пульс кампуса — <em>в прямом эфире</em>',
+    lead: 'АГМА глазами наших студентов: от морского клуба до вечеров в общежитии, от сессий на тренажёре до выпускного. Следи, ставь лайк, а завтра поделись своим.',
+    ctaText: 'Подпишись <em>и ты</em> —<br>завтра окажись в этих кадрах',
+  },
+  en: {
+    eyebrow: 'ASMA on social media',
+    title: 'The pulse of campus — <em>live</em>',
+    lead: 'ASMA through our students\u2019 eyes: from the sailing club to evenings in the halls, from simulator sessions to graduation day. Follow, like, and share your own tomorrow.',
+    ctaText: 'Follow us <em>too</em> —<br>be in these frames tomorrow',
+  },
+};
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     const inFlight = new Set<string>();
@@ -1667,6 +1704,37 @@ export default {
       );
     } catch (err) {
       strapi.log.error('[seed] rektor xetasi: ' + (err as Error).message);
+    }
+
+    // Sosial blok — boşdursa doldur (mətn onsuz da yazılmışdı, kodda idi)
+    //
+    // Paylaşım kartları SEED OLUNMUR: onlar real sosial hesab linkləri və
+    // real şəkillərdir, uydurmaq olmaz. Kart əlavə olunana qədər bölmə ana
+    // səhifədə render olunmur — boş karusel göstərməkdənsə gizlətmək düzdür.
+    try {
+      const uid = 'api::social-block.social-block';
+      const force = process.env.SOCIAL_RESEED === 'true';
+      let wrote = 0;
+      for (const loc of ['az', 'ru', 'en'] as const) {
+        const existing = (await strapi.documents(uid).findFirst({ locale: loc })) as
+          | { documentId: string; title?: string | null }
+          | null;
+        const hasData = !!existing && !!existing.title;
+        if (hasData && !force) continue;
+        const data = { ...SOCIAL_BLOCK_SEED.shared, ...SOCIAL_BLOCK_SEED[loc] };
+        if (existing) {
+          await strapi.documents(uid).update({ documentId: existing.documentId, locale: loc, data: data as never });
+        } else {
+          await strapi.documents(uid).create({ locale: loc, data: data as never });
+        }
+        wrote++;
+      }
+      strapi.log.info(
+        '[seed] Sosial blok: ' + wrote + ' dil yazildi' +
+          (force ? ' (SOCIAL_RESEED=true).' : '. Yenilemek ucun SOCIAL_RESEED=true.'),
+      );
+    } catch (err) {
+      strapi.log.error('[seed] sosial blok xetasi: ' + (err as Error).message);
     }
   },
 };

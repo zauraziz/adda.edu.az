@@ -26,6 +26,22 @@ export function fmtDateTime(iso: string | null | undefined, locale: Locale): str
   return base + ', ' + hh + ':' + mm;
 }
 
+/**
+ * Sosial göstəricilər üçün yığcam say: 842 · 1,2K · 23K · 1,4M.
+ *
+ * `Intl.NumberFormat(..., {notation:'compact'})` İŞLƏDİLMİR: Azərbaycan
+ * dilində "1,2 min" verir, dizayn isə "1,2K" gözləyir və üç dildə eyni
+ * qısaltma lazımdır. Onluq ayırıcı yenə də dilə uyğun gəlir.
+ */
+export function fmtCount(n: number | null | undefined, locale: Locale): string | null {
+  if (n === null || n === undefined || !Number.isFinite(n)) return null;
+  if (n < 1000) return n.toLocaleString(locale);
+  const unit = n >= 1_000_000 ? 1_000_000 : 1_000;
+  const v = n / unit;
+  const rounded = v >= 10 ? Math.round(v) : Math.round(v * 10) / 10;
+  return rounded.toLocaleString(locale, { maximumFractionDigits: 1 }) + (unit === 1_000_000 ? 'M' : 'K');
+}
+
 /** Article/announcement kateqoriya etiketləri (chip). */
 export const CAT_LABELS: Record<Locale, Record<string, string>> = {
   az: { xeber: 'Xəbər', elan: 'Elan', tedbir: 'Tədbir', elm: 'Elm' },
