@@ -97,7 +97,7 @@ const SEED = {
               },
               {
                 "label": "Rəqəmlər və faktlar",
-                "url": "/hazirlanir/reqemler-ve-faktlar"
+                "url": "/sehife/reqemler-ve-faktlar"
               }
             ]
           },
@@ -159,7 +159,7 @@ const SEED = {
               },
               {
                 "label": "Keyfiyyətin monitorinqi",
-                "url": "/hazirlanir/keyfiyyetin-monitorinqi"
+                "url": "/sehife/keyfiyyetin-monitorinqi"
               },
               {
                 "label": "Dayanıqlı inkişaf",
@@ -193,7 +193,7 @@ const SEED = {
               },
               {
                 "label": "Binalar və infrastruktur",
-                "url": "/hazirlanir/binalar-ve-infrastruktur"
+                "url": "/sehife/binalar-ve-infrastruktur"
               },
               {
                 "label": "I və II tədris binaları",
@@ -209,7 +209,7 @@ const SEED = {
               },
               {
                 "label": "Tədris gəmisi",
-                "url": "/hazirlanir/tedris-gemisi"
+                "url": "/sehife/tedris-gemisi"
               },
               {
                 "label": "Kollec",
@@ -486,7 +486,7 @@ const SEED = {
               },
               {
                 "label": "Rəqəmlər və faktlar",
-                "url": "/hazirlanir/reqemler-ve-faktlar"
+                "url": "/sehife/reqemler-ve-faktlar"
               }
             ]
           },
@@ -615,7 +615,7 @@ const SEED = {
               },
               {
                 "label": "Sosial təminat və maddi yardım",
-                "url": "/hazirlanir/sosial-teminat-ve-maddi-yardim"
+                "url": "/sehife/sosial-teminat-ve-maddi-yardim"
               },
               {
                 "label": "Təqaüd proqramları",
@@ -677,7 +677,7 @@ const SEED = {
               },
               {
                 "label": "Akademik tərəfdaşlar",
-                "url": "/hazirlanir/akademik-terefdaslar"
+                "url": "/sehife/akademik-terefdaslar"
               },
               {
                 "label": "Beynəlxalq əlaqələr qrupu",
@@ -732,7 +732,7 @@ const SEED = {
               },
               {
                 "label": "Məzunların işlə təminatı",
-                "url": "/hazirlanir/mezunlarin-isle-teminati"
+                "url": "/sehife/mezunlarin-isle-teminati"
               }
             ]
           },
@@ -1332,6 +1332,137 @@ const SOCIAL_BLOCK_SEED = {
   },
 };
 
+
+// ── K33 · «ADDA dünən və bu gün» səhifəsinin bölünməsi ──
+// Bir səhifədə 8 mövzu vardı; ~1100 söz təkrar idi. Mövzular aidiyyəti
+// menyu bəndlərinə ayrıldı. `page` tipi draftAndPublish=true olduğu üçün
+// yaratmaqdan sonra publish() AÇIQ çağırılır — əks halda qaralamada qalır.
+interface PageSplitText { title: string; body: string }
+interface PageSplitSeed { slug: string; az: PageSplitText; ru: PageSplitText; en: PageSplitText }
+
+const PAGE_SPLIT_SEED: PageSplitSeed[] = [
+  {
+    slug: 'adda-dunen-ve-bugun',
+    az: {
+      title: 'ADDA — dünən və bu gün',
+      body: '**Azərbaycanda dənizçilik təhsilinin kökləri XIX əsrin sonlarına — 1881-ci ilə gedib çıxır. Azərbaycan Dövlət Dəniz Akademiyasının özü isə 1996-cı ildə, müstəqillik dövründə yaradılıb və bu, dənizçilik təhsilinin inkişafında yeni mərhələnin başlanğıcı oldu.**\n\n## Akademiyaya gedən yol\n\nRespublikamız dəniz ölkəsi olduğundan yüksəkixtisaslı dənizçi kadrlar hazırlayan ali təhsil müəssisəsinin əhəmiyyətini bilən ölkə rəhbəri Heydər Əliyevin təşəbbüsü və Nazirlər Kabinetinin 1996-cı il qərarı ilə Bakı Dəniz Yolları Məktəbinin bazasında Azərbaycan Dövlət Dəniz Akademiyası yaradıldı.\n\n## Beynəlxalq tanınma\n\nAkademiya ilk gündən təhsilini Beynəlxalq Dənizçilik Təşkilatının (IMO) «Dənizçilərin hazırlanması, sertifikatlandırılması və növbə çəkməsi haqqında» Beynəlxalq Konvensiyasının (STCW) tələblərinə uyğun qurub. Bütün ixtisaslar üzrə baza təhsil proqramları, tədris planları və dövlət standartları hazırlanaraq təsdiq edilib və IMO tərəfindən qəbul olunub.\n\nAkademiya **012 nömrəsi** altında dünya ali dəniz təhsili sisteminin kataloquna daxil edilib. Diplomu dünyanın **170-dən çox ölkəsi** tərəfindən tanınır.\n\n## Üzvlüklər\n\n- Beynəlxalq Dənizçilik Ali Məktəbləri Assosiasiyası (IAMU)\n- MDB ölkələrinin dənizçilik ali məktəblərinin Tədris-Metodiki Şurası — admiral S. O. Makarov adına Dövlət Dəniz və Çay Donanması Universiteti (Sankt-Peterburq) nəzdində\n- Xəzəryanı dövlətlərin Ali Məktəbləri Assosiasiyası — fəal iştirakçı\n\nAkademiya **11 ölkənin 18 universiteti** ilə ikitərəfli əməkdaşlıq edir. Tam siyahı: [Akademik tərəfdaşlar](/sehife/akademik-terefdaslar).\n\n## Bu gün\n\nAkademiyada dənizçilik ixtisasları üzrə təhsilin bütün pillələrində — bakalavriat, magistratura və doktorantura — müasir standartlara cavab verən tədris prosesi qurulub. Burada təkcə ölkə gəncləri deyil, bir sıra xarici ölkələrdən gələn tələbələr də təhsil alır.\n\nƏtraflı: [Rəqəmlər və faktlar](/sehife/reqemler-ve-faktlar) · [Fakültələr](/fakulteler) · [Keyfiyyətin menecmenti](/sehife/keyfiyyetin-monitorinqi)',
+    },
+    ru: {
+      title: 'АГМА — вчера и сегодня',
+      body: '**Корни морского образования в Азербайджане уходят в конец XIX века — к 1881 году. Сама же Азербайджанская Государственная Морская Академия создана в 1996 году, в период независимости, и это стало началом нового этапа развития морского образования.**\n\n## Путь к Академии\n\nПоскольку наша республика — морская страна, по инициативе руководителя страны Гейдара Алиева, понимавшего значение высшего учебного заведения, готовящего высококвалифицированные морские кадры, и решением Кабинета Министров 1996 года на базе Бакинской школы морских путей была создана Азербайджанская Государственная Морская Академия.\n\n## Международное признание\n\nС первого дня Академия выстроила обучение в соответствии с требованиями Международной конвенции о подготовке и дипломировании моряков и несении вахты (ПДНВ) Международной морской организации (ИМО). По всем специальностям разработаны и утверждены базовые образовательные программы, учебные планы и государственные стандарты, принятые ИМО.\n\nАкадемия включена в каталог мировой системы высшего морского образования под **номером 012**. Её диплом признаётся более чем в **170 странах мира**.\n\n## Членство\n\n- Международная ассоциация морских университетов (IAMU)\n- Учебно-методический совет морских вузов стран СНГ — при Государственном университете морского и речного флота имени адмирала С. О. Макарова (Санкт-Петербург)\n- Ассоциация вузов прикаспийских государств — активный участник\n\nАкадемия ведёт двустороннее сотрудничество с **18 университетами из 11 стран**. Полный список: [Академические партнёры](/sehife/akademik-terefdaslar).\n\n## Сегодня\n\nВ Академии выстроен отвечающий современным стандартам учебный процесс на всех уровнях морского образования — бакалавриат, магистратура и докторантура. Здесь учатся не только азербайджанские, но и иностранные студенты.\n\nПодробнее: [Цифры и факты](/sehife/reqemler-ve-faktlar) · [Факультеты](/fakulteler) · [Менеджмент качества](/sehife/keyfiyyetin-monitorinqi)',
+    },
+    en: {
+      title: 'ASMA — Yesterday and Today',
+      body: '**Maritime education in Azerbaijan traces its roots to the late nineteenth century — to 1881. The Azerbaijan State Marine Academy itself was established in 1996, during the years of independence, opening a new chapter in the development of maritime education.**\n\n## The road to the Academy\n\nAs a maritime nation, Azerbaijan needed an institution capable of training highly qualified seafarers. On the initiative of national leader Heydar Aliyev and by a 1996 decision of the Cabinet of Ministers, the Azerbaijan State Marine Academy was founded on the basis of the Baku Maritime School.\n\n## International recognition\n\nFrom its first day the Academy has built its programmes around the requirements of the International Maritime Organization\'s Convention on Standards of Training, Certification and Watchkeeping for Seafarers (STCW). Core curricula, study plans and state standards were developed and approved for every programme, and accepted by the IMO.\n\nThe Academy is listed in the catalogue of the world maritime education system under **number 012**. Its diploma is recognised in more than **170 countries**.\n\n## Memberships\n\n- International Association of Maritime Universities (IAMU)\n- Educational and Methodological Council of maritime universities of the CIS, based at the Admiral S. O. Makarov State University of Maritime and Inland Shipping (St Petersburg)\n- Association of Universities of the Caspian States — active participant\n\nThe Academy maintains bilateral cooperation with **18 universities across 11 countries**. Full list: [Academic partners](/sehife/akademik-terefdaslar).\n\n## Today\n\nThe Academy delivers teaching that meets modern standards at every level of maritime education — bachelor\'s, master\'s and doctoral. Its student body includes both Azerbaijani and international students.\n\nMore: [Facts and figures](/sehife/reqemler-ve-faktlar) · [Faculties](/fakulteler) · [Quality management](/sehife/keyfiyyetin-monitorinqi)',
+    },
+  },
+  {
+    slug: 'akademik-terefdaslar',
+    az: {
+      title: 'Akademik tərəfdaşlar',
+      body: '**Azərbaycan Dövlət Dəniz Akademiyası 11 ölkənin 18 universiteti ilə ikitərəfli əməkdaşlıq edir.**\n\n## Tərəfdaş ali təhsil müəssisələri\n\n**Rusiya**\n- Admiral S. O. Makarov adına Dövlət Dəniz və Çay Donanması Universiteti\n- Həştərxan Dövlət Texniki Universiteti\n- F. F. Uşakov adına Novorossiysk Dövlət Dəniz Universiteti\n- Nevelski adına Dövlət Dəniz Universiteti\n\n**Ukrayna**\n- Admiral Makarov adına Milli Gəmiqayırma Universiteti\n- Getman Petr Konaşeviç-Sahaydaçnı adına Kiyev Dövlət Su Nəqliyyatı Akademiyası\n- Odessa Milli Dəniz Universiteti\n\n**Gürcüstan**\n- Batumi Dəniz Akademiyası\n- Batumi Naviqasiya Tədris Universiteti\n\n**Polşa** — Şetsin Dəniz Akademiyası\n**Latviya** — Latviya Dəniz Akademiyası\n**Estoniya** — Estoniya Dəniz Akademiyası (TalTech)\n**Monteneqro** — Monteneqro Universiteti\n**Bolqarıstan** — Varna Texniki Universiteti\n**Qazaxıstan** — Ş. Yesenov adına Xəzər Dövlət Texnologiya və Mühəndislik Universiteti\n**Litva** — Klaypeda Universiteti\n**Türkiyə** — İstanbul Texniki Universiteti\n\n## Beynəlxalq şirkətlər\n\nAkademiya Litvanın **Informacinė Raida** və Türkiyənin **Turksen Eğitim Ltd** şirkətləri ilə də sıx əlaqələr qurub.',
+    },
+    ru: {
+      title: 'Академические партнёры',
+      body: '**Азербайджанская Государственная Морская Академия ведёт двустороннее сотрудничество с 18 университетами из 11 стран.**\n\n## Партнёрские вузы\n\n**Россия**\n- Государственный университет морского и речного флота имени адмирала С. О. Макарова\n- Астраханский государственный технический университет\n- Новороссийский государственный морской университет имени Ф. Ф. Ушакова\n- Морской государственный университет имени адмирала Г. И. Невельского\n\n**Украина**\n- Национальный университет кораблестроения имени адмирала Макарова\n- Киевская государственная академия водного транспорта имени гетмана Петра Конашевича-Сагайдачного\n- Одесский национальный морской университет\n\n**Грузия**\n- Батумская морская академия\n- Батумский навигационный учебный университет\n\n**Польша** — Морская академия в Щецине\n**Латвия** — Латвийская морская академия\n**Эстония** — Эстонская морская академия (TalTech)\n**Черногория** — Университет Черногории\n**Болгария** — Технический университет Варны\n**Казахстан** — Каспийский государственный университет технологий и инжиниринга имени Ш. Есенова\n**Литва** — Клайпедский университет\n**Турция** — Стамбульский технический университет\n\n## Международные компании\n\nАкадемия также поддерживает тесные связи с литовской **Informacinė Raida** и турецкой **Turksen Eğitim Ltd**.',
+    },
+    en: {
+      title: 'Academic Partners',
+      body: '**The Azerbaijan State Marine Academy maintains bilateral cooperation with 18 universities across 11 countries.**\n\n## Partner institutions\n\n**Russia**\n- Admiral S. O. Makarov State University of Maritime and Inland Shipping\n- Astrakhan State Technical University\n- Admiral F. F. Ushakov Novorossiysk State Maritime University\n- Admiral Nevelskoy Maritime State University\n\n**Ukraine**\n- Admiral Makarov National University of Shipbuilding\n- Kyiv State Maritime Academy named after Hetman Petro Konashevych-Sahaidachnyi\n- Odesa National Maritime University\n\n**Georgia**\n- Batumi Maritime Academy\n- Batumi Navigation Teaching University\n\n**Poland** — Maritime University of Szczecin\n**Latvia** — Latvian Maritime Academy\n**Estonia** — Estonian Maritime Academy (TalTech)\n**Montenegro** — University of Montenegro\n**Bulgaria** — Technical University of Varna\n**Kazakhstan** — Sh. Yessenov Caspian University of Technology and Engineering\n**Lithuania** — Klaipeda University\n**Türkiye** — Istanbul Technical University\n\n## International companies\n\nThe Academy also works closely with **Informacinė Raida** (Lithuania) and **Turksen Eğitim Ltd** (Türkiye).',
+    },
+  },
+  {
+    slug: 'keyfiyyetin-monitorinqi',
+    az: {
+      title: 'Keyfiyyətin menecmenti və monitorinqi',
+      body: '**Akademiyada keyfiyyət siyasəti tədris, təlim-trenajor mərkəzləri və dəniz nəqliyyatı mütəxəssislərinin hazırlığı üzrə xidmətlərə qoyulan beynəlxalq və milli standartların şərtsiz yerinə yetirilməsinə əsaslanır və işlərin təşkilinin bütün səviyyələrini əhatə edir.**\n\n## İSO 9001 sertifikatlaşdırılması\n\n| tarix | standart |\n|---|---|\n| 2002-ci ilin oktyabrından | İSO 9001:2000 |\n| 2010-cu ildən | İSO 9001:2008 |\n| 2018-ci ilin fevralından | İSO 9001:2015 |\n\nAkademiya dənizçi mütəxəssislərin hazırlanması sahəsində keyfiyyətin menecmenti sistemi üzrə fasiləsiz olaraq bu standartlarla işləyir.\n\n## Amerika Gəmiçilik Bürosunun (ABS) sertifikatı\n\n2016-cı ilin fevralında dünyanın nüfuzlu təsnifat cəmiyyətlərindən olan **Amerika Gəmiçilik Bürosu (ABS)** Akademiyanın Dənizçilərin hazırlanması və sertifikatlandırılması mərkəzində beynəlxalq audit keçirib. Auditin nəticələri əsasında mərkəzin ABS-in «Tədris müəssisələrinin və təlim kurslarının sertifikatlaşdırılması üzrə standartları»na uyğunluğu təsdiqlənib və Akademiya 2016-cı ildə **ABS uyğunluq sertifikatını** əldə edib.\n\n## Təlim Tədris Mərkəzi\n\nMərkəz İSO 9001:2015 standartına uyğun fəaliyyət göstərir və **Bureau Veritas** beynəlxalq sertifikatlaşdırma təşkilatı tərəfindən audit olunaraq sertifikata layiq görülüb. Ətraflı: [Təlim-Tədris Mərkəzi](/struktur/telim-tedris-merkezi-ttm).',
+    },
+    ru: {
+      title: 'Менеджмент и мониторинг качества',
+      body: '**Политика качества Академии основана на безусловном выполнении международных и национальных стандартов, предъявляемых к обучению, тренажёрным центрам и подготовке специалистов морского транспорта, и охватывает все уровни организации работы.**\n\n## Сертификация по ИСО 9001\n\n| дата | стандарт |\n|---|---|\n| с октября 2002 года | ИСО 9001:2000 |\n| с 2010 года | ИСО 9001:2008 |\n| с февраля 2018 года | ИСО 9001:2015 |\n\nАкадемия непрерывно работает по этим стандартам в области системы менеджмента качества подготовки морских специалистов.\n\n## Сертификат Американского бюро судоходства (ABS)\n\nВ феврале 2016 года **Американское бюро судоходства (ABS)**, одно из авторитетнейших классификационных обществ мира, провело международный аудит Центра подготовки и сертификации моряков Академии. По результатам аудита подтверждено соответствие центра «Стандартам сертификации учебных заведений и учебных курсов» ABS, и в 2016 году Академия получила **сертификат соответствия ABS**.\n\n## Учебно-тренировочный центр\n\nЦентр работает в соответствии со стандартом ИСО 9001:2015 и прошёл аудит международной сертификационной организации **Bureau Veritas** с выдачей сертификата. Подробнее: [Учебно-тренировочный центр](/struktur/telim-tedris-merkezi-ttm).',
+    },
+    en: {
+      title: 'Quality Management and Monitoring',
+      body: '**The Academy\'s quality policy rests on the unconditional fulfilment of the international and national standards governing teaching, simulator training centres and services for training maritime transport specialists, and covers every level of the organisation.**\n\n## ISO 9001 certification\n\n| date | standard |\n|---|---|\n| from October 2002 | ISO 9001:2000 |\n| from 2010 | ISO 9001:2008 |\n| from February 2018 | ISO 9001:2015 |\n\nThe Academy has worked continuously to these standards in its quality management system for training maritime professionals.\n\n## American Bureau of Shipping (ABS) certificate\n\nIn February 2016 the **American Bureau of Shipping (ABS)**, one of the world\'s leading classification societies, carried out an international audit of the Academy\'s Seafarer Training and Certification Centre. The audit confirmed the centre\'s conformity with the ABS *Standards for Certification of Training Institutions and Courses*, and in 2016 the Academy obtained its **ABS certificate of conformity**.\n\n## Training Centre\n\nThe Centre operates to ISO 9001:2015 and has been audited and certified by the international certification body **Bureau Veritas**. More: [Training Centre](/struktur/telim-tedris-merkezi-ttm).',
+    },
+  },
+  {
+    slug: 'reqemler-ve-faktlar',
+    az: {
+      title: 'Rəqəmlər və faktlar',
+      body: '**Akademiyanın bugünkü strukturu və potensialı — rəqəmlərlə.**\n\n## Struktur\n\n| göstərici | say |\n|---|---|\n| Fakültə | 2 |\n| Kafedra | 7 |\n| Qəbul aparılan ixtisas | 4 |\n\n## Tələbə və heyət\n\n| göstərici | say |\n|---|---|\n| Tələbə | 1 093 |\n| Professor | 6 |\n| Dosent | 30 |\n| Baş müəllim | 47 |\n| Assistent müəllim | 17 |\n\n## Qəbul aparılan ixtisaslar\n\n- [Dəniz naviqasiyası mühəndisliyi](/ixtisaslar/deniz-naviqasiyasi-muhendisliyi)\n- [Gəmi energetik qurğularının istismarı mühəndisliyi](/ixtisaslar/gemi-energetik-qurgularinin-istismari-muhendisliyi)\n- [Gəmiqayırma və gəmi təmiri mühəndisliyi](/ixtisaslar/gemiqayirma-ve-gemi-temiri-muhendisliyi)\n- [Elektrik və elektronika mühəndisliyi (su nəqliyyatı üzrə)](/ixtisaslar/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre)\n\n## Beynəlxalq göstəricilər\n\n- Diplomun tanındığı ölkə sayı: **170-dən çox**\n- Dünya ali dəniz təhsili kataloqunda nömrə: **012**\n- İkitərəfli əməkdaşlıq: **11 ölkənin 18 universiteti**\n- Təlim Tədris Mərkəzində kurs sayı: **53**\n\n*Göstəricilər tədris ili üzrə yenilənir.*',
+    },
+    ru: {
+      title: 'Цифры и факты',
+      body: '**Сегодняшняя структура и потенциал Академии — в цифрах.**\n\n## Структура\n\n| показатель | количество |\n|---|---|\n| Факультеты | 2 |\n| Кафедры | 7 |\n| Специальности приёма | 4 |\n\n## Студенты и персонал\n\n| показатель | количество |\n|---|---|\n| Студенты | 1 093 |\n| Профессора | 6 |\n| Доценты | 30 |\n| Старшие преподаватели | 47 |\n| Ассистенты | 17 |\n\n## Специальности приёма\n\n- [Инженерия морской навигации](/ixtisaslar/deniz-naviqasiyasi-muhendisliyi)\n- [Инженерия эксплуатации судовых энергетических установок](/ixtisaslar/gemi-energetik-qurgularinin-istismari-muhendisliyi)\n- [Инженерия судостроения и судоремонта](/ixtisaslar/gemiqayirma-ve-gemi-temiri-muhendisliyi)\n- [Электротехника и электроника (водный транспорт)](/ixtisaslar/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre)\n\n## Международные показатели\n\n- Стран, признающих диплом: **более 170**\n- Номер в каталоге мирового морского образования: **012**\n- Двустороннее сотрудничество: **18 университетов из 11 стран**\n- Курсов в Учебно-тренировочном центре: **53**\n\n*Показатели обновляются по учебному году.*',
+    },
+    en: {
+      title: 'Facts and Figures',
+      body: '**The Academy\'s current structure and capacity, in numbers.**\n\n## Structure\n\n| indicator | count |\n|---|---|\n| Faculties | 2 |\n| Departments | 7 |\n| Admission programmes | 4 |\n\n## Students and staff\n\n| indicator | count |\n|---|---|\n| Students | 1,093 |\n| Professors | 6 |\n| Associate professors | 30 |\n| Senior lecturers | 47 |\n| Assistant lecturers | 17 |\n\n## Admission programmes\n\n- [Marine Navigation Engineering](/ixtisaslar/deniz-naviqasiyasi-muhendisliyi)\n- [Marine Power Plant Operation Engineering](/ixtisaslar/gemi-energetik-qurgularinin-istismari-muhendisliyi)\n- [Shipbuilding and Ship Repair Engineering](/ixtisaslar/gemiqayirma-ve-gemi-temiri-muhendisliyi)\n- [Electrical and Electronics Engineering (Water Transport)](/ixtisaslar/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre)\n\n## International indicators\n\n- Countries recognising the diploma: **more than 170**\n- Number in the world maritime education catalogue: **012**\n- Bilateral cooperation: **18 universities in 11 countries**\n- Courses at the Training Centre: **53**\n\n*Figures are updated each academic year.*',
+    },
+  },
+  {
+    slug: 'tedris-gemisi',
+    az: {
+      title: 'Tədris gəmisi',
+      body: '**Tədris gəmisi Akademiyada müasir tədrisi təmin edən əsas vasitələrdən biridir.**\n\nKonvension ixtisaslarda təhsil alan tələbələrin nəzəri və praktiki məşğələləri, həmçinin istehsalat təcrübələri tədris gəmisində keçirilir.\n\n## Gəmilər\n\n- **«General Əsədov»** — 2015-ci il sentyabrın 15-dən tədris gəmisi kimi ADDA tələbələrinin ixtiyarına verilib\n- **«Sabit Orucov»** sərnişin gəmisi — 2017-ci ildən\n\nTələbələr həmçinin müasir dünya standartlarına cavab verən digər gəmilərdə və **Bakı Gəmiqayırma Zavodunda** həm ixtisas fənlərini, həm də istehsalat təcrübəsini öyrənirlər.\n\nTəcrübə qaydaları haqqında: [Təcrübə haqqında](/sehife/tecrube-haqqinda).',
+    },
+    ru: {
+      title: 'Учебное судно',
+      body: '**Учебное судно — одно из главных средств обеспечения современного обучения в Академии.**\n\nТеоретические и практические занятия студентов конвенционных специальностей, а также производственная практика проводятся на учебном судне.\n\n## Суда\n\n- **«Генерал Асадов»** — передано в распоряжение студентов АГМА в качестве учебного судна с 15 сентября 2015 года\n- Пассажирское судно **«Сабит Оруджев»** — с 2017 года\n\nСтуденты также осваивают профильные дисциплины и проходят производственную практику на других судах, отвечающих современным мировым стандартам, и на **Бакинском судостроительном заводе**.\n\nО правилах практики: [О практике](/sehife/tecrube-haqqinda).',
+    },
+    en: {
+      title: 'Training Vessel',
+      body: '**The training vessel is one of the Academy\'s principal means of delivering modern instruction.**\n\nTheoretical and practical classes for students on convention programmes, along with their shipboard practice, are carried out aboard the training vessel.\n\n## Vessels\n\n- **General Asadov** — placed at the disposal of ASMA students as a training vessel from 15 September 2015\n- The passenger vessel **Sabit Orujov** — from 2017\n\nStudents also study professional subjects and complete shipboard practice aboard other vessels meeting modern international standards and at the **Baku Shipyard**.\n\nOn practice arrangements: [About practical training](/sehife/tecrube-haqqinda).',
+    },
+  },
+  {
+    slug: 'binalar-ve-infrastruktur',
+    az: {
+      title: 'Binalar və maddi-texniki baza',
+      body: '**Gəmiçiliyin donanması müasir gəmilərlə zənginləşdikcə, Akademiyanın tədris prosesi də yeni trenajorlarla təmin edilir və laboratoriya şəbəkəsi genişlənir.**\n\n## Binalar\n\nAkademiyanın yeni korpusu 2016-cı ildən tələbələrin istifadəsinə verilib. **Kazım Kazımzadə küçəsi 127** ünvanındakı dördmərtəbəli bina «Azərbaycan Xəzər Dəniz Gəmiçiliyi» QSC-nin vəsaiti hesabına əsaslı təmir edilib və ərazisi abadlaşdırılıb.\n\n## Trenajorlar\n\nBeynəlxalq Konvensiyanın **B-1/12** bölməsinin tələblərinə cavab verən trenajorlar tədris prosesində istifadə olunur:\n\n- Engine Room Simulator **ERS4000**\n- **NT-4000**\n- **TQS**\n- **NS-3000**\n- «Radar», «Naviqasiya», «Elektron xəritə çəkmə», **GMDSS** trenajorları\n\n## Təlim Tədris Mərkəzinin avadanlığı\n\n1. Qravitasiya tipli AT xilasetmə qayığı\n2. «Wiking» xilasetmə salı\n3. Qlobal Dəniz Fəlakət və Əmniyyətli Rabitə Sistemi (QDFƏRS) trenajoru — POSEIDON və TRANSAS istehsalı\n4. QDFƏRS-in real avadanlığı\n5. «Radar müşahidəsi və təsviri, avtomatik radar müşahidəsi vasitələrinin istismarı» trenajoru — POSEIDON istehsalı\n6. «Elektron Xəritə Displeyinin və İnformasiya Sistemlərinin İstismar Qaydaları» trenajoru\n7. «Sürətli xilasetmə qayıq mütəxəssisi» hazırlığı trenajoru — TRANSAS istehsalı\n\nAkademiya auditoriya, laboratoriya və tədris kabinələrini ən müasir texniki-təlim vasitələri ilə davamlı zənginləşdirir.',
+    },
+    ru: {
+      title: 'Здания и материально-техническая база',
+      body: '**По мере пополнения флота современными судами учебный процесс Академии оснащается новыми тренажёрами, а сеть лабораторий расширяется.**\n\n## Здания\n\nНовый корпус Академии передан в пользование студентов с 2016 года. Четырёхэтажное здание по адресу **улица Кязыма Кязымзаде, 127** капитально отремонтировано за счёт средств ЗАО «Азербайджанское Каспийское Морское Пароходство», прилегающая территория благоустроена.\n\n## Тренажёры\n\nВ учебном процессе используются тренажёры, отвечающие требованиям раздела **B-1/12** Международной конвенции:\n\n- Engine Room Simulator **ERS4000**\n- **NT-4000**\n- **TQS**\n- **NS-3000**\n- Тренажёры «Радар», «Навигация», «Электронная картография», **ГМССБ**\n\n## Оборудование Учебно-тренировочного центра\n\n1. Спасательная шлюпка гравитационного типа\n2. Спасательный плот «Wiking»\n3. Тренажёр Глобальной морской системы связи при бедствии и для обеспечения безопасности (ГМССБ) — производства POSEIDON и TRANSAS\n4. Реальное оборудование ГМССБ\n5. Тренажёр «Радиолокационное наблюдение и прокладка, эксплуатация средств САРП» — производства POSEIDON\n6. Тренажёр «Правила эксплуатации ЭКНИС»\n7. Тренажёр подготовки «Специалист по дежурной спасательной шлюпке» — производства TRANSAS\n\nАкадемия постоянно оснащает аудитории, лаборатории и учебные кабинеты новейшими техническими средствами обучения.',
+    },
+    en: {
+      title: 'Buildings and Facilities',
+      body: '**As the shipping fleet is renewed with modern vessels, the Academy\'s teaching is equipped with new simulators and its laboratory network expands.**\n\n## Buildings\n\nThe Academy\'s new block has been in student use since 2016. The four-storey building at **127 Kazim Kazimzade Street** was fully refurbished with funding from the Azerbaijan Caspian Shipping Company (ASCO), and its grounds landscaped.\n\n## Simulators\n\nSimulators meeting the requirements of section **B-1/12** of the International Convention are used in teaching:\n\n- Engine Room Simulator **ERS4000**\n- **NT-4000**\n- **TQS**\n- **NS-3000**\n- Radar, Navigation, Electronic Chart and **GMDSS** simulators\n\n## Training Centre equipment\n\n1. Gravity-type lifeboat\n2. Wiking liferaft\n3. Global Maritime Distress and Safety System (GMDSS) simulator — POSEIDON and TRANSAS\n4. Live GMDSS equipment\n5. Radar observation and plotting / ARPA operation simulator — POSEIDON\n6. ECDIS operating procedures simulator\n7. Fast rescue boat specialist training simulator — TRANSAS\n\nThe Academy continuously equips its lecture rooms, laboratories and teaching cabinets with the latest technical training aids.',
+    },
+  },
+  {
+    slug: 'mezunlarin-isle-teminati',
+    az: {
+      title: 'Məzunların işlə təminatı',
+      body: '**Akademiya «Azərbaycan Xəzər Dəniz Gəmiçiliyi» QSC-nin (ASCO) əsas kadr sütunudur. Gəmiçiliyin yüksəkixtisaslı kadrlara olan daimi ehtiyacı keyfiyyətə üstünlük verilməsi şərtilə ödənilir.**\n\n## İşə qəbul\n\nTəhsildə uğurlu nəticələrlə fərqlənən məzunların işə qəbulu **zəmanət məktublarının verilməsi əsasında** həyata keçirilir. Məzunlar üçün karyera inkişafı, əlavə təhsil və sosial müdafiənin gücləndirilməsi imkanları yaradılır.\n\n## Dəniz təcrübəsi\n\nDənizçi kadrların beynəlxalq standartlara uyğun inkişafını təmin etmək məqsədilə hər il bir qrup tələbə **Qara dənizdəki gəmilərə üzmə təcrübəsinə** göndərilir.\n\n## Xaricdə təhsil\n\nAkademiyanın zərbəçi və əlaçı tələbələri sırasından müvafiq seçim yolu ilə xarici ölkələrin dənizçilik ali məktəblərində **ASCO-nun vəsaiti hesabına** müddətli təhsilalma imkanı yaradılır.\n\n## Məzunlar hara işə düşür\n\nFakültə məzunları yalnız Xəzər dənizində deyil, dünyanın bütün sularında üzən gəmilərdə, aparıcı beynəlxalq şirkətlərdə, limanlarda və gəmi təmiri müəssisələrində çalışırlar. İxtisaslar üzrə vəzifələr: [İxtisaslar](/ixtisaslar).',
+    },
+    ru: {
+      title: 'Трудоустройство выпускников',
+      body: '**Академия — основная кадровая опора ЗАО «Азербайджанское Каспийское Морское Пароходство» (ASCO). Постоянная потребность пароходства в высококвалифицированных кадрах удовлетворяется при приоритете качества.**\n\n## Приём на работу\n\nТрудоустройство выпускников, отличившихся успехами в учёбе, осуществляется **на основании выдачи гарантийных писем**. Для выпускников создаются возможности карьерного роста, дополнительного образования и усиления социальной защиты.\n\n## Морская практика\n\nДля развития морских кадров в соответствии с международными стандартами ежегодно группа студентов направляется на **плавательную практику на суда Чёрного моря**.\n\n## Обучение за рубежом\n\nДля отличников и лучших студентов Академии по итогам соответствующего отбора создаётся возможность срочного обучения в морских вузах зарубежных стран **за счёт средств ASCO**.\n\n## Где работают выпускники\n\nВыпускники факультетов работают не только на Каспии, но и на судах, ходящих во всех водах мира, в ведущих международных компаниях, портах и на судоремонтных предприятиях. Должности по специальностям: [Специальности](/ixtisaslar).',
+    },
+    en: {
+      title: 'Graduate Employment',
+      body: '**The Academy is the principal source of personnel for the Azerbaijan Caspian Shipping Company (ASCO). The company\'s continuing need for highly qualified crews is met with quality as the first priority.**\n\n## Recruitment\n\nGraduates who distinguish themselves academically are recruited **on the basis of letters of guarantee**. Opportunities are created for career development, further education and strengthened social protection.\n\n## Sea practice\n\nTo develop seafarers in line with international standards, a group of students is sent each year for **sea practice aboard vessels in the Black Sea**.\n\n## Study abroad\n\nThrough a selection process among the Academy\'s highest-achieving students, fixed-term study at maritime universities abroad is funded **by ASCO**.\n\n## Where graduates work\n\nGraduates serve not only in the Caspian but aboard vessels sailing in all the world\'s waters, with leading international companies, in ports and at ship repair yards. Positions by programme: [Programmes](/ixtisaslar).',
+    },
+  },
+  {
+    slug: 'sosial-teminat-ve-maddi-yardim',
+    az: {
+      title: 'Sosial təminat və maddi yardım',
+      body: '**Professor-müəllim və tələbə heyətinin səmərəli fəaliyyəti üçün Akademiyada hər cür şərait yaradılıb.**\n\n## Tələbələrə ödənişsiz təminat\n\nAkademiyada təhsil alan tələbələr aşağıdakılarla **ödənişsiz** təmin olunur:\n\n- Tam təmirli yataqxana (güzəştli şərtlə)\n- Gündə iki dəfə yemək\n- Yay və qış geyim formaları\n\n## Kampus infrastrukturu\n\n- Azərbaycan, rus və ingilis dillərində çoxsaylı dənizçilik ədəbiyyatı ilə təmin olunmuş informasiya-resurs mərkəzi\n- Yeməkxana\n- İdman zalları\n- Hovuz\n\nƏtraflı: [Yataqxana](/sehife/yataqxana) · [İdman](/sehife/idman) · [İnformasiya Resurs Mərkəzi](/struktur/informasiya-resurs-merkezi)\n\n## Tələbə təşkilatları\n\nDövlət gənclər siyasətinin prioritet istiqamətlərinə uyğun olaraq Akademiyada üç tələbə təşkilatı fəaliyyət göstərir:\n\n- [Tələbə Elmi Cəmiyyəti](/sehife/telebe-elmi-cemiyyeti)\n- [Tələbə Gənclər Təşkilatı](/sehife/telebe-gencler-teskilati)\n- [Tələbə Həmkarlar İttifaqı Komitəsi](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
+    },
+    ru: {
+      title: 'Социальное обеспечение и материальная помощь',
+      body: '**В Академии созданы все условия для эффективной работы профессорско-преподавательского состава и студентов.**\n\n## Бесплатное обеспечение студентов\n\nСтуденты Академии **бесплатно** обеспечиваются:\n\n- полностью отремонтированным общежитием (на льготных условиях)\n- двухразовым питанием\n- летней и зимней форменной одеждой\n\n## Инфраструктура кампуса\n\n- Информационно-ресурсный центр с обширной литературой по морскому делу на азербайджанском, русском и английском языках\n- Столовая\n- Спортивные залы\n- Бассейн\n\nПодробнее: [Общежитие](/sehife/yataqxana) · [Спорт](/sehife/idman) · [Информационно-ресурсный центр](/struktur/informasiya-resurs-merkezi)\n\n## Студенческие организации\n\nВ соответствии с приоритетными направлениями государственной молодёжной политики в Академии действуют три студенческие организации:\n\n- [Студенческое научное общество](/sehife/telebe-elmi-cemiyyeti)\n- [Организация студенческой молодёжи](/sehife/telebe-gencler-teskilati)\n- [Студенческий профсоюзный комитет](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
+    },
+    en: {
+      title: 'Student Welfare and Support',
+      body: '**The Academy provides the conditions its teaching staff and students need to work effectively.**\n\n## Provision at no cost to students\n\nStudents at the Academy receive the following **free of charge**:\n\n- Fully refurbished hall of residence (on preferential terms)\n- Two meals a day\n- Summer and winter uniform\n\n## Campus facilities\n\n- An information resource centre stocked with extensive maritime literature in Azerbaijani, Russian and English\n- Canteen\n- Sports halls\n- Swimming pool\n\nMore: [Halls of residence](/sehife/yataqxana) · [Sport](/sehife/idman) · [Information Resource Centre](/struktur/informasiya-resurs-merkezi)\n\n## Student organisations\n\nIn line with the priorities of national youth policy, three student organisations operate at the Academy:\n\n- [Student Research Society](/sehife/telebe-elmi-cemiyyeti)\n- [Student Youth Organisation](/sehife/telebe-gencler-teskilati)\n- [Student Trade Union Committee](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
+    },
+  },
+];
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     const inFlight = new Set<string>();
@@ -1736,5 +1867,74 @@ export default {
     } catch (err) {
       strapi.log.error('[seed] sosial blok xetasi: ' + (err as Error).message);
     }
+    // Səhifə bölünməsi — «ADDA dünən və bu gün»dən ayrılan mövzular
+    //
+    // `slug` uyğunluq açarıdır. Səhifə MÖVCUDDURSA toxunulmur — redaktorun
+    // admin-dəki düzəlişləri hər deploy-da geri qayıtmasın deyə.
+    // PAGES_RESEED=true bir dəfəlik üzərinə yazır. Mövcud
+    // `adda-dunen-ve-bugun` səhifəsi məhz bu bayraqla yenilənir.
+    try {
+      const uid = 'api::page.page';
+      const force = process.env.PAGES_RESEED === 'true';
+      let created = 0;
+      let rewritten = 0;
+      let skipped = 0;
+
+      for (const p of PAGE_SPLIT_SEED) {
+        // locale AÇIQ verilir: defolt lokal `en`-dir, `az` yazılmasa
+        // ingilis qeydlərinə baxardıq.
+        const existing = (await strapi.documents(uid).findFirst({
+          locale: 'az',
+          filters: { slug: p.slug },
+          status: 'draft',
+        })) as { documentId: string } | null;
+
+        if (existing && !force) {
+          skipped++;
+          continue;
+        }
+
+        let documentId: string;
+        if (existing) {
+          documentId = existing.documentId;
+          await strapi.documents(uid).update({
+            documentId,
+            locale: 'az',
+            data: { slug: p.slug, title: p.az.title, body: p.az.body } as never,
+          });
+          rewritten++;
+        } else {
+          const doc = await strapi.documents(uid).create({
+            locale: 'az',
+            data: { slug: p.slug, title: p.az.title, body: p.az.body } as never,
+          });
+          documentId = doc.documentId;
+          created++;
+        }
+
+        for (const loc of ['ru', 'en'] as const) {
+          await strapi.documents(uid).update({
+            documentId,
+            locale: loc,
+            data: { slug: p.slug, title: p[loc].title, body: p[loc].body } as never,
+          });
+        }
+
+        // draftAndPublish=true → publish AÇIQ çağırılmalıdır, əks halda
+        // səhifə admin-də görünür, saytda görünmür.
+        for (const loc of ['az', 'ru', 'en'] as const) {
+          await strapi.documents(uid).publish({ documentId, locale: loc });
+        }
+      }
+
+      strapi.log.info(
+        '[seed] Sehife bolunmesi: ' + created + ' yaradildi, ' + rewritten +
+          ' uzerine yazildi, ' + skipped + ' otuldu' +
+          (force ? ' (PAGES_RESEED=true).' : '. Yenilemek ucun PAGES_RESEED=true.'),
+      );
+    } catch (err) {
+      strapi.log.error('[seed] sehife bolunmesi xetasi: ' + (err as Error).message);
+    }
+
   },
 };
