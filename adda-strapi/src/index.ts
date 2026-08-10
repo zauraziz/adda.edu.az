@@ -1593,6 +1593,29 @@ const MILESTONE_SEED: MilestoneSeed[] = [
   },
 ];
 
+
+// ── K35 · Rəhbərlik səhifələri ──
+// Rektor vəzifəsi vakantdır; icraçı tədris üzrə prorektordur.
+// Elmi Şura tərkibi yeniləndi: sədr dəyişdi, ayrılan əməkdaş çıxarıldı.
+// `page` draftAndPublish=true → publish() AÇIQ çağırılır.
+interface LeadText { title: string; body: string }
+interface LeadSeed { slug: string; az: LeadText; ru: LeadText; en: LeadText }
+
+const LEADERSHIP_SEED: LeadSeed[] = [
+  {
+    slug: 'rektor',
+    az: { title: 'Rektor', body: '**Hazırda Azərbaycan Dövlət Dəniz Akademiyasının rektoru vəzifəsi vakantdır.**\n\nRektor vəzifəsi üzrə əmək funksiyalarının icrasını müvəqqəti olaraq tədrisin təşkili və idarəedilməsi üzrə prorektor həyata keçirir.\n\n> ### [İradə Süleymanova](/emekdas/irade-suleymanova)\n> Tədrisin təşkili və idarəedilməsi üzrə prorektor\n> Rektor vəzifəsinin icrasını müvəqqəti həyata keçirən\n\nVəzifəyə təyinat Azərbaycan Respublikası Prezidentinin sərəncamı ilə həyata keçirilir. Təyinat baş verdikdə bu səhifə yenilənəcək.\n\n## Əlaqəli səhifələr\n\n- [Elmi Şura](/sehife/elmi-sura) — sədr eyni şəxsdir\n- [Təşkilati struktur](/struktur)\n- [Ümumi işlər üzrə prorektor](/sehife/umumi-isler-uzre-prorektor)\n- [Sabiq rektorlarımız](/sabiq-rektorlar)\n- [İnzibati heyət](/heyet/inzibati)' },
+    ru: { title: 'Ректор', body: '**В настоящее время должность ректора Азербайджанской Государственной Морской Академии вакантна.**\n\nОбязанности ректора временно исполняет проректор по организации и управлению учебным процессом.\n\n> ### [Ирада Сулейманова](/emekdas/irade-suleymanova)\n> Проректор по организации и управлению учебным процессом\n> Временно исполняющая обязанности ректора\n\nНазначение на должность осуществляется распоряжением Президента Азербайджанской Республики. Страница будет обновлена после назначения.\n\n## Связанные страницы\n\n- [Учёный совет](/sehife/elmi-sura) — председателем является то же лицо\n- [Организационная структура](/struktur)\n- [Проректор по общим вопросам](/sehife/umumi-isler-uzre-prorektor)\n- [Бывшие ректоры](/sabiq-rektorlar)\n- [Административный персонал](/heyet/inzibati)' },
+    en: { title: 'Rector', body: '**The post of Rector of the Azerbaijan State Marine Academy is currently vacant.**\n\nThe duties of the Rector are temporarily discharged by the Vice-Rector for Academic Organisation and Management.\n\n> ### [Irada Suleymanova](/emekdas/irade-suleymanova)\n> Vice-Rector for Academic Organisation and Management\n> Acting Rector\n\nAppointment to the post is made by order of the President of the Republic of Azerbaijan. This page will be updated once an appointment is made.\n\n## Related pages\n\n- [Academic Council](/sehife/elmi-sura) — chaired by the same person\n- [Organisational structure](/struktur)\n- [Vice-Rector for General Affairs](/sehife/umumi-isler-uzre-prorektor)\n- [Former rectors](/sabiq-rektorlar)\n- [Administrative staff](/heyet/inzibati)' },
+  },
+  {
+    slug: 'elmi-sura',
+    az: { title: 'Elmi Şura', body: '**«Azərbaycan Dövlət Dəniz Akademiyası» Publik Hüquqi Şəxsinə ümumi rəhbərlik Elmi Şura tərəfindən həyata keçirilir.**\n\nŞuranın tərkibi Təhsil Nazirliyinin 10 noyabr 1997-ci il tarixli 792 nömrəli «Ali təhsil müəssisəsinin Elmi Şurası haqqında Əsasnamə»yə və «Azərbaycan Xəzər Dəniz Gəmiçiliyi» QSC-nin 6 dekabr 2023-cü il tarixli 13-3/2-4641/2023 nömrəli məktubuna əsasən təsdiq edilib.\n\n## Sədr\n\n> ### [İradə Süleymanova](/emekdas/irade-suleymanova)\n> Tədrisin təşkili və idarəedilməsi üzrə prorektor, rektor vəzifəsinin icrasını müvəqqəti həyata keçirən\n\n## Üzvlər\n\n| Ad | Vəzifə |\n|---|---|\n| [Almaz Yaqub qızı İmanova](/emekdas/imanova-almaz-yaqub-qizi) | Elmi katib |\n| [Elnur Oruc oğlu Abbasov](/emekdas/abbasov-elnur-oruc-oglu) | «Gəmi sürücülüyü» fakültəsinin dekanı |\n| [Rafiq Xəlil oğlu Əsgərov](/emekdas/esgerov-rafiq-xelil-oglu) | «Gəmi mexanikası və elektromexanikası» fakültəsinin dekanı |\n| Emil Məmmədniyaz oğlu Manafov | Təlim Tədris Mərkəzinin direktoru |\n| [Əsədullah Mahmud oğlu Süleymanov](/emekdas/suleymanov-esedullah-mahmud-oglu) | Tədris prosesinin təşkili şöbəsinin müdiri |\n| Həzi Nəbi oğlu Nəbiyev | «Dəniz naviqasiyası» kafedrasının müdiri |\n| Akif Şəmil oğlu İsmayılov | «Gəmi energetik qurğuları» kafedrasının müdiri |\n| Elşən Fəxrəddin oğlu Sultanov | «Gəmi elektroavtomatikası» kafedrasının müdiri |\n| İsaq Abuzər oğlu Xankişiyev | «Gəmiqayırma və gəmi təmiri» kafedrasının müdiri |\n| [İsmayıl Hüseyn oğlu Dünyamalıyev](/emekdas/dunyamaliyev-ismayil-huseyn-oglu) | Həmkarlar təşkilatının sədri |\n| Rüslan Ramiz oğlu Əlicanov | Tələbə Elmi Cəmiyyətinin sədri |\n| Fuad Aqil oğlu Rəşidli | Tələbə Həmkarlar İttifaqı Komitəsinin sədri, 054İ qrup tələbəsi |\n\n## Səlahiyyətlər\n\nElmi Şura:\n\n- ADDA-nın Nizamnaməsini qəbul edir, ona əlavə və dəyişikliklər üçün təkliflər verir;\n- İnkişaf Proqramını təsdiq edir, inkişafın əsas istiqamətlərini, tədris və elmi fəaliyyət məsələlərini, beynəlxalq əlaqələri həll edir;\n- Tələbə, müəllim, əməkdaş, doktorant və dinləyicilər üçün daxili intizam qaydalarını təsdiq edir;\n- Əsasnamə, təlimat və digər normativ sənədləri təsdiq edir;\n- Hər il rektorun fəaliyyət hesabatını və maliyyə hesabatını dinləyir;\n- Mütəxəssis və elmi-pedaqoji kadr hazırlığı, əlavə təhsil, təlim-tərbiyə və elmi-tədqiqat məsələlərini həll edir;\n- Komissiyalar yaradır, hesabatlarını dinləyir və qərar qəbul edir;\n- Şura üzvləri arasından elmi katib seçir;\n- Fakültə, kafedra və digər struktur bölmələrin yaradılması, ləğvi və yenidən təşkili məsələlərini həll edir;\n- Fakültələrin tədris, elmi-tədqiqat və tərbiyə işləri barədə hesabatlarını dinləyir;\n- «Professor» və «dosent» elmi adlarının verilməsi üçün Ali Attestasiya Komissiyası qarşısında vəsatət qaldırır;\n- Əməkdaşları fəxri ad, mükafat, orden və medallara təqdim edir;\n- Tədris planlarını təsdiq edir.\n\n## İş qaydası\n\n| Məsələ | Qayda |\n|---|---|\n| Səlahiyyət müddəti | 3 il |\n| İclasların tezliyi | ayda ən azı bir dəfə |\n| Yetərsay | üzvlərin ən azı 2/3 hissəsi |\n| Qərar qəbulu | iştirakçıların 50%-dən çoxunun səsi |\n| Səsvermə | açıq; elmi ad və fəxri adlar üzrə gizli |\n| Qüvvəyə minmə | rektorun təsdiqindən sonra |\n\nŞura təsdiqlənmiş iş planı əsasında fəaliyyət göstərir. İclaslar protokollaşdırılır, sədr və katib tərəfindən imzalanır və elmi katibdə saxlanılır. Sədr qərarların icrasının müntəzəm yoxlanılmasını təşkil edir.\n\nŞuranın vaxtından əvvəl yenidən yaradılması üzvlərin ən azı 2/3 hissəsinin tələbi ilə mümkündür. Qərarın obyektiv olmadığı və ya qanunvericiliyə zidd olduğu müəyyənləşdikdə, qərar «Azərbaycan Xəzər Dəniz Gəmiçiliyi» QSC və Elm və Təhsil Nazirliyi tərəfindən ləğv oluna bilər.' },
+    ru: { title: 'Учёный совет', body: '**Общее руководство публично-правовым лицом «Азербайджанская Государственная Морская Академия» осуществляет Учёный совет.**\n\nСостав Совета утверждён в соответствии с «Положением об Учёном совете высшего учебного заведения» Министерства образования № 792 от 10 ноября 1997 года и письмом ЗАО «Азербайджанское Каспийское Морское Пароходство» № 13-3/2-4641/2023 от 6 декабря 2023 года.\n\n## Председатель\n\n> ### [Ирада Сулейманова](/emekdas/irade-suleymanova)\n> Проректор по организации и управлению учебным процессом, временно исполняющая обязанности ректора\n\n## Члены\n\n| Ф.И.О. | Должность |\n|---|---|\n| [Алмаз Ягуб кызы Иманова](/emekdas/imanova-almaz-yaqub-qizi) | Учёный секретарь |\n| [Эльнур Оруджоглу Аббасов](/emekdas/abbasov-elnur-oruc-oglu) | Декан факультета судовождения |\n| [Рафиг Халил оглу Аскеров](/emekdas/esgerov-rafiq-xelil-oglu) | Декан факультета судовой механики и электромеханики |\n| Эмиль Мамеднияз оглу Манафов | Директор Учебно-тренировочного центра |\n| [Асадулла Махмуд оглу Сулейманов](/emekdas/suleymanov-esedullah-mahmud-oglu) | Начальник отдела организации учебного процесса |\n| Хази Наби оглу Набиев | Заведующий кафедрой морской навигации |\n| Акиф Шамиль оглу Исмайлов | Заведующий кафедрой судовых энергетических установок |\n| Эльшан Фахреддин оглу Султанов | Заведующий кафедрой судовой электроавтоматики |\n| Исаг Абузар оглу Ханкишиев | Заведующий кафедрой судостроения и судоремонта |\n| [Исмаил Гусейн оглу Дуньямалыев](/emekdas/dunyamaliyev-ismayil-huseyn-oglu) | Председатель профсоюзной организации |\n| Руслан Рамиз оглу Алиджанов | Председатель Студенческого научного общества |\n| Фуад Агиль оглу Рашидли | Председатель Студенческого профсоюзного комитета, студент группы 054И |\n\n## Полномочия\n\nУчёный совет:\n\n- принимает Устав АГМА, вносит предложения о дополнениях и изменениях к нему;\n- утверждает Программу развития, решает вопросы основных направлений развития, учебной и научной деятельности, международных связей;\n- утверждает правила внутреннего распорядка для студентов, преподавателей, сотрудников, докторантов и слушателей;\n- утверждает положения, инструкции и другие нормативные документы;\n- ежегодно заслушивает отчёт ректора о деятельности и финансовый отчёт;\n- решает вопросы подготовки специалистов и научно-педагогических кадров, дополнительного образования, учебно-воспитательной и научно-исследовательской работы;\n- создаёт комиссии, заслушивает их отчёты и принимает решения;\n- избирает учёного секретаря из числа членов Совета;\n- решает вопросы создания, ликвидации и реорганизации факультетов, кафедр и других структурных подразделений;\n- заслушивает отчёты факультетов об учебной, научно-исследовательской и воспитательной работе;\n- ходатайствует перед Высшей аттестационной комиссией о присвоении учёных званий «профессор» и «доцент»;\n- представляет сотрудников к почётным званиям, премиям, орденам и медалям;\n- утверждает учебные планы.\n\n## Порядок работы\n\n| Вопрос | Правило |\n|---|---|\n| Срок полномочий | 3 года |\n| Периодичность заседаний | не реже одного раза в месяц |\n| Кворум | не менее 2/3 членов |\n| Принятие решения | более 50% голосов присутствующих |\n| Голосование | открытое; по учёным и почётным званиям — тайное |\n| Вступление в силу | после утверждения ректором |\n\nСовет действует на основании утверждённого плана работы. Заседания протоколируются, протоколы подписываются председателем и секретарём и хранятся у учёного секретаря. Председатель организует регулярную проверку исполнения решений.\n\nДосрочное переизбрание Совета возможно по требованию не менее 2/3 его членов. Если решение признано необъективным или противоречащим законодательству, оно может быть отменено ЗАО «Азербайджанское Каспийское Морское Пароходство» и Министерством науки и образования.' },
+    en: { title: 'Academic Council', body: '**Overall governance of the Azerbaijan State Marine Academy public legal entity is exercised by the Academic Council.**\n\nThe Council\'s composition was approved under the Ministry of Education\'s Regulation on the Academic Council of a Higher Education Institution, No. 792 of 10 November 1997, and letter No. 13-3/2-4641/2023 of 6 December 2023 from the Azerbaijan Caspian Shipping Company.\n\n## Chair\n\n> ### [Irada Suleymanova](/emekdas/irade-suleymanova)\n> Vice-Rector for Academic Organisation and Management, Acting Rector\n\n## Members\n\n| Name | Position |\n|---|---|\n| [Almaz Yagub gizi Imanova](/emekdas/imanova-almaz-yaqub-qizi) | Academic Secretary |\n| [Elnur Oruj oglu Abbasov](/emekdas/abbasov-elnur-oruc-oglu) | Dean of the Faculty of Navigation |\n| [Rafig Khalil oglu Asgarov](/emekdas/esgerov-rafiq-xelil-oglu) | Dean of the Faculty of Marine Engineering and Electrical Engineering |\n| Emil Mammadniyaz oglu Manafov | Director of the Training Centre |\n| [Asadullah Mahmud oglu Suleymanov](/emekdas/suleymanov-esedullah-mahmud-oglu) | Head of the Academic Process Organisation Department |\n| Hazi Nabi oglu Nabiyev | Head of the Marine Navigation Department |\n| Akif Shamil oglu Ismayilov | Head of the Marine Power Plants Department |\n| Elshan Fakhraddin oglu Sultanov | Head of the Marine Electrical Automation Department |\n| Isag Abuzar oglu Khankishiyev | Head of the Shipbuilding and Ship Repair Department |\n| [Ismayil Huseyn oglu Dunyamaliyev](/emekdas/dunyamaliyev-ismayil-huseyn-oglu) | Chair of the Trade Union Organisation |\n| Ruslan Ramiz oglu Alijanov | Chair of the Student Research Society |\n| Fuad Agil oglu Rashidli | Chair of the Student Trade Union Committee, student of group 054I |\n\n## Powers\n\nThe Academic Council:\n\n- adopts the Academy\'s Charter and proposes additions and amendments to it;\n- approves the Development Programme and decides on the principal directions of development, academic and research activity, and international relations;\n- approves internal rules for students, lecturers, staff, doctoral candidates and course participants;\n- approves regulations, instructions and other normative documents;\n- hears the Rector\'s annual activity report and the annual financial report;\n- decides matters of specialist and academic staff training, further education, teaching and research work;\n- establishes commissions, hears their reports and adopts decisions;\n- elects an academic secretary from among its members;\n- decides on the establishment, closure and reorganisation of faculties, departments and other structural units;\n- hears faculty reports on teaching, research and student work;\n- petitions the Higher Attestation Commission for the award of the titles of professor and associate professor;\n- nominates staff for honorary titles, prizes, orders and medals;\n- approves curricula.\n\n## Procedure\n\n| Matter | Rule |\n|---|---|\n| Term of office | 3 years |\n| Frequency of meetings | at least monthly |\n| Quorum | at least two thirds of members |\n| Adoption of decisions | more than 50% of those present |\n| Voting | open; secret for academic and honorary titles |\n| Entry into force | after approval by the Rector |\n\nThe Council works to an approved plan. Meetings are minuted, signed by the chair and the secretary, and kept by the academic secretary. The chair arranges regular checks on the implementation of decisions.\n\nThe Council may be reconstituted early at the request of at least two thirds of its members. Where a decision is found not to be objective or to contravene legislation, it may be annulled by the Azerbaijan Caspian Shipping Company and the Ministry of Science and Education.' },
+  },
+];
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     const inFlight = new Set<string>();
@@ -2085,6 +2108,57 @@ export default {
     } catch (err) {
       strapi.log.error('[seed] sehife bolunmesi xetasi: ' + (err as Error).message);
     }
+    // Rəhbərlik səhifələri — rektor vakansiyası və Elmi Şura tərkibi
+    //
+    // Bu iki səhifə MÖVCUDDUR, ona görə yalnız LEADERSHIP_RESEED=true ilə
+    // yenilənir. Ayrıca bayraq götürülüb ki, PAGES_RESEED bütün səhifələri
+    // birdən üzərinə yazmasın — redaktorun digər düzəlişləri qorunsun.
+    try {
+      const uid = 'api::page.page';
+      if (process.env.LEADERSHIP_RESEED !== 'true') {
+        strapi.log.info('[seed] Rehberlik sehifeleri otuldu. Yenilemek ucun LEADERSHIP_RESEED=true.');
+      } else {
+        let n = 0;
+        for (const p of LEADERSHIP_SEED) {
+          const existing = (await strapi.documents(uid).findFirst({
+            locale: 'az',
+            filters: { slug: p.slug },
+            status: 'draft',
+          })) as { documentId: string } | null;
+
+          let documentId: string;
+          if (existing) {
+            documentId = existing.documentId;
+            await strapi.documents(uid).update({
+              documentId,
+              locale: 'az',
+              data: { slug: p.slug, title: p.az.title, body: p.az.body } as never,
+            });
+          } else {
+            const doc = await strapi.documents(uid).create({
+              locale: 'az',
+              data: { slug: p.slug, title: p.az.title, body: p.az.body } as never,
+            });
+            documentId = doc.documentId;
+          }
+          for (const loc of ['ru', 'en'] as const) {
+            await strapi.documents(uid).update({
+              documentId,
+              locale: loc,
+              data: { slug: p.slug, title: p[loc].title, body: p[loc].body } as never,
+            });
+          }
+          for (const loc of ['az', 'ru', 'en'] as const) {
+            await strapi.documents(uid).publish({ documentId, locale: loc });
+          }
+          n++;
+        }
+        strapi.log.info('[seed] Rehberlik sehifeleri: ' + n + ' x 3 dil yazildi (LEADERSHIP_RESEED=true).');
+      }
+    } catch (err) {
+      strapi.log.error('[seed] rehberlik sehifeleri xetasi: ' + (err as Error).message);
+    }
+
 
   },
 };
