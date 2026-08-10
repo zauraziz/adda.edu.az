@@ -628,7 +628,10 @@ export interface SocialPost {
   handle: string;
   url: string;
   image?: StrapiMedia | null;
+  /** Altyazı üç dildə — tip LOKALLAŞDIRILMIR (səbəb `getSocialPosts`-da). */
   caption: string | null;
+  captionRu: string | null;
+  captionEn: string | null;
   hashtag: string | null;
   video: boolean;
   duration: string | null;
@@ -652,14 +655,21 @@ export async function getSocialBlock(locale: Locale = 'az'): Promise<SocialBlock
 /**
  * Karusel kartları.
  *
+ * `locale` SORĞUYA VERİLMİR və content-type lokallaşdırılmır.
+ * K31-də lokallaşdırılmışdı və nəticə belə oldu: Strapi admin panelində
+ * defolt dil `en`-dir, redaktor kartı orada yaradırdı, `?locale=az` isə
+ * SIFIR qeyd qaytarırdı — kartlar bazada var idi, amma azərbaycanca ana
+ * səhifədə heç vaxt görünmürdü. Kartın 90%-i onsuz da dilsizdir (şəbəkə,
+ * hesab, link, şəkil, rəqəmlər); yalnız altyazı dəyişir, o da üç ayrıca
+ * sahədədir. Bir kart = bir qeyd.
+ *
  * SIRA: `sortOrder` artan, sonra ən yenisi əvvəldə. Sxemdə defolt dəyər
  * 100-dür — yəni yeni paylaşım heç nəyi qabaqlamır, sadəcə tarixə görə
  * yuxarı düşür. Bir kartı önə sancmaq üçün redaktor daha KİÇİK rəqəm yazır.
  */
-export async function getSocialPosts(locale: Locale = 'az', limit = 12): Promise<SocialPost[]> {
+export async function getSocialPosts(limit = 12): Promise<SocialPost[]> {
   try {
     const json = await strapiFetch<StrapiList<SocialPost>>('/social-posts', {
-      locale,
       'sort[0]': 'sortOrder:asc',
       'sort[1]': 'createdAt:desc',
       'pagination[pageSize]': limit,

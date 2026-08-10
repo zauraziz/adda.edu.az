@@ -1,4 +1,4 @@
-// ── K31 / Social (server component) ──────────────────────────────────
+// ── K32 / Social (server component) ──────────────────────────────────
 // «ADDA sosial şəbəkələrdə» (socialx · scroll-x karusel) bölməsi.
 //
 // ARTIQ STRAPI-DƏN GƏLİR. Əvvəl bütün bölmə koda yazılmış UYDURMA data idi:
@@ -66,6 +66,16 @@ function hashtags(block: SocialBlock | null): string[] {
     .map((t) => (t.startsWith('#') ? t : '#' + t));
 }
 
+/**
+ * Altyazı dilə görə. Kart qeydi LOKALLAŞDIRILMIR (K32) — altyazının üç dili
+ * ayrıca sahədədir. Tərcümə yazılmayıbsa Azərbaycan dilinə düşür: boş kart
+ * göstərməkdənsə mövcud mətni vermək daha faydalıdır.
+ */
+function caption(p: SocialPost, locale: Locale): string | null {
+  const v = locale === 'ru' ? p.captionRu : locale === 'en' ? p.captionEn : p.caption;
+  return (v && v.trim()) || (p.caption && p.caption.trim()) || null;
+}
+
 /** Kartın göstəriciləri — yalnız doldurulmuş sahələr. */
 function metrics(p: SocialPost, locale: Locale): { icon: string; val: string }[] {
   const out: { icon: string; val: string }[] = [];
@@ -89,7 +99,7 @@ const PlayIcon = ({ n }: { n: number }) => (
 export default async function Social({ locale }: { locale: Locale }) {
   const [block, posts] = await Promise.all([
     getSocialBlock(locale),
-    getSocialPosts(locale, 12),
+    getSocialPosts(12),
   ]);
 
   const cards = posts.filter((p) => mediaUrl(p.image));
@@ -148,6 +158,7 @@ export default async function Social({ locale }: { locale: Locale }) {
               {cards.map((c, i) => {
                 const img = mediaUrl(c.image) as string;
                 const ms = metrics(c, locale);
+                const cap = caption(c, locale);
                 return (
                   <a
                     href={c.url}
@@ -171,9 +182,9 @@ export default async function Social({ locale }: { locale: Locale }) {
                     ) : null}
                     {c.duration ? <span className="sx-dur">{c.duration}</span> : null}
                     <span className="sx-body">
-                      {c.caption ? (
+                      {cap ? (
                         <span className="sx-cap">
-                          {c.caption}
+                          {cap}
                           {c.hashtag ? <>{' '}<b>{c.hashtag}</b></> : null}
                         </span>
                       ) : null}

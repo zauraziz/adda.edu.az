@@ -5,87 +5,165 @@
     "singularName": "social-post",
     "pluralName": "social-posts",
     "displayName": "Sosial paylaşım",
-    "description": "Ana səhifə karuselindəki paylaşım kartları"
+    "description": "Ana səhifə karuselindəki paylaşım kartları. Bir kart = bir qeyd: dil seçicisi ilə işləmək lazım deyil, altyazının üç dili eyni formada yazılır."
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {
-      "localized": true
+      "localized": false
     }
   },
   "attributes": {
     "network": {
       "type": "enumeration",
-      "enum": ["instagram", "tiktok", "youtube", "facebook", "linkedin"],
+      "enum": [
+        "instagram",
+        "tiktok",
+        "youtube",
+        "facebook",
+        "linkedin"
+      ],
       "required": true,
       "default": "instagram",
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "handle": {
       "type": "string",
       "required": true,
       "maxLength": 80,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "url": {
       "type": "string",
       "required": true,
       "maxLength": 500,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "image": {
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"],
-      "pluginOptions": { "i18n": { "localized": false } }
+      "allowedTypes": [
+        "images"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "caption": {
       "type": "text",
       "maxLength": 300,
-      "pluginOptions": { "i18n": { "localized": true } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "captionRu": {
+      "type": "text",
+      "maxLength": 300,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "captionEn": {
+      "type": "text",
+      "maxLength": 300,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "hashtag": {
       "type": "string",
       "maxLength": 60,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "video": {
       "type": "boolean",
       "default": false,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "duration": {
       "type": "string",
       "maxLength": 12,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "likes": {
       "type": "integer",
       "min": 0,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "comments": {
       "type": "integer",
       "min": 0,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "views": {
       "type": "integer",
       "min": 0,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "shares": {
       "type": "integer",
       "min": 0,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "sortOrder": {
       "type": "integer",
       "default": 100,
-      "pluginOptions": { "i18n": { "localized": false } }
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     }
   }
 }

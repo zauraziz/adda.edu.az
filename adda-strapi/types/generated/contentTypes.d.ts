@@ -2202,7 +2202,7 @@ export interface ApiSocialBlockSocialBlock extends Struct.SingleTypeSchema {
 export interface ApiSocialPostSocialPost extends Struct.CollectionTypeSchema {
   collectionName: 'social_posts';
   info: {
-    description: 'Ana s\u0259hif\u0259 karuselind\u0259ki payla\u015F\u0131m kartlar\u0131';
+    description: 'Ana s\u0259hif\u0259 karuselind\u0259ki payla\u015F\u0131m kartlar\u0131. Bir kart = bir qeyd: dil se\u00E7icisi il\u0259 i\u015Fl\u0259m\u0259k laz\u0131m deyil, altyaz\u0131n\u0131n \u00FC\u00E7 dili eyni formada yaz\u0131l\u0131r.';
     displayName: 'Sosial payla\u015F\u0131m';
     pluralName: 'social-posts';
     singularName: 'social-post';
@@ -2212,14 +2212,32 @@ export interface ApiSocialPostSocialPost extends Struct.CollectionTypeSchema {
   };
   pluginOptions: {
     i18n: {
-      localized: true;
+      localized: false;
     };
   };
   attributes: {
     caption: Schema.Attribute.Text &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
-          localized: true;
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    captionEn: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    captionRu: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }> &
       Schema.Attribute.SetMinMaxLength<{
@@ -2287,11 +2305,12 @@ export interface ApiSocialPostSocialPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    locale: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::social-post.social-post'
-    >;
+    > &
+      Schema.Attribute.Private;
     network: Schema.Attribute.Enumeration<
       ['instagram', 'tiktok', 'youtube', 'facebook', 'linkedin']
     > &

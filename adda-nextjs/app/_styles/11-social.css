@@ -5,6 +5,9 @@
 .sx-space{position:relative}
 .sx-sticky{padding:88px 0 46px}
 .socialx.sx-js .sx-sticky{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding:96px 0 40px}
+/* Qoruyucu: JS hündürlüyü səhv hesablasa belə konteyner sticky uşaqdan
+   alçaq qala bilməz — əks halda növbəti bölmə üstünə çıxır. */
+.socialx.sx-js .sx-space{min-height:100vh}
 /* Head */
 .sx-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-bottom:34px;flex-wrap:wrap}
 .sx-eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--nav-font);font-size:13px;font-weight:800;letter-spacing:2.4px;color:var(--gold-600);text-transform:uppercase;margin-bottom:12px}

@@ -25,8 +25,14 @@ export default function SocialIsland() {
     const narrow = window.matchMedia(NARROW);
     let max = 0, ticking = false, active = false;
 
+    // Sticky rejimin açılması üçün ən azı bir kart eni gizli qalmalıdır.
+    // Kiçik artıq en üçün istifadəçi tam ekran hündürlüyü sürüşdürüb cəmi
+    // bir neçə piksel hərəkət görərdi — mənasız.
+    const MIN_OVERFLOW = 240;
+    const overflow = () => track.scrollWidth - vp.clientWidth;
+
     const measure = () => {
-      max = track.scrollWidth - vp.clientWidth;
+      max = Math.max(0, overflow());
       if (active) space.style.height = (window.innerHeight + max) + 'px';
     };
     const progress = () => {
@@ -43,7 +49,11 @@ export default function SocialIsland() {
     const onScroll = () => { if (!ticking && active) { ticking = true; requestAnimationFrame(render); } };
 
     const setMode = () => {
-      const want = !reduced.matches && !narrow.matches;
+      // Ölçü ƏVVƏLCƏ alınır. Əks halda az sayda kartda `max` mənfi olurdu:
+      // `.sx-space` hündürlüyü `innerHeight + max` ilə 100vh-dən KİÇİK
+      // qalır, `.sx-sticky` isə `min-height:100vh` saxlayır → sticky uşaq
+      // konteynerindən daşır və növbəti bölmə (vquote) onun üstünə çıxırdı.
+      const want = !reduced.matches && !narrow.matches && overflow() >= MIN_OVERFLOW;
       if (want === active) { if (active) { measure(); render(); } return; }
       active = want;
       sec.classList.toggle('sx-js', active);
