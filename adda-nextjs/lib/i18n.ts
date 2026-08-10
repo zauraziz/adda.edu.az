@@ -776,6 +776,10 @@ const T: Array<[string, string, string]> = [
   ['International Admissions',
    'Приём иностранных студентов',
    'International Admissions'],
+  // --- K34 tarix marşrutu (az, ru, en) ---
+  ['Dənizçilik təhsilimizin marşrutu', 'Маршрут нашего морского образования', 'The course of our maritime education'],
+  ['Xəzərin sahilində dənizçilik təhsilinin ilk siniflərindən müasir akademiyaya qədər — adlar, qərarlar və dönüş nöqtələri ilə.', 'От первых мореходных классов на берегу Каспия до современной академии — имена, решения и поворотные точки.', 'From the first navigation classes on the Caspian shore to the modern Academy — the names, decisions and turning points.'],
+  ['mərhələ', 'этапов', 'milestones'],
   // --- K30 «Bunlar üçün» auditoriya səhifələri (az, ru, en) ---
   ['Bunlar üçün bölməsi', 'Раздел «Для вас»', 'For you'],
   ['İlk addımlar', 'С чего начать', 'Start here'],

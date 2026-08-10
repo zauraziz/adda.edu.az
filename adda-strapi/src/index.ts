@@ -1463,6 +1463,136 @@ const PAGE_SPLIT_SEED: PageSplitSeed[] = [
   },
 ];
 
+
+// ── K34 · Tarix marşrutu ──
+// 1867–2026: 14 mərhələ, hər biri ÜÇ DİLDƏ. Əvvəlki skelet 5 nöqtədən
+// ibarət idi və YALNIZ `az` yaradılmışdı — /ru/tarix və /en/tarix boş
+// qalırdı. Burada hər mərhələ üçün ru/en lokalizasiyası da yazılır.
+interface MilestoneText { title: string; description: string }
+interface MilestoneSeed {
+  year: number;
+  era: 'temel' | 'inkisaf' | 'muasir';
+  sortOrder: number;
+  az: MilestoneText;
+  ru: MilestoneText;
+  en: MilestoneText;
+}
+
+const MILESTONE_SEED: MilestoneSeed[] = [
+  {
+    year: 1867,
+    era: 'temel',
+    sortOrder: 10,
+    az: { title: 'Dənizçilik siniflərinin nizamnaməsi', description: 'XIX əsrdə yelkənli taxta gəmilərdən buxar mühərrikli metal gəmilərə keçid dəniz gəmiçiliyi üçün ixtisaslı kadr məsələsini kəskinləşdirdi. 1864-cü ildə «Dənizçilik sinifləri haqqında nizamnamə» və «Şkiper və şturman adı almaq üçün sınaq qaydaları»nı hazırlayan xüsusi komissiya yaradıldı; nizamnamə 27 iyun 1867-ci ildə təsdiq edildi.' },
+    ru: { title: 'Устав мореходных классов', description: 'В XIX веке переход от деревянных парусников к металлическим судам с паровыми машинами обострил вопрос подготовки квалифицированных кадров для морского флота. В 1864 году была создана специальная комиссия, разработавшая «Устав о мореходных классах» и «Правила испытаний на звание шкипера и штурмана»; устав был утверждён 27 июня 1867 года.' },
+    en: { title: 'The statute of the navigation classes', description: 'In the nineteenth century the shift from wooden sailing vessels to steam-powered metal ships made the training of qualified crews urgent. A commission formed in 1864 drafted the Statute on Navigation Classes and the Rules of Examination for the Ranks of Skipper and Navigator; the statute was approved on 27 June 1867.' },
+  },
+  {
+    year: 1870,
+    era: 'temel',
+    sortOrder: 20,
+    az: { title: 'Bakıda məktəb qərarı', description: 'Bakı limanına təhkim olunmuş gəmilərdə azərbaycanlı dənizçilərin çoxluğu və şəhər ictimaiyyətinin dənizçilik təhsilinə müsbət münasibəti nəzərə alınaraq, Bakıda «Uzaq səfərlər məktəbi»nin təsis edilməsi barədə qərar qəbul olundu.' },
+    ru: { title: 'Решение об открытии школы в Баку', description: 'С учётом большого числа азербайджанских моряков на судах, приписанных к Бакинскому порту, и благожелательного отношения городской общественности к морскому образованию было принято решение об учреждении в Баку «Школы дальнего плавания».' },
+    en: { title: 'The decision to open a school in Baku', description: 'Given the large number of Azerbaijani seafarers on vessels registered at the port of Baku, and the favourable attitude of the city\'s public towards maritime education, a decision was taken to establish a School of Deep-Sea Navigation in Baku.' },
+  },
+  {
+    year: 1881,
+    era: 'temel',
+    sortOrder: 30,
+    az: { title: 'Bakı dənizçilik məktəbi açılır', description: '27 iyun 1877-ci il tarixli xüsusi Nizamnaməyə əsasən, 8 noyabr 1881-ci ildə Bakıda üç bölmədən ibarət I dərəcəli dənizçilik məktəbi açıldı. Qəbul zamanı xüsusi biliklər tələb olunmurdu — yazıb-oxuma bacarığı kifayət edirdi. İlk direktor dəniz coğrafiyası üzrə baş müəllim, II dərəcəli kapitan N. M. Filippov oldu.' },
+    ru: { title: 'Открытие Бакинского мореходного училища', description: 'На основании особого Устава от 27 июня 1877 года 8 ноября 1881 года в Баку было открыто мореходное училище I разряда, состоявшее из трёх отделений. При поступлении специальных знаний не требовалось — было достаточно умения читать и писать. Первым директором стал старший преподаватель морской географии, капитан II разряда Н. М. Филиппов.' },
+    en: { title: 'The Baku navigation school opens', description: 'Under a special statute of 27 June 1877, a first-class navigation school with three departments opened in Baku on 8 November 1881. Admission required no specialist knowledge — literacy was sufficient. Its first director was N. M. Filippov, senior lecturer in marine geography and a second-class master mariner.' },
+  },
+  {
+    year: 1896,
+    era: 'temel',
+    sortOrder: 40,
+    az: { title: 'Gəmi mexanikləri məktəbi', description: 'Mühəndis-mexanik A. A. Maslovun yaratdığı «Gəmi mexanikası» kursları — Gəmi mexanikləri məktəbi — fəaliyyətə başladı. Beləliklə, Bakıda naviqasiya ilə yanaşı gəmi maşın heyəti üzrə də hazırlıq quruldu.' },
+    ru: { title: 'Школа судовых механиков', description: 'Начали работу курсы «Судовая механика» — Школа судовых механиков, — созданные инженером-механиком А. А. Масловым. Так в Баку наряду с навигацией была выстроена и подготовка судовых механиков.' },
+    en: { title: 'The school for marine engineers', description: 'Courses in marine engineering — the School for Marine Engineers — were founded by the engineer A. A. Maslov. Baku thus gained training for engine-room crews alongside navigation.' },
+  },
+  {
+    year: 1902,
+    era: 'temel',
+    sortOrder: 50,
+    az: { title: 'Bakı uzaq səfərlər məktəbi', description: '1 iyul 1902-ci ildə «Bakı dənizçilik sinifləri»nin bazasında üçillik «Bakı uzaq səfərlər məktəbi» yaradıldı, nəzdində hazırlıq kursları təşkil edildi. 1881–1902-ci illərdə dənizçilik siniflərini bitirmiş 945 nəfərdən 126-sı azərbaycanlı idi.' },
+    ru: { title: 'Бакинская школа дальнего плавания', description: '1 июля 1902 года на базе «Бакинских мореходных классов» была создана трёхлетняя «Бакинская школа дальнего плавания», при которой организовали подготовительные курсы. Из 945 человек, окончивших мореходные классы в 1881–1902 годах, 126 были азербайджанцами.' },
+    en: { title: 'The Baku School of Deep-Sea Navigation', description: 'On 1 July 1902 the three-year Baku School of Deep-Sea Navigation was established on the basis of the Baku navigation classes, with preparatory courses attached. Of the 945 people who completed the navigation classes between 1881 and 1902, 126 were Azerbaijani.' },
+  },
+  {
+    year: 1920,
+    era: 'inkisaf',
+    sortOrder: 60,
+    az: { title: 'Bakı Su Nəqliyyatı Texnikumu', description: '«Bakı uzaq səfərlər məktəbi»nin bazasında Bakı Su Nəqliyyatı Texnikumu yaradıldı. Məktəbin 1910-cu il məzunu, dənizçi kadrların yetişməsində xüsusi xidməti olan Vikenti Pavloviç Koroleviç texnikumun direktoru seçildi. 1 oktyabr 1921-ci ildə texnikumun nəzdində əyani və axşam şöbələri açıldı.' },
+    ru: { title: 'Бакинский техникум водного транспорта', description: 'На базе «Бакинской школы дальнего плавания» был создан Бакинский техникум водного транспорта. Директором был избран выпускник школы 1910 года Викентий Павлович Королевич, сыгравший особую роль в подготовке морских кадров. 1 октября 1921 года при техникуме открылись дневное и вечернее отделения.' },
+    en: { title: 'The Baku Water Transport Technical College', description: 'The Baku Water Transport Technical College was founded on the basis of the School of Deep-Sea Navigation. Vikenty Pavlovich Korolevich, a 1910 graduate of the school who did much for the training of seafarers, was elected its director. Full-time and evening departments opened on 1 October 1921.' },
+  },
+  {
+    year: 1924,
+    era: 'inkisaf',
+    sortOrder: 70,
+    az: { title: 'Xəzər Dəniz Gəmiçiliyinin tabeliyinə', description: '1 oktyabr 1924-cü ildə Dəniz Nəqliyyatı Mərkəzi İdarəsinin və Yollar xidməti üzrə Xalq Komissarlığının sərəncamı ilə texnikum «Bakı Su Yolları Texnikumu» adlandırılaraq Xəzər Dəniz Gəmiçiliyinin maarif şöbəsinin tabeliyinə verildi. 1925-ci ildə texnikumun nəzdində Azərbaycan bölməsi açıldı.' },
+    ru: { title: 'Переход в ведение Каспийского пароходства', description: '1 октября 1924 года распоряжением Центрального управления морского транспорта и Народного комиссариата путей сообщения техникум был переименован в «Бакинский техникум водных путей» и передан в ведение отдела просвещения Каспийского морского пароходства. В 1925 году при техникуме открылось азербайджанское отделение.' },
+    en: { title: 'Transfer to the Caspian Shipping Company', description: 'On 1 October 1924, by order of the Central Directorate of Maritime Transport and the People\'s Commissariat of Transport, the college was renamed the Baku Waterways Technical College and placed under the education department of the Caspian Shipping Company. An Azerbaijani-language department opened in 1925.' },
+  },
+  {
+    year: 1930,
+    era: 'inkisaf',
+    sortOrder: 80,
+    az: { title: 'Bakı Dənizçilik Texnikumu', description: 'Hökumətin «Sənaye texnikumlarının sahələr üzrə yenidən təşkili haqqında» qərarına əsasən, 1 sentyabr 1930-cu ildə texnikum «Bakı Dənizçilik Texnikumu» adlandırıldı.' },
+    ru: { title: 'Бакинский морской техникум', description: 'На основании постановления правительства «О реорганизации промышленных техникумов по отраслям» 1 сентября 1930 года техникум получил название «Бакинский морской техникум».' },
+    en: { title: 'The Baku Maritime Technical College', description: 'Following the government decree on the reorganisation of industrial technical colleges by sector, the college was renamed the Baku Maritime Technical College on 1 September 1930.' },
+  },
+  {
+    year: 1933,
+    era: 'inkisaf',
+    sortOrder: 90,
+    az: { title: 'İlk azərbaycanlı direktor', description: '1933-cü ilin oktyabrında 24 yaşlı Güləhmədov Ağa Qasım Kərbəlayı Kazım oğlu — Qasım Gül — texnikuma ilk azərbaycanlı direktor təyin edildi. Onun qəbul etdiyi ilk mühüm qərar texnikumun nəzdində Azərbaycan bölməsinin fəaliyyətinin bərpası oldu.' },
+    ru: { title: 'Первый азербайджанский директор', description: 'В октябре 1933 года 24-летний Агa Гасым Кербалаи Кязым оглу Гюльахмедов — Гасым Гюль — стал первым азербайджанским директором техникума. Его первым важным решением стало восстановление работы азербайджанского отделения.' },
+    en: { title: 'The first Azerbaijani director', description: 'In October 1933 the 24-year-old Agha Gasym Karbalayi Kazim oglu Gulahmadov — known as Gasym Gul — became the college\'s first Azerbaijani director. His first significant decision was to restore the Azerbaijani-language department.' },
+  },
+  {
+    year: 1944,
+    era: 'inkisaf',
+    sortOrder: 100,
+    az: { title: 'Bakı Dənizçilik Məktəbi', description: 'Azərbaycan SSR Nazirlər Sovetinin qərarı ilə Bakı Dənizçilik Texnikumu «Bakı Dənizçilik Məktəbi» adlandırıldı.' },
+    ru: { title: 'Бакинское мореходное училище', description: 'Постановлением Совета Министров Азербайджанской ССР Бакинский морской техникум был переименован в «Бакинское мореходное училище».' },
+    en: { title: 'The Baku Maritime School', description: 'By decision of the Council of Ministers of the Azerbaijan SSR, the Baku Maritime Technical College was renamed the Baku Maritime School.' },
+  },
+  {
+    year: 1958,
+    era: 'inkisaf',
+    sortOrder: 110,
+    az: { title: 'Qafur Məmmədovun adı verilir', description: '23 sentyabr 1958-ci ildən məktəb Azərbaycanın cəsur oğlu Qafur Məmmədovun şərəfinə onun adını daşıdı. Məktəb 1996-cı ilə qədər fəaliyyət göstərdi; bu dövrdə ona Ağaisa Mustafayev (1945–1954), Məcid Kardaşov (1954–1973), Məmməd Yaqubov (1973–1991) və Həsən Əliyev (1991–1996) rəhbərlik etdilər.' },
+    ru: { title: 'Присвоение имени Гафура Мамедова', description: 'С 23 сентября 1958 года училище носило имя отважного сына Азербайджана Гафура Мамедова. Училище действовало до 1996 года; в этот период им руководили Агаиса Мустафаев (1945–1954), Меджид Кардашов (1954–1973), Мамед Ягубов (1973–1991) и Гасан Алиев (1991–1996).' },
+    en: { title: 'Named after Gafur Mammadov', description: 'From 23 September 1958 the school bore the name of Gafur Mammadov, a courageous son of Azerbaijan. It operated until 1996, led in those years by Aghaisa Mustafayev (1945–1954), Majid Kardashov (1954–1973), Mammad Yagubov (1973–1991) and Hasan Aliyev (1991–1996).' },
+  },
+  {
+    year: 1996,
+    era: 'muasir',
+    sortOrder: 120,
+    az: { title: 'Azərbaycan Dövlət Dəniz Akademiyası', description: 'Ümummilli lider Heydər Əliyevin tövsiyəsi və Xəzər Dəniz Gəmiçiliyi İdarəsinin təsisçiliyi ilə, Nazirlər Kabinetinin 15 iyul 1996-cı il tarixli qərarına əsasən Bakı Dəniz Yolları Məktəbinin bazasında Azərbaycan Dövlət Dəniz Akademiyası yaradıldı. Akademiya qarşısına yalnız Xəzər üçün deyil, dünya sularında işləyə biləcək yüksəkixtisaslı kadrlar hazırlamaq məqsədini qoydu.' },
+    ru: { title: 'Азербайджанская Государственная Морская Академия', description: 'По рекомендации общенационального лидера Гейдара Алиева и при учредительстве Каспийского морского пароходства, постановлением Кабинета Министров от 15 июля 1996 года на базе Бакинской школы морских путей была создана Азербайджанская Государственная Морская Академия. Академия поставила целью готовить высококвалифицированные кадры не только для Каспия, но и для работы в водах всего мира.' },
+    en: { title: 'The Azerbaijan State Marine Academy', description: 'On the recommendation of national leader Heydar Aliyev and with the Caspian Shipping Company as founder, a decision of the Cabinet of Ministers of 15 July 1996 established the Azerbaijan State Marine Academy on the basis of the Baku Maritime School. Its aim was to train crews qualified to work not only in the Caspian but in the world\'s waters.' },
+  },
+  {
+    year: 2000,
+    era: 'muasir',
+    sortOrder: 130,
+    az: { title: 'Diplom «ağ siyahı»da', description: 'Akademiya ilk gündən Beynəlxalq Dənizçilik Təşkilatının (IMO) 1978-ci il tarixli STCW Konvensiyasının tələblərinə uyğun təhsil sistemi qurdu. Hazırlanmış tədris proqramları və dövlət standartları beynəlxalq səviyyədə tanındı: 2000-ci ildə Akademiyanın diplomu 170 ölkə tərəfindən qəbul edilərək dünya dənizçilik ali məktəblərinin «ağ siyahı»sına daxil edildi.' },
+    ru: { title: 'Диплом в «белом списке»', description: 'С первого дня Академия выстроила систему обучения по требованиям Конвенции ПДНВ 1978 года Международной морской организации (ИМО). Разработанные учебные программы и государственные стандарты получили международное признание: в 2000 году диплом Академии был принят 170 странами и вошёл в «белый список» морских вузов мира.' },
+    en: { title: 'The diploma on the White List', description: 'From its first day the Academy built its programmes around the 1978 STCW Convention of the International Maritime Organization. Its curricula and state standards won international recognition: in 2000 the Academy\'s diploma was accepted by 170 countries and entered the White List of the world\'s maritime universities.' },
+  },
+  {
+    year: 2026,
+    era: 'muasir',
+    sortOrder: 140,
+    az: { title: 'Otuz il və qlobal şəbəkə', description: 'Bu gün Akademiya Beynəlxalq Dənizçilik Universitetləri Assosiasiyasının (IAMU) və digər nüfuzlu universitet birliklərinin üzvüdür. Beynəlxalq fəaliyyət ikitərəfli tərəfdaşlıqları, beynəlxalq proqramlarda iştirakı və əcnəbi tələbələrin cəlbini əhatə edir; Erasmus+ layihələri bu istiqamətdə xüsusi yer tutur.' },
+    ru: { title: 'Тридцать лет и глобальная сеть', description: 'Сегодня Академия — член Международной ассоциации морских университетов (IAMU) и других авторитетных университетских объединений. Международная деятельность охватывает двусторонние партнёрства, участие в международных программах и привлечение иностранных студентов; особое место занимают проекты Erasmus+.' },
+    en: { title: 'Thirty years and a global network', description: 'Today the Academy is a member of the International Association of Maritime Universities (IAMU) and other respected university bodies. Its international work spans bilateral partnerships, participation in international programmes and the recruitment of international students, with Erasmus+ projects playing a particular role.' },
+  },
+];
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     const inFlight = new Set<string>();
@@ -1746,29 +1876,49 @@ export default {
       strapi.log.error('[seed] menu xetasi: ' + (err as Error).message);
     }
 
-    // Mərhələ (milestone) — 144 illik marşrut skeleti (boşdursa)
-    // QEYD: bunlar redaktə üçün SKELET nöqtələrdir. Təsis ili mübahisəsi
-    // (1881 vs 1996) həll edilməmiş məzmun məsələsidir — editorlar dəqiqləşdirir.
+    // Tarix marşrutu — 1867–2026
+    //
+    // `year` təbii açardır. Mərhələ mövcuddursa toxunulmur.
+    // MILESTONE_RESEED=true bütün mərhələləri SİLİB yenidən yazır: köhnə
+    // skelet nöqtələr (1960, 2020 kimi) yeni siyahıda yoxdur və üzərinə
+    // yazmaqla təmizlənmirdi. Skelet mətnləri onsuz da yer tutucu idi.
     try {
       const uid = 'api::milestone.milestone';
-      const first = await strapi.documents(uid).findFirst({ locale: 'az' });
-      if (!first) {
-        const seeds: Array<{ year: number; era: string; sortOrder: number; title: string; description: string }> = [
-          { year: 1881, era: 'temel', sortOrder: 10, title: 'Dəniz təhsilinin ilk təməlləri', description: 'Xəzər regionunda peşəkar dəniz təhsilinin erkən mərhələsi.' },
-          { year: 1920, era: 'inkisaf', sortOrder: 20, title: 'İnstitusional formalaşma', description: 'Təhsil strukturunun institusional əsasda qurulması.' },
-          { year: 1960, era: 'inkisaf', sortOrder: 30, title: 'Genişlənmə dövrü', description: 'İxtisasların və tədris bazasının genişlənməsi.' },
-          { year: 1996, era: 'muasir', sortOrder: 40, title: 'Müasir akademiya statusu', description: 'Müstəqillik dövründə akademiyanın yenidən təşkili.' },
-          { year: 2020, era: 'muasir', sortOrder: 50, title: 'Rəqəmsal transformasiya', description: 'Rəqəmsal tədris və beynəlxalq inteqrasiya istiqamətləri.' },
-        ];
-        for (const s of seeds) {
-          await strapi.documents(uid).create({
-            data: { year: s.year, era: s.era, sortOrder: s.sortOrder, title: s.title, description: s.description } as never,
-            locale: 'az',
-          });
-        }
-        strapi.log.info('[seed] Merhele skeleti yaradildi: ' + seeds.length + ' nogte (az).');
+      const force = process.env.MILESTONE_RESEED === 'true';
+      const existing = (await strapi.documents(uid).findMany({
+        locale: 'az',
+        fields: ['year'],
+        limit: 200,
+      })) as unknown as Array<{ documentId: string; year: number }>;
+
+      if (existing.length && !force) {
+        strapi.log.info(
+          '[seed] Merhele: ' + existing.length + ' movcuddur, otulur. Yenilemek ucun MILESTONE_RESEED=true.',
+        );
       } else {
-        strapi.log.info('[seed] Merhele artiq movcuddur, otulur.');
+        for (const e of existing) {
+          await strapi.documents(uid).delete({ documentId: e.documentId });
+        }
+
+        for (const m of MILESTONE_SEED) {
+          const shared = { year: m.year, era: m.era, sortOrder: m.sortOrder };
+          const doc = await strapi.documents(uid).create({
+            locale: 'az',
+            data: { ...shared, ...m.az } as never,
+          });
+          // ru/en lokalizasiyaları — bunlar olmasa hemin dillerde sehife bos qalir
+          for (const loc of ['ru', 'en'] as const) {
+            await strapi.documents(uid).update({
+              documentId: doc.documentId,
+              locale: loc,
+              data: { ...shared, ...m[loc] } as never,
+            });
+          }
+        }
+        strapi.log.info(
+          '[seed] Merhele marsrutu: ' + existing.length + ' silindi, ' +
+            MILESTONE_SEED.length + ' x 3 dil yazildi.',
+        );
       }
     } catch (err) {
       strapi.log.error('[seed] merhele xetasi: ' + (err as Error).message);

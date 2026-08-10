@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   return {
-    title: tr('144 illik dəniz marşrutu', locale),
+    title: tr('Dənizçilik təhsilimizin marşrutu', locale),
     description: tr('Təməldən bu günə — akademiyanın dənizçilik təhsilindəki tarixi yolu.', locale),
   };
 }
@@ -52,6 +52,13 @@ export default async function HistoryPage({ params }: { params: Promise<{ locale
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
 
+  // Dövr aralığı MƏLUMATDAN hesablanır. Başlıqda «144 illik» sabit yazılmışdı;
+  // 2026-da bu rəqəm artıq səhv idi və hər il əl ilə düzəldilməli olurdu.
+  const years = milestones.map((m) => m.year).filter((y) => Number.isFinite(y));
+  const span = years.length
+    ? `${Math.min(...years)} — ${Math.max(...years)} · ${milestones.length} ${tr('mərhələ', locale)}`
+    : null;
+
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
@@ -60,11 +67,15 @@ export default async function HistoryPage({ params }: { params: Promise<{ locale
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('Akademiyanın tarixi', locale)}</div>
             <h1 className="np-h1" style={{ viewTransitionName: 'history-title' }}>
-              {tr('144 illik dəniz marşrutu', locale)}
+              {tr('Dənizçilik təhsilimizin marşrutu', locale)}
             </h1>
             <p className="np-lead">
-              {tr('Təməldən bu günə — akademiyanın dənizçilik təhsilindəki yolu.', locale)}
+              {tr(
+                'Xəzərin sahilində dənizçilik təhsilinin ilk siniflərindən müasir akademiyaya qədər — adlar, qərarlar və dönüş nöqtələri ilə.',
+                locale,
+              )}
             </p>
+            {span ? <p className="tl-span">{span}</p> : null}
           </div>
         </section>
 
