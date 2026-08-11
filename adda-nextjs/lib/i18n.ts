@@ -776,6 +776,19 @@ const T: Array<[string, string, string]> = [
   ['International Admissions',
    'Приём иностранных студентов',
    'International Admissions'],
+  // --- K36 struktur: əvvəldən çatışmayan açarlar (ru/en-də az mətn qalırdı) ---
+  ['işçi', 'сотрудников', 'staff'],
+  ['bölmə', 'подразделений', 'units'],
+  ['vakant', 'вакансия', 'vacant'],
+  ['Struktur məlumatı hazırda əlçatan deyil.', 'Данные о структуре сейчас недоступны.', 'Structure data is currently unavailable.'],
+  ['Azərbaycan Dövlət Dəniz Akademiyasının təşkilati strukturu.', 'Организационная структура Азербайджанской Государственной Морской Академии.', 'The organisational structure of the Azerbaijan State Marine Academy.'],
+  // --- K36 struktur ağacı (az, ru, en) ---
+  ['Bölmə və ya rəhbər axtar', 'Поиск подразделения или руководителя', 'Search a unit or head'],
+  ['Təmizlə', 'Очистить', 'Clear'],
+  ['Hamısını aç', 'Развернуть всё', 'Expand all'],
+  ['Hamısını yığ', 'Свернуть всё', 'Collapse all'],
+  ['Uyğun bölmə tapılmadı.', 'Подразделения не найдены.', 'No matching units.'],
+  ['Akademiyanın təsdiqlənmiş təşkilati strukturu — bölmələr, rəhbərlər və tabelik silsiləsi.', 'Утверждённая организационная структура Академии — подразделения, руководители и порядок подчинения.', 'The Academy\u2019s approved organisational structure \u2014 units, heads and reporting lines.'],
   // --- K34 tarix marşrutu (az, ru, en) ---
   ['Dənizçilik təhsilimizin marşrutu', 'Маршрут нашего морского образования', 'The course of our maritime education'],
   ['Xəzərin sahilində dənizçilik təhsilinin ilk siniflərindən müasir akademiyaya qədər — adlar, qərarlar və dönüş nöqtələri ilə.', 'От первых мореходных классов на берегу Каспия до современной академии — имена, решения и поворотные точки.', 'From the first navigation classes on the Caspian shore to the modern Academy — the names, decisions and turning points.'],

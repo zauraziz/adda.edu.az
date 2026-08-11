@@ -1,0 +1,229 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — K36 / Təşkilati struktur ağacı (`org-*`)
+   Yalnız mövcud tokenlər. Səviyyələr vizual olaraq fərqlənir,
+   bağlayıcı xətlər valideyn-övlad əlaqəsini açıq göstərir.
+   ═══════════════════════════════════════════════════════ */
+
+.org-wrap { padding-bottom: clamp(3rem, 6vw, 4.5rem); }
+
+/* ── Alət zolağı ── */
+.org-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.org-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+.org-search > i {
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  color: var(--navy-500);
+  pointer-events: none;
+}
+.org-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 38px 0 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+.org-search input:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 1px; }
+.org-search input::-webkit-search-cancel-button { display: none; }
+.org-clear {
+  position: absolute;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.org-clear:hover { background: var(--navy-50); }
+
+.org-actions { display: flex; gap: 8px; }
+.org-actions button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.org-actions button:hover:not(:disabled) { border-color: var(--gold-400); color: var(--navy-700); }
+.org-actions button:disabled { opacity: 0.45; cursor: default; }
+
+/* ── Ağac ── */
+.org-tree { list-style: none; margin: 0; padding: 0; }
+.org-tree--root > .org-item { margin-bottom: 10px; }
+
+/* Alt səviyyələr: girinti + şaquli bağlayıcı xətt */
+.org-item .org-tree {
+  position: relative;
+  margin: 6px 0 0 21px;
+  padding-left: 22px;
+}
+.org-item .org-tree::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Sonuncu övladın mərkəzinədək — aşağısı kəsilir */
+  bottom: 26px;
+  width: 1px;
+  background: var(--line);
+}
+/* Hər övladdan valideyn xəttinə dirsək */
+.org-item .org-tree > .org-item { position: relative; }
+.org-item .org-tree > .org-item::before {
+  content: '';
+  position: absolute;
+  top: 26px;
+  left: -22px;
+  width: 16px;
+  height: 1px;
+  background: var(--line);
+}
+
+.org-row { display: flex; align-items: flex-start; gap: 6px; }
+
+.org-toggle {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  margin-top: 11px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--navy-600);
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform var(--nav-dur) var(--nav-ease),
+              border-color var(--nav-dur) var(--nav-ease);
+}
+.org-toggle:hover { border-color: var(--gold-400); }
+.org-toggle i { transition: transform var(--nav-dur) var(--nav-ease); }
+.org-toggle.is-open i { transform: rotate(90deg); }
+.org-toggle--leaf {
+  border: 0;
+  background: none;
+  cursor: default;
+  position: relative;
+}
+.org-toggle--leaf::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--gold-400);
+}
+
+/* ── Bölmə kartı ── */
+.org-card {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--navy-800);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  text-decoration: none;
+  transition: border-color var(--nav-dur) var(--nav-ease),
+              box-shadow var(--nav-dur) var(--nav-ease);
+}
+.org-card:hover {
+  border-color: var(--gold-400);
+  border-left-color: var(--gold-500);
+  box-shadow: var(--nav-sh-lg);
+}
+.org-card:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 2px; }
+
+.org-name {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--navy-900);
+}
+.org-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.org-head i { font-size: 14px; color: var(--navy-500); }
+
+.org-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.org-chip {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-full);
+  background: var(--navy-50);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--navy-600);
+}
+.org-chip--vac {
+  background: var(--gold-100);
+  color: var(--gold-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Səviyyə fərqi: yuxarı səviyyə ağır, aşağı yüngül ── */
+.org-item--l1 > .org-row > .org-card { padding: 0.95rem 1.15rem; }
+.org-item--l1 > .org-row > .org-card .org-name { font-size: 1.08rem; }
+
+.org-item--l2 > .org-row > .org-card { border-left-color: var(--navy-500); }
+.org-item--l2 > .org-row > .org-card .org-name { font-size: 0.98rem; }
+
+.org-item--l3 > .org-row > .org-card {
+  border-left-color: var(--gold-400);
+  background: var(--navy-50);
+}
+.org-item--l3 > .org-row > .org-card .org-name { font-size: 0.92rem; font-family: var(--font-body); font-weight: 700; }
+
+.org-empty {
+  padding: 2rem 0;
+  font-family: var(--font-body);
+  color: var(--ink-soft);
+}
+
+@media (max-width: 560px) {
+  .org-item .org-tree { margin-left: 12px; padding-left: 16px; }
+  .org-item .org-tree > .org-item::before { left: -16px; width: 12px; }
+  .org-toggle { width: 26px; height: 26px; }
+  .org-actions { width: 100%; }
+  .org-actions button { flex: 1 1 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .org-toggle, .org-toggle i, .org-card { transition: none !important; }
+}

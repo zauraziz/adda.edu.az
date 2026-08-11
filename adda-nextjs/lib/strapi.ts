@@ -760,6 +760,8 @@ export interface OrgUnit {
   about: string | null;
   vacancies: { position: string }[] | null;
   parent: { slug: string; name: string } | null;
+  /** K36: ağacda «kim rəhbərlik edir» göstərilir. */
+  head?: { name: string; slug: string } | null;
   locale: Locale;
 }
 
@@ -776,6 +778,10 @@ export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
     'populate[vacancies]': true,
     'populate[parent][fields][0]': 'slug',
     'populate[parent][fields][1]': 'name',
+    // K36: bölmə rəhbəri ağacda göstərilir. Populate yazılmasa Strapi
+    // əlaqəni ÜMUMİYYƏTLƏ qaytarmır — sahə səssizcə cavabdan düşür.
+    'populate[head][fields][0]': 'name',
+    'populate[head][fields][1]': 'slug',
   });
 }
 

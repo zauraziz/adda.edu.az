@@ -24,11 +24,12 @@ import '../../_styles/16-footer-ftx.css';
 import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
+import '../../_styles/34-org.css';
 import '../../_styles/28-staff.css';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
+import OrgTree, { type OrgNode } from '../../_components/OrgTree';
 import { getMenu, getUnits, getStaff, type OrgUnit, type Person, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -51,12 +52,9 @@ export async function generateMetadata({
   };
 }
 
-interface Node extends OrgUnit {
-  children: Node[];
-  staffCount: number;
-}
-
-function buildTree(units: OrgUnit[], staff: Person[]): Node[] {
+// Ağac serverdə qurulur və SERİALİZASİYA OLUNAN formada klientə verilir.
+// `tr()` burada tətbiq olunur — i18n lüğəti klient bundle-ına düşmür.
+function buildTree(units: OrgUnit[], staff: Person[], locale: Locale): OrgNode[] {
   const counts = new Map<string, number>();
   for (const p of staff) {
     for (const r of p.roles ?? []) {
@@ -64,46 +62,29 @@ function buildTree(units: OrgUnit[], staff: Person[]): Node[] {
     }
   }
 
-  const nodes = new Map<string, Node>();
+  const nodes = new Map<string, OrgNode & { _parent: string | null }>();
   for (const u of units) {
-    nodes.set(u.slug, { ...u, children: [], staffCount: counts.get(u.name) ?? 0 });
+    nodes.set(u.slug, {
+      slug: u.slug,
+      name: tr(u.name, locale),
+      href: `/${locale}/struktur/${u.slug}`,
+      head: u.head
+        ? { name: u.head.name, href: `/${locale}/emekdas/${u.head.slug}` }
+        : null,
+      staffCount: counts.get(u.name) ?? 0,
+      vacancies: (u.vacancies ?? []).map((v) => tr(v.position, locale)),
+      children: [],
+      _parent: u.parent?.slug ?? null,
+    });
   }
 
-  const roots: Node[] = [];
+  const roots: OrgNode[] = [];
   for (const n of nodes.values()) {
-    const parent = n.parent?.slug ? nodes.get(n.parent.slug) : null;
+    const parent = n._parent ? nodes.get(n._parent) : null;
     if (parent) parent.children.push(n);
     else roots.push(n);
   }
   return roots;
-}
-
-function Branch({ nodes, locale }: { nodes: Node[]; locale: Locale }) {
-  if (!nodes.length) return null;
-  return (
-    <ul className="stf-tree">
-      {nodes.map((n) => {
-        const vacancies = n.vacancies ?? [];
-        const meta: string[] = [];
-        if (n.staffCount) meta.push(`${n.staffCount} ${tr('işçi', locale)}`);
-        if (n.children.length) meta.push(`${n.children.length} ${tr('bölmə', locale)}`);
-        return (
-          <li key={n.slug} className={n.children.length ? 'stf-node' : 'stf-node stf-node--leaf'}>
-            <Link href={`/${locale}/struktur/${n.slug}`} className="stf-unit">
-              <span className="stf-unit-name">{tr(n.name, locale)}</span>
-              {meta.length ? <span className="stf-unit-meta">{meta.join(' · ')}</span> : null}
-              {vacancies.map((v) => (
-                <span key={v.position} className="stf-vac">
-                  {tr(v.position, locale)} — {tr('vakant', locale)}
-                </span>
-              ))}
-            </Link>
-            <Branch nodes={n.children} locale={locale} />
-          </li>
-        );
-      })}
-    </ul>
-  );
 }
 
 export default async function StructurePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -116,7 +97,7 @@ export default async function StructurePage({ params }: { params: Promise<{ loca
     getStaff(locale).catch(() => [] as Person[]),
   ]);
 
-  const roots = buildTree(units, staff);
+  const roots = buildTree(units, staff, locale);
 
   return (
     <>
@@ -126,14 +107,31 @@ export default async function StructurePage({ params }: { params: Promise<{ loca
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('Akademiya', locale)}</div>
             <h1 className="np-h1">{tr('Təşkilati struktur', locale)}</h1>
-            <p className="np-lead">{tr('Akademiyanın 2025-ci il üçün təsdiqlənmiş təşkilati strukturu.', locale)}</p>
+            <p className="np-lead">
+              {tr(
+                'Akademiyanın təsdiqlənmiş təşkilati strukturu — bölmələr, rəhbərlər və tabelik silsiləsi.',
+                locale,
+              )}
+            </p>
           </div>
         </section>
 
         <section className="np-wrap">
           <div className="container">
             {roots.length ? (
-              <Branch nodes={roots} locale={locale} />
+              <OrgTree
+                roots={roots}
+                labels={{
+                  search: tr('Bölmə və ya rəhbər axtar', locale),
+                  clear: tr('Təmizlə', locale),
+                  expandAll: tr('Hamısını aç', locale),
+                  collapseAll: tr('Hamısını yığ', locale),
+                  staff: tr('işçi', locale),
+                  units: tr('bölmə', locale),
+                  vacant: tr('vakant', locale),
+                  nothing: tr('Uyğun bölmə tapılmadı.', locale),
+                }}
+              />
             ) : (
               <p className="np-empty">{tr('Struktur məlumatı hazırda əlçatan deyil.', locale)}</p>
             )}
