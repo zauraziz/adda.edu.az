@@ -1616,6 +1616,52 @@ const LEADERSHIP_SEED: LeadSeed[] = [
   },
 ];
 
+
+// ── K38 · Struktur ağacı ──
+// Təsdiqlənmiş ierarxiya: Elmi Şura → Rektor → prorektorlar → şöbə/fakültə
+// → kafedra. Uyğunluq əvvəlcə `slug`, tapılmasa NORMALLAŞDIRILMIŞ AD üzrə
+// qurulur — mövcud qeydlər təkrarlanmasın deyə. Tapılmayan yaradılır.
+// `unit` draftAndPublish=true → publish() AÇIQ çağırılır.
+interface UnitSeed {
+  slug: string;
+  az: string;
+  ru: string;
+  en: string;
+  parent: string | null;
+  sortOrder: number;
+}
+
+const UNIT_TREE: UnitSeed[] = [
+  { slug: 'elmi-sura', az: 'Elmi Şura', ru: 'Учёный совет', en: 'Academic Council', parent: null, sortOrder: 10 },
+  { slug: 'rektor', az: 'Rektor', ru: 'Ректор', en: 'Rector', parent: 'elmi-sura', sortOrder: 10 },
+  { slug: 'rektorun-musaviri', az: 'Rektorun müşaviri', ru: 'Советник ректора', en: 'Adviser to the Rector', parent: 'rektor', sortOrder: 10 },
+  { slug: 'rektorun-komekcisi', az: 'Rektorun köməkçisi', ru: 'Помощник ректора', en: 'Assistant to the Rector', parent: 'rektor', sortOrder: 20 },
+  { slug: 'elmi-katib', az: 'Elmi katib', ru: 'Учёный секретарь', en: 'Academic Secretary', parent: 'rektor', sortOrder: 30 },
+  { slug: 'referent', az: 'Referent', ru: 'Референт', en: 'Referent', parent: 'rektor', sortOrder: 40 },
+  { slug: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', az: 'Tədrisin təşkili və idarəedilməsi üzrə prorektor', ru: 'Проректор по организации и управлению учебным процессом', en: 'Vice-Rector for Academic Organisation and Management', parent: 'rektor', sortOrder: 50 },
+  { slug: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', az: '«Gəmi mexanikası və elektromexanikası» fakültəsi', ru: 'Факультет судовой механики и электромеханики', en: 'Faculty of Marine Engineering and Electrical Engineering', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 10 },
+  { slug: 'tetbiqi-mexanika-kafedrasi', az: '«Tətbiqi mexanika» kafedrası', ru: 'Кафедра прикладной механики', en: 'Applied Mechanics Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 10 },
+  { slug: 'gemi-energetik-qurgulari-kafedrasi', az: '«Gəmi energetik qurğuları» kafedrası', ru: 'Кафедра судовых энергетических установок', en: 'Marine Power Plants Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 20 },
+  { slug: 'gemi-elektroavtomatikasi-kafedrasi', az: '«Gəmi elektroavtomatikası» kafedrası', ru: 'Кафедра судовой электроавтоматики', en: 'Marine Electrical Automation Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 30 },
+  { slug: 'gemi-suruculuyu-fakultesi', az: '«Gəmi sürücülüyü» fakültəsi', ru: 'Факультет судовождения', en: 'Faculty of Navigation', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 20 },
+  { slug: 'deniz-naviqasiyasi-kafedrasi', az: '«Dəniz naviqasiyası» kafedrası', ru: 'Кафедра морской навигации', en: 'Marine Navigation Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 10 },
+  { slug: 'gemiqayirma-ve-gemi-temiri-kafedrasi', az: '«Gəmiqayırma və gəmi təmiri» kafedrası', ru: 'Кафедра судостроения и судоремонта', en: 'Shipbuilding and Ship Repair Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 20 },
+  { slug: 'ingilis-dili-kafedrasi', az: '«İngilis dili» kafedrası', ru: 'Кафедра английского языка', en: 'English Language Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 30 },
+  { slug: 'humanitar-fenler-kafedrasi', az: '«Humanitar fənlər» kafedrası', ru: 'Кафедра гуманитарных дисциплин', en: 'Humanities Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 40 },
+  { slug: 'tedris-proseslerinin-teskili-sobesi', az: 'Tədris proseslərinin təşkili şöbəsi', ru: 'Отдел организации учебного процесса', en: 'Academic Process Organisation Department', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 30 },
+  { slug: 'teserrufat-isleri-sobesi', az: 'Təsərrüfat işləri şöbəsi', ru: 'Отдел хозяйственных работ', en: 'Facilities Department', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 40 },
+  { slug: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', az: 'Elmi işlər və beynəlxalq əlaqələr üzrə prorektor', ru: 'Проректор по научной работе и международным связям', en: 'Vice-Rector for Research and International Relations', parent: 'rektor', sortOrder: 60 },
+  { slug: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi', az: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi', ru: 'Отдел научных исследований и международных связей', en: 'Research and International Relations Department', parent: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', sortOrder: 10 },
+  { slug: 'informasiya-resurs-merkezi', az: 'İnformasiya resurs mərkəzi', ru: 'Информационно-ресурсный центр', en: 'Information Resource Centre', parent: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', sortOrder: 20 },
+  { slug: 'metbee', az: 'Mətbəə', ru: 'Типография', en: 'Printing House', parent: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', sortOrder: 30 },
+  { slug: 'muhasibat-ucotu-ve-hesabati-sobesi', az: 'Mühasibat uçotu və hesabatı şöbəsi', ru: 'Отдел бухгалтерского учёта и отчётности', en: 'Accounting and Reporting Department', parent: 'rektor', sortOrder: 70 },
+  { slug: 'huquq-meslehetcisi', az: 'Hüquq məsləhətçisi', ru: 'Юрисконсульт', en: 'Legal Adviser', parent: 'rektor', sortOrder: 80 },
+  { slug: 'personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi', az: 'Personalın idarəedilməsi, əmək haqqı və kargüzarlıq şöbəsi', ru: 'Отдел управления персоналом, оплаты труда и делопроизводства', en: 'HR, Payroll and Records Department', parent: 'rektor', sortOrder: 90 },
+  { slug: 'tehsil-innovasiyalari-ve-reqemsal-heller-merkezi', az: 'Təhsil innovasiyaları və rəqəmsal həllər mərkəzi', ru: 'Центр образовательных инноваций и цифровых решений', en: 'Centre for Educational Innovation and Digital Solutions', parent: 'rektor', sortOrder: 100 },
+  { slug: 'telim-tedris-merkezi', az: 'Təlim Tədris Mərkəzi', ru: 'Учебно-тренировочный центр', en: 'Training Centre', parent: 'rektor', sortOrder: 110 },
+  { slug: 'azerbaycan-denizcilik-kolleci-phs', az: 'Azərbaycan Dənizçilik Kolleci PHŞ', ru: 'Азербайджанский морской колледж ППЛ', en: 'Azerbaijan Maritime College', parent: 'rektor', sortOrder: 120 },
+];
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     const inFlight = new Set<string>();
@@ -2158,6 +2204,90 @@ export default {
     } catch (err) {
       strapi.log.error('[seed] rehberlik sehifeleri xetasi: ' + (err as Error).message);
     }
+    // Struktur ağacı — təsdiqlənmiş ierarxiya
+    //
+    // UNIT_RESEED=true olmadan İŞLƏMİR: bu blok mövcud bölmələrin valideyn
+    // əlaqəsini və sırasını dəyişir, təsadüfən işə düşməməlidir.
+    // Heç bir qeyd SİLİNMİR — ağacda olmayanlar yalnız loga yazılır ki,
+    // redaktor admin paneldə özü qərar versin.
+    try {
+      const uid = 'api::unit.unit';
+      if (process.env.UNIT_RESEED !== 'true') {
+        strapi.log.info('[seed] Struktur agaci otuldu. Qurmaq ucun UNIT_RESEED=true.');
+      } else {
+        const norm = (s: string) =>
+          (s || '').replace(/[«»"“”]/g, '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('az');
+
+        const existing = (await strapi.documents(uid).findMany({
+          locale: 'az',
+          fields: ['slug', 'name'],
+          limit: 500,
+          status: 'draft',
+        })) as unknown as Array<{ documentId: string; slug: string; name: string }>;
+
+        const bySlug = new Map(existing.map((e) => [e.slug, e]));
+        const byName = new Map(existing.map((e) => [norm(e.name), e]));
+        const ids = new Map<string, string>(); // seed slug -> documentId
+        const matched = new Set<string>();
+
+        // 1-ci keçid: qeydləri tap və ya yarat (valideyn hələ qoyulmur)
+        for (const u of UNIT_TREE) {
+          const hit = bySlug.get(u.slug) ?? byName.get(norm(u.az));
+          if (hit) {
+            ids.set(u.slug, hit.documentId);
+            matched.add(hit.documentId);
+            await strapi.documents(uid).update({
+              documentId: hit.documentId,
+              locale: 'az',
+              data: { name: u.az, sortOrder: u.sortOrder } as never,
+            });
+          } else {
+            const doc = await strapi.documents(uid).create({
+              locale: 'az',
+              data: { name: u.az, slug: u.slug, sortOrder: u.sortOrder } as never,
+            });
+            ids.set(u.slug, doc.documentId);
+            matched.add(doc.documentId);
+          }
+        }
+
+        // 2-ci keçid: valideyn əlaqələri (hamısı artıq mövcuddur)
+        for (const u of UNIT_TREE) {
+          const documentId = ids.get(u.slug) as string;
+          const parentId = u.parent ? ids.get(u.parent) : null;
+          for (const loc of ['az', 'ru', 'en'] as const) {
+            const text = loc === 'az' ? u.az : loc === 'ru' ? u.ru : u.en;
+            await strapi.documents(uid).update({
+              documentId,
+              locale: loc,
+              data: {
+                name: text,
+                slug: u.slug,
+                sortOrder: u.sortOrder,
+                parent: parentId ?? null,
+              } as never,
+            });
+          }
+          for (const loc of ['az', 'ru', 'en'] as const) {
+            await strapi.documents(uid).publish({ documentId, locale: loc });
+          }
+        }
+
+        const extras = existing.filter((e) => !matched.has(e.documentId));
+        strapi.log.info(
+          '[seed] Struktur agaci: ' + UNIT_TREE.length + ' bolme x 3 dil yazildi.',
+        );
+        if (extras.length) {
+          strapi.log.warn(
+            '[seed] Agacda OLMAYAN ' + extras.length + ' bolme qaldi (silinmedi): ' +
+              extras.map((e) => e.slug).join(', '),
+          );
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] struktur agaci xetasi: ' + (err as Error).message);
+    }
+
 
 
   },
