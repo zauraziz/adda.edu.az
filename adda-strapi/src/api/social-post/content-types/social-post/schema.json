@@ -4,7 +4,7 @@
   "info": {
     "singularName": "social-post",
     "pluralName": "social-posts",
-    "displayName": "Sosial paylaşım",
+    "displayName": "3. Sayt — Sosial paylaşım",
     "description": "Ana səhifə karuselindəki paylaşım kartları. Bir kart = bir qeyd: dil seçicisi ilə işləmək lazım deyil, altyazının üç dili eyni formada yazılır."
   },
   "options": {

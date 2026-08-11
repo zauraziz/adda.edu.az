@@ -4,7 +4,7 @@
   "info": {
     "singularName": "unit",
     "pluralName": "units",
-    "displayName": "Struktur bölmə",
+    "displayName": "2. Akademiya — Struktur bölmə",
     "description": "İnzibati struktur bölmələri (şöbə, mərkəz, idarə)"
   },
   "options": {
@@ -75,6 +75,15 @@
       "relation": "oneToMany",
       "target": "api::person.person",
       "mappedBy": "unit"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 100,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     }
   }
 }

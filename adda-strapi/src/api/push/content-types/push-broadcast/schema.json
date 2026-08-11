@@ -4,7 +4,7 @@
   "info": {
     "singularName": "push-broadcast",
     "pluralName": "push-broadcasts",
-    "displayName": "Push yayımı",
+    "displayName": "4. Müraciət — Push yayımı",
     "description": "Yayım jurnalı. dedupeKey unikaldır — təkrar publish təkrar bildiriş göndərmir."
   },
   "options": {

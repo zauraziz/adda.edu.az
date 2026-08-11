@@ -762,6 +762,7 @@ export interface OrgUnit {
   parent: { slug: string; name: string } | null;
   /** K36: ağacda «kim rəhbərlik edir» göstərilir. */
   head?: { name: string; slug: string } | null;
+  sortOrder?: number;
   locale: Locale;
 }
 
@@ -775,6 +776,10 @@ export interface OrgUnit {
 export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
   return fetchAllPages<OrgUnit>('/units', {
     locale,
+    // K37: qardaş bölmələrin sırası admin paneldən idarə olunur.
+    // Əvvəl sıralama yox idi — redaktor bölməni yuxarı qaldıra bilmirdi.
+    'sort[0]': 'sortOrder:asc',
+    'sort[1]': 'name:asc',
     'populate[vacancies]': true,
     'populate[parent][fields][0]': 'slug',
     'populate[parent][fields][1]': 'name',

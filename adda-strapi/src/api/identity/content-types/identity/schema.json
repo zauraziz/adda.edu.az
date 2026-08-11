@@ -4,7 +4,7 @@
   "info": {
     "singularName": "identity",
     "pluralName": "identities",
-    "displayName": "Kimlik",
+    "displayName": "5. Sistem — Kimlik",
     "description": "Parolsuz (magic-link) təsdiqlənmiş e-poçt kimlikləri — RSVP və düzəliş göndərənləri"
   },
   "options": {

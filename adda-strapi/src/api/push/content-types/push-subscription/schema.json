@@ -4,7 +4,7 @@
   "info": {
     "singularName": "push-subscription",
     "pluralName": "push-subscriptions",
-    "displayName": "Push abunəliyi",
+    "displayName": "4. Müraciət — Push abunəliyi",
     "description": "Web Push (VAPID) abunəlikləri. Endpoint və açarlar private — API ilə heç vaxt qaytarılmır."
   },
   "options": {

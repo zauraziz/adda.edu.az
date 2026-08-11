@@ -446,7 +446,7 @@ export interface ApiAnnouncementAnnouncement
   collectionName: 'announcements';
   info: {
     description: 'R\u0259smi elanlar \u2014 m\u00FCdd\u0259tli, \u0259h\u0259miyy\u0259t d\u0259r\u0259c\u0259li';
-    displayName: 'Elan';
+    displayName: '1. M\u0259zmun \u2014 Elan';
     pluralName: 'announcements';
     singularName: 'announcement';
   };
@@ -576,7 +576,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   collectionName: 'articles';
   info: {
     description: 'Akademiya x\u0259b\u0259rl\u0259ri v\u0259 elanlar\u0131';
-    displayName: 'X\u0259b\u0259r';
+    displayName: '1. M\u0259zmun \u2014 X\u0259b\u0259r';
     pluralName: 'articles';
     singularName: 'article';
   };
@@ -702,7 +702,7 @@ export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
   collectionName: 'corrections';
   info: {
     description: 'Crowdsourced m\u0259zmun d\u00FCz\u0259li\u015Fl\u0259ri \u2014 moderasiya n\u00F6vb\u0259si (diff-view)';
-    displayName: 'D\u00FCz\u0259li\u015F';
+    displayName: '4. M\u00FCraci\u0259t \u2014 M\u0259zmun d\u00FCz\u0259li\u015Fi';
     pluralName: 'corrections';
     singularName: 'correction';
   };
@@ -763,7 +763,7 @@ export interface ApiDepartmentDepartment extends Struct.CollectionTypeSchema {
   collectionName: 'departments';
   info: {
     description: 'Fak\u00FClt\u0259 t\u0259rkibind\u0259ki kafedralar';
-    displayName: 'Kafedra';
+    displayName: '2. Akademiya \u2014 Kafedra';
     pluralName: 'departments';
     singularName: 'department';
   };
@@ -818,7 +818,7 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
   collectionName: 'documents';
   info: {
     description: 'Normativ-h\u00FCquqi s\u0259n\u0259dl\u0259r, \u0259sasnam\u0259l\u0259r, hesabatlar';
-    displayName: 'S\u0259n\u0259d';
+    displayName: '1. M\u0259zmun \u2014 S\u0259n\u0259d';
     pluralName: 'documents';
     singularName: 'document';
   };
@@ -905,7 +905,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
     description: 'Konfrans, seminar, a\u00E7\u0131q d\u0259rs \u2014 fiziki / onlayn / hibrid';
-    displayName: 'T\u0259dbir';
+    displayName: '1. M\u0259zmun \u2014 T\u0259dbir';
     pluralName: 'events';
     singularName: 'event';
   };
@@ -1051,7 +1051,7 @@ export interface ApiFacultyFaculty extends Struct.CollectionTypeSchema {
   collectionName: 'faculties';
   info: {
     description: 'Akademiyan\u0131n fak\u00FClt\u0259l\u0259ri';
-    displayName: 'Fak\u00FClt\u0259';
+    displayName: '2. Akademiya \u2014 Fak\u00FClt\u0259';
     pluralName: 'faculties';
     singularName: 'faculty';
   };
@@ -1116,7 +1116,7 @@ export interface ApiIdentityIdentity extends Struct.CollectionTypeSchema {
   collectionName: 'identities';
   info: {
     description: 'Parolsuz (magic-link) t\u0259sdiql\u0259nmi\u015F e-po\u00E7t kimlikl\u0259ri \u2014 RSVP v\u0259 d\u00FCz\u0259li\u015F g\u00F6nd\u0259r\u0259nl\u0259ri';
-    displayName: 'Kimlik';
+    displayName: '5. Sistem \u2014 Kimlik';
     pluralName: 'identities';
     singularName: 'identity';
   };
@@ -1172,7 +1172,7 @@ export interface ApiIdentityIdentityToken extends Struct.CollectionTypeSchema {
   collectionName: 'identity_tokens';
   info: {
     description: 'Magic-link v\u0259 sessiya tokenl\u0259rinin SHA-256 hash-lar\u0131. Plaintext HE\u00C7 VAXT saxlanm\u0131r.';
-    displayName: 'Kimlik tokeni';
+    displayName: '5. Sistem \u2014 Kimlik tokeni';
     pluralName: 'identity-tokens';
     singularName: 'identity-token';
   };
@@ -1218,7 +1218,7 @@ export interface ApiMenuMenu extends Struct.SingleTypeSchema {
   collectionName: 'menus';
   info: {
     description: 'Sayt\u0131n b\u00FCt\u00FCn menyular\u0131 \u2014 \u018Fsas, \u00DCst, E-Akademiya, \u0130stifad\u0259\u00E7i qruplar\u0131, S\u00FCr\u0259tli ke\u00E7idl\u0259r, Footer';
-    displayName: 'Menyu';
+    displayName: '3. Sayt \u2014 Menyu';
     pluralName: 'menus';
     singularName: 'menu';
   };
@@ -1283,7 +1283,7 @@ export interface ApiMilestoneMilestone extends Struct.CollectionTypeSchema {
   collectionName: 'milestones';
   info: {
     description: '144 illik d\u0259niz mar\u015Frutu \u2014 akademiyan\u0131n tarixi m\u0259rh\u0259l\u0259l\u0259ri (timeline)';
-    displayName: 'M\u0259rh\u0259l\u0259';
+    displayName: '2. Akademiya \u2014 Tarix m\u0259rh\u0259l\u0259si';
     pluralName: 'milestones';
     singularName: 'milestone';
   };
@@ -1358,7 +1358,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
     description: 'Statik s\u0259hif\u0259l\u0259r (Haqq\u0131m\u0131zda, v\u0259 s.)';
-    displayName: 'S\u0259hif\u0259';
+    displayName: '1. M\u0259zmun \u2014 S\u0259hif\u0259';
     pluralName: 'pages';
     singularName: 'page';
   };
@@ -1416,7 +1416,7 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
   collectionName: 'people';
   info: {
     description: 'Professor-m\u00FC\u0259llim, inzibati v\u0259 texniki hey\u0259t';
-    displayName: 'Hey\u0259t';
+    displayName: '2. Akademiya \u2014 Hey\u0259t';
     pluralName: 'people';
     singularName: 'person';
   };
@@ -1589,7 +1589,7 @@ export interface ApiPersonProfileRevision extends Struct.CollectionTypeSchema {
   collectionName: 'profile_revisions';
   info: {
     description: '\u018Fm\u0259kda\u015F\u0131n \u00F6z profilin\u0259 etdiyi d\u0259yi\u015Fikliyin izi. `person` API folder-ind\u0259dir, amma \u00F6z routes fayl\u0131 YOXDUR \u2014 REST endpoint-i yaranm\u0131r, y\u0259ni bu tarix\u00E7\u0259 ictimai oxunmur.';
-    displayName: 'Profil d\u00FCz\u0259li\u015Fi';
+    displayName: '5. Sistem \u2014 Profil d\u00FCz\u0259li\u015Fi';
     pluralName: 'profile-revisions';
     singularName: 'profile-revision';
   };
@@ -1628,7 +1628,7 @@ export interface ApiPersonStaffPrivate extends Struct.CollectionTypeSchema {
   collectionName: 'staff_privates';
   info: {
     description: '\u0130ctimai API-d\u0259 G\u00D6R\u00DCNM\u018FY\u018FN hey\u0259t m\u0259lumat\u0131 (do\u011Fum tarixi). `person` API folder-ind\u0259dir, amma \u00F6z routes fayl\u0131 YOXDUR \u2014 buna g\u00F6r\u0259 REST endpoint-i yaranm\u0131r.';
-    displayName: 'Hey\u0259t \u2014 m\u0259xfi';
+    displayName: '5. Sistem \u2014 Hey\u0259t \u2014 m\u0259xfi';
     pluralName: 'staff-privates';
     singularName: 'staff-private';
   };
@@ -1666,7 +1666,7 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
   collectionName: 'programs';
   info: {
     description: 'T\u0259hsil ixtisaslar\u0131 / proqramlar\u0131';
-    displayName: '\u0130xtisas';
+    displayName: '2. Akademiya \u2014 \u0130xtisas';
     pluralName: 'programs';
     singularName: 'program';
   };
@@ -1732,7 +1732,7 @@ export interface ApiPushPushBroadcast extends Struct.CollectionTypeSchema {
   collectionName: 'push_broadcasts';
   info: {
     description: 'Yay\u0131m jurnal\u0131. dedupeKey unikald\u0131r \u2014 t\u0259krar publish t\u0259krar bildiri\u015F g\u00F6nd\u0259rmir.';
-    displayName: 'Push yay\u0131m\u0131';
+    displayName: '4. M\u00FCraci\u0259t \u2014 Push yay\u0131m\u0131';
     pluralName: 'push-broadcasts';
     singularName: 'push-broadcast';
   };
@@ -1793,7 +1793,7 @@ export interface ApiPushPushSubscription extends Struct.CollectionTypeSchema {
   collectionName: 'push_subscriptions';
   info: {
     description: 'Web Push (VAPID) abun\u0259likl\u0259ri. Endpoint v\u0259 a\u00E7arlar private \u2014 API il\u0259 he\u00E7 vaxt qaytar\u0131lm\u0131r.';
-    displayName: 'Push abun\u0259liyi';
+    displayName: '4. M\u00FCraci\u0259t \u2014 Push abun\u0259liyi';
     pluralName: 'push-subscriptions';
     singularName: 'push-subscription';
   };
@@ -1859,7 +1859,7 @@ export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
   collectionName: 'reactions';
   info: {
     description: 'D\u0259niz\u00E7ilik emoji reaksiyalar\u0131 (\u2693\uD83D\uDEA2\uD83E\uDDED\uD83C\uDF0A) m\u0259zmun \u00FCz\u0259rind\u0259';
-    displayName: 'Reaksiya';
+    displayName: '4. M\u00FCraci\u0259t \u2014 Reaksiya';
     pluralName: 'reactions';
     singularName: 'reaction';
   };
@@ -1906,7 +1906,7 @@ export interface ApiRectorRector extends Struct.CollectionTypeSchema {
   collectionName: 'rectors';
   info: {
     description: 'Akademiyaya r\u0259hb\u0259rlik etmi\u015F sabiq rektorlar \u2014 /sabiq-rektorlar s\u0259hif\u0259si';
-    displayName: 'Sabiq rektor';
+    displayName: '2. Akademiya \u2014 Sabiq rektor';
     pluralName: 'rectors';
     singularName: 'rector';
   };
@@ -2025,7 +2025,7 @@ export interface ApiRsvpRsvp extends Struct.CollectionTypeSchema {
   collectionName: 'rsvps';
   info: {
     description: 'T\u0259dbir qeydiyyatlar\u0131 (RSVP) \u2014 yaln\u0131z t\u0259sdiql\u0259nmi\u015F kimlikl\u0259rd\u0259n (F2.6e)';
-    displayName: 'RSVP';
+    displayName: '4. M\u00FCraci\u0259t \u2014 T\u0259dbir qeydiyyat\u0131';
     pluralName: 'rsvps';
     singularName: 'rsvp';
   };
@@ -2072,7 +2072,7 @@ export interface ApiSocialBlockSocialBlock extends Struct.SingleTypeSchema {
   collectionName: 'social_blocks';
   info: {
     description: 'Ana s\u0259hif\u0259d\u0259ki \u00ABADDA sosial \u015F\u0259b\u0259k\u0259l\u0259rd\u0259\u00BB b\u00F6lm\u0259sinin ba\u015Fl\u0131\u011F\u0131, m\u0259tni, he\u015Fteql\u0259ri v\u0259 r\u0259smi hesab linkl\u0259ri';
-    displayName: 'Sosial blok';
+    displayName: '3. Sayt \u2014 Sosial blok';
     pluralName: 'social-blocks';
     singularName: 'social-block';
   };
@@ -2203,7 +2203,7 @@ export interface ApiSocialPostSocialPost extends Struct.CollectionTypeSchema {
   collectionName: 'social_posts';
   info: {
     description: 'Ana s\u0259hif\u0259 karuselind\u0259ki payla\u015F\u0131m kartlar\u0131. Bir kart = bir qeyd: dil se\u00E7icisi il\u0259 i\u015Fl\u0259m\u0259k laz\u0131m deyil, altyaz\u0131n\u0131n \u00FC\u00E7 dili eyni formada yaz\u0131l\u0131r.';
-    displayName: 'Sosial payla\u015F\u0131m';
+    displayName: '3. Sayt \u2014 Sosial payla\u015F\u0131m';
     pluralName: 'social-posts';
     singularName: 'social-post';
   };
@@ -2380,7 +2380,7 @@ export interface ApiTagTag extends Struct.CollectionTypeSchema {
   collectionName: 'tags';
   info: {
     description: 'X\u0259b\u0259r / elan / t\u0259dbir etiketl\u0259ri (taksonomiya)';
-    displayName: 'Etiket';
+    displayName: '1. M\u0259zmun \u2014 Etiket';
     pluralName: 'tags';
     singularName: 'tag';
   };
@@ -2429,7 +2429,7 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
   collectionName: 'units';
   info: {
     description: '\u0130nzibati struktur b\u00F6lm\u0259l\u0259ri (\u015F\u00F6b\u0259, m\u0259rk\u0259z, idar\u0259)';
-    displayName: 'Struktur b\u00F6lm\u0259';
+    displayName: '2. Akademiya \u2014 Struktur b\u00F6lm\u0259';
     pluralName: 'units';
     singularName: 'unit';
   };
@@ -2472,6 +2472,13 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    sortOrder: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<100>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

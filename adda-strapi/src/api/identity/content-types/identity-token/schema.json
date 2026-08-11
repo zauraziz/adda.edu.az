@@ -4,7 +4,7 @@
   "info": {
     "singularName": "identity-token",
     "pluralName": "identity-tokens",
-    "displayName": "Kimlik tokeni",
+    "displayName": "5. Sistem — Kimlik tokeni",
     "description": "Magic-link və sessiya tokenlərinin SHA-256 hash-ları. Plaintext HEÇ VAXT saxlanmır."
   },
   "options": {

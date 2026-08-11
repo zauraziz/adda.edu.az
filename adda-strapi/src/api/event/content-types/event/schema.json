@@ -4,7 +4,7 @@
   "info": {
     "singularName": "event",
     "pluralName": "events",
-    "displayName": "Tədbir",
+    "displayName": "1. Məzmun — Tədbir",
     "description": "Konfrans, seminar, açıq dərs — fiziki / onlayn / hibrid"
   },
   "options": {

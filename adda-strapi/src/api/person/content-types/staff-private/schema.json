@@ -4,14 +4,26 @@
   "info": {
     "singularName": "staff-private",
     "pluralName": "staff-privates",
-    "displayName": "Heyət — məxfi",
+    "displayName": "5. Sistem — Heyət — məxfi",
     "description": "İctimai API-də GÖRÜNMƏYƏN heyət məlumatı (doğum tarixi). `person` API folder-indədir, amma öz routes faylı YOXDUR — buna görə REST endpoint-i yaranmır."
   },
-  "options": { "draftAndPublish": false },
-  "pluginOptions": { "i18n": { "localized": false } },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
   "attributes": {
-    "personSlug": { "type": "string", "required": true, "unique": true },
-    "birthDate": { "type": "date" },
+    "personSlug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "birthDate": {
+      "type": "date"
+    },
     "person": {
       "type": "relation",
       "relation": "oneToOne",
