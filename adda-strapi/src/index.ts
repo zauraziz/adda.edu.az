@@ -1765,6 +1765,44 @@ export default {
       strapi.log.warn('[seed] locale ensure skipped: ' + (err as Error).message);
     }
 
+      // ── Defolt dil: az ───────────────────────────────────────────────
+      //
+      // NIYE KRITIKDIR: Strapi `en` ilə gəlir və bura indiyədək toxunulmayıb.
+      // Bütün məzmun isə `az`-dadır. Bir content type-da i18n söndürülsə,
+      // Strapi-nin öz miqrasiyası (@strapi/core/dist/migrations/i18n.js)
+      // belə edir:
+      //
+      //   deleteMany({ where: { locale: { $ne: defaultLocale } } })
+      //
+      // Yəni defolt `en` qalarsa, `person` üzərində i18n söndürmək 162
+      // əməkdaşın HAMISINI silərdi — heç biri `en`-də deyil.
+      //
+      // Bu blok həmin mərmini boşaldır. İdempotentdir: artıq `az`-dırsa
+      // heç nə etmir.
+      try {
+        const lsvc = strapi.plugin('i18n').service('locales') as unknown as {
+          getDefaultLocale: () => Promise<string>;
+          setDefaultLocale: (d: { code: string }) => Promise<unknown>;
+        };
+        const current = await lsvc.getDefaultLocale();
+        if (current === 'az') {
+          strapi.log.info('[seed] Defolt dil artiq az.');
+        } else {
+          await lsvc.setDefaultLocale({ code: 'az' });
+          const after = await lsvc.getDefaultLocale();
+          if (after === 'az') {
+            strapi.log.info('[seed] Defolt dil deyisdirildi: ' + current + ' -> az');
+          } else {
+            strapi.log.error(
+              '[seed] Defolt dil DEYISMEDI: hele de ' + after + '. i18n sondurulmemelidir!',
+            );
+          }
+        }
+      } catch (err) {
+        strapi.log.error('[seed] defolt dil xetasi: ' + (err as Error).message);
+      }
+
+
     // Public rol — oxu icazələri (find / findOne)
     try {
       const role = (await strapi.db
