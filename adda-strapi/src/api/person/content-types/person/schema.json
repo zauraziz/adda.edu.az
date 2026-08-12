@@ -243,6 +243,12 @@
       "target": "api::unit.unit",
       "inversedBy": "people"
     },
+    "headOf": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::unit.unit",
+      "mappedBy": "head"
+    },
     "articles": {
       "type": "relation",
       "relation": "oneToMany",

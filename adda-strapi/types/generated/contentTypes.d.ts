@@ -1494,6 +1494,7 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
         };
       }>;
     faculty: Schema.Attribute.Relation<'manyToOne', 'api::faculty.faculty'>;
+    headOf: Schema.Attribute.Relation<'oneToMany', 'api::unit.unit'>;
     languages: Schema.Attribute.Component<'staff.language', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::person.person'>;
@@ -2452,7 +2453,7 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    head: Schema.Attribute.Relation<'oneToOne', 'api::person.person'>;
+    head: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::unit.unit'>;
     name: Schema.Attribute.String &

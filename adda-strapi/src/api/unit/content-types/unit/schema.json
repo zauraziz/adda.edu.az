@@ -55,8 +55,9 @@
     },
     "head": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::person.person"
+      "relation": "manyToOne",
+      "target": "api::person.person",
+      "inversedBy": "headOf"
     },
     "parent": {
       "type": "relation",
