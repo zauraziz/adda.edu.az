@@ -83,6 +83,7 @@
       "enum": [
         "elmler_doktoru",
         "felsefe_doktoru",
+        "elmler_namizedi",
         "yoxdur"
       ],
       "pluginOptions": {

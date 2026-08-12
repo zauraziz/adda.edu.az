@@ -2455,6 +2455,252 @@ export default {
       strapi.log.error('[seed] bolme rehberleri xetasi: ' + (err as Error).message);
     }
 
+    // ── Kafedra heyəti (F3.7) ────────────────────────────────────────────
+    //
+    // Mənbə: kafedra üzrə heyət siyahısı (74 sətir, 7 kafedra).
+    // Ştat cədvəlində professor-müəllim heyətinin kafedra bağlantısı YOXDUR
+    // — ona görə bu siyahı yeganə mənbədir.
+    //
+    // Adlardakı üç yazı səhvi mənbədə deyil, burada düzəldilib:
+    //   Talıbov Nurməmməd  -> Nurməhəmməd     (ştatda belədir)
+    //   Məhərəmmova Qəhraman -> Məhərrəmova Qəhrəman
+    //   Alfeedo            -> Alfaheeda
+    //
+    // «Elmi dərəcə» sütununda 20 fərqli yazılış var idi, hamısı üç enum
+    // dəyərinə yığılıb. «elmlər namizədi» ayrıca saxlanılır.
+    //
+    // ÜSTÜNDƏN YAZMIR: mövcud `unit`, `position`, `academicDegree`,
+    // `academicTitle` dəyərlərinə toxunmur — yalnız boş sahələri doldurur.
+    // Səbəb: dekan/müdir kimi inzibati vəzifələr kafedra vəzifəsindən
+    // üstündür və silinməməlidir.
+    //
+    // KAFEDRA_RESEED=true olmadan İŞLƏMİR.
+    try {
+      if (process.env.KAFEDRA_RESEED !== 'true') {
+        strapi.log.info('[seed] Kafedra heyeti otuldu. Qurmaq ucun KAFEDRA_RESEED=true.');
+      } else {
+        const KAFEDRA_NAMES: Record<string, string> = {
+          'tetbiqi-mexanika-kafedrasi': '«Tətbiqi mexanika» kafedrası',
+          'deniz-naviqasiyasi-kafedrasi': '«Dəniz naviqasiyası» kafedrası',
+          'gemi-elektroavtomatikasi-kafedrasi': '«Gəmi elektroavtomatikası» kafedrası',
+          'gemi-energetik-qurgulari-kafedrasi': '«Gəmi energetik qurğuları» kafedrası',
+          'gemiqayirma-ve-gemi-temiri-kafedrasi': '«Gəmiqayırma və gəmi təmiri» kafedrası',
+          'humanitar-fenler-kafedrasi': '«Humanitar fənlər» kafedrası',
+          'ingilis-dili-kafedrasi': '«İngilis dili» kafedrası',
+        };
+
+        // slug, kafedra, elmi derece, elmi ad, vezife
+        const STAFF: Array<[string, string, string | null, string | null, string]> = [
+          ['hesenov-yusif-nadir-oglu', 'tetbiqi-mexanika-kafedrasi', 'elmler_doktoru', 'Professor', 'Professor'],
+          ['humbeteliyev-rovsen-zulfuqar-oglu', 'tetbiqi-mexanika-kafedrasi', 'elmler_doktoru', null, 'Professor'],
+          ['agarzayev-behruz-kerimbala-oglu', 'tetbiqi-mexanika-kafedrasi', 'felsefe_doktoru', null, 'Dosent'],
+          ['hesenova-leyla-agamverdi-qizi', 'tetbiqi-mexanika-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['eliyeva-irade-kerim-qizi', 'tetbiqi-mexanika-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['esgerov-rafiq-xelil-oglu', 'tetbiqi-mexanika-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['imanova-almaz-yaqub-qizi', 'tetbiqi-mexanika-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['abdullayeva-aynur-ramiz-qizi', 'tetbiqi-mexanika-kafedrasi', null, null, 'Baş müəllim'],
+          ['abdullayeva-nazile-baheddin-qizi', 'tetbiqi-mexanika-kafedrasi', null, null, 'Baş müəllim'],
+          ['rustemov-zakir-eliaga-oglu', 'deniz-naviqasiyasi-kafedrasi', null, 'Professor', 'Professor'],
+          ['abbasov-elnur-oruc-oglu', 'deniz-naviqasiyasi-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['kelbiyev-ferqan-memmed-oglu', 'deniz-naviqasiyasi-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['sireliyev-ekber-tapdiq-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['qonaqov-musaim-novruz-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['rzayev-resid-esref-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['gozelova-samire-saban-qizi', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['xelilov-asif-hemid-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['dunyamaliyev-ismayil-huseyn-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['qafarov-aydin-vaqif-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['eliyev-rovsen-logman-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['recebov-polad-ilyas-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Müəllim'],
+          ['xaliqov-rufet-nureli-oglu', 'deniz-naviqasiyasi-kafedrasi', null, null, 'Müəllim'],
+          ['sultanov-elsen-fexreddin-oglu', 'gemi-elektroavtomatikasi-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['allahverdiyeva-aynure-tevekkul-qizi', 'gemi-elektroavtomatikasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['bayramova-ilhame-pasa-qizi', 'gemi-elektroavtomatikasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['memmedov-emil-memmed-oglu', 'gemi-elektroavtomatikasi-kafedrasi', null, null, 'Baş müəllim'],
+          ['elicanov-ruslan-ramiz-oglu', 'gemi-elektroavtomatikasi-kafedrasi', null, null, 'Müəllim'],
+          ['rzayev-mehemmed-ejder-oglu', 'gemi-energetik-qurgulari-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['eliyev-nazim-sedreddin-oglu', 'gemi-energetik-qurgulari-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['ismayilov-akif-semil-oglu', 'gemi-energetik-qurgulari-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['rehmanov-muqabil-xanoglan-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['elekberov-ikram-ismayil-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['ismayilov-mehman-hacixelil-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['memmedov-salamat-musa-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['fatyanova-natalya-vladimirovna', 'gemi-energetik-qurgulari-kafedrasi', 'felsefe_doktoru', null, 'Baş müəllim'],
+          ['quliyev-elvan-rza-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['axundov-ilham-siyavus-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['kerimov-elnur-nadir-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['talibov-nurmehemmed-sixmehemmed', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Baş müəllim'],
+          ['heziyev-elihuseyn-rasim-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Müəllim'],
+          ['eliyev-elivahid-azer-oglu', 'gemi-energetik-qurgulari-kafedrasi', null, null, 'Müəllim'],
+          ['ismayilov-nizami-sayi-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', 'elmler_doktoru', 'Professor', 'Professor'],
+          ['qafarov-aydin-memis-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', 'elmler_doktoru', 'Professor', 'Professor'],
+          ['orucov-fazil-sedi-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['sadiqov-vuqar-boyukaga-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['xankisiyev-isaq-abuzer-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['memmedov-elxan-demir-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', 'felsefe_doktoru', 'Dosent', 'Dosent'],
+          ['quliyev-yaqub-mikayil-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', null, null, 'Baş müəllim'],
+          ['ismayilov-allahverdi-qesem-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', null, null, 'Baş müəllim'],
+          ['cabbarov-rovsen-calal-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', null, null, 'Baş müəllim'],
+          ['huseynov-resul-erestun-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', null, null, 'Baş müəllim'],
+          ['mecnunov-elsen-elman-oglu', 'gemiqayirma-ve-gemi-temiri-kafedrasi', null, null, 'Müəllim'],
+          ['huseynov-nesir-cavansir-oglu', 'humanitar-fenler-kafedrasi', 'felsefe_doktoru', 'Professor', 'Professor'],
+          ['abdullayev-ilqar-agammed-oglu', 'humanitar-fenler-kafedrasi', 'elmler_namizedi', 'Dosent', 'Dosent'],
+          ['suleymanov-esedullah-mahmud-oglu', 'humanitar-fenler-kafedrasi', 'felsefe_doktoru', null, 'Dosent'],
+          ['rzayeva-sevinc-rasim-qizi', 'humanitar-fenler-kafedrasi', 'felsefe_doktoru', null, 'Baş müəllim'],
+          ['namazova-lamiyye-sexavet-qizi', 'humanitar-fenler-kafedrasi', 'felsefe_doktoru', null, 'Baş müəllim'],
+          ['hesimov-elbrus-efrasiyab-oglu', 'humanitar-fenler-kafedrasi', null, null, 'Baş müəllim'],
+          ['qasimov-elitaleh-yusif-oglu', 'humanitar-fenler-kafedrasi', null, null, 'Baş müəllim'],
+          ['feteliyev-agarza-resul-oglu', 'humanitar-fenler-kafedrasi', null, null, 'Baş müəllim'],
+          ['imanov-sameddin-mursel-oglu', 'humanitar-fenler-kafedrasi', null, null, 'Baş müəllim'],
+          ['aliyeva-gulcohre-babaeli-qizi', 'ingilis-dili-kafedrasi', 'elmler_doktoru', 'Professor', 'Professor'],
+          ['murselova-melahet-memmed-qizi', 'ingilis-dili-kafedrasi', 'felsefe_doktoru', null, 'Dosent'],
+          ['besirova-gulnar-rasim-qizi', 'ingilis-dili-kafedrasi', 'felsefe_doktoru', null, 'Dosent'],
+          ['ferecova-ramile-misirxan-qizi', 'ingilis-dili-kafedrasi', 'felsefe_doktoru', null, 'Dosent'],
+          ['sefizade-irade-nesib-qizi', 'ingilis-dili-kafedrasi', null, null, 'Baş müəllim'],
+          ['meherremova-gunay-qehreman-qizi', 'ingilis-dili-kafedrasi', null, null, 'Baş müəllim'],
+          ['veliyeva-kemale-saleh-qizi', 'ingilis-dili-kafedrasi', null, null, 'Baş müəllim'],
+          ['zeynalov-eldar-atamali-oglu', 'ingilis-dili-kafedrasi', null, null, 'Baş müəllim'],
+          ['xelilova-rena-kamil-qizi', 'ingilis-dili-kafedrasi', 'felsefe_doktoru', null, 'Baş müəllim'],
+          ['quliyev-orxan-cavansir-oglu', 'ingilis-dili-kafedrasi', null, null, 'Müəllim'],
+          ['zeynalova-zuleyxa-hafiz-qizi', 'ingilis-dili-kafedrasi', null, null, 'Müəllim'],
+          ['huseynova-esmer-mehman-qizi', 'ingilis-dili-kafedrasi', null, null, 'Müəllim'],
+          ['alfaheeda-sevinc-zahid-qizi', 'ingilis-dili-kafedrasi', null, null, 'Müəllim'],
+        ];
+
+        const unitCache = new Map<string, string>();
+        const getUnit = async (slug: string): Promise<string | null> => {
+          if (unitCache.has(slug)) return unitCache.get(slug) as string;
+          const u = await strapi.documents('api::unit.unit').findMany({
+            locale: 'az',
+            filters: { slug: { $eq: slug } },
+            fields: ['slug'],
+            limit: 2,
+          });
+          if (u.length !== 1) return null;
+          unitCache.set(slug, String(u[0].documentId));
+          return String(u[0].documentId);
+        };
+
+        let linked = 0, enriched = 0, roleAdded = 0;
+        const notFound: string[] = [];
+
+        for (const [slug, unitSlug, degree, title, position] of STAFF) {
+          try {
+            const found = await strapi.documents('api::person.person').findMany({
+              locale: 'az',
+              filters: { slug: { $eq: slug } },
+              populate: ['unit', 'roles'],
+              limit: 2,
+            });
+            if (found.length !== 1) { notFound.push(slug); continue; }
+
+            const p = found[0] as unknown as {
+              documentId: string;
+              unit?: { documentId: string } | null;
+              position?: string | null;
+              academicDegree?: string | null;
+              academicTitle?: string | null;
+              roles?: Array<{ staffType: string; position: string; unitName?: string | null; sortOrder?: number }>;
+            };
+            const unitId = await getUnit(unitSlug);
+            if (!unitId) { notFound.push(unitSlug + ' (bolme)'); continue; }
+
+            const patch: Record<string, unknown> = {};
+            if (!p.unit) { patch.unit = unitId; linked++; }
+            if (!p.academicDegree && degree) { patch.academicDegree = degree; enriched++; }
+            if (!p.academicTitle && title) patch.academicTitle = title;
+            if (!p.position) patch.position = position;
+
+            // roles[]: kafedra vezifesi ayrica setir kimi elave olunur ki,
+            // bir adamin hem inzibati, hem kafedra baglantisi gorunsun.
+            const kafName = KAFEDRA_NAMES[unitSlug];
+            const roles = p.roles ?? [];
+            if (!roles.some((r) => (r.unitName ?? '') === kafName)) {
+              patch.roles = [
+                ...roles.map((r) => ({
+                  staffType: r.staffType,
+                  position: r.position,
+                  unitName: r.unitName ?? null,
+                  sortOrder: r.sortOrder ?? 0,
+                })),
+                { staffType: 'akademik', position, unitName: kafName, sortOrder: roles.length },
+              ];
+              roleAdded++;
+            }
+
+            if (Object.keys(patch).length === 0) continue;
+            await strapi.documents('api::person.person').update({
+              documentId: p.documentId,
+              locale: 'az',
+              data: patch as never,
+            });
+            await strapi.documents('api::person.person').publish({ documentId: p.documentId, locale: 'az' });
+          } catch (e) {
+            notFound.push(slug + ': ' + (e as Error).message);
+          }
+        }
+
+        strapi.log.info(
+          '[seed] Kafedra heyeti: ' + STAFF.length + ' setir | kafedraya baglandi: ' + linked +
+          ' | derece yazildi: ' + enriched + ' | vezife setri elave olundu: ' + roleAdded,
+        );
+        for (const n of notFound) strapi.log.error('[seed] kafedra UGURSUZ - ' + n);
+      }
+    } catch (err) {
+      strapi.log.error('[seed] kafedra heyeti xetasi: ' + (err as Error).message);
+    }
+
+    // ── Ayrılmış əməkdaşlar (F3.7) ───────────────────────────────────────
+    //
+    // Ştatda «Professor-müəllim heyyəti» kimi qeyd olunub, lakin yeni
+    // kafedra siyahısında yoxdur -> artıq işləmir.
+    //
+    // DİQQƏT: «Tədris köməkçi-heyət» (10 laborant) BURAYA DAXİL DEYİL.
+    // Kafedra siyahısı yalnız müəllim vəzifələrini sadalayır, ona görə
+    // laborantların orada olmaması işdən ayrıldıqları demək deyil.
+    //
+    // SİLMİR — yalnız nəşrdən çıxarır. Geri qaytarmaq üçün admin paneldə
+    // «Publish» kifayətdir.
+    //
+    // STAFF_ARCHIVE=true olmadan İŞLƏMİR.
+    try {
+      if (process.env.STAFF_ARCHIVE !== 'true') {
+        strapi.log.info('[seed] Ayrilmis emekdaslar otuldu. Ucun STAFF_ARCHIVE=true.');
+      } else {
+        const GONE: string[] = [
+          'agayeva-gulsum-allahyar-qizi', 'agazade-sahin-mutarif-oglu', 'babayev-lacin-vasif-oglu',
+          'bayramov-azad-memmed-oglu', 'cabbarov-samir-muzeffer-oglu', 'dadasova-nermin-rasim-qizi',
+          'ferhadov-vahid-qara-oglu', 'hesenov-elsever-akif-oglu', 'memmedov-sahlar-eyyub-oglu',
+          'quliyev-namiq-nizami-oglu', 'rustemli-qara-rustem-oglu', 'semedova-ulker-ferrux-qizi',
+          'yusubov-nizami-demir-oglu', 'yusubov-sahid-tahir-oglu', 'celebi-iftixar-qurbaneli-oglu',
+          'imanli-mehemmed-nagi-oglu', 'ismayilov-sahib-soyun-oglu', 'ehmedov-beyali-behcet-oglu',
+          'ehmedov-ferrux-enver-oglu', 'ehmedov-iqbal-novruz-oglu', 'ehmedova-rena-haciaga-qizi',
+          'eliyev-eli-sahin-oglu',
+        ];
+        let done = 0;
+        const skipped: string[] = [];
+        for (const slug of GONE) {
+          try {
+            const f = await strapi.documents('api::person.person').findMany({
+              locale: 'az', filters: { slug: { $eq: slug } }, fields: ['slug'], limit: 2,
+            });
+            if (f.length !== 1) { skipped.push(slug + ' (' + f.length + ' tapildi)'); continue; }
+            await strapi.documents('api::person.person').unpublish({
+              documentId: String(f[0].documentId), locale: 'az',
+            });
+            done++;
+          } catch (e) {
+            skipped.push(slug + ': ' + (e as Error).message);
+          }
+        }
+        strapi.log.info('[seed] Ayrilmis emekdaslar: ' + done + '/' + GONE.length + ' nesrden cixarildi.');
+        for (const s of skipped) strapi.log.warn('[seed] arxiv atlandi - ' + s);
+      }
+    } catch (err) {
+      strapi.log.error('[seed] arxiv xetasi: ' + (err as Error).message);
+    }
+
+
 
 
 

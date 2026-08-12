@@ -1430,7 +1430,7 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
   };
   attributes: {
     academicDegree: Schema.Attribute.Enumeration<
-      ['elmler_doktoru', 'felsefe_doktoru', 'yoxdur']
+      ['elmler_doktoru', 'felsefe_doktoru', 'elmler_namizedi', 'yoxdur']
     > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
