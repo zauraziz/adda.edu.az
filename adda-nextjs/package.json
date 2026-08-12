@@ -5,6 +5,7 @@
   "description": "Azərbaycan Dövlət Dəniz Akademiyası — Rəqəmsal Platforma",
   "scripts": {
     "check:audiences": "node ../tools/check-audiences.mjs",
+    "check:units": "node ../tools/check-unit-data.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
