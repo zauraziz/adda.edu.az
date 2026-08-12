@@ -2288,15 +2288,16 @@ export default {
       strapi.log.error('[seed] struktur agaci xetasi: ' + (err as Error).message);
     }
 
-    // ── Bölmə rəhbərləri (F3.3) ──────────────────────────────────────────
+    // ── Bölmə rəhbərləri (F3.3 / F3.4) ───────────────────────────────────
     //
-    // Diaqnostika 28/28 bölmədə `head` boş tapdı. Vəzifə adlarına görə 17
-    // rəhbər avtomatik müəyyən edildi, 6 nəfər isə ştatda «Rəhbərlik» adlı
-    // (artıq mövcud olmayan) bölmədə qeyd olunduğu üçün əl ilə bağlanır.
+    // F3.3 23-dən yalnız 1-ini yazdı. Səbəb bilinmir, çünki bir istisna
+    // bütün dövrəni dayandırırdı. Bu versiya HƏR bölməni və HƏR dili ayrıca
+    // qoruyur — bir uğursuzluq qalanları saxlamır və logda dəqiq görünür.
     //
-    // Qalan 5 bölmə (rektor, elmi-sura, elmi işlər üzrə prorektorluq, TTM,
-    // Kollec) BİLƏRƏKDƏN buraxılıb — ştat cədvəlində qarşılığı yoxdur,
-    // admin panelindən təyin olunmalıdır.
+    // Əlavə: Qocayev Eldar (elmi işlər üzrə prorektor) ştatda var.
+    //
+    // Təyin olunmayan 3 bölmə (rektor VAKANT, elmi-sura, TTM, Kollec)
+    // admin panelindən verilir.
     //
     // HEAD_RESEED=true olmadan İŞLƏMİR.
     try {
@@ -2304,7 +2305,6 @@ export default {
         strapi.log.info('[seed] Bolme rehberleri otuldu. Teyin etmek ucun HEAD_RESEED=true.');
       } else {
         const UNIT_HEADS: Record<string, string> = {
-          // avtomatik — vəzifə adına görə
           'deniz-naviqasiyasi-kafedrasi': 'nebiyev-hezi-nebi-oglu',
           'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi': 'huseynov-nesir-cavansir-oglu',
           'gemi-elektroavtomatikasi-kafedrasi': 'sultanov-elsen-fexreddin-oglu',
@@ -2322,75 +2322,94 @@ export default {
           'tehsil-innovasiyalari-ve-reqemsal-heller-merkezi': 'eziz-zaur-vaqif-oglu',
           'teserrufat-isleri-sobesi': 'huseynova-leyla-xanhuseyn-qizi',
           'tetbiqi-mexanika-kafedrasi': 'hesenov-yusif-nadir-oglu',
-          // əl ilə — ştatdakı «Rəhbərlik» qrupu
           'rektorun-musaviri': 'sadiqov-vuqar-boyukaga-oglu',
           'rektorun-komekcisi': 'mirelekberli-eli-mirteyyub-oglu',
           'referent': 'tagiyeva-ilahe-asef-qizi',
           'elmi-katib': 'imanova-almaz-yaqub-qizi',
           'huquq-meslehetcisi': 'imanov-sameddin-mursel-oglu',
           'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq': 'irade-suleymanova',
+          // Ştatda var, F3.3-də buraxılmışdı — Strapi-də tapılmasa log deyəcək.
+          'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq': 'qocayev-eldar-adigozel-oglu',
         };
 
-        let assigned = 0;
-        const missingUnit: string[] = [];
-        const missingPerson: string[] = [];
+        const total = Object.keys(UNIT_HEADS).length;
+        let okAz = 0;
+        const failed: string[] = [];
 
         for (const [unitSlug, personSlug] of Object.entries(UNIT_HEADS)) {
-          // Bölmə: `locale` MÜTLƏQ verilməlidir — Strapi-nin defolt dili `en`,
-          // parametrsiz sorğu səhv qeydi tapır və ya heç nə tapmır.
-          const units = await strapi.documents('api::unit.unit').findMany({
-            locale: 'az',
-            filters: { slug: { $eq: unitSlug } },
-            fields: ['documentId', 'slug'],
-            limit: 2,
-          });
-          if (units.length !== 1) {
-            missingUnit.push(unitSlug + (units.length > 1 ? ' (tekrar)' : ''));
-            continue;
-          }
-
-          const people = await strapi.documents('api::person.person').findMany({
-            locale: 'az',
-            filters: { slug: { $eq: personSlug } },
-            fields: ['documentId', 'slug'],
-            limit: 2,
-          });
-          if (people.length !== 1) {
-            missingPerson.push(personSlug + (people.length > 1 ? ' (tekrar)' : ''));
-            continue;
-          }
-
-          const documentId = String(units[0].documentId);
-          const headId = String(people[0].documentId);
-
-          // Hər üç dil AÇIQ yazılır. `REL_SYNC` middleware-i bunu güzgüləyir,
-          // amma seed vaxtı sıralamaya güvənmək əvəzinə birbaşa yazmaq
-          // nəticəni müəyyən edir.
-          for (const loc of ['az', 'ru', 'en'] as const) {
-            await strapi.documents('api::unit.unit').update({
-              documentId,
-              locale: loc,
-              data: { head: headId } as never,
+          try {
+            // `locale` MÜTLƏQ verilir — Strapi-nin defolt dili `en`.
+            const units = await strapi.documents('api::unit.unit').findMany({
+              locale: 'az',
+              filters: { slug: { $eq: unitSlug } },
+              fields: ['slug'],
+              limit: 2,
             });
-            // update() YALNIZ qaralamaya yazır — publish() olmadan dəyişiklik
-            // saytda görünmür.
-            await strapi.documents('api::unit.unit').publish({ documentId, locale: loc });
+            if (units.length !== 1) {
+              failed.push(unitSlug + ': bolme ' + units.length + ' defe tapildi');
+              continue;
+            }
+
+            const people = await strapi.documents('api::person.person').findMany({
+              locale: 'az',
+              filters: { slug: { $eq: personSlug } },
+              fields: ['slug'],
+              limit: 2,
+            });
+            if (people.length !== 1) {
+              failed.push(unitSlug + ': sexs «' + personSlug + '» ' + people.length + ' defe tapildi');
+              continue;
+            }
+
+            const documentId = String(units[0].documentId);
+            const headId = String(people[0].documentId);
+
+            // AZ ƏSASDIR. Sayt `az` üzərində qurulur, `REL_SYNC` middleware-i
+            // digər dilləri az qaralamasından güzgüləyir. Ona görə `az` ayrıca
+            // yazılır və uğursuzluğu ayrıca sayılır — ru/en xətası az-ı
+            // aparmamalıdır.
+            try {
+              await strapi.documents('api::unit.unit').update({
+                documentId,
+                locale: 'az',
+                data: { head: headId } as never,
+              });
+              // update() YALNIZ qaralamaya yazır.
+              await strapi.documents('api::unit.unit').publish({ documentId, locale: 'az' });
+              okAz++;
+              strapi.log.info('[seed] head az OK: ' + unitSlug + ' -> ' + personSlug);
+            } catch (e) {
+              failed.push(unitSlug + ' (az): ' + (e as Error).message);
+              continue;
+            }
+
+            for (const loc of ['ru', 'en'] as const) {
+              try {
+                await strapi.documents('api::unit.unit').update({
+                  documentId,
+                  locale: loc,
+                  data: { head: headId } as never,
+                });
+                await strapi.documents('api::unit.unit').publish({ documentId, locale: loc });
+              } catch (e) {
+                // Dil qeydi yoxdursa və ya güzgüləmə toqquşursa yalnız
+                // xəbərdarlıq — az artıq yazılıb.
+                strapi.log.warn(
+                  '[seed] head ' + loc + ' atlandi: ' + unitSlug + ' — ' + (e as Error).message,
+                );
+              }
+            }
+          } catch (e) {
+            failed.push(unitSlug + ': ' + (e as Error).message);
           }
-          assigned++;
         }
 
-        strapi.log.info(
-          '[seed] Bolme rehberleri: ' + assigned + '/' + Object.keys(UNIT_HEADS).length + ' teyin olundu.',
-        );
-        if (missingUnit.length) {
-          strapi.log.warn('[seed] Bolme tapilmadi: ' + missingUnit.join(', '));
-        }
-        if (missingPerson.length) {
-          strapi.log.warn('[seed] Sexs tapilmadi: ' + missingPerson.join(', '));
+        strapi.log.info('[seed] Bolme rehberleri: ' + okAz + '/' + total + ' (az) teyin olundu.');
+        if (failed.length) {
+          for (const f of failed) strapi.log.error('[seed] head UGURSUZ — ' + f);
         }
         strapi.log.info(
-          '[seed] Teyin olunmayan 5 bolme (elle): rektor, elmi-sura, ' +
-            'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq, telim-tedris-merkezi, ' +
+          '[seed] Elle qalan: rektor (VAKANT), elmi-sura, telim-tedris-merkezi, ' +
             'azerbaycan-denizcilik-kolleci-phs',
         );
       }
