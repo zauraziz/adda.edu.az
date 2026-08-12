@@ -242,9 +242,13 @@ async function fetchAllPages<T>(
 }
 
 /** Bir tipin bütün slug-ları — `generateStaticParams` üçün. */
-async function allSlugs(path: string, locale: Locale): Promise<string[]> {
+async function allSlugs(path: string, locale: Locale | null): Promise<string[]> {
   try {
-    const rows = await fetchAllPages<{ slug: string }>(path, { locale, 'fields[0]': 'slug' });
+    // `locale` null olanda parametr ÜMUMİYYƎTLƎ göndərilmir. Lokallaşdırılmamış
+    // tiplər üçün (bax: social-posts) `locale` mənasızdır.
+    const params: Record<string, string | number | boolean> = { 'fields[0]': 'slug' };
+    if (locale) params.locale = locale;
+    const rows = await fetchAllPages<{ slug: string }>(path, params);
     return rows.map((r) => r.slug).filter(Boolean);
   } catch {
     return [];
@@ -797,8 +801,11 @@ export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
  * komponenti ümumiyyətlə qaytarmır, sahə sadəcə cavabda olmur. Populate
  * yazmasaq siyahılar səssizcə boş çıxar.
  */
-export async function getStaff(locale: Locale = 'az'): Promise<Person[]> {
-  return fetchAllPages<Person>('/people', { locale, 'populate[roles]': true });
+export async function getStaff(_locale: Locale = 'az'): Promise<Person[]> {
+  // `locale` GÖNDƎRİLMİR: əməkdaş qeydləri dilə görə dəyişmir, tip
+  // lokallaşdırılmadan çıxarılır. İmza saxlanılır ki, çağıran yerlər
+  // dəyişməsin.
+  return fetchAllPages<Person>('/people', { 'populate[roles]': true });
 }
 
 /** Bütün fakültələr. */
@@ -895,9 +902,8 @@ export async function getStaffDirectory(locale: Locale = 'az'): Promise<PersonFu
 }
 
 /** Bir əməkdaşın tam profili. */
-export async function getPersonBySlug(slug: string, locale: Locale = 'az'): Promise<PersonFull | null> {
+export async function getPersonBySlug(slug: string, _locale: Locale = 'az'): Promise<PersonFull | null> {
   const json = await strapiFetch<StrapiList<PersonFull>>('/people', {
-    locale,
     'filters[slug][$eq]': slug,
     'pagination[pageSize]': 1,
     'populate[roles]': true,
@@ -917,7 +923,7 @@ export async function getPersonBySlug(slug: string, locale: Locale = 'az'): Prom
 }
 
 /** Statik generasiya üçün bütün slug-lar. */
-export const getPersonSlugs = (locale: Locale = 'az') => allSlugs('/people', locale);
+export const getPersonSlugs = (_locale: Locale = 'az') => allSlugs('/people', null);
 
 /**
  * Bir struktur bölməsi — valideyn, alt bölmələr və heyəti ilə.
