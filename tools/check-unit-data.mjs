@@ -31,18 +31,18 @@ async function api(path, params) {
   url.searchParams.set('locale', LOCALE);
   for (const [k, v] of Object.entries(params || {})) url.searchParams.set(k, String(v));
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= 5; attempt++) {
     try {
       const r = await fetch(url, { signal: AbortSignal.timeout(70000) });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return await r.json();
     } catch (e) {
-      if (attempt === 3) throw new Error(url.pathname + ': ' + e.message);
+      if (attempt === 5) throw new Error(url.pathname + ': ' + e.message);
       if (!coldStartWarned) {
-        console.log('  (Render soyuq start ola biler - gozleyirem...)');
+        console.log('  (yenidən cəhd edirəm...)');
         coldStartWarned = true;
       }
-      await new Promise((s) => setTimeout(s, 5000));
+      await new Promise((s) => setTimeout(s, 8000));
     }
   }
 }
@@ -66,6 +66,35 @@ const line = (n = 62) => console.log('-'.repeat(n));
 
 console.log('Strapi : ' + BASE);
 console.log('Dil    : ' + LOCALE);
+
+/** Render pulsuz planda servis yatir. Ilk sorgu onu oyadir, cavab 2-3 deqiqe
+ *  cekе biler. Sorgulara baslamazdan evvel /_health-i doyecleyirik. */
+async function wake() {
+  const deadline = Date.now() + 5 * 60 * 1000;
+  let announced = false;
+  while (Date.now() < deadline) {
+    try {
+      const r = await fetch(new URL('/_health', BASE), { signal: AbortSignal.timeout(30000) });
+      if (r.ok || r.status === 204) {
+        if (announced) console.log('  servis oyandi.\n');
+        return true;
+      }
+    } catch {
+      /* hele yatir */
+    }
+    if (!announced) {
+      console.log('  Render soyuq start - servis oyanir, 5 deqiqeye qeder gozleyirem...');
+      announced = true;
+    }
+    process.stdout.write('.');
+    await new Promise((s) => setTimeout(s, 10000));
+  }
+  console.log('\n  XEBERDARLIQ: /_health cavab vermedi, yene de cehd edirem.\n');
+  return false;
+}
+
+await wake();
+
 line();
 
 // ---------------------------------------------------------------- 1. bolmeler

@@ -21,14 +21,14 @@ const PAGE = 100; // maxLimit
 async function api(path, params) {
   const url = new URL('/api' + path, BASE);
   for (const [k, v] of Object.entries(params || {})) url.searchParams.set(k, String(v));
-  for (let a = 1; a <= 3; a++) {
+  for (let a = 1; a <= 5; a++) {
     try {
       const r = await fetch(url, { signal: AbortSignal.timeout(70000) });
       if (!r.ok) return { __http: r.status };
       return await r.json();
     } catch (e) {
-      if (a === 3) return { __err: e.message };
-      await new Promise((s) => setTimeout(s, 5000));
+      if (a === 5) return { __err: e.message };
+      await new Promise((s) => setTimeout(s, 8000));
     }
   }
 }
@@ -46,6 +46,34 @@ async function all(path, params) {
 
 const line = (n = 62) => console.log('-'.repeat(n));
 console.log('Strapi : ' + BASE);
+
+/** Render pulsuz planda servis yatir. Ilk sorgu onu oyadir, cavab 2-3 deqiqe
+ *  cekе biler. Sorgulara baslamazdan evvel /_health-i doyecleyirik. */
+async function wake() {
+  const deadline = Date.now() + 5 * 60 * 1000;
+  let announced = false;
+  while (Date.now() < deadline) {
+    try {
+      const r = await fetch(new URL('/_health', BASE), { signal: AbortSignal.timeout(30000) });
+      if (r.ok || r.status === 204) {
+        if (announced) console.log('  servis oyandi.\n');
+        return true;
+      }
+    } catch {
+      /* hele yatir */
+    }
+    if (!announced) {
+      console.log('  Render soyuq start - servis oyanir, 5 deqiqeye qeder gozleyirem...');
+      announced = true;
+    }
+    process.stdout.write('.');
+    await new Promise((s) => setTimeout(s, 10000));
+  }
+  console.log('\n  XEBERDARLIQ: /_health cavab vermedi, yene de cehd edirem.\n');
+  return false;
+}
+
+await wake();
 line();
 
 // --- 1. dil-dil say -------------------------------------------------------

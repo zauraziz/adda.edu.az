@@ -1639,15 +1639,15 @@ const UNIT_TREE: UnitSeed[] = [
   { slug: 'elmi-katib', az: 'Elmi katib', ru: 'Учёный секретарь', en: 'Academic Secretary', parent: 'rektor', sortOrder: 30 },
   { slug: 'referent', az: 'Referent', ru: 'Референт', en: 'Referent', parent: 'rektor', sortOrder: 40 },
   { slug: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', az: 'Tədrisin təşkili və idarəedilməsi üzrə prorektor', ru: 'Проректор по организации и управлению учебным процессом', en: 'Vice-Rector for Academic Organisation and Management', parent: 'rektor', sortOrder: 50 },
-  { slug: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', az: '«Gəmi mexanikası və elektromexanikası» fakültəsi', ru: 'Факультет судовой механики и электромеханики', en: 'Faculty of Marine Engineering and Electrical Engineering', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 10 },
-  { slug: 'tetbiqi-mexanika-kafedrasi', az: '«Tətbiqi mexanika» kafedrası', ru: 'Кафедра прикладной механики', en: 'Applied Mechanics Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 10 },
-  { slug: 'gemi-energetik-qurgulari-kafedrasi', az: '«Gəmi energetik qurğuları» kafedrası', ru: 'Кафедра судовых энергетических установок', en: 'Marine Power Plants Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 20 },
-  { slug: 'gemi-elektroavtomatikasi-kafedrasi', az: '«Gəmi elektroavtomatikası» kafedrası', ru: 'Кафедра судовой электроавтоматики', en: 'Marine Electrical Automation Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 30 },
-  { slug: 'gemi-suruculuyu-fakultesi', az: '«Gəmi sürücülüyü» fakültəsi', ru: 'Факультет судовождения', en: 'Faculty of Navigation', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 20 },
-  { slug: 'deniz-naviqasiyasi-kafedrasi', az: '«Dəniz naviqasiyası» kafedrası', ru: 'Кафедра морской навигации', en: 'Marine Navigation Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 10 },
-  { slug: 'gemiqayirma-ve-gemi-temiri-kafedrasi', az: '«Gəmiqayırma və gəmi təmiri» kafedrası', ru: 'Кафедра судостроения и судоремонта', en: 'Shipbuilding and Ship Repair Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 20 },
-  { slug: 'ingilis-dili-kafedrasi', az: '«İngilis dili» kafedrası', ru: 'Кафедра английского языка', en: 'English Language Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 30 },
-  { slug: 'humanitar-fenler-kafedrasi', az: '«Humanitar fənlər» kafedrası', ru: 'Кафедра гуманитарных дисциплин', en: 'Humanities Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 40 },
+  { slug: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', az: 'Gəmi mexanikası və elektromexanikası fakültəsi', ru: 'Факультет судовой механики и электромеханики', en: 'Faculty of Marine Engineering and Electrical Engineering', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 10 },
+  { slug: 'tetbiqi-mexanika-kafedrasi', az: 'Tətbiqi mexanika kafedrası', ru: 'Кафедра прикладной механики', en: 'Applied Mechanics Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 10 },
+  { slug: 'gemi-energetik-qurgulari-kafedrasi', az: 'Gəmi energetik qurğuları kafedrası', ru: 'Кафедра судовых энергетических установок', en: 'Marine Power Plants Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 20 },
+  { slug: 'gemi-elektroavtomatikasi-kafedrasi', az: 'Gəmi elektroavtomatikası kafedrası', ru: 'Кафедра судовой электроавтоматики', en: 'Marine Electrical Automation Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 30 },
+  { slug: 'gemi-suruculuyu-fakultesi', az: 'Gəmi sürücülüyü fakültəsi', ru: 'Факультет судовождения', en: 'Faculty of Navigation', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 20 },
+  { slug: 'deniz-naviqasiyasi-kafedrasi', az: 'Dəniz naviqasiyası kafedrası', ru: 'Кафедра морской навигации', en: 'Marine Navigation Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 10 },
+  { slug: 'gemiqayirma-ve-gemi-temiri-kafedrasi', az: 'Gəmiqayırma və gəmi təmiri kafedrası', ru: 'Кафедра судостроения и судоремонта', en: 'Shipbuilding and Ship Repair Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 20 },
+  { slug: 'ingilis-dili-kafedrasi', az: 'İngilis dili kafedrası', ru: 'Кафедра английского языка', en: 'English Language Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 30 },
+  { slug: 'humanitar-fenler-kafedrasi', az: 'Humanitar fənlər kafedrası', ru: 'Кафедра гуманитарных дисциплин', en: 'Humanities Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 40 },
   { slug: 'tedris-proseslerinin-teskili-sobesi', az: 'Tədris proseslərinin təşkili şöbəsi', ru: 'Отдел организации учебного процесса', en: 'Academic Process Organisation Department', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 30 },
   { slug: 'teserrufat-isleri-sobesi', az: 'Təsərrüfat işləri şöbəsi', ru: 'Отдел хозяйственных работ', en: 'Facilities Department', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 40 },
   { slug: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', az: 'Elmi işlər və beynəlxalq əlaqələr üzrə prorektor', ru: 'Проректор по научной работе и международным связям', en: 'Vice-Rector for Research and International Relations', parent: 'rektor', sortOrder: 60 },
@@ -2649,6 +2649,154 @@ export default {
     } catch (err) {
       strapi.log.error('[seed] kafedra heyeti xetasi: ' + (err as Error).message);
     }
+
+    // ── Dırnaq təmizliyi və təkrar vəzifələrin birləşdirilməsi (F3.10) ───
+    //
+    // PROBLEM: bölmə adları «Dırnaqlı» formada idi, köhnə heyət idxalı isə
+    // dırnaqsız yazmışdı. Nəticədə eyni kafedra iki ayrı ad kimi görünürdü:
+    //   «İngilis dili» kafedrası   -> müəllimlər
+    //   İngilis dili kafedrası     -> kafedra müdiri
+    //
+    // HƏLL: dırnaqsız forma kanonik qəbul olunur. 9 bölmənin `az` adı
+    // yenilənir, bütün `roles[].unitName` dəyərləri həmin ada gətirilir,
+    // eyni bölməyə işarə edən təkrar sətirlər birləşdirilir.
+    //
+    // Yalnız `az` adları dırnaqlı idi — ru/en toxunulmur.
+    //
+    // NAME_CLEAN=true olmadan İŞLƏMİR.
+    try {
+      if (process.env.NAME_CLEAN !== 'true') {
+        strapi.log.info('[seed] Dirnaq temizliyi otuldu. Ucun NAME_CLEAN=true.');
+      } else {
+        // Azərbaycan dilində kiçik hərf: toLowerCase() tək başına
+        // I -> 'i' (doğrusu 'ı'), İ -> 'i̇' (iki kod nöqtəsi) verir.
+        const azLower = (s: string) =>
+          String(s ?? '').replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
+        const fold = (s: string) =>
+          azLower(s)
+            .replace(/[«»""''"']/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const strip = (s: string) =>
+          String(s ?? '').replace(/[«»""'']/g, '').replace(/\s+/g, ' ').trim();
+
+        // ---- 1. bölmə adları -------------------------------------------
+        const units = (await strapi.documents('api::unit.unit').findMany({
+          locale: 'az',
+          fields: ['name', 'slug'],
+          limit: 200,
+          status: 'draft',
+        })) as unknown as Array<{ documentId: string; name: string; slug: string }>;
+
+        let renamed = 0;
+        for (const u of units) {
+          const clean = strip(u.name);
+          if (clean === u.name) continue;
+          await strapi.documents('api::unit.unit').update({
+            documentId: u.documentId,
+            locale: 'az',
+            data: { name: clean } as never,
+          });
+          await strapi.documents('api::unit.unit').publish({ documentId: u.documentId, locale: 'az' });
+          strapi.log.info('[seed] ad temizlendi: ' + u.name + '  ->  ' + clean);
+          renamed++;
+        }
+
+        // kanonik ad xəritəsi: bükülmüş forma -> təmiz ad
+        const canon = new Map<string, string>();
+        for (const u of units) canon.set(fold(u.name), strip(u.name));
+
+        // ---- 2. vəzifə sətirləri ---------------------------------------
+        // Eyni bölmədə iki sətir qalarsa hansı saxlanılır: inzibati vəzifə
+        // akademikdən üstündür. «Kafedra müdiri» qalır, «Professor» düşür —
+        // elmi ad onsuz da `academicTitle` sahəsindədir.
+        const rank = (position: string): number => {
+          const p = azLower(position);
+          if (/müavin/.test(p)) return 5;
+          if (/müdir|dekan|rəis|direktor|prorektor|rektor|baş mühasib/.test(p)) return 0;
+          if (/professor/.test(p)) return 1;
+          if (/dosent|dossent/.test(p)) return 2;
+          if (/baş müəllim/.test(p)) return 3;
+          return 4;
+        };
+
+        type Role = { staffType: string; position: string; unitName?: string | null; sortOrder?: number };
+        let touched = 0, merged = 0, renamedRoles = 0;
+
+        for (let page = 1; page <= 20; page++) {
+          const people = (await strapi.documents('api::person.person').findMany({
+            locale: 'az',
+            populate: ['roles'],
+            fields: ['slug'],
+            start: (page - 1) * 50,
+            limit: 50,
+            status: 'draft',
+          })) as unknown as Array<{ documentId: string; slug: string; roles?: Role[] }>;
+          if (!people.length) break;
+
+          for (const p of people) {
+            const roles = p.roles ?? [];
+            if (!roles.length) continue;
+
+            // adları kanonik formaya gətir
+            let changed = false;
+            const fixed = roles.map((r) => {
+              const raw = r.unitName ?? '';
+              if (!raw) return r;
+              const target = canon.get(fold(raw));
+              if (target && target !== raw) {
+                changed = true;
+                renamedRoles++;
+                return { ...r, unitName: target };
+              }
+              return r;
+            });
+
+            // eyni bölmədəki təkrarları birləşdir
+            const best = new Map<string, Role>();
+            const extras: Role[] = [];
+            for (const r of fixed) {
+              const key = r.unitName ?? '';
+              if (!key) { extras.push(r); continue; }
+              const cur = best.get(key);
+              if (!cur) { best.set(key, r); continue; }
+              changed = true;
+              merged++;
+              if (rank(r.position) < rank(cur.position)) best.set(key, r);
+            }
+
+            if (!changed) continue;
+
+            const out = [...best.values(), ...extras].map((r, i) => ({
+              staffType: r.staffType,
+              position: r.position,
+              unitName: r.unitName ?? null,
+              sortOrder: i,
+            }));
+
+            await strapi.documents('api::person.person').update({
+              documentId: p.documentId,
+              locale: 'az',
+              data: { roles: out } as never,
+            });
+            await strapi.documents('api::person.person').publish({
+              documentId: p.documentId,
+              locale: 'az',
+            });
+            touched++;
+          }
+        }
+
+        strapi.log.info(
+          '[seed] Dirnaq temizliyi: ' + renamed + ' bolme adi | ' + touched +
+          ' sexs yenilendi | ' + renamedRoles + ' vezife adi duzeldildi | ' +
+          merged + ' tekrar birlesdirildi.',
+        );
+      }
+    } catch (err) {
+      strapi.log.error('[seed] dirnaq temizliyi xetasi: ' + (err as Error).message);
+    }
+
 
     // ── Ayrılmış əməkdaşlar (F3.7) ───────────────────────────────────────
     //
