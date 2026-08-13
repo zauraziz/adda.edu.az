@@ -164,6 +164,26 @@
   color: #c9a961;
 }
 
+/* Admin redakte setri — yalniz NEXT_PUBLIC_ADMIN_EDIT_LINKS=true olanda. */
+.ld-admin {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(11, 61, 92, 0.15);
+  font-size: 0.76rem;
+  color: #9aa4ae;
+}
+.ld-admin a {
+  color: #7b8794;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+.ld-admin a:hover {
+  color: #c9a961;
+}
+
 .ld-empty {
   color: #7b8794;
   padding: 24px 0 48px;

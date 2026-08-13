@@ -950,6 +950,7 @@ export const getUnitSlugs = (locale: Locale = 'az') => allSlugs('/units', locale
 /** ── Rəhbərlik (/[locale]/rehberlik) ── */
 
 export interface LeaderPerson {
+  documentId: string;
   name: string;
   displayName: string | null;
   slug: string;

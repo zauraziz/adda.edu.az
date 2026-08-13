@@ -44,6 +44,7 @@ import {
   getLeadership,
   degreeLabel,
   mediaUrl,
+  STRAPI_URL,
   type SiteMenu,
   type LeadershipUnit,
 } from '@/lib/strapi';
@@ -60,9 +61,28 @@ const COUNCIL_SLUG = 'elmi-sura';
  * Bu siyahı QƏSDƏN açıqdır, ağacdan çıxarılmır. Rektorun birbaşa tabeliyində
  * həm bu vəzifələr, həm də mühasibatlıq, personal, təsərrüfat kimi şöbələr
  * dayanır — ağacın forması onları ayırmır. Yeni prorektor əlavə olunanda
- * `prorektor` sözü slug-da olduğu üçün avtomatik düşəcək.
+ * slug-da `prorektor` sözü olduğu üçün avtomatik düşəcək.
  */
 const LEADERSHIP_EXTRA = ['elmi-katib', 'rektorun-musaviri'];
+
+/**
+ * Admin redaktə keçidləri.
+ *
+ * QAPALI olduğu üçün ictimai saytda görünmür — `NEXT_PUBLIC_ADMIN_EDIT_LINKS=true`
+ * yalnız demo mühitində qoyulur. Bu, qəsdən belədir: CMS ünvanını hər ziyarətçiyə
+ * göstərmək nə gərəklidir, nə də səliqəlidir.
+ *
+ * `NEXT_PUBLIC_` prefiksi məcburidir — onsuz dəyər brauzer paketinə düşmür.
+ */
+const SHOW_ADMIN_LINKS = process.env.NEXT_PUBLIC_ADMIN_EDIT_LINKS === 'true';
+
+/** Strapi 5 content-manager URL-i. Dil parametri olmadan `en` açılır. */
+function adminUrl(uid: string, documentId: string, locale: Locale): string {
+  return (
+    `${STRAPI_URL}/admin/content-manager/collection-types/${uid}/${documentId}` +
+    `?plugins[i18n][locale]=${locale}`
+  );
+}
 
 /** Rəhbərlik səhifəsində GÖSTƏRİLMİR (öz bölmə səhifələri qalır). */
 const HIDDEN = ['rektorun-komekcisi', 'referent'];
@@ -76,6 +96,32 @@ function isAcademicPost(position: string | null | undefined): boolean {
   if (!p || /müavin/.test(p)) return false;
   return /dekan|kafedra müdiri/.test(p);
 }
+
+/**
+ * Əlifba sırası ÜÇÜN `name` («Soyad Ad Ata») işlənir, `displayName` yox —
+ * kataloq da soyada görə sıralanır, iki səhifə bir-birindən fərqlənməsin.
+ *
+ * `localeCompare(..., 'az')` MƏCBURİDİR: standart müqayisədə «Ə» hərfi «Z»-dən
+ * sonra düşür və Əliyev, Əsgərov siyahının sonuna atılır.
+ */
+const byName = (a: LeadershipUnit, b: LeadershipUnit) =>
+  (a.head?.name ?? '').localeCompare(b.head?.name ?? '', 'az');
+
+/** Vəzifə növünə görə blok daxilində sıra. Kiçik rəqəm yuxarıda. */
+function postRank(position: string | null | undefined, order: RegExp[]): number {
+  const p = azLower(position ?? '');
+  for (let i = 0; i < order.length; i++) if (order[i].test(p)) return i;
+  return order.length;
+}
+
+/** Rəhbərlik bloku: prorektor -> elmi katib -> müşavir. */
+const LEAD_ORDER = [/prorektor/, /elmi katib/, /müşavir/];
+/** Tədris bloku: əvvəlcə dekanlar, sonra kafedra müdirləri. */
+const ACADEMIC_ORDER = [/dekan/, /kafedra müdiri/];
+
+/** Əvvəl vəzifə növü, sonra əlifba. */
+const byRankThenName = (order: RegExp[]) => (a: LeadershipUnit, b: LeadershipUnit) =>
+  postRank(a.head?.position, order) - postRank(b.head?.position, order) || byName(a, b);
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];
@@ -175,6 +221,17 @@ function LeaderCard({
           {tr('Bölmə haqqında', locale)}
           <i className="ti ti-arrow-right" aria-hidden="true" />
         </Link>
+        {SHOW_ADMIN_LINKS ? (
+          <div className="ld-admin">
+            <span>{tr('Redaktə', locale)}:</span>
+            <a href={adminUrl('api::person.person', head.documentId, locale)} target="_blank" rel="noreferrer">
+              {tr('şəxs', locale)}
+            </a>
+            <a href={adminUrl('api::unit.unit', unit.documentId, locale)} target="_blank" rel="noreferrer">
+              {tr('bölmə', locale)}
+            </a>
+          </div>
+        ) : null}
       </div>
     </li>
   );
@@ -219,17 +276,6 @@ export default async function LeadershipPage({
 
   const bySlug = new Map(units.map((u) => [u.slug, u]));
 
-  /** Kökə qədər neçə addım var. Dövr olsa 20-də dayanır (sonsuz döngü olmasın). */
-  const depthOf = (u: LeadershipUnit): number => {
-    let d = 0;
-    let cur: LeadershipUnit | undefined = u;
-    while (cur?.parent?.slug && d < 20) {
-      cur = bySlug.get(cur.parent.slug);
-      d++;
-    }
-    return d;
-  };
-
   const rector = bySlug.get(ROOT_SLUG) ?? null;
   const council = bySlug.get(COUNCIL_SLUG) ?? null;
 
@@ -239,19 +285,18 @@ export default async function LeadershipPage({
   const isLeadership = (u: LeadershipUnit) =>
     u.slug.includes('prorektor') || LEADERSHIP_EXTRA.includes(u.slug);
 
-  const leadership = staffed.filter(isLeadership);
+  const leadership = [...staffed.filter(isLeadership)].sort(byRankThenName(LEAD_ORDER));
 
   const rest = staffed.filter(
     (u) => u.slug !== ROOT_SLUG && u.slug !== COUNCIL_SLUG && !isLeadership(u),
   );
 
-  // Tədris / inzibati ayrımı vəzifəyə görədir, ağaca görə yox: təsərrüfat
+  // Tədris / inzibati ayrımı VƏZİFƏYƏ görədir, ağaca görə yox: təsərrüfat
   // şöbəsi ağacda prorektorluq altındadır, amma tədris bölməsi deyil.
-  const academic = rest.filter((u) => isAcademicPost(u.head?.position));
-  const administrative = rest.filter((u) => !isAcademicPost(u.head?.position));
-
-  const sorted = (list: LeadershipUnit[]) =>
-    [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || depthOf(a) - depthOf(b));
+  const academic = [...rest.filter((u) => isAcademicPost(u.head?.position))].sort(
+    byRankThenName(ACADEMIC_ORDER),
+  );
+  const administrative = [...rest.filter((u) => !isAcademicPost(u.head?.position))].sort(byName);
 
   return (
     <>
@@ -278,13 +323,13 @@ export default async function LeadershipPage({
           </section>
         ) : null}
 
-        <Group title={tr('Rəhbərlik', locale)} units={sorted(leadership)} locale={locale} />
+        <Group title={tr('Rəhbərlik', locale)} units={leadership} locale={locale} />
 
-        <Group title={tr('Tədris bölmələri', locale)} units={sorted(academic)} locale={locale} />
+        <Group title={tr('Tədris bölmələri', locale)} units={academic} locale={locale} />
 
         <Group
           title={tr('İnzibati və dəstək bölmələri', locale)}
-          units={sorted(administrative)}
+          units={administrative}
           locale={locale}
         />
 
