@@ -54,6 +54,29 @@ export const revalidate = 300;
 const ROOT_SLUG = 'rektor';
 const COUNCIL_SLUG = 'elmi-sura';
 
+/**
+ * «Rəhbərlik» bloku: prorektorlar + elmi katib + rektorun müşaviri.
+ *
+ * Bu siyahı QƏSDƏN açıqdır, ağacdan çıxarılmır. Rektorun birbaşa tabeliyində
+ * həm bu vəzifələr, həm də mühasibatlıq, personal, təsərrüfat kimi şöbələr
+ * dayanır — ağacın forması onları ayırmır. Yeni prorektor əlavə olunanda
+ * `prorektor` sözü slug-da olduğu üçün avtomatik düşəcək.
+ */
+const LEADERSHIP_EXTRA = ['elmi-katib', 'rektorun-musaviri'];
+
+/** Rəhbərlik səhifəsində GÖSTƏRİLMİR (öz bölmə səhifələri qalır). */
+const HIDDEN = ['rektorun-komekcisi', 'referent'];
+
+const azLower = (s: string) =>
+  String(s ?? '').replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
+
+/** Tədris bölməsi: dekan və kafedra müdiri. Müavinlər rəhbər sayılmır. */
+function isAcademicPost(position: string | null | undefined): boolean {
+  const p = azLower(position ?? '');
+  if (!p || /müavin/.test(p)) return false;
+  return /dekan|kafedra müdiri/.test(p);
+}
+
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];
 }
@@ -100,21 +123,9 @@ function LeaderCard({
   const degree = head ? degreeLabel(head.academicDegree) : null;
   const place = [head?.building, head?.office].filter(Boolean).join(', ');
 
-  // Rəhbəri təyin olunmamış bölmə GİZLƏDİLMİR. Vakantlıq məlumatdır:
-  // rektor vəzifəsi hazırda boşdur və bunu göstərmək düzgündür.
-  if (!head) {
-    return (
-      <li className={featured ? 'ld-card ld-card--lead ld-card--vacant' : 'ld-card ld-card--vacant'}>
-        <div className="ld-plate" aria-hidden="true">
-          <span className="ld-mono">—</span>
-        </div>
-        <div className="ld-body">
-          <div className="ld-unit">{unit.name}</div>
-          <div className="ld-vacant">{tr('Vəzifə hazırda vakantdır', locale)}</div>
-        </div>
-      </li>
-    );
-  }
+  // Rəhbəri olmayan bölmə HEÇ GÖSTƏRİLMİR. Boş kart məlumat vermir, sadəcə
+  // səhifəni doldurur. Süzgəc çağıran tərəfdədir; bu yoxlama TypeScript üçün.
+  if (!head) return null;
 
   return (
     <li className={featured ? 'ld-card ld-card--lead' : 'ld-card'}>
@@ -222,14 +233,22 @@ export default async function LeadershipPage({
   const rector = bySlug.get(ROOT_SLUG) ?? null;
   const council = bySlug.get(COUNCIL_SLUG) ?? null;
 
-  const directReports = units.filter((u) => u.parent?.slug === ROOT_SLUG);
-  const deeper = units.filter(
-    (u) =>
-      u.slug !== ROOT_SLUG &&
-      u.slug !== COUNCIL_SLUG &&
-      u.parent?.slug !== ROOT_SLUG &&
-      u.head, // dərin səviyyədə yalnız rəhbəri olanlar göstərilir
+  // Rəhbəri olmayan bölmə səhifədə iştirak etmir — vakant kart göstərilmir.
+  const staffed = units.filter((u) => u.head && !HIDDEN.includes(u.slug));
+
+  const isLeadership = (u: LeadershipUnit) =>
+    u.slug.includes('prorektor') || LEADERSHIP_EXTRA.includes(u.slug);
+
+  const leadership = staffed.filter(isLeadership);
+
+  const rest = staffed.filter(
+    (u) => u.slug !== ROOT_SLUG && u.slug !== COUNCIL_SLUG && !isLeadership(u),
   );
+
+  // Tədris / inzibati ayrımı vəzifəyə görədir, ağaca görə yox: təsərrüfat
+  // şöbəsi ağacda prorektorluq altındadır, amma tədris bölməsi deyil.
+  const academic = rest.filter((u) => isAcademicPost(u.head?.position));
+  const administrative = rest.filter((u) => !isAcademicPost(u.head?.position));
 
   const sorted = (list: LeadershipUnit[]) =>
     [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || depthOf(a) - depthOf(b));
@@ -248,7 +267,7 @@ export default async function LeadershipPage({
           </div>
         </section>
 
-        {rector ? (
+        {rector?.head ? (
           <section className="ld-group ld-group--lead">
             <div className="container">
               <h2 className="ld-h2">{tr('Rektor', locale)}</h2>
@@ -259,23 +278,21 @@ export default async function LeadershipPage({
           </section>
         ) : null}
 
+        <Group title={tr('Rəhbərlik', locale)} units={sorted(leadership)} locale={locale} />
+
+        <Group title={tr('Tədris bölmələri', locale)} units={sorted(academic)} locale={locale} />
+
         <Group
-          title={tr('Prorektorlar və rektor yanında vəzifələr', locale)}
-          units={sorted(directReports)}
+          title={tr('İnzibati və dəstək bölmələri', locale)}
+          units={sorted(administrative)}
           locale={locale}
         />
 
-        <Group
-          title={tr('Struktur bölmə rəhbərləri', locale)}
-          units={sorted(deeper)}
-          locale={locale}
-        />
-
-        {council ? (
+        {council?.head ? (
           <Group title={tr('Elmi Şura', locale)} units={[council]} locale={locale} />
         ) : null}
 
-        {!units.length ? (
+        {!staffed.length ? (
           <section className="ld-group">
             <div className="container">
               <p className="ld-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>

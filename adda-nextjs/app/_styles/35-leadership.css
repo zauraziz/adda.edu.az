@@ -57,10 +57,6 @@
   padding: 24px;
   border-color: rgba(201, 169, 97, 0.45);
 }
-.ld-card--vacant {
-  background: rgba(11, 61, 92, 0.02);
-  border-style: dashed;
-}
 
 .ld-plate {
   display: block;
@@ -126,11 +122,6 @@
   font-size: 0.85rem;
   color: #7b8794;
   margin-top: 3px;
-}
-.ld-vacant {
-  font-size: 0.95rem;
-  color: #8a6d3b;
-  margin-top: 6px;
 }
 
 .ld-contact {
