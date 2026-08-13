@@ -2372,6 +2372,7 @@ export default {
 
         const total = Object.keys(UNIT_HEADS).length;
         let okAz = 0;
+        let skipped = 0;
         const failed: string[] = [];
 
         for (const [unitSlug, personSlug] of Object.entries(UNIT_HEADS)) {
@@ -2401,6 +2402,18 @@ export default {
 
             const documentId = String(units[0].documentId);
             const headId = String(people[0].documentId);
+
+            // Artıq düzgündürsə toxunma. Bu yoxlama olmayanda flag açıq
+            // qalanda hər boot 24 bölməni × 3 dil yenidən yazırdı — 134 saniyə.
+            const cur = (await strapi.documents('api::unit.unit').findOne({
+              documentId,
+              locale: 'az',
+              populate: ['head'],
+            })) as unknown as { head?: { documentId?: string } | null } | null;
+            if (cur?.head?.documentId === headId) {
+              skipped++;
+              continue;
+            }
 
             // AZ ƏSASDIR. Sayt `az` üzərində qurulur, `REL_SYNC` middleware-i
             // digər dilləri az qaralamasından güzgüləyir. Ona görə `az` ayrıca
@@ -2442,7 +2455,10 @@ export default {
           }
         }
 
-        strapi.log.info('[seed] Bolme rehberleri: ' + okAz + '/' + total + ' (az) teyin olundu.');
+        strapi.log.info(
+          '[seed] Bolme rehberleri: ' + okAz + '/' + total + ' (az) yazildi, ' +
+          skipped + ' artiq duzgun idi.',
+        );
         if (failed.length) {
           for (const f of failed) strapi.log.error('[seed] head UGURSUZ — ' + f);
         }
@@ -2479,14 +2495,17 @@ export default {
       if (process.env.KAFEDRA_RESEED !== 'true') {
         strapi.log.info('[seed] Kafedra heyeti otuldu. Qurmaq ucun KAFEDRA_RESEED=true.');
       } else {
+        // DIRNAQSIZ. F3.10 bölmə adlarından «» işarələrini çıxardı; burada
+        // köhnə forma qalsaydı, KAFEDRA_RESEED-in növbəti işləməsi 74 nəfərə
+        // yenidən köhnə formatda vəzifə sətri yazıb təmizliyi ləğv edərdi.
         const KAFEDRA_NAMES: Record<string, string> = {
-          'tetbiqi-mexanika-kafedrasi': '«Tətbiqi mexanika» kafedrası',
-          'deniz-naviqasiyasi-kafedrasi': '«Dəniz naviqasiyası» kafedrası',
-          'gemi-elektroavtomatikasi-kafedrasi': '«Gəmi elektroavtomatikası» kafedrası',
-          'gemi-energetik-qurgulari-kafedrasi': '«Gəmi energetik qurğuları» kafedrası',
-          'gemiqayirma-ve-gemi-temiri-kafedrasi': '«Gəmiqayırma və gəmi təmiri» kafedrası',
-          'humanitar-fenler-kafedrasi': '«Humanitar fənlər» kafedrası',
-          'ingilis-dili-kafedrasi': '«İngilis dili» kafedrası',
+          'tetbiqi-mexanika-kafedrasi': 'Tətbiqi mexanika kafedrası',
+          'deniz-naviqasiyasi-kafedrasi': 'Dəniz naviqasiyası kafedrası',
+          'gemi-elektroavtomatikasi-kafedrasi': 'Gəmi elektroavtomatikası kafedrası',
+          'gemi-energetik-qurgulari-kafedrasi': 'Gəmi energetik qurğuları kafedrası',
+          'gemiqayirma-ve-gemi-temiri-kafedrasi': 'Gəmiqayırma və gəmi təmiri kafedrası',
+          'humanitar-fenler-kafedrasi': 'Humanitar fənlər kafedrası',
+          'ingilis-dili-kafedrasi': 'İngilis dili kafedrası',
         };
 
         // slug, kafedra, elmi derece, elmi ad, vezife
@@ -2668,6 +2687,15 @@ export default {
       if (process.env.NAME_CLEAN !== 'true') {
         strapi.log.info('[seed] Dirnaq temizliyi otuldu. Ucun NAME_CLEAN=true.');
       } else {
+        // ARXA PLAN. `bootstrap()` bitmədən Strapi portu AÇMIR, ona görə burada
+        // görülən hər saniyə saytın əlçatmaz qaldığı saniyədir.
+        //
+        // `setTimeout` işi növbəyə atır: bootstrap dərhal qayıdır, port açılır,
+        // təmizlik sayt işləyərkən davam edir. İş idempotentdir — yarıda
+        // kəsilsə növbəti dəfə qaldığı yerdən davam edir.
+        strapi.log.info('[seed] Dirnaq temizliyi ARXA PLANDA baslayir - port bloklanmir.');
+        setTimeout(() => {
+          void (async () => {
         // Azərbaycan dilində kiçik hərf: toLowerCase() tək başına
         // I -> 'i' (doğrusu 'ı'), İ -> 'i̇' (iki kod nöqtəsi) verir.
         const azLower = (s: string) =>
@@ -2728,6 +2756,12 @@ export default {
             locale: 'az',
             populate: ['roles'],
             fields: ['slug'],
+            // SABİT SIRA MƏCBURİDİR. Bu dövrə qeydləri YENİLƏYİR; sıra
+            // verilməsə baza sətirləri yenidən düzə bilər və səhifələr
+            // arasında sürüşən qeyd HEÇ VAXT emal olunmur. Məhz buna görə
+            // bir nəfərdə köhnə «Tətbiqi mexanika» kafedrası dəyəri qalmışdı.
+            // `slug` dəyişməyən sahədir — sıralama üçün etibarlıdır.
+            sort: 'slug:asc',
             start: (page - 1) * 50,
             limit: 50,
             status: 'draft',
@@ -2784,14 +2818,21 @@ export default {
               locale: 'az',
             });
             touched++;
+            if (touched % 25 === 0) {
+              strapi.log.info('[seed] temizlik gedir: ' + touched + ' sexs yazildi...');
+            }
           }
         }
 
         strapi.log.info(
-          '[seed] Dirnaq temizliyi: ' + renamed + ' bolme adi | ' + touched +
+          '[seed] Dirnaq temizliyi BITDI: ' + renamed + ' bolme adi | ' + touched +
           ' sexs yenilendi | ' + renamedRoles + ' vezife adi duzeldildi | ' +
           merged + ' tekrar birlesdirildi.',
         );
+          })().catch((e) =>
+            strapi.log.error('[seed] dirnaq temizliyi (arxa plan) xetasi: ' + (e as Error).message),
+          );
+        }, 5000);
       }
     } catch (err) {
       strapi.log.error('[seed] dirnaq temizliyi xetasi: ' + (err as Error).message);
