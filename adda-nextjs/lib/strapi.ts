@@ -946,3 +946,68 @@ export async function getUnitBySlug(slug: string, locale: Locale = 'az'): Promis
 }
 
 export const getUnitSlugs = (locale: Locale = 'az') => allSlugs('/units', locale);
+
+/** ── Rəhbərlik (/[locale]/rehberlik) ── */
+
+export interface LeaderPerson {
+  name: string;
+  displayName: string | null;
+  slug: string;
+  position: string | null;
+  academicDegree: 'elmler_doktoru' | 'felsefe_doktoru' | 'elmler_namizedi' | 'yoxdur' | null;
+  academicTitle: string | null;
+  email: string | null;
+  phone: string | null;
+  office: string | null;
+  building: string | null;
+  photo: StrapiMedia | null;
+}
+
+export interface LeadershipUnit {
+  documentId: string;
+  name: string;
+  slug: string;
+  sortOrder?: number;
+  parent: { slug: string } | null;
+  head: LeaderPerson | null;
+}
+
+/**
+ * Bölmələr + rəhbərləri (kart üçün lazım olan bütün sahələrlə).
+ *
+ * `getUnits` yalnız rəhbərin adını və slug-ını gətirir — ağac üçün bu bəsdir,
+ * kart üçün deyil. Foto, e-poçt, telefon AÇIQ populate olunmalıdır: Strapi
+ * populate yazılmayan sahəni cavabdan səssizcə çıxarır.
+ *
+ * İyerarxiya BURADA qurulmur — səhifə `parent.slug` üzərindən qurur.
+ */
+export async function getLeadership(locale: Locale = 'az'): Promise<LeadershipUnit[]> {
+  return fetchAllPages<LeadershipUnit>('/units', {
+    locale,
+    'sort[0]': 'sortOrder:asc',
+    'sort[1]': 'name:asc',
+    'fields[0]': 'name',
+    'fields[1]': 'slug',
+    'fields[2]': 'sortOrder',
+    'populate[parent][fields][0]': 'slug',
+    'populate[head][fields][0]': 'name',
+    'populate[head][fields][1]': 'displayName',
+    'populate[head][fields][2]': 'slug',
+    'populate[head][fields][3]': 'position',
+    'populate[head][fields][4]': 'academicDegree',
+    'populate[head][fields][5]': 'academicTitle',
+    'populate[head][fields][6]': 'email',
+    'populate[head][fields][7]': 'phone',
+    'populate[head][fields][8]': 'office',
+    'populate[head][fields][9]': 'building',
+    'populate[head][populate][photo][fields][0]': 'url',
+  });
+}
+
+/** Enum → oxunaqlı ad. Boş və `yoxdur` halları göstərilmir. */
+export function degreeLabel(d: LeaderPerson['academicDegree']): string | null {
+  if (d === 'elmler_doktoru') return 'Elmlər doktoru';
+  if (d === 'felsefe_doktoru') return 'Fəlsəfə doktoru';
+  if (d === 'elmler_namizedi') return 'Elmlər namizədi';
+  return null;
+}

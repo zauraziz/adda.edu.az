@@ -110,7 +110,7 @@ const SEED = {
               },
               {
                 "label": "Rəhbərlik",
-                "url": "/hazirlanir/rehberlik"
+                "url": "/rehberlik"
               },
               {
                 "label": "Elmi Şura",
@@ -1063,7 +1063,7 @@ const SEED = {
           },
           {
             "label": "Rəhbərlik",
-            "url": "/hazirlanir/rehberlik"
+            "url": "/rehberlik"
           },
           {
             "label": "Struktur",

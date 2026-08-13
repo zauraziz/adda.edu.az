@@ -1133,6 +1133,16 @@ const MENU_T: Array<[string, string, string]> = [
   ['Status', 'Статус', 'Status'],
   ['Göndərilir', 'Отправляется', 'Sending'],
   ['Bu tədbirdə yerinizi təsdiqləyin', 'Подтвердите ваше участие в этом мероприятии', 'Confirm your attendance at this event'],
+  ['İdarəetmə', 'Управление', 'Governance'],
+  ['Akademiyanın rəhbər heyəti və struktur bölmə rəhbərləri.', 'Руководство Академии и руководители структурных подразделений.', 'The Academy leadership and heads of structural units.'],
+  ['Prorektorlar və rektor yanında vəzifələr', 'Проректоры и должности при ректоре', 'Vice-Rectors and Offices under the Rector'],
+  ['Struktur bölmə rəhbərləri', 'Руководители структурных подразделений', 'Heads of Structural Units'],
+  ['Vəzifə hazırda vakantdır', 'Должность в настоящее время вакантна', 'This position is currently vacant'],
+  ['Bölmə haqqında', 'О подразделении', 'About the unit'],
+  ['Yerləşmə', 'Расположение', 'Location'],
+  ['E-poçt', 'Эл. почта', 'Email'],
+  ['Telefon', 'Телефон', 'Phone'],
+  ['Məlumat hazırda əlçatan deyil.', 'Информация в настоящее время недоступна.', 'Information is currently unavailable.'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.
