@@ -1170,7 +1170,7 @@ const REL_SYNC: Record<string, string[]> = {
   'api::program.program': ['faculty'],
   'api::department.department': ['faculty', 'head'],
   'api::faculty.faculty': ['dean'],
-  'api::unit.unit': ['head', 'parent'],
+  'api::unit.unit': ['head', 'parent', 'documents'],
 };
 const SYNC_DEFAULT_LOCALE = 'az';
 
