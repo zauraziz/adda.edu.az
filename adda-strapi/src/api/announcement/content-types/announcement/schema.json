@@ -153,6 +153,11 @@
       "target": "api::person.person",
       "inversedBy": "announcements"
     },
+    "unit": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::unit.unit"
+    },
     "showOnHome": {
       "type": "boolean",
       "default": false,

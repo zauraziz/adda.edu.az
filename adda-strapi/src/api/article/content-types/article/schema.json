@@ -151,6 +151,11 @@
       "target": "api::person.person",
       "inversedBy": "articles"
     },
+    "unit": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::unit.unit"
+    },
     "showOnHome": {
       "type": "boolean",
       "default": false,

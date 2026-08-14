@@ -1164,8 +1164,8 @@ const SEED = {
  * Idempotent; rekursiya module-level inFlight Set ile bloklanir.
  */
 const REL_SYNC: Record<string, string[]> = {
-  'api::article.article': ['faculty', 'person', 'tags'],
-  'api::announcement.announcement': ['faculty', 'person', 'tags'],
+  'api::article.article': ['faculty', 'person', 'tags', 'unit'],
+  'api::announcement.announcement': ['faculty', 'person', 'tags', 'unit'],
   'api::event.event': ['faculty', 'person', 'tags'],
   'api::program.program': ['faculty'],
   'api::department.department': ['faculty', 'head'],
