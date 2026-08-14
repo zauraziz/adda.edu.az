@@ -1426,42 +1426,26 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
   };
   pluginOptions: {
     i18n: {
-      localized: true;
+      localized: false;
     };
   };
   attributes: {
     academicDegree: Schema.Attribute.Enumeration<
       ['elmler_doktoru', 'felsefe_doktoru', 'elmler_namizedi', 'yoxdur']
-    > &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    academicTitle: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    >;
+    academicTitle: Schema.Attribute.String;
+    academicTitleEn: Schema.Attribute.String;
+    academicTitleRu: Schema.Attribute.String;
     altEmail: Schema.Attribute.Email;
     announcements: Schema.Attribute.Relation<
       'oneToMany',
       'api::announcement.announcement'
     >;
     articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
-    bio: Schema.Attribute.RichText &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    building: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    bio: Schema.Attribute.RichText;
+    bioEn: Schema.Attribute.RichText;
+    bioRu: Schema.Attribute.RichText;
+    building: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1469,117 +1453,41 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::department.department'
     >;
-    displayName: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    education: Schema.Attribute.Component<'staff.education', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    email: Schema.Attribute.Email &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }>;
+    displayName: Schema.Attribute.String;
+    education: Schema.Attribute.Component<'staff.education', true>;
+    email: Schema.Attribute.Email;
     events: Schema.Attribute.Relation<'oneToMany', 'api::event.event'>;
-    experience: Schema.Attribute.Component<'staff.experience', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    experience: Schema.Attribute.Component<'staff.experience', true>;
     faculty: Schema.Attribute.Relation<'manyToOne', 'api::faculty.faculty'>;
     headOf: Schema.Attribute.Relation<'oneToMany', 'api::unit.unit'>;
     languages: Schema.Attribute.Component<'staff.language', true>;
-    locale: Schema.Attribute.String;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::person.person'>;
-    name: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    office: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    other: Schema.Attribute.RichText &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::person.person'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    office: Schema.Attribute.String;
+    other: Schema.Attribute.RichText;
     phone: Schema.Attribute.String;
-    photo: Schema.Attribute.Media<'images'> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }>;
-    position: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    photo: Schema.Attribute.Media<'images'>;
+    position: Schema.Attribute.String;
+    positionEn: Schema.Attribute.String;
+    positionRu: Schema.Attribute.String;
     profileUpdatedAt: Schema.Attribute.DateTime;
-    publications: Schema.Attribute.Component<'staff.publication', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    publications: Schema.Attribute.Component<'staff.publication', true>;
     publishedAt: Schema.Attribute.DateTime;
-    researchAreas: Schema.Attribute.Component<'staff.tag', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    responsibilities: Schema.Attribute.RichText &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    roles: Schema.Attribute.Component<'staff.role', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    researchAreas: Schema.Attribute.Component<'staff.tag', true>;
+    responsibilities: Schema.Attribute.RichText;
+    roles: Schema.Attribute.Component<'staff.role', true>;
     scholar: Schema.Attribute.Component<'staff.scholar', false>;
-    slug: Schema.Attribute.UID<'name'> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     staffType: Schema.Attribute.Enumeration<
       ['akademik', 'telimci_texniki', 'inzibati', 'rehberlik', 'diger']
     > &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }> &
       Schema.Attribute.DefaultTo<'akademik'>;
-    teaching: Schema.Attribute.RichText &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    teaching: Schema.Attribute.RichText;
     unit: Schema.Attribute.Relation<'manyToOne', 'api::unit.unit'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

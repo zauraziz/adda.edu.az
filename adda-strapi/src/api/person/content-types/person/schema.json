@@ -12,26 +12,16 @@
   },
   "pluginOptions": {
     "i18n": {
-      "localized": true
+      "localized": false
     }
   },
   "attributes": {
     "name": {
       "type": "string",
-      "required": true,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "required": true
     },
     "displayName": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "string"
     },
     "profileUpdatedAt": {
       "type": "datetime"
@@ -39,12 +29,7 @@
     "slug": {
       "type": "uid",
       "targetField": "name",
-      "required": true,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "required": true
     },
     "staffType": {
       "type": "enumeration",
@@ -55,28 +40,25 @@
         "rehberlik",
         "diger"
       ],
-      "default": "akademik",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      }
+      "default": "akademik"
     },
     "position": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "string"
+    },
+    "positionRu": {
+      "type": "string"
+    },
+    "positionEn": {
+      "type": "string"
     },
     "academicTitle": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "string"
+    },
+    "academicTitleRu": {
+      "type": "string"
+    },
+    "academicTitleEn": {
+      "type": "string"
     },
     "academicDegree": {
       "type": "enumeration",
@@ -85,30 +67,21 @@
         "felsefe_doktoru",
         "elmler_namizedi",
         "yoxdur"
-      ],
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      ]
     },
     "roles": {
       "type": "component",
       "repeatable": true,
-      "component": "staff.role",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "staff.role"
     },
     "bio": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "richtext"
+    },
+    "bioRu": {
+      "type": "richtext"
+    },
+    "bioEn": {
+      "type": "richtext"
     },
     "languages": {
       "type": "component",
@@ -123,86 +96,41 @@
     "researchAreas": {
       "type": "component",
       "repeatable": true,
-      "component": "staff.tag",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "staff.tag"
     },
     "teaching": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "richtext"
     },
     "publications": {
       "type": "component",
       "repeatable": true,
-      "component": "staff.publication",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "staff.publication"
     },
     "experience": {
       "type": "component",
       "repeatable": true,
-      "component": "staff.experience",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "staff.experience"
     },
     "education": {
       "type": "component",
       "repeatable": true,
-      "component": "staff.education",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "staff.education"
     },
     "responsibilities": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "richtext"
     },
     "other": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "richtext"
     },
     "photo": {
       "type": "media",
       "multiple": false,
       "allowedTypes": [
         "images"
-      ],
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      }
+      ]
     },
     "email": {
-      "type": "email",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      }
+      "type": "email"
     },
     "altEmail": {
       "type": "email"
@@ -211,20 +139,10 @@
       "type": "string"
     },
     "office": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "string"
     },
     "building": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "type": "string"
     },
     "faculty": {
       "type": "relation",
