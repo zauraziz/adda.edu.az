@@ -2402,14 +2402,27 @@ export default {
             const documentId = String(units[0].documentId);
             const headId = String(people[0].documentId);
 
-            // Artıq düzgündürsə toxunma. Bu yoxlama olmayanda flag açıq
-            // qalanda hər boot 24 bölməni × 3 dil yenidən yazırdı — 134 saniyə.
-            const cur = (await strapi.documents('api::unit.unit').findOne({
-              documentId,
-              locale: 'az',
-              populate: ['head'],
-            })) as unknown as { head?: { documentId?: string } | null } | null;
-            if (cur?.head?.documentId === headId) {
+            // Artıq HƏR ÜÇ DİLDƏ düzgündürsə toxunma.
+            //
+            // Yalnız `az`-a baxmaq SƏHVDİR: `person` lokallaşdırılana qədər ru/en
+            // yazıları uğursuz olurdu, ona görə az dolu, ru/en boş qala bilər.
+            // Belə halda yalnız az-a baxan yoxlama hamısını atlayır və ru/en heç
+            // vaxt dolmur.
+            const already = await Promise.all(
+              (['az', 'ru', 'en'] as const).map(async (loc) => {
+                try {
+                  const d = (await strapi.documents('api::unit.unit').findOne({
+                    documentId,
+                    locale: loc,
+                    populate: ['head'],
+                  })) as unknown as { head?: { documentId?: string } | null } | null;
+                  return d?.head?.documentId === headId;
+                } catch {
+                  return false;
+                }
+              }),
+            );
+            if (already.every(Boolean)) {
               skipped++;
               continue;
             }
