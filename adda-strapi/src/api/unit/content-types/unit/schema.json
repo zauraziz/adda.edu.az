@@ -85,6 +85,12 @@
           "localized": false
         }
       }
+    },
+    "documents": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::document.document",
+      "mappedBy": "units"
     }
   }
 }

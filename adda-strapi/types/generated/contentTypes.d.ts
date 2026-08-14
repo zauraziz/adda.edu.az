@@ -882,6 +882,7 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    units: Schema.Attribute.Relation<'manyToMany', 'api::unit.unit'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2453,6 +2454,10 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    documents: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::document.document'
+    >;
     head: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::unit.unit'>;

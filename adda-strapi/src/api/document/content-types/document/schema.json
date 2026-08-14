@@ -73,6 +73,12 @@
           "localized": false
         }
       }
+    },
+    "units": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::unit.unit",
+      "inversedBy": "documents"
     }
   }
 }
