@@ -1145,6 +1145,24 @@ const MENU_T: Array<[string, string, string]> = [
   ['E-poçt', 'Эл. почта', 'Email'],
   ['Telefon', 'Телефон', 'Phone'],
   ['Məlumat hazırda əlçatan deyil.', 'Информация в настоящее время недоступна.', 'Information is currently unavailable.'],
+  // --- F3.22 struktur bölmə səhifəsi (az, ru, en) ---
+  ['Struktur bölmə', 'Структурное подразделение', 'Structural unit'],
+  ['Rəhbərlik və heyət', 'Руководство и персонал', 'Leadership & staff'],
+  ['Funksional fəaliyyət', 'Функциональная деятельность', 'Functional activity'],
+  ['Kommunikasiya və yerləşmə', 'Связь и расположение', 'Contact & location'],
+  ['Hesabatlılıq və şəffaflıq', 'Отчётность и прозрачность', 'Accountability & transparency'],
+  ['Əsasnamə', 'Положение', 'Regulations'],
+  ['Funksiyalar', 'Функции', 'Functions'],
+  ['Xidmətlər', 'Услуги', 'Services'],
+  ['Onlayn xidmətlər', 'Онлайн-услуги', 'Online services'],
+  ['Qəbul saatları', 'Часы приёма', 'Reception hours'],
+  ['Rəhbər', 'Руководитель', 'Head'],
+  ['Korpus', 'Корпус', 'Building'],
+  ['Mərtəbə', 'Этаж', 'Floor'],
+  ['Otaq', 'Кабинет', 'Room'],
+  ['Daxili telefon', 'Внутренний телефон', 'Extension'],
+  ['İllik hesabatlar', 'Годовые отчёты', 'Annual reports'],
+  ['Alt bölmələr', 'Подразделения', 'Sub-units'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

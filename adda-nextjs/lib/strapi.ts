@@ -947,6 +947,144 @@ export async function getUnitBySlug(slug: string, locale: Locale = 'az'): Promis
 
 export const getUnitSlugs = (locale: Locale = 'az') => allSlugs('/units', locale);
 
+/** ── F3.22: `/struktur/[slug]` bölmə səhifəsi (beş blok) ── */
+
+export interface NavLinkItem { label: string; url: string; }
+
+export interface UnitDocumentItem {
+  id: number;
+  documentId: string;
+  title: string;
+  titleRu: string | null;
+  titleEn: string | null;
+  description: string | null;
+  descriptionRu: string | null;
+  descriptionEn: string | null;
+  category: 'normativ' | 'esasname' | 'qerar' | 'hesabat' | 'etika' | 'akkreditasiya' | 'forma' | 'diger';
+  year: number | null;
+  file: StrapiMedia | null;
+}
+
+/** Sənəd başlığı/təsviri cari dildə — `document` lokallaşdırılmayıb, üç sahədən seçilir. */
+export function docText(d: UnitDocumentItem, locale: Locale): { title: string; description: string | null } {
+  const title = (locale === 'ru' ? d.titleRu : locale === 'en' ? d.titleEn : null) || d.title;
+  const description = (locale === 'ru' ? d.descriptionRu : locale === 'en' ? d.descriptionEn : null) || d.description;
+  return { title, description };
+}
+
+export interface UnitDetail {
+  documentId: string;
+  name: string;
+  slug: string;
+  about: string | null;
+  mission: string | null;
+  receptionHours: string | null;
+  functions: string | null;
+  services: string | null;
+  building: string | null;
+  floor: string | null;
+  room: string | null;
+  phoneExt: string | null;
+  email: string | null;
+  onlineServices: NavLinkItem[];
+  links: NavLinkItem[];
+  parent: { slug: string; name: string } | null;
+  children: { slug: string; name: string; sortOrder?: number }[];
+  head: LeaderPerson | null;
+}
+
+/**
+ * Bölmənin tam profili (F3.22 beş blok üçün).
+ *
+ * `documents`, `people` və xəbər/elan lentləri BURADA YOXDUR — ayrıca
+ * sorğulardadır (aşağı). Hamısı bir yerdə çox dərin populate aparardı;
+ * hər sorğu öz sahəsini yüngül tutur.
+ */
+export async function getUnitDetail(slug: string, locale: Locale = 'az'): Promise<UnitDetail | null> {
+  const json = await strapiFetch<StrapiList<UnitDetail>>('/units', {
+    locale,
+    'filters[slug][$eq]': slug,
+    'pagination[pageSize]': 1,
+    'populate[onlineServices]': true,
+    'populate[links]': true,
+    'populate[parent][fields][0]': 'slug',
+    'populate[parent][fields][1]': 'name',
+    'populate[children][fields][0]': 'slug',
+    'populate[children][fields][1]': 'name',
+    'populate[children][fields][2]': 'sortOrder',
+    'populate[head][fields][0]': 'name',
+    'populate[head][fields][1]': 'displayName',
+    'populate[head][fields][2]': 'slug',
+    'populate[head][fields][3]': 'position',
+    'populate[head][fields][4]': 'academicDegree',
+    'populate[head][fields][5]': 'academicTitle',
+    'populate[head][fields][6]': 'email',
+    'populate[head][fields][7]': 'phone',
+    'populate[head][fields][8]': 'office',
+    'populate[head][fields][9]': 'building',
+    'populate[head][populate][photo][fields][0]': 'url',
+  });
+  return json.data?.[0] ?? null;
+}
+
+/** Bölməyə bağlı sənədlər (əsasnamə, hesabat və s.) — `document.units` çoxa-çox, `document` lokallaşdırılmayıb. */
+export async function getUnitDocuments(unitSlug: string): Promise<UnitDocumentItem[]> {
+  return fetchAllPages<UnitDocumentItem>('/documents', {
+    'filters[units][slug][$eq]': unitSlug,
+    'populate[file]': true,
+  });
+}
+
+/**
+ * Bölmənin heyəti — İKİ mənbənin BİRLƏŞMƏSİ:
+ *   person.unit === bu bölmə              (əsas bağlantı)
+ *   person.roles[].unitName === unit.name (əlavə bağlantı — kafedra üzvləri üçün)
+ * `person` lokallaşdırılmayıb — sorğuya `locale` göndərilmir.
+ */
+export async function getUnitStaff(unitSlug: string, unitName: string): Promise<Person[]> {
+  return fetchAllPages<Person>('/people', {
+    'filters[$or][0][unit][slug][$eq]': unitSlug,
+    'filters[$or][1][roles][unitName][$eq]': unitName,
+    'populate[roles]': true,
+  });
+}
+
+/** Bölməyə aid xəbərlər — HİBRİD: `article.unit` əlaqəsi VƏ YA bölmə slug-ına bərabər tag. */
+export async function getUnitArticles(unitSlug: string, locale: Locale = 'az', limit = 6): Promise<Article[]> {
+  try {
+    const json = await strapiFetch<StrapiList<Article>>('/articles', {
+      locale,
+      'filters[$or][0][unit][slug][$eq]': unitSlug,
+      'filters[$or][1][tags][slug][$eq]': unitSlug,
+      sort: 'newsDate:desc',
+      'pagination[pageSize]': limit,
+      'populate[cover]': true,
+    });
+    return json.data ?? [];
+  } catch (err) {
+    console.error('[unit] xeberler cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
+/** Bölməyə aid elanlar — eyni hibrid qayda. */
+export async function getUnitAnnouncements(unitSlug: string, locale: Locale = 'az', limit = 6): Promise<Announcement[]> {
+  try {
+    const json = await strapiFetch<StrapiList<Announcement>>('/announcements', {
+      locale,
+      'filters[$or][0][unit][slug][$eq]': unitSlug,
+      'filters[$or][1][tags][slug][$eq]': unitSlug,
+      sort: 'publishAt:desc',
+      'pagination[pageSize]': limit,
+      'populate[cover]': true,
+    });
+    return json.data ?? [];
+  } catch (err) {
+    console.error('[unit] elanlar cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
 /** ── Rəhbərlik (/[locale]/rehberlik) ── */
 
 export interface LeaderPerson {
