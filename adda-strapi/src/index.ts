@@ -2901,7 +2901,81 @@ export default {
       strapi.log.error('[seed] arxiv xetasi: ' + (err as Error).message);
     }
 
+    // ── Department mətninin unit-ə köçürülməsi (F3.23) ───────────────────
+    //
+    // PROBLEM: F3.22-də slug hər iki tipdə (`unit` + `department`) varsa
+    // beş bloklu `unit` görünüşü üstün gəlir və `department.about` heç vaxt
+    // göstərilmir. Altı bölmədə köhnə saytdan gələn real mətn bu səbəbdən
+    // görünməz qalıb.
+    //
+    // HƏLL: hər `department` üçün eyni slug-lı `unit` tapılır. `unit.about`
+    // (qaralama) BOŞDURSA `department.about` ora yazılır + publish().
+    // DOLUDURSA TOXUNULMUR — üstündən yazma yoxdur. Hər üç dil ayrıca
+    // yoxlanılır: `department`-də ru/en versiyası varsa (az 11, ru 3, en 10)
+    // yalnız o dillər üçün `unit`-ə yazılır.
+    //
+    // ABOUT_MIGRATE=true olmadan İŞLƏMİR.
+    try {
+      if (process.env.ABOUT_MIGRATE !== 'true') {
+        strapi.log.info('[seed] Department -> unit about kocurmesi otuldu. Ucun ABOUT_MIGRATE=true.');
+      } else {
+        const LOCS = ['az', 'ru', 'en'] as const;
+        let written = 0;
+        let skipped = 0;
+        const failed: string[] = [];
 
+        for (const loc of LOCS) {
+          const deps = (await strapi.documents('api::department.department').findMany({
+            locale: loc,
+            // Yalnız 12 qeyd — SABİT SIRA yenə də tələb olunur (layihə qaydası).
+            sort: 'slug:asc',
+            fields: ['slug', 'about'],
+            limit: 100,
+          })) as unknown as Array<{ slug: string; about?: string | null }>;
+
+          for (const d of deps) {
+            if (!d.about) continue;
+            try {
+              const units = (await strapi.documents('api::unit.unit').findMany({
+                locale: loc,
+                filters: { slug: { $eq: d.slug } },
+                fields: ['slug', 'about'],
+                status: 'draft',
+                limit: 2,
+              })) as unknown as Array<{ documentId: string; about?: string | null }>;
+              if (units.length !== 1) {
+                skipped++;
+                continue;
+              }
+              const u = units[0];
+              if (u.about) {
+                skipped++;
+                continue;
+              }
+
+              await strapi.documents('api::unit.unit').update({
+                documentId: u.documentId,
+                locale: loc,
+                data: { about: d.about } as never,
+              });
+              // update() YALNIZ qaralamaya yazır.
+              await strapi.documents('api::unit.unit').publish({ documentId: u.documentId, locale: loc });
+              written++;
+              strapi.log.info(
+                '[seed] about kocuruldu (' + loc + '): ' + d.slug + ' -> ' + d.about.length + ' simvol',
+              );
+            } catch (e) {
+              failed.push(d.slug + ' (' + loc + '): ' + (e as Error).message);
+            }
+          }
+        }
+
+        strapi.log.info('[seed] Department about kocurmesi: ' + written + ' yazildi, ' + skipped + ' atlandi.');
+        for (const f of failed) strapi.log.error('[seed] about kocurme UGURSUZ - ' + f);
+      }
+    } catch (err) {
+      strapi.log.error('[seed] about kocurme xetasi: ' + (err as Error).message);
+    }
 
 
 
