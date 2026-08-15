@@ -1177,3 +1177,13 @@ export function tr(az: string, locale: Locale): string {
   if (!hit) return az;
   return locale === 'ru' ? hit[0] : hit[1];
 }
+
+// F3.28 — `az` fallback bildirişi (sehife/ixtisaslar/fakulteler [slug]).
+// tr() bura yaramır: ru və en mesajları eyni cümlənin tərcüməsi DEYİL, hərəsi
+// öz dilinin adını çəkir ("rus dilinə" / "into English") — TR_MAP-in tək-az-
+// mənbə modeli fərqli məzmunu tuta bilməz.
+export function fallbackNotice(locale: Locale): string | null {
+  if (locale === 'ru') return 'Эта страница ещё не переведена на русский язык';
+  if (locale === 'en') return 'This page has not been translated into English yet';
+  return null;
+}

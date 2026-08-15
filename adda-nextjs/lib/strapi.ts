@@ -271,6 +271,28 @@ export const getDepartmentSlugs = (locale: Locale = 'az') => allSlugs('/departme
 export const getProgramSlugs = (locale: Locale = 'az') => allSlugs('/programs', locale);
 export const getFacultySlugs = (locale: Locale = 'az') => allSlugs('/faculties', locale);
 
+export interface LocaleFallback<T> {
+  doc: T | null;
+  /** `true` = `locale`-də tapılmadı, `az` versiyası göstərilir. */
+  isFallback: boolean;
+}
+
+/**
+ * Cari dildə tapılmasa `az` versiyasını çəkir. F3.28: `page`/`program`/
+ * `faculty` ru/en əhatəsi natamamdır (bax CLAUDE.md dil əhatəsi cədvəli:
+ * page 42/25/26, program 4/0/3, faculty 2/0/2) — 58 menyu keçidi bu səbəbdən
+ * 404 verirdi. Marşrut xətası deyil, məzmun boşluğudur.
+ */
+export async function withAzFallback<T>(
+  loader: (locale: Locale) => Promise<T | null>,
+  locale: Locale,
+): Promise<LocaleFallback<T>> {
+  const doc = await loader(locale).catch(() => null);
+  if (doc || locale === 'az') return { doc, isFallback: false };
+  const fallback = await loader('az').catch(() => null);
+  return { doc: fallback, isFallback: fallback !== null };
+}
+
 
 /** ── F2.4: Elan (announcement) tipi ── */
 export interface Announcement {

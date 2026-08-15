@@ -12,7 +12,7 @@ import SiteHeaderStack from './SiteHeaderStack';
 import Footer from './Footer';
 import CorrectionIsland, { type TargetType } from './CorrectionIsland';
 import type { SiteMenu } from '@/lib/strapi';
-import { tr, type Locale } from '@/lib/i18n';
+import { tr, fallbackNotice, type Locale } from '@/lib/i18n';
 
 export interface ContentPageProps {
   locale: Locale;
@@ -25,6 +25,8 @@ export interface ContentPageProps {
   back?: { label: string; href: string };
   /** Düzəliş adası üçün hədəf tipi; verilməsə ada göstərilmir. */
   correction?: { targetType: TargetType; targetSlug: string; labels: Record<string, string> };
+  /** F3.28: cari dildə tapılmadı, `az` versiyası göstərilir. */
+  isFallback?: boolean;
 }
 
 export default async function ContentPage({
@@ -35,8 +37,10 @@ export default async function ContentPage({
   body,
   back,
   correction,
+  isFallback,
 }: ContentPageProps) {
   const bodyHtml = body ? await marked.parse(body) : '';
+  const notice = isFallback ? fallbackNotice(locale) : null;
 
   return (
     <>
@@ -52,6 +56,25 @@ export default async function ContentPage({
         ) : null}
 
         <article>
+          {notice ? (
+            <div className="container">
+              <div
+                role="status"
+                style={{
+                  background: '#FBF4E4',
+                  border: '1px solid #C9A961',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginBottom: '20px',
+                  color: '#0B3D5C',
+                  fontSize: '0.95rem',
+                }}
+              >
+                {notice}
+              </div>
+            </div>
+          ) : null}
+
           <div className="container na-head">
             <div className="na-eyebrow">{kicker}</div>
             <h1 className="na-title">{title}</h1>

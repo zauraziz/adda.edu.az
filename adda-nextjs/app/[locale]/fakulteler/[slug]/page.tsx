@@ -26,7 +26,7 @@ import '../../../_styles/24-identity.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ContentPage from '../../../_components/ContentPage';
-import { getFacultyBySlug, getFacultySlugs, getMenu, type FacultyDoc, type SiteMenu } from '@/lib/strapi';
+import { getFacultyBySlug, getFacultySlugs, getMenu, withAzFallback, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
@@ -46,7 +46,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const doc = await getFacultyBySlug(slug, locale).catch(() => null);
+  const { doc } = await withAzFallback((loc) => getFacultyBySlug(slug, loc), locale);
   if (!doc) return { title: tr('Fakültə', locale) };
   return { title: doc.name };
 }
@@ -59,8 +59,8 @@ export default async function Page({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
 
-  const [doc, menu] = await Promise.all([
-    getFacultyBySlug(slug, locale).catch(() => null as FacultyDoc | null),
+  const [{ doc, isFallback }, menu] = await Promise.all([
+    withAzFallback((loc) => getFacultyBySlug(slug, loc), locale),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
 
@@ -107,6 +107,7 @@ export default async function Page({
     <ContentPage
       locale={locale}
       menu={menu}
+      isFallback={isFallback}
       kicker={tr('Fakültə', locale)}
       title={doc.name}
       body={doc.about}
