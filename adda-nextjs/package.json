@@ -8,6 +8,7 @@
     "check:locales": "node ../tools/check-unit-locales.mjs",
     "check:units": "node ../tools/check-unit-data.mjs",
     "check:locale-coverage": "node ../tools/check-locale-coverage.mjs",
+    "check:menu": "node ../tools/check-menu-links.mjs",
     "plan:heads": "node ../tools/plan-unit-heads.mjs",
     "dev": "next dev",
     "build": "next build",
