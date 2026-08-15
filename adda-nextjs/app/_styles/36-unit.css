@@ -37,6 +37,47 @@
   color: var(--navy-900);
   margin: 0 0 1.4rem;
 }
+
+/* ── F4.3: admin redaktə keçidləri — YALNIZ NEXT_PUBLIC_ADMIN_EDIT_LINKS=true
+   olanda görünür, ictimai səhifəni dəyişmir. ── */
+.un-admin-status {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: #7b8794;
+  background: var(--navy-50);
+  border: 1px dashed rgba(11, 61, 92, 0.2);
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  margin: 1.5rem 0 0;
+}
+.un-block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 1.4rem;
+}
+.un-block-head .un-block-title { margin: 0; }
+.un-admin-edit {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  color: #7b8794;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+  white-space: nowrap;
+}
+.un-admin-edit:hover { color: var(--gold-600); }
+
+.un-block--empty { opacity: 0.55; }
+.un-block--empty .un-block-title { color: var(--gray-500); }
+.un-block-empty-note {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: #9aa4ae;
+  font-style: italic;
+  margin: 0;
+}
 .un-sub-title {
   font-family: var(--font-body);
   font-size: var(--text-xs);

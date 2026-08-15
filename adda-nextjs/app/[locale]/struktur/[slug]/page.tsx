@@ -123,6 +123,40 @@ function buildCrumbs(unit: UnitDetail, allUnits: OrgUnit[]): { slug: string; nam
   return chain;
 }
 
+/** F4.3 — blok başlığı + admin rejimində kiçik «redaktə» keçidi. */
+function BlockTitle({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
+  return (
+    <div className="un-block-head">
+      <h2 className="un-block-title">{title}</h2>
+      {SHOW_ADMIN_LINKS ? (
+        <a
+          className="un-admin-edit"
+          href={adminUrl('api::unit.unit', documentId, locale)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {tr('redaktə', locale)}
+        </a>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * F4.3 — boş blok, YALNIZ SHOW_ADMIN_LINKS aktiv olanda render olunur.
+ * check:gaps hansı blokun boş olduğunu terminalda deyir, amma səhifədə
+ * görünmürdü — məhz doldurulmalı yerdə keçid yox idi. İctimai görünüşdə
+ * boş blok HEÇ VAXT render olunmur (yuxarıdakı əsas qayda dəyişmir).
+ */
+function EmptyBlock({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
+  return (
+    <section className="un-block un-block--empty">
+      <BlockTitle title={title} documentId={documentId} locale={locale} />
+      <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
+    </section>
+  );
+}
+
 function DocList({ docs, locale }: { docs: UnitDocumentItem[]; locale: Locale; }) {
   if (!docs.length) return null;
   return (
@@ -246,6 +280,21 @@ export default async function UnitPage({
   );
   const block5Has = Boolean(hesabat.length || articles.length || announcements.length || subunits.length);
 
+  const blockTitle1 = tr('Struktur bölmə', locale);
+  const blockTitle2 = tr('Rəhbərlik və heyət', locale);
+  const blockTitle3 = tr('Funksional fəaliyyət', locale);
+  const blockTitle4 = tr('Kommunikasiya və yerləşmə', locale);
+  const blockTitle5 = tr('Hesabatlılıq və şəffaflıq', locale);
+  const blockStatus = [
+    { has: block1Has, title: blockTitle1 },
+    { has: block2Has, title: blockTitle2 },
+    { has: block3Has, title: blockTitle3 },
+    { has: block4Has, title: blockTitle4 },
+    { has: block5Has, title: blockTitle5 },
+  ];
+  const openBlockCount = blockStatus.filter((b) => b.has).length;
+  const closedBlockTitles = blockStatus.filter((b) => !b.has).map((b) => b.title);
+
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
   const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
   const servicesHtml = unit.services ? await marked.parse(unit.services) : '';
@@ -309,10 +358,17 @@ export default async function UnitPage({
         </section>
 
         <div className="container">
+          {SHOW_ADMIN_LINKS ? (
+            <div className="un-admin-status">
+              {tr('Bloklar', locale)}: {openBlockCount}/5
+              {closedBlockTitles.length ? ' · ' + tr('boş', locale) + ': ' + closedBlockTitles.join(', ') : ''}
+            </div>
+          ) : null}
+
           {/* ── 1. Struktur bölmə ── */}
           {block1Has ? (
             <section className="un-block">
-              <h2 className="un-block-title">{tr('Struktur bölmə', locale)}</h2>
+              <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
               {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
               {aboutHtml ? <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: aboutHtml }} /> : null}
               {esasname.length ? (
@@ -322,12 +378,14 @@ export default async function UnitPage({
                 </>
               ) : null}
             </section>
+          ) : SHOW_ADMIN_LINKS ? (
+            <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} />
           ) : null}
 
           {/* ── 2. Rəhbərlik və heyət ── */}
           {block2Has ? (
             <section className="un-block">
-              <h2 className="un-block-title">{tr('Rəhbərlik və heyət', locale)}</h2>
+              <BlockTitle title={blockTitle2} documentId={unit.documentId} locale={locale} />
               {unit.head ? (
                 <div className="un-sub-title">{tr('Rəhbər', locale)}</div>
               ) : null}
@@ -404,12 +462,14 @@ export default async function UnitPage({
                 </p>
               ) : null}
             </section>
+          ) : SHOW_ADMIN_LINKS ? (
+            <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} />
           ) : null}
 
           {/* ── 3. Funksional fəaliyyət ── */}
           {block3Has ? (
             <section className="un-block">
-              <h2 className="un-block-title">{tr('Funksional fəaliyyət', locale)}</h2>
+              <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
               {functionsHtml ? (
                 <>
                   <div className="un-sub-title">{tr('Funksiyalar', locale)}</div>
@@ -436,12 +496,14 @@ export default async function UnitPage({
                 </>
               ) : null}
             </section>
+          ) : SHOW_ADMIN_LINKS ? (
+            <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} />
           ) : null}
 
           {/* ── 4. Kommunikasiya və yerləşmə ── */}
           {block4Has ? (
             <section className="un-block">
-              <h2 className="un-block-title">{tr('Kommunikasiya və yerləşmə', locale)}</h2>
+              <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
               {contactHas ? (
                 <div className="na-event-info" style={{ maxWidth: 'none', margin: '0 0 1.25rem' }}>
                   {unit.building ? (
@@ -505,12 +567,14 @@ export default async function UnitPage({
                 </>
               ) : null}
             </section>
+          ) : SHOW_ADMIN_LINKS ? (
+            <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} />
           ) : null}
 
           {/* ── 5. Hesabatlılıq və şəffaflıq ── */}
           {block5Has ? (
             <section className="un-block">
-              <h2 className="un-block-title">{tr('Hesabatlılıq və şəffaflıq', locale)}</h2>
+              <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
               {hesabat.length ? (
                 <>
                   <div className="un-sub-title">{tr('İllik hesabatlar', locale)}</div>
@@ -558,6 +622,8 @@ export default async function UnitPage({
                 </>
               ) : null}
             </section>
+          ) : SHOW_ADMIN_LINKS ? (
+            <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} />
           ) : null}
 
           {SHOW_ADMIN_LINKS ? (
