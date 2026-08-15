@@ -2986,7 +2986,166 @@ export default {
       strapi.log.error('[seed] about kocurme xetasi: ' + (err as Error).message);
     }
 
+    // ── Əsasnamə sənədlərinin ilkin yaradılması (F4.2) ────────────────────
+    //
+    // MƏQSƏD: admin paneldə hər sənəd üçün başlıq + kateqoriya + bölmə
+    // seçimi əvəzinə, Zaur yalnız PDF-i əlavə etsin.
+    //
+    // `file` BOŞ qalır: sxemdə `required: true` olsa da, Strapi-nin document
+    // service validator-ı media sahələri üçün `required` yoxlaması APARMIR
+    // (yalnız content-manager UI-də tətbiq olunur) — ona görə boş `file` ilə
+    // `create()`/`publish()` uğurla keçir. `year` də boş: mənbə sənədlərdə
+    // tarix ziddiyyətlidir (bax CLAUDE.md). `titleRu`/`titleEn` boş: rəsmi
+    // tərcümə yoxdur.
+    //
+    // Hər bölmə üçün `units` əlaqəsi az/ru/en HƏR ÜÇ lokalın sənəd
+    // (documentId eynidir, `unit` yalnız `az`-dan tapılır) entry-lərinə
+    // ayrıca bağlanır — əks halda `unit` `ru`/`en` görünüşündə sənəd
+    // görünməzdi (populate yalnız faktiki bağlı lokal/status cütünə baxır).
+    //
+    // İDEMPOTENT: eyni başlıqlı (`title`) sənəd varsa keçilir.
+    interface EsasnameSeed {
+      title: string;
+      unitSlugs: string[];
+      description?: string;
+    }
+    const ESASNAME_SEED: EsasnameSeed[] = [
+      {
+        title: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsinin Əsasnaməsi (ADDA-ƏS-011)',
+        unitSlugs: ['elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi'],
+      },
+      {
+        title: 'İnformasiya resurs mərkəzinin Əsasnaməsi (ADDA-ƏS-012)',
+        unitSlugs: ['informasiya-resurs-merkezi'],
+      },
+      {
+        title: 'Personalın idarə edilməsi və əmək haqqı şöbəsinin Əsasnaməsi (ADDA-ƏS-013)',
+        unitSlugs: ['personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi'],
+      },
+      {
+        title: 'Kafedralar haqqında Əsasnamə (ADDA-ƏS-014)',
+        unitSlugs: [
+          'tetbiqi-mexanika-kafedrasi',
+          'deniz-naviqasiyasi-kafedrasi',
+          'gemi-elektroavtomatikasi-kafedrasi',
+          'gemi-energetik-qurgulari-kafedrasi',
+          'gemiqayirma-ve-gemi-temiri-kafedrasi',
+          'humanitar-fenler-kafedrasi',
+          'ingilis-dili-kafedrasi',
+        ],
+      },
+      {
+        title: 'Mühasibat uçotu və hesabatı şöbəsinin Əsasnaməsi (ADDA-ƏS-015)',
+        unitSlugs: ['muhasibat-ucotu-ve-hesabati-sobesi'],
+      },
+      {
+        title: 'Təlim Tədris Mərkəzinin Əsasnaməsi (ADDA-ƏS-016)',
+        unitSlugs: ['telim-tedris-merkezi'],
+      },
+      {
+        title: 'Mətbəənin Əsasnaməsi (ADDA-ƏS-018)',
+        unitSlugs: ['metbee'],
+      },
+      {
+        title: 'Fakültələr haqqında Əsasnamə (ADDA-ƏS-019)',
+        unitSlugs: ['gemi-mexanikasi-ve-elektromexanikasi-fakultesi', 'gemi-suruculuyu-fakultesi'],
+      },
+      {
+        title: 'İcraya nəzarət, kargüzarlıq və təsərrüfat işləri qrupunun Əsasnaməsi (ADDA-ƏS-020)',
+        unitSlugs: [
+          'personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi',
+          'teserrufat-isleri-sobesi',
+        ],
+        description:
+          'Sənəd 2020-ci ildə yaradılmış qrupa aiddir. Qrupun funksiyaları sonradan Personalın idarəedilməsi və Təsərrüfat işləri şöbələri arasında bölüşdürülüb.',
+      },
+      {
+        title: 'Tədris qeydiyyat şöbəsinin Əsasnaməsi (ADDA-ƏS-021)',
+        unitSlugs: ['tedris-proseslerinin-teskili-sobesi'],
+        description: 'Sənəddə şöbənin köhnə adı — Tədris qeydiyyat şöbəsi — işlədilir.',
+      },
+    ];
 
+    try {
+      if (process.env.ESASNAME_SEED !== 'true') {
+        strapi.log.info('[seed] Esasname senedleri otuldu. Ucun ESASNAME_SEED=true.');
+      } else {
+        const LOCS = ['az', 'ru', 'en'] as const;
+        let created = 0;
+        let skipped = 0;
+        let errored = 0;
+
+        for (const doc of ESASNAME_SEED) {
+          try {
+            const existing = (await strapi.documents('api::document.document').findMany({
+              filters: { title: { $eq: doc.title } },
+              fields: ['title'],
+              status: 'draft',
+              limit: 2,
+            })) as unknown as Array<{ documentId: string }>;
+            if (existing.length > 0) {
+              skipped++;
+              strapi.log.info('[seed] esasname atlandi (movcuddur): ' + doc.title);
+              continue;
+            }
+
+            // Her bolme slug-i ucun documentId (az-dan - documentId lokaldan
+            // asili deyil). Tapilmasa XETA - sened YARADILMIR.
+            const unitDocIds: string[] = [];
+            let missing = false;
+            for (const slug of doc.unitSlugs) {
+              const units = (await strapi.documents('api::unit.unit').findMany({
+                locale: 'az',
+                filters: { slug: { $eq: slug } },
+                fields: ['slug'],
+                limit: 2,
+              })) as unknown as Array<{ documentId: string }>;
+              if (units.length !== 1) {
+                strapi.log.error('[seed] esasname XETA - bolme tapilmadi: ' + slug + ' (' + doc.title + ')');
+                missing = true;
+                continue;
+              }
+              unitDocIds.push(units[0].documentId);
+            }
+            if (missing) {
+              errored++;
+              continue;
+            }
+
+            const unitsConnect = unitDocIds.flatMap((id) =>
+              LOCS.map((locale) => ({ documentId: id, locale })),
+            );
+
+            const createData: Record<string, unknown> = {
+              title: doc.title,
+              category: 'esasname',
+              units: { connect: unitsConnect },
+            };
+            if (doc.description) createData.description = doc.description;
+
+            const createdDoc = (await strapi.documents('api::document.document').create({
+              data: createData as never,
+            })) as unknown as { documentId: string };
+
+            // update() YALNIZ qaralamaya yazir - publish() olmadan ictimai
+            // API-de gorunmur.
+            await strapi.documents('api::document.document').publish({ documentId: createdDoc.documentId });
+
+            created++;
+            strapi.log.info('[seed] esasname yaradildi: ' + doc.title + ' -> [' + doc.unitSlugs.join(', ') + ']');
+          } catch (e) {
+            errored++;
+            strapi.log.error('[seed] esasname XETA - ' + doc.title + ': ' + (e as Error).message);
+          }
+        }
+
+        strapi.log.info(
+          '[seed] Esasname senedleri: ' + created + ' yaradildi, ' + skipped + ' atlandi, ' + errored + ' xeta.',
+        );
+      }
+    } catch (err) {
+      strapi.log.error('[seed] esasname seed xetasi: ' + (err as Error).message);
+    }
 
   },
 };
