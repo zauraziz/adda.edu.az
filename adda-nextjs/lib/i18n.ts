@@ -1163,6 +1163,16 @@ const MENU_T: Array<[string, string, string]> = [
   ['Daxili telefon', 'Внутренний телефон', 'Extension'],
   ['İllik hesabatlar', 'Годовые отчёты', 'Annual reports'],
   ['Alt bölmələr', 'Подразделения', 'Sub-units'],
+  // --- F3.29: check:menu-nün tapdığı 9 tərcüməsiz menyu etiketi ---
+  ['Rektor köməkçisi', 'Помощник ректора', 'Assistant to the Rector'],
+  ['Personalın idarə edilməsi şöbəsi', 'Отдел управления персоналом', 'Human Resources Department'],
+  ['Təsərrüfat işləri şöbəsi', 'Хозяйственный отдел', 'Facilities Department'],
+  ['Hüquq məsləhətçisi', 'Юрисконсульт', 'Legal Adviser'],
+  ['Mətbəə', 'Типография', 'Printing House'],
+  ['Elektrik və elektronika mühəndisliyi', 'Электротехника и электроника', 'Electrical and Electronics Engineering'],
+  ['Gəmi sürücülüyü fakültəsi', 'Судоводительский факультет', 'Faculty of Navigation'],
+  ['Gəmi mexanikası və elektromexanikası fakültəsi', 'Факультет судовой механики и электромеханики', 'Faculty of Marine Engineering and Electrical Engineering'],
+  ['Elmi-tədqiqat qrupu', 'Научно-исследовательская группа', 'Research Group'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

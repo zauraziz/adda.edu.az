@@ -309,6 +309,11 @@ function extractLinks(menu) {
 const ABSOLUTE = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 const PREFIXED = /^\/(?:az|ru|en)(?:\/|$)/;
 
+// F3.28-də `az` fallback yalnız bu üç marşruta əlavə olundu (ContentPage
+// paylaşır). Buradan kənarda (struktur, emekdas, xeberler, ...) cari dildə
+// tapılmayan slug hələ də əsl QIRIQ-dır — fallback render YOXDUR.
+const FALLBACK_PREFIXES = new Set(['sehife', 'ixtisaslar', 'fakulteler']);
+
 async function classify(url, locale) {
   const raw = (url ?? '').trim();
   if (!raw || raw === '#') return { cat: 'PLASEHOLDER' };
@@ -347,6 +352,22 @@ async function classify(url, locale) {
     const rows = await getRows(t, locale);
     if (rows.some((r) => r.slug === slug)) return { cat: 'DINAMIK', ok: true, foundIn: t };
   }
+
+  // F3.28 fallback: cari dildə yoxdur, amma `az`-da varsa səhifə 404 vermir —
+  // `az` mətnini bildiriş zolağı ilə göstərir. Bu, məzmun boşluğudur (tərcümə
+  // borcu), marşrut xətası deyil — QIRIQ-dan ayrıca sayılmalıdır.
+  if (locale !== 'az' && FALLBACK_PREFIXES.has(prefix)) {
+    for (const t of types) {
+      const azRows = await getRows(t, 'az');
+      if (azRows.some((r) => r.slug === slug)) {
+        return {
+          cat: 'FALLBACK',
+          note: '«' + slug + '» ' + types.join('/') + '-də yalnız az-da var (F3.28 fallback göstərir, 404 deyil)',
+        };
+      }
+    }
+  }
+
   return { cat: 'QIRIQ', note: '«' + slug + '» ' + types.join('/') + '-də (' + locale + ') tapılmadı' };
 }
 
@@ -401,6 +422,7 @@ await wake();
 let grandTotal = 0;
 const grandPlaceholders = [];
 const grandBroken = [];
+const grandFallback = [];
 const grandUntranslated = [];
 
 for (const locale of LOCALES) {
@@ -417,10 +439,11 @@ for (const locale of LOCALES) {
     continue;
   }
 
-  const counts = { OK: 0, DINAMIK: 0, PLASEHOLDER: 0, QIRIQ: 0 };
+  const counts = { OK: 0, DINAMIK: 0, PLASEHOLDER: 0, FALLBACK: 0, QIRIQ: 0 };
   const okKinds = { real: 0, xarici: 0, hazirlanir: 0 };
   const placeholders = [];
   const broken = [];
+  const fallbacks = [];
 
   for (const l of links) {
     const r = await classify(l.url, locale);
@@ -431,6 +454,7 @@ for (const locale of LOCALES) {
       else okKinds.real++;
     }
     if (r.cat === 'PLASEHOLDER') placeholders.push(l);
+    if (r.cat === 'FALLBACK') fallbacks.push({ ...l, note: r.note });
     if (r.cat === 'QIRIQ') broken.push({ ...l, note: r.note });
   }
 
@@ -440,7 +464,8 @@ for (const locale of LOCALES) {
   console.log('  OK          : ' + counts.OK + '  (həqiqi: ' + okKinds.real + ', /hazirlanir: ' + okKinds.hazirlanir + ', xarici: ' + okKinds.xarici + ')');
   console.log('  DINAMIK     : ' + counts.DINAMIK + '  (slug/tip mənbədə tapıldı)');
   console.log('  PLASEHOLDER : ' + counts.PLASEHOLDER + '  (\'#\' və ya boş)');
-  console.log('  QIRIQ       : ' + counts.QIRIQ + '  (marşrut/slug yoxdur)');
+  console.log('  FALLBACK    : ' + counts.FALLBACK + '  (cari dildə yox, `az`-da var — F3.28 göstərir, tərcümə borcu)');
+  console.log('  QIRIQ       : ' + counts.QIRIQ + '  (nə cari dildə, nə `az`-da var — əsl xəta)');
 
   if (placeholders.length) {
     console.log('\n  PLASEHOLDER siyahısı + təklif:');
@@ -452,6 +477,15 @@ for (const locale of LOCALES) {
         '    ' + where + '  ->  «' + l.label + '»' + (s ? '    TƏKLİF: ' + s : ''),
       );
       grandPlaceholders.push({ locale, where, label: l.label, suggestion: s });
+    }
+  }
+
+  if (fallbacks.length) {
+    console.log('\n  FALLBACK siyahısı (tərcümə borcu, 404 deyil):');
+    for (const l of fallbacks) {
+      const where = l.trail.join(' / ');
+      console.log('    ' + where + '  ->  «' + l.label + '»  (' + l.url + ')  — ' + l.note);
+      grandFallback.push({ locale, where, label: l.label, url: l.url, note: l.note });
     }
   }
 
@@ -491,7 +525,8 @@ console.log('XÜLASƏ');
 console.log('='.repeat(70));
 console.log('cəmi yoxlanan keçid   : ' + grandTotal);
 console.log('PLASEHOLDER (3 dil)   : ' + grandPlaceholders.length);
-console.log('QIRIQ (3 dil)         : ' + grandBroken.length);
+console.log('FALLBACK (3 dil)      : ' + grandFallback.length + ' (tərcümə borcu, 404 deyil)');
+console.log('QIRIQ (3 dil)         : ' + grandBroken.length + ' (əsl xəta)');
 console.log('TƏRCÜMƏSİ YOX (ru+en) : ' + grandUntranslated.length + ' (unikal etiket × dil)');
 console.log('');
 console.log('Bu skript HEÇ NƏYƏ TOXUNMADI — yalnız oxudu.');
