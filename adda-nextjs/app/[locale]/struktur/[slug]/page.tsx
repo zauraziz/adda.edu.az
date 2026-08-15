@@ -148,12 +148,77 @@ function BlockTitle({ title, documentId, locale }: { title: string; documentId: 
  * görünmürdü — məhz doldurulmalı yerdə keçid yox idi. İctimai görünüşdə
  * boş blok HEÇ VAXT render olunmur (yuxarıdakı əsas qayda dəyişmir).
  */
-function EmptyBlock({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
+function EmptyBlock({
+  title,
+  documentId,
+  locale,
+  tint,
+}: {
+  title: string;
+  documentId: string;
+  locale: Locale;
+  tint: boolean;
+}) {
   return (
-    <section className="un-block un-block--empty">
+    <section className={'un-block un-block--empty' + (tint ? ' un-block--tint' : '')}>
       <BlockTitle title={title} documentId={documentId} locale={locale} />
       <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
     </section>
+  );
+}
+
+// F4.4 — 1200 simvoldan uzun `about`/`services` mətni «Ətraflı» arxasında
+// açılır. Native <details>/<summary> qəsdən seçilib: JS lazım deyil,
+// klaviatura/reduced-motion pulsuz gəlir, hər instansiya MÜSTƏQİLDİR (bir
+// blokun açılması digərini bağlamır — akkordeon DEYİL).
+const LONG_TEXT_THRESHOLD = 1200;
+
+function LongHtml({ raw, html, locale }: { raw: string; html: string; locale: Locale }) {
+  const body = <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: html }} />;
+  if (raw.length <= LONG_TEXT_THRESHOLD) return body;
+  return (
+    <details className="un-expand">
+      <summary className="un-expand-toggle">{tr('Ətraflı', locale)}</summary>
+      {body}
+    </details>
+  );
+}
+
+// F4.4 — `functions`/`services` üçün markdown siyahısı kart toruna çevrilir.
+// Format: `- **Başlıq** — açıqlama`. YALNIZ hər sətir bullet-lə başlayırsa
+// siyahı sayılır (qarışıq abzas+siyahı halında SƏHV parçalanmanın qarşısını
+// almaq üçün) — əks halda `null` qaytarılır və çağıran adi mətn kimi render
+// edir.
+interface FnCard { title: string | null; body: string }
+
+function parseListCards(raw: string): FnCard[] | null {
+  const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter((l) => l.length > 0);
+  if (!lines.length) return null;
+  const items: string[] = [];
+  for (const line of lines) {
+    const m = line.match(/^[-*]\s+(.+)$/);
+    if (!m) return null;
+    items.push(m[1].trim());
+  }
+  return items.map((item) => {
+    const m = item.match(/^\*\*(.+?)\*\*\s*(?:[—-]\s*)?(.*)$/);
+    if (m) return { title: m[1].trim(), body: m[2].trim() };
+    return { title: null, body: item };
+  });
+}
+
+function FnCardGrid({ cards }: { cards: FnCard[] }) {
+  return (
+    <div className="un-card-grid">
+      {cards.map((c, i) => (
+        <div key={i} className="un-card">
+          {c.title ? <div className="un-card-title">{c.title}</div> : null}
+          {c.body ? (
+            <div className="un-card-body" dangerouslySetInnerHTML={{ __html: marked.parseInline(c.body) as string }} />
+          ) : null}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -295,9 +360,24 @@ export default async function UnitPage({
   const openBlockCount = blockStatus.filter((b) => b.has).length;
   const closedBlockTitles = blockStatus.filter((b) => !b.has).map((b) => b.title);
 
+  // F4.4 — ağ/boz ritm YALNIZ faktiki render olunan bloklara görə sayılır.
+  // Boş bloklar public görünüşdə heç render olunmur, admin rejimində isə
+  // (EmptyBlock kimi) render olunur — hər iki halda sayğac DOĞRU işləməlidir.
+  let tintCursor = 0;
+  const blockTint = blockStatus.map((b) => {
+    const willRender = b.has || SHOW_ADMIN_LINKS;
+    if (!willRender) return false;
+    const tint = tintCursor % 2 === 1;
+    tintCursor++;
+    return tint;
+  });
+  const blockClass = (n: 0 | 1 | 2 | 3 | 4) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
+
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
   const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
   const servicesHtml = unit.services ? await marked.parse(unit.services) : '';
+  const functionCards = unit.functions ? parseListCards(unit.functions) : null;
+  const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
@@ -367,10 +447,10 @@ export default async function UnitPage({
 
           {/* ── 1. Struktur bölmə ── */}
           {block1Has ? (
-            <section className="un-block">
+            <section className={blockClass(0)}>
               <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
               {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
-              {aboutHtml ? <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: aboutHtml }} /> : null}
+              {unit.about ? <LongHtml raw={unit.about} html={aboutHtml} locale={locale} /> : null}
               {esasname.length ? (
                 <>
                   <div className="un-sub-title">{tr('Əsasnamə', locale)}</div>
@@ -379,12 +459,12 @@ export default async function UnitPage({
               ) : null}
             </section>
           ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} />
+            <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
           ) : null}
 
           {/* ── 2. Rəhbərlik və heyət ── */}
           {block2Has ? (
-            <section className="un-block">
+            <section className={blockClass(1)}>
               <BlockTitle title={blockTitle2} documentId={unit.documentId} locale={locale} />
               {unit.head ? (
                 <div className="un-sub-title">{tr('Rəhbər', locale)}</div>
@@ -439,16 +519,28 @@ export default async function UnitPage({
               {staffSorted.length ? (
                 <>
                   <div className="un-sub-title">{tr('Heyət', locale)} ({staffSorted.length})</div>
-                  <ul className="np-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', listStyle: 'none', margin: 0, padding: 0 }}>
+                  <ul className="un-staff-grid">
                     {staffSorted.map((p) => {
                       const role = (p.roles ?? []).find((r) => r.unitName === unit.name);
                       const post = role?.position || p.position || '';
+                      const initials = (p.displayName || p.name || '—')
+                        .split(/\s+/)
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((w) => w[0])
+                        .join('')
+                        .toUpperCase();
                       return (
-                        <li key={p.documentId} className="stf-row">
-                          <Link href={`/${locale}/emekdas/${p.slug}`} className="stf-name" style={{ textDecoration: 'none' }}>
-                            {p.displayName || p.name}
+                        <li key={p.documentId} className="un-staff-card">
+                          <Link href={`/${locale}/emekdas/${p.slug}`} className="un-staff-mono" aria-hidden="true" tabIndex={-1}>
+                            {initials}
                           </Link>
-                          {post ? <div className="stf-post">{post}</div> : null}
+                          <div className="un-staff-body">
+                            <Link href={`/${locale}/emekdas/${p.slug}`} className="un-staff-name">
+                              {p.displayName || p.name}
+                            </Link>
+                            {post ? <div className="un-staff-post">{post}</div> : null}
+                          </div>
                         </li>
                       );
                     })}
@@ -463,23 +555,31 @@ export default async function UnitPage({
               ) : null}
             </section>
           ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} />
+            <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
           ) : null}
 
           {/* ── 3. Funksional fəaliyyət ── */}
           {block3Has ? (
-            <section className="un-block">
+            <section className={blockClass(2)}>
               <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
-              {functionsHtml ? (
+              {unit.functions ? (
                 <>
                   <div className="un-sub-title">{tr('Funksiyalar', locale)}</div>
-                  <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: functionsHtml }} />
+                  {functionCards ? (
+                    <FnCardGrid cards={functionCards} />
+                  ) : (
+                    <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: functionsHtml }} />
+                  )}
                 </>
               ) : null}
-              {servicesHtml ? (
+              {unit.services ? (
                 <>
                   <div className="un-sub-title">{tr('Xidmətlər', locale)}</div>
-                  <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: servicesHtml }} />
+                  {serviceCards ? (
+                    <FnCardGrid cards={serviceCards} />
+                  ) : (
+                    <LongHtml raw={unit.services} html={servicesHtml} locale={locale} />
+                  )}
                 </>
               ) : null}
               {unit.onlineServices.length ? (
@@ -497,12 +597,12 @@ export default async function UnitPage({
               ) : null}
             </section>
           ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} />
+            <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
           ) : null}
 
           {/* ── 4. Kommunikasiya və yerləşmə ── */}
           {block4Has ? (
-            <section className="un-block">
+            <section className={blockClass(3)}>
               <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
               {contactHas ? (
                 <div className="na-event-info" style={{ maxWidth: 'none', margin: '0 0 1.25rem' }}>
@@ -568,12 +668,12 @@ export default async function UnitPage({
               ) : null}
             </section>
           ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} />
+            <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
           ) : null}
 
           {/* ── 5. Hesabatlılıq və şəffaflıq ── */}
           {block5Has ? (
-            <section className="un-block">
+            <section className={blockClass(4)}>
               <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
               {hesabat.length ? (
                 <>
@@ -623,7 +723,7 @@ export default async function UnitPage({
               ) : null}
             </section>
           ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} />
+            <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
           ) : null}
 
           {SHOW_ADMIN_LINKS ? (

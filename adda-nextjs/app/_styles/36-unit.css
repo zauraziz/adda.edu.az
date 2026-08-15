@@ -38,6 +38,22 @@
   margin: 0 0 1.4rem;
 }
 
+/* ── F4.4: bölmə ritmi — ağ / çox açıq boz, RENDER OLUNAN bloklara görə
+   növbələnir (JS-də hesablanır, bura sadəcə vizual tərəfdir). Bounded
+   (full-bleed yox) qəsdən seçilib: .container-in padding-i breakpoint-ə
+   görə dəyişir (40px → 24px), mənfi margin ilə tam-bleed sinxronizasiyası
+   kövrək olardı. Padding/margin EYNİ clamp() ifadəsindən gəlir ki, tam
+   güzgülənsin. ── */
+.un-block--tint {
+  background: var(--gray-50, #f8fafc);
+  border-top: none;
+  border-radius: 18px;
+  padding-left: clamp(1.25rem, 3vw, 2.5rem);
+  padding-right: clamp(1.25rem, 3vw, 2.5rem);
+  margin-left: calc(-1 * clamp(1.25rem, 3vw, 2.5rem));
+  margin-right: calc(-1 * clamp(1.25rem, 3vw, 2.5rem));
+}
+
 /* ── F4.3: admin redaktə keçidləri — YALNIZ NEXT_PUBLIC_ADMIN_EDIT_LINKS=true
    olanda görünür, ictimai səhifəni dəyişmir. ── */
 .un-admin-status {
@@ -178,3 +194,123 @@
   .un-row { flex-direction: column; gap: 0.15rem; }
   .un-row-date { min-width: 0; }
 }
+
+/* ── F4.4: funksiya/xidmət kart toru — markdown siyahısından qurulur
+   (`- **Başlıq** — mətn`). Qızılı nazik üst xətt marker rolunu oynayır,
+   NÖMRƏLƏMƏ yoxdur — ardıcıllıq deyil. ── */
+.un-card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  margin: 0 0 0.5rem;
+}
+.un-card {
+  padding: 1.1rem 1.25rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-top: 3px solid var(--gold-500);
+  border-radius: 4px 4px 12px 12px;
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+.un-card:hover { box-shadow: 0 10px 24px rgba(11, 61, 92, 0.08); }
+.un-card-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--navy-900);
+  margin: 0 0 0.4rem;
+}
+.un-card-body {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--gray-700, #33424f);
+}
+.un-card-body p { margin: 0; }
+
+/* ── F4.4: heyət kartı — .ld-card ilə eyni vizual dil (navy→qızılı
+   monoqram), amma sadə: foto yoxdur (foto sahəsi 1/23 doludur, monoqram
+   normadır), tək sətir ad+vəzifə. ── */
+.un-staff-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.un-staff-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.un-staff-card:hover { border-color: rgba(201, 169, 97, 0.55); box-shadow: 0 8px 20px rgba(11, 61, 92, 0.08); }
+.un-staff-mono {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, var(--navy-900, #0b3d5c), #12547c);
+  color: var(--gold-500);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.un-staff-body { min-width: 0; }
+.un-staff-name {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--navy-900);
+  text-decoration: none;
+  line-height: 1.3;
+}
+.un-staff-name:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
+.un-staff-post {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  margin-top: 0.15rem;
+}
+
+/* ── F4.4: uzun mətn (`about`/`services` > 1200 simvol) — «Ətraflı».
+   Native <details>/<summary>: JS yoxdur, klaviatura pulsuz gəlir, HƏR
+   BLOK MÜSTƏQİLDİR (bir açılan digərini bağlamır — akkordeon deyil). ── */
+.un-expand summary.un-expand-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--navy-800);
+}
+.un-expand summary.un-expand-toggle::-webkit-details-marker { display: none; }
+.un-expand summary.un-expand-toggle::after {
+  content: '›';
+  display: inline-block;
+  font-size: 1rem;
+  transform: rotate(90deg);
+}
+.un-expand[open] summary.un-expand-toggle::after { transform: rotate(-90deg); }
+@media (prefers-reduced-motion: no-preference) {
+  .un-expand summary.un-expand-toggle::after { transition: transform 180ms ease; }
+}
+.un-expand summary.un-expand-toggle:hover { color: var(--gold-600); }
+.un-expand summary.un-expand-toggle:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.un-expand[open] summary.un-expand-toggle { margin-bottom: 0.75rem; }
