@@ -10,6 +10,7 @@
     "check:locale-coverage": "node ../tools/check-locale-coverage.mjs",
     "check:menu": "node ../tools/check-menu-links.mjs",
     "check:dupes": "node ../tools/check-duplicate-units.mjs",
+    "check:gaps": "node ../tools/check-content-gaps.mjs",
     "plan:heads": "node ../tools/plan-unit-heads.mjs",
     "dev": "next dev",
     "build": "next build",
