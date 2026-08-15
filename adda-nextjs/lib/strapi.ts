@@ -704,10 +704,12 @@ export interface SiteMenu {
 }
 
 /** Bütün saytın menyusunu CMS-dən çəkir (dərin populate ilə). */
-export async function getMenu(locale: Locale = 'az'): Promise<SiteMenu | null> {
+export async function getMenu(_locale: Locale = 'az'): Promise<SiteMenu | null> {
+  // `locale` GÖNDƏRİLMİR: `menu` lokallaşdırılmadan çıxarılıb (F3.27), yalnız
+  // `az` sətri var. Etiketlər `MENU_T` vasitəsilə çağıran tərəfdə tərcümə
+  // olunur. İmza saxlanılır ki, çağıran yerlər dəyişməsin.
   try {
     const json = await strapiFetch<{ data: Partial<SiteMenu> | null }>('/menu', {
-      locale,
       'populate[esasMenyu][populate][groups][populate][links]': true,
       'populate[ustMenyu][populate][groups][populate][links]': true,
       'populate[eAkademiya][populate][cards]': true,

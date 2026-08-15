@@ -1214,55 +1214,26 @@ export interface ApiMenuMenu extends Struct.SingleTypeSchema {
   };
   pluginOptions: {
     i18n: {
-      localized: true;
+      localized: false;
     };
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    eAkademiya: Schema.Attribute.Component<'nav.portal', false> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    esasMenyu: Schema.Attribute.Component<'nav.category', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    footerMenyusu: Schema.Attribute.Component<'nav.footercol', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    istifadeciQruplari: Schema.Attribute.Component<'nav.link', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    locale: Schema.Attribute.String;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::menu.menu'>;
+    eAkademiya: Schema.Attribute.Component<'nav.portal', false>;
+    esasMenyu: Schema.Attribute.Component<'nav.category', true>;
+    footerMenyusu: Schema.Attribute.Component<'nav.footercol', true>;
+    istifadeciQruplari: Schema.Attribute.Component<'nav.link', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::menu.menu'> &
+      Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    suretliKecidler: Schema.Attribute.Component<'nav.quicklink', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    suretliKecidler: Schema.Attribute.Component<'nav.quicklink', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    ustMenyu: Schema.Attribute.Component<'nav.category', true> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    ustMenyu: Schema.Attribute.Component<'nav.category', true>;
   };
 }
 

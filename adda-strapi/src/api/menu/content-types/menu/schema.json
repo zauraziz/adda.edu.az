@@ -12,69 +12,39 @@
   },
   "pluginOptions": {
     "i18n": {
-      "localized": true
+      "localized": false
     }
   },
   "attributes": {
     "esasMenyu": {
       "type": "component",
       "repeatable": true,
-      "component": "nav.category",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "nav.category"
     },
     "ustMenyu": {
       "type": "component",
       "repeatable": true,
-      "component": "nav.category",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "nav.category"
     },
     "eAkademiya": {
       "type": "component",
       "repeatable": false,
-      "component": "nav.portal",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "nav.portal"
     },
     "istifadeciQruplari": {
       "type": "component",
       "repeatable": true,
-      "component": "nav.link",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "nav.link"
     },
     "suretliKecidler": {
       "type": "component",
       "repeatable": true,
-      "component": "nav.quicklink",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "nav.quicklink"
     },
     "footerMenyusu": {
       "type": "component",
       "repeatable": true,
-      "component": "nav.footercol",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "component": "nav.footercol"
     }
   }
 }

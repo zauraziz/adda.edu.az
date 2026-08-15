@@ -105,6 +105,53 @@ const BUNLAR_UCUN_SLUGS = new Set(AUDIENCES.map((a) => a.slug));
 const heyetSrc = read(path.join(NEXT, 'app', '[locale]', 'heyet', '[tip]', 'page.tsx'));
 const HEYET_TIP_SLUGS = new Set([...heyetSrc.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1]));
 
+// F3.27: `menu` i18n-dən çıxdı — ru/en etiketləri artıq `tr()` (T + MENU_T,
+// lib/i18n.ts) vasitəsilə tərcümə olunur. `T`/`MENU_T` `export` DEYİL, ona
+// görə `extractArrayLiteral`-ın `export const` axtarışı işləməz — mötərizə
+// dərinliyi ilə balanslaşdırılmış oxuma lazımdır (massiv `];`-ə qədər fayl
+// davam edir, `lastIndexOf(']')` texnikası bura yaramır).
+function extractBalancedArray(src, marker) {
+  const at = src.indexOf(marker);
+  if (at === -1) return [];
+  // `indexOf('[', at)` özü yox — marker `const T: Array<[string, string,
+  // string]> = [...]` şəklindədir, tip annotasiyasındaki `[` əvvəl gəlir.
+  // Massivin özü `=` işarəsindən SONRA başlayır.
+  const eq = src.indexOf('=', at);
+  const start = src.indexOf('[', eq);
+  if (start === -1) return [];
+  let depth = 0;
+  let i = start;
+  for (; i < src.length; i++) {
+    const c = src[i];
+    if (c === "'" || c === '"' || c === '`') {
+      const quote = c;
+      i++;
+      while (i < src.length && src[i] !== quote) {
+        if (src[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '[') depth++;
+    else if (c === ']') {
+      depth--;
+      if (depth === 0) { i++; break; }
+    }
+  }
+  try {
+    return eval('(' + src.slice(start, i) + ')');
+  } catch {
+    return [];
+  }
+}
+
+const i18nSrc = read(path.join(NEXT, 'lib', 'i18n.ts'));
+const T_ENTRIES = extractBalancedArray(i18nSrc, 'const T:');
+const MENU_T_ENTRIES = extractBalancedArray(i18nSrc, 'const MENU_T:');
+// tr() T + MENU_T-ni birləşdirib az-exact-match axtarır (bax: lib/i18n.ts TR_MAP) —
+// eyni əhatəni yoxlamaq üçün ikisi birləşdirilir, YALNIZ MENU_T deyil.
+const TRANSLATED_AZ = new Set([...T_ENTRIES, ...MENU_T_ENTRIES].map((row) => row[0]));
+
 // ────────────────────────────────────────────────────────────────────────
 // 3. Strapi — content type üzrə slug siyahıları (lazım olanda, keşlənir).
 // ────────────────────────────────────────────────────────────────────────
@@ -348,11 +395,13 @@ function suggest(label, index) {
 console.log('Strapi     : ' + BASE);
 console.log('Marşrutlar : ' + ROUTES.length + ' (app/[locale]/**/page.tsx)');
 console.log('«Bunlar üçün» slug: ' + BUNLAR_UCUN_SLUGS.size + '  ·  heyet/[tip] slug: ' + HEYET_TIP_SLUGS.size);
+console.log('tr() lüğəti: T ' + T_ENTRIES.length + ' + MENU_T ' + MENU_T_ENTRIES.length + ' giriş (' + TRANSLATED_AZ.size + ' unikal az mətn)');
 await wake();
 
 let grandTotal = 0;
 const grandPlaceholders = [];
 const grandBroken = [];
+const grandUntranslated = [];
 
 for (const locale of LOCALES) {
   console.log('\n' + '='.repeat(70));
@@ -414,14 +463,36 @@ for (const locale of LOCALES) {
       grandBroken.push({ locale, where, label: l.label, url: l.url, note: l.note });
     }
   }
+
+  // F3.27: ru/en indi eyni `az` mənbədən qidalanır (menu i18n-dən çıxdı) —
+  // `tr()` tapmadığı etiket üçün SƏSSİZCƏ az mətni qaytarır (səhifə sınmır,
+  // amma qarışıq dil görünür). Bura düşməz — yalnız RAPORT edir.
+  if (locale !== 'az') {
+    const seen = new Set();
+    const untranslated = [];
+    for (const l of links) {
+      const label = (l.label ?? '').trim();
+      if (!label || seen.has(label)) continue;
+      seen.add(label);
+      if (!TRANSLATED_AZ.has(label)) untranslated.push(label);
+    }
+    if (untranslated.length) {
+      console.log('\n  tr()-də TƏRCÜMƏSİ YOXDUR (' + untranslated.length + ' unikal etiket — az mətni görünəcək):');
+      for (const lbl of untranslated) console.log('    «' + lbl + '»');
+    } else {
+      console.log('\n  tr() əhatəsi tam — bütün etiketlər T/MENU_T-də var.');
+    }
+    grandUntranslated.push(...untranslated.map((label) => ({ locale, label })));
+  }
 }
 
 console.log('\n' + '='.repeat(70));
 console.log('XÜLASƏ');
 console.log('='.repeat(70));
-console.log('cəmi yoxlanan keçid : ' + grandTotal);
-console.log('PLASEHOLDER (3 dil) : ' + grandPlaceholders.length);
-console.log('QIRIQ (3 dil)       : ' + grandBroken.length);
+console.log('cəmi yoxlanan keçid   : ' + grandTotal);
+console.log('PLASEHOLDER (3 dil)   : ' + grandPlaceholders.length);
+console.log('QIRIQ (3 dil)         : ' + grandBroken.length);
+console.log('TƏRCÜMƏSİ YOX (ru+en) : ' + grandUntranslated.length + ' (unikal etiket × dil)');
 console.log('');
 console.log('Bu skript HEÇ NƏYƏ TOXUNMADI — yalnız oxudu.');
 
