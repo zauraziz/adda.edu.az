@@ -125,10 +125,6 @@ const SEED = {
                 "url": "/struktur"
               },
               {
-                "label": "Ümumi işlər üzrə prorektor",
-                "url": "/sehife/umumi-isler-uzre-prorektor"
-              },
-              {
                 "label": "Rektor köməkçisi",
                 "url": "/sehife/rektor-komekcisi"
               },
@@ -205,7 +201,7 @@ const SEED = {
               },
               {
                 "label": "Təlim-Tədris Mərkəzi",
-                "url": "/struktur/telim-tedris-merkezi-ttm"
+                "url": "/struktur/telim-tedris-merkezi"
               },
               {
                 "label": "Tədris gəmisi",
@@ -213,7 +209,7 @@ const SEED = {
               },
               {
                 "label": "Kollec",
-                "url": "/struktur/azerbaycan-denizcilik-kolleci"
+                "url": "/struktur/azerbaycan-denizcilik-kolleci-phs"
               },
               {
                 "label": "Muzey",
@@ -251,11 +247,11 @@ const SEED = {
               },
               {
                 "label": "Mühasibat uçotu və hesabat şöbəsi",
-                "url": "/struktur/muhasibat-ucotu-ve-hesabat-sobesi"
+                "url": "/struktur/muhasibat-ucotu-ve-hesabati-sobesi"
               },
               {
                 "label": "Personalın idarə edilməsi şöbəsi",
-                "url": "/struktur/personalin-idare-edilmesi-emek-haqqi-sobesi-ve-karguzarliq-sobesi"
+                "url": "/struktur/personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi"
               },
               {
                 "label": "Təsərrüfat işləri şöbəsi",
@@ -2914,6 +2910,18 @@ export default {
     // yoxlanılır: `department`-də ru/en versiyası varsa (az 11, ru 3, en 10)
     // yalnız o dillər üçün `unit`-ə yazılır.
     //
+    // F3.26: bəzi cütlərdə slug eyni deyil (quyruq/şəkilçi/söz sırası fərqi) —
+    // avtomatik uyğunlaşdırma DEYİL, ƏL İLƏ yoxlanıb yazılıb (bax:
+    // tools/check-duplicate-units.mjs, F3.25 tapıntısı). Xəritədə olmayan
+    // department-lər yenə öz slug-ına uyğun unit axtarır (F3.23 davranışı).
+    const DEPT_UNIT_MAP: Record<string, string> = {
+      'azerbaycan-denizcilik-kolleci': 'azerbaycan-denizcilik-kolleci-phs',
+      'telim-tedris-merkezi-ttm': 'telim-tedris-merkezi',
+      'muhasibat-ucotu-ve-hesabat-sobesi': 'muhasibat-ucotu-ve-hesabati-sobesi',
+      'personalin-idare-edilmesi-emek-haqqi-sobesi-ve-karguzarliq-sobesi':
+        'personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi',
+    };
+
     // ABOUT_MIGRATE=true olmadan İŞLƏMİR.
     try {
       if (process.env.ABOUT_MIGRATE !== 'true') {
@@ -2935,10 +2943,11 @@ export default {
 
           for (const d of deps) {
             if (!d.about) continue;
+            const targetSlug = DEPT_UNIT_MAP[d.slug] ?? d.slug;
             try {
               const units = (await strapi.documents('api::unit.unit').findMany({
                 locale: loc,
-                filters: { slug: { $eq: d.slug } },
+                filters: { slug: { $eq: targetSlug } },
                 fields: ['slug', 'about'],
                 status: 'draft',
                 limit: 2,
@@ -2962,10 +2971,10 @@ export default {
               await strapi.documents('api::unit.unit').publish({ documentId: u.documentId, locale: loc });
               written++;
               strapi.log.info(
-                '[seed] about kocuruldu (' + loc + '): ' + d.slug + ' -> ' + d.about.length + ' simvol',
+                '[seed] about kocuruldu (' + loc + '): ' + d.slug + ' -> ' + targetSlug + ' (' + d.about.length + ' simvol)',
               );
             } catch (e) {
-              failed.push(d.slug + ' (' + loc + '): ' + (e as Error).message);
+              failed.push(d.slug + ' -> ' + targetSlug + ' (' + loc + '): ' + (e as Error).message);
             }
           }
         }
