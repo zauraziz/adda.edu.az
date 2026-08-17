@@ -654,10 +654,12 @@ export default async function UnitPage({
                       {articles.map((a) => {
                         const thumb = mediaUrl(a.cover);
                         return (
-                          <li key={a.documentId} className="un-row un-row--news">
-                            <span className="un-row-thumb">
-                              {thumb ? <img src={thumb} alt="" loading="lazy" /> : <i className="ti ti-news" aria-hidden="true" />}
-                            </span>
+                          <li key={a.documentId} className={'un-row' + (thumb ? ' un-row--news' : '')}>
+                            {thumb ? (
+                              <span className="un-row-thumb">
+                                <img src={thumb} alt="" loading="lazy" />
+                              </span>
+                            ) : null}
                             <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
                             <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
                           </li>
