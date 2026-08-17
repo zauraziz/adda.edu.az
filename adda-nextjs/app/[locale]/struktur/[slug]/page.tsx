@@ -344,9 +344,10 @@ export default async function UnitPage({
   // kart cərgəsinə keçib, aşağıda) — ona görə "var" statusu subunits-i
   // SAYMIR, əks halda başlıq görünüb altı boş qalardı.
   // F4.6d — hesabat bloku ikiyə bölünür: nəticə mətni (unit.results) + varsa
-  // PDF sənədləri. "var" statusu HƏR İKİSİNİ (+ hələ eyni blokdakı
-  // xəbər/elan) nəzərə alır.
-  const block5Has = Boolean(unit.results || hesabat.length || articles.length || announcements.length);
+  // PDF sənədləri.
+  // F4.6e — xəbər/elan artıq bu blokda deyil, ayrıca "Əlaqəli xəbərlər" blokundadır.
+  const block5Has = Boolean(unit.results || hesabat.length);
+  const block6Has = Boolean(articles.length || announcements.length);
 
   // F4.5c — hər alt bölmə kartında ad + rəhbər + heyət sayı. Rəhbər `allUnits`-dən
   // (artıq yüklənib, əlavə sorğu yoxdur); heyət sayı üçün hər alt bölmə üçün
@@ -361,12 +362,14 @@ export default async function UnitPage({
   const blockTitle3 = tr('Bölmə nə işlə məşğuldur?', locale);
   const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
+  const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
   const blockStatus = [
     { has: block1Has, title: blockTitle1 },
     { has: block2Has, title: blockTitle2 },
     { has: block3Has, title: blockTitle3 },
     { has: block4Has, title: blockTitle4 },
     { has: block5Has, title: blockTitle5 },
+    { has: block6Has, title: blockTitle6 },
   ];
   const openBlockCount = blockStatus.filter((b) => b.has).length;
   const closedBlockTitles = blockStatus.filter((b) => !b.has).map((b) => b.title);
@@ -382,7 +385,7 @@ export default async function UnitPage({
     tintCursor++;
     return tint;
   });
-  const blockClass = (n: 0 | 1 | 2 | 3 | 4) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
+  const blockClass = (n: 0 | 1 | 2 | 3 | 4 | 5) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
 
   // F4.5a — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · əsasnamə ·
   // onlayn xidmətlər. Heç biri yoxdursa sütun render olunmur, səhifə TƏK
@@ -635,26 +638,32 @@ export default async function UnitPage({
                       <DocList docs={hesabat} locale={locale} />
                     </>
                   ) : null}
-                  {/* F4.5c — elanlar/xəbərlər ayrılır: xəbər şəkilli (kiçik üz qabığı
-                      şəkli), elan qısa/tarixli/şəkilsiz qalır. */}
+                </section>
+              ) : SHOW_ADMIN_LINKS ? (
+                <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
+              ) : null}
+
+              {/* ── 6. Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
+                  varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz
+                  qabığı şəkli), elan qısa/tarixli/şəkilsiz qalır (F4.5c). ── */}
+              {block6Has ? (
+                <section className={blockClass(5)}>
+                  <BlockTitle title={blockTitle6} documentId={unit.documentId} locale={locale} />
                   {articles.length ? (
-                    <>
-                      <div className="un-sub-title">{tr('Xəbərlər', locale)}</div>
-                      <ul className="un-row-list">
-                        {articles.map((a) => {
-                          const thumb = mediaUrl(a.cover);
-                          return (
-                            <li key={a.documentId} className="un-row un-row--news">
-                              <span className="un-row-thumb">
-                                {thumb ? <img src={thumb} alt="" loading="lazy" /> : <i className="ti ti-news" aria-hidden="true" />}
-                              </span>
-                              <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
-                              <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </>
+                    <ul className="un-row-list">
+                      {articles.map((a) => {
+                        const thumb = mediaUrl(a.cover);
+                        return (
+                          <li key={a.documentId} className="un-row un-row--news">
+                            <span className="un-row-thumb">
+                              {thumb ? <img src={thumb} alt="" loading="lazy" /> : <i className="ti ti-news" aria-hidden="true" />}
+                            </span>
+                            <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
+                            <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   ) : null}
                   {announcements.length ? (
                     <>
@@ -671,7 +680,7 @@ export default async function UnitPage({
                   ) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
+                <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={blockTint[5]} />
               ) : null}
 
               {SHOW_ADMIN_LINKS ? (
