@@ -2390,6 +2390,12 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    results: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     room: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
         i18n: {

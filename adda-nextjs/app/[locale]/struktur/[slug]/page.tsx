@@ -341,9 +341,12 @@ export default async function UnitPage({
     (a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name),
   );
   // F4.5c — alt bölmələr artıq blok 5-in İÇİNDƏ deyil (səhifənin sonuna öz
-  // kart cərgəsinə keçib, aşağıda) — ona görə blok 5-in "var" statusu
-  // subunits-i SAYMIR, əks halda başlıq görünüb altı boş qalardı.
-  const block5Has = Boolean(hesabat.length || articles.length || announcements.length);
+  // kart cərgəsinə keçib, aşağıda) — ona görə "var" statusu subunits-i
+  // SAYMIR, əks halda başlıq görünüb altı boş qalardı.
+  // F4.6d — hesabat bloku ikiyə bölünür: nəticə mətni (unit.results) + varsa
+  // PDF sənədləri. "var" statusu HƏR İKİSİNİ (+ hələ eyni blokdakı
+  // xəbər/elan) nəzərə alır.
+  const block5Has = Boolean(unit.results || hesabat.length || articles.length || announcements.length);
 
   // F4.5c — hər alt bölmə kartında ad + rəhbər + heyət sayı. Rəhbər `allUnits`-dən
   // (artıq yüklənib, əlavə sorğu yoxdur); heyət sayı üçün hər alt bölmə üçün
@@ -357,7 +360,7 @@ export default async function UnitPage({
   const blockTitle2 = tr('Kim işləyir?', locale);
   const blockTitle3 = tr('Bölmə nə işlə məşğuldur?', locale);
   const blockTitle4 = tr('Faydalı linklər', locale);
-  const blockTitle5 = tr('Hesabatlar və xəbərlər', locale);
+  const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockStatus = [
     { has: block1Has, title: blockTitle1 },
     { has: block2Has, title: blockTitle2 },
@@ -398,6 +401,7 @@ export default async function UnitPage({
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
   const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
   const servicesHtml = unit.services ? await marked.parse(unit.services) : '';
+  const resultsHtml = unit.results ? await marked.parse(unit.results) : '';
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
@@ -406,6 +410,7 @@ export default async function UnitPage({
   const aboutExpandLabel = `${tr('Bölmə haqqında', locale)} — ${tr('ətraflı', locale)}`;
   const functionsExpandLabel = `${tr('Fəaliyyət sahəsi', locale)} — ${tr('ətraflı', locale)}`;
   const servicesExpandLabel = `${tr('Xidmətlər', locale)} — ${tr('ətraflı', locale)}`;
+  const resultsExpandLabel = `${tr('Görülmüş işlər və nəticələr', locale)} — ${tr('ətraflı', locale)}`;
 
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
@@ -507,7 +512,7 @@ export default async function UnitPage({
         <div className="container">
           {SHOW_ADMIN_LINKS ? (
             <div className="un-admin-status">
-              {tr('Bloklar', locale)}: {openBlockCount}/5
+              {tr('Bloklar', locale)}: {openBlockCount}/{blockStatus.length}
               {closedBlockTitles.length ? ' · ' + tr('boş', locale) + ': ' + closedBlockTitles.join(', ') : ''}
             </div>
           ) : null}
@@ -619,13 +624,14 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
               ) : null}
 
-              {/* ── 5. Hesabatlılıq və şəffaflıq ── */}
+              {/* ── 5. Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər) ── */}
               {block5Has ? (
                 <section className={blockClass(4)}>
                   <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                  {unit.results ? longText(unit.results, resultsHtml, resultsExpandLabel, expandLabelOpen) : null}
                   {hesabat.length ? (
                     <>
-                      <div className="un-sub-title">{tr('İllik hesabatlar', locale)}</div>
+                      <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
                       <DocList docs={hesabat} locale={locale} />
                     </>
                   ) : null}

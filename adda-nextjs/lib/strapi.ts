@@ -1005,6 +1005,8 @@ export interface UnitDetail {
   receptionHours: string | null;
   functions: string | null;
   services: string | null;
+  /** F4.6d — "Görülmüş işlər və nəticələr" (hesabat sənədlərindən ayrı, mətn). */
+  results: string | null;
   building: string | null;
   floor: string | null;
   room: string | null;

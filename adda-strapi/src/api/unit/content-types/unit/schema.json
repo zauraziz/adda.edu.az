@@ -75,6 +75,14 @@
         }
       }
     },
+    "results": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "onlineServices": {
       "type": "component",
       "repeatable": true,
