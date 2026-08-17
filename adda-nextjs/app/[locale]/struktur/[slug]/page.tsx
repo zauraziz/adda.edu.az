@@ -167,8 +167,9 @@ function EmptyBlock({
   );
 }
 
-// F4.4 — 1200 simvoldan uzun `about`/`services` mətni «Ətraflı» arxasında
-// açılır. Native <details>/<summary> qəsdən seçilib: JS lazım deyil,
+// F4.4 — 1200 simvoldan uzun `about`/`functions`/`services` mətni (kart
+// toruna çevrilməyəndə) «Ətraflı» arxasında açılır. Native <details>/<summary>
+// qəsdən seçilib: JS lazım deyil,
 // klaviatura/reduced-motion pulsuz gəlir, hər instansiya MÜSTƏQİLDİR (bir
 // blokun açılması digərini bağlamır — akkordeon DEYİL).
 const LONG_TEXT_THRESHOLD = 1200;
@@ -568,7 +569,7 @@ export default async function UnitPage({
                   {functionCards ? (
                     <FnCardGrid cards={functionCards} />
                   ) : (
-                    <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: functionsHtml }} />
+                    <LongHtml raw={unit.functions} html={functionsHtml} locale={locale} />
                   )}
                 </>
               ) : null}

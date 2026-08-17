@@ -282,7 +282,7 @@
   margin-top: 0.15rem;
 }
 
-/* ── F4.4: uzun mətn (`about`/`services` > 1200 simvol) — «Ətraflı».
+/* ── F4.4: uzun mətn (`about`/`functions`/`services` > 1200 simvol) — «Ətraflı».
    Native <details>/<summary>: JS yoxdur, klaviatura pulsuz gəlir, HƏR
    BLOK MÜSTƏQİLDİR (bir açılan digərini bağlamır — akkordeon deyil). ── */
 .un-expand summary.un-expand-toggle {
