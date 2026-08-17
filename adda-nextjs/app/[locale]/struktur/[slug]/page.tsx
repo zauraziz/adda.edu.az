@@ -41,6 +41,7 @@ import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
 import ContentPage from '../../../_components/ContentPage';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
+import ExpandBlock from '../../../_components/ExpandBlock';
 import {
   getDepartmentBySlug,
   getDepartmentSlugs,
@@ -168,21 +169,16 @@ function EmptyBlock({
 }
 
 // F4.4 — 1200 simvoldan uzun `about`/`functions`/`services` mətni (kart
-// toruna çevrilməyəndə) «Ətraflı» arxasında açılır. Native <details>/<summary>
-// qəsdən seçilib: JS lazım deyil,
-// klaviatura/reduced-motion pulsuz gəlir, hər instansiya MÜSTƏQİLDİR (bir
-// blokun açılması digərini bağlamır — akkordeon DEYİL).
+// toruna çevrilməyəndə) aç/yığ düyməsi arxasında açılır. Qısa mətn üçün
+// heç bir klient JS-i getmir — <ExpandBlock> yalnız HƏQİQƏTƏN uzun olanda
+// render olunur (F4.6c: düymə hər blokun öz adını daşıyır, açıq halda
+// "Yığ" olur — bu, native <details>-in avtomatik vermədiyi davranışdır).
 const LONG_TEXT_THRESHOLD = 1200;
 
-function LongHtml({ raw, html, locale }: { raw: string; html: string; locale: Locale }) {
+function longText(raw: string, html: string, labelClosed: string, labelOpen: string) {
   const body = <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: html }} />;
   if (raw.length <= LONG_TEXT_THRESHOLD) return body;
-  return (
-    <details className="un-expand">
-      <summary className="un-expand-toggle">{tr('Ətraflı', locale)}</summary>
-      {body}
-    </details>
-  );
+  return <ExpandBlock html={html} labelClosed={labelClosed} labelOpen={labelOpen} />;
 }
 
 // F4.4 — `functions`/`services` üçün markdown siyahısı kart toruna çevrilir.
@@ -405,6 +401,12 @@ export default async function UnitPage({
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
+  // F4.6c — hər yığılmış blokun düyməsi öz adını daşıyır ("Ətraflı" YERİNƏ).
+  const expandLabelOpen = tr('Yığ', locale);
+  const aboutExpandLabel = `${tr('Bölmə haqqında', locale)} — ${tr('ətraflı', locale)}`;
+  const functionsExpandLabel = `${tr('Fəaliyyət sahəsi', locale)} — ${tr('ətraflı', locale)}`;
+  const servicesExpandLabel = `${tr('Xidmətlər', locale)} — ${tr('ətraflı', locale)}`;
+
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
     prompt: tr('Düzəliş təklif et', locale),
@@ -531,7 +533,7 @@ export default async function UnitPage({
                     </div>
                   ) : null}
                   {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
-                  {unit.about ? <LongHtml raw={unit.about} html={aboutHtml} locale={locale} /> : null}
+                  {unit.about ? longText(unit.about, aboutHtml, aboutExpandLabel, expandLabelOpen) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
                 <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
@@ -582,7 +584,7 @@ export default async function UnitPage({
                     functionCards ? (
                       <FnCardGrid cards={functionCards} />
                     ) : (
-                      <LongHtml raw={unit.functions} html={functionsHtml} locale={locale} />
+                      longText(unit.functions, functionsHtml, functionsExpandLabel, expandLabelOpen)
                     )
                   ) : null}
                   {unit.services ? (
@@ -591,7 +593,7 @@ export default async function UnitPage({
                       {serviceCards ? (
                         <FnCardGrid cards={serviceCards} />
                       ) : (
-                        <LongHtml raw={unit.services} html={servicesHtml} locale={locale} />
+                        longText(unit.services, servicesHtml, servicesExpandLabel, expandLabelOpen)
                       )}
                     </>
                   ) : null}
