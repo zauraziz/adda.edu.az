@@ -270,6 +270,15 @@
   line-height: 1.55;
 }
 .prf-role-unit { color: rgba(255, 255, 255, 0.62); }
+/* F4.6b — bölmə adı tanınanda keçidə çevrilir (bax emekdas/[slug]/page.tsx). */
+.prf-role-unit a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+  text-underline-offset: 2px;
+}
+.prf-role-unit a:hover { color: var(--gold-400); text-decoration-color: var(--gold-400); }
+.prf-role-unit a:focus-visible { outline: 2px solid var(--gold-400); outline-offset: 2px; border-radius: 2px; }
 .prf-rank {
   margin: 0.5rem 0 0;
   font-family: var(--font-body);

@@ -36,10 +36,12 @@ import {
   getPersonBySlug,
   getPersonSlugs,
   getPersonArticles,
+  getUnits,
   mediaUrl,
   type Article,
   type PersonFull,
   type SiteMenu,
+  type OrgUnit,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
@@ -113,6 +115,20 @@ export default async function PersonPage({
   if (!person) notFound();
 
   const news = await getPersonArticles(slug, locale, 6).catch(() => [] as Article[]);
+
+  // F4.6b — `roles[].unitName` sadə mətndir (slug yoxdur). `unitName` HƏMİŞƏ
+  // az-dadır (lokallaşdırılmamış sahə, `tr()` ilə göstərilir) — ona görə
+  // adları AZ bölmə siyahısı ilə tutuşduruq (NAME_CLEAN kanonikləşdirib,
+  // dəqiq uyğunluq kifayətdir), sonra tapılan `documentId`-ni cari lokalın
+  // slug-ına çeviririk (unit lokallaşdırılıb, slug dildən dildə fərqlənə bilər).
+  const azUnits = await getUnits('az').catch(() => [] as OrgUnit[]);
+  const localeUnits = locale === 'az' ? azUnits : await getUnits(locale).catch(() => [] as OrgUnit[]);
+  const unitSlugByDocId = new Map(localeUnits.map((u) => [u.documentId, u.slug]));
+  const unitSlugByName = new Map(
+    azUnits
+      .map((u) => [u.name.trim(), unitSlugByDocId.get(u.documentId)] as const)
+      .filter((pair): pair is [string, string] => Boolean(pair[1])),
+  );
 
   const roles = person.roles ?? [];
   const areas = person.researchAreas ?? [];
@@ -199,12 +215,24 @@ export default async function PersonPage({
               <h1 className="np-h1 prf-name">{shownName}</h1>
               {roles.length ? (
                 <ul className="prf-roles">
-                  {roles.map((r, i) => (
-                    <li key={`${r.position}-${i}`}>
-                      {tr(r.position, locale)}
-                      {r.unitName ? <span className="prf-role-unit"> — {tr(r.unitName, locale)}</span> : null}
-                    </li>
-                  ))}
+                  {roles.map((r, i) => {
+                    const unitSlug = r.unitName ? unitSlugByName.get(r.unitName.trim()) : undefined;
+                    return (
+                      <li key={`${r.position}-${i}`}>
+                        {tr(r.position, locale)}
+                        {r.unitName ? (
+                          <span className="prf-role-unit">
+                            {' — '}
+                            {unitSlug ? (
+                              <Link href={`/${locale}/struktur/${unitSlug}`}>{tr(r.unitName, locale)}</Link>
+                            ) : (
+                              tr(r.unitName, locale)
+                            )}
+                          </span>
+                        ) : null}
+                      </li>
+                    );
+                  })}
                 </ul>
               ) : null}
               {nonEmpty(person.academicTitle) || nonEmpty(degree) ? (
@@ -221,6 +249,14 @@ export default async function PersonPage({
             <aside className="prf-side">
               <h2 className="prf-side-title">{tr('Əlaqə', locale)}</h2>
               <ul className="prf-facts">
+                {person.unit ? (
+                  <li>
+                    <span className="prf-fact-k">{tr('Bölmə', locale)}</span>
+                    <Link className="prf-fact-v dir-link" href={`/${locale}/struktur/${person.unit.slug}`}>
+                      {tr(person.unit.name, locale)}
+                    </Link>
+                  </li>
+                ) : null}
                 {person.email ? (
                   <li>
                     <span className="prf-fact-k">{tr('E-poçt', locale)}</span>
@@ -247,7 +283,7 @@ export default async function PersonPage({
                     <span className="prf-fact-v">{tr(person.office as string, locale)}</span>
                   </li>
                 ) : null}
-                {!person.email && !person.phone && !nonEmpty(person.office) && !nonEmpty(person.building) ? (
+                {!person.unit && !person.email && !person.phone && !nonEmpty(person.office) && !nonEmpty(person.building) ? (
                   <li className="prf-fact-none">{tr('Əlaqə məlumatı əlavə olunmayıb.', locale)}</li>
                 ) : null}
               </ul>
