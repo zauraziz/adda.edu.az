@@ -314,3 +314,64 @@
   border-radius: 3px;
 }
 .un-expand[open] summary.un-expand-toggle { margin-bottom: 0.75rem; }
+
+/* ── F4.5a: iki sütun + yapışqan yan panel (HSE ba/bi struktur modelinə
+   istinad — bax CLAUDE.md). Yan sütunda HEÇ NƏ yoxdursa (27/28 bölmədə
+   baş verir) `<aside>` ÜMUMİYYƏTLƏ render olunmur — .un-layout--single
+   ikinci sütunu ləğv edir, sağda boş zolaq qalmır. `top: 98px` = sabit
+   header (82px, bax 02-header.css .header-inner) + boşluq. ── */
+.un-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: clamp(2rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.un-layout--single { grid-template-columns: minmax(0, 1fr); }
+.un-main { min-width: 0; }
+.un-side {
+  min-width: 0;
+  position: sticky;
+  top: 98px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--gray-50, #f8fafc);
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+}
+.un-side-text {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--navy-800);
+  margin: 0;
+}
+/* Rəhbər kartı dar sütuna uyğunlaşdırılır (.ld-card defolt 104px avatarla
+   masaüstü genişlik üçün nəzərdə tutulub — 260-320px sütunda sıxılır). */
+.un-side .ld-card {
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+}
+.un-side .ld-plate { width: 72px; height: 88px; }
+.un-side .ld-mono { font-size: 1.4rem; }
+.un-side .ld-name { font-size: 1rem; }
+/* .na-event-info özü ağ/boz çərçivəli kart kimi qurulub — yan sütunun
+   artıq öz çərçivəsi var, ikiqat çərçivə görünməsin deyə soyulur. */
+.un-side .na-event-info {
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+@media (max-width: 900px) {
+  .un-layout { grid-template-columns: minmax(0, 1fr); }
+  /* F4.5, bənd 6 — mobildə yan sütun mətndən ƏVVƏLƏ keçir: "kimə zəng
+     edim" sualı telefonda daha vacibdir. Sticky mənasızdır, söndürülür. */
+  .un-side { position: static; order: -1; }
+  .un-main { order: 0; }
+}

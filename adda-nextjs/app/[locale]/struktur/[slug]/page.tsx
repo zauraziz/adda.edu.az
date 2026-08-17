@@ -336,11 +336,11 @@ export default async function UnitPage({
   const headPhoto = unit.head ? mediaUrl(unit.head.photo) : null;
   const headDegree = unit.head ? degreeLabel(unit.head.academicDegree) : null;
 
-  const block1Has = Boolean(unit.mission || unit.about || esasname.length);
-  const block2Has = Boolean(unit.head || staffSorted.length || unit.receptionHours);
-  const block3Has = Boolean(unit.functions || unit.services || unit.onlineServices.length);
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
-  const block4Has = Boolean(contactHas || unit.links.length);
+  const block1Has = Boolean(unit.mission || unit.about);
+  const block2Has = Boolean(staffSorted.length);
+  const block3Has = Boolean(unit.functions || unit.services);
+  const block4Has = Boolean(unit.links.length);
   const subunits = [...unit.children].sort(
     (a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name),
   );
@@ -349,7 +349,7 @@ export default async function UnitPage({
   const blockTitle1 = tr('Struktur bölmə', locale);
   const blockTitle2 = tr('Rəhbərlik və heyət', locale);
   const blockTitle3 = tr('Funksional fəaliyyət', locale);
-  const blockTitle4 = tr('Kommunikasiya və yerləşmə', locale);
+  const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Hesabatlılıq və şəffaflıq', locale);
   const blockStatus = [
     { has: block1Has, title: blockTitle1 },
@@ -373,6 +373,13 @@ export default async function UnitPage({
     return tint;
   });
   const blockClass = (n: 0 | 1 | 2 | 3 | 4) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
+
+  // F4.5a — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · əsasnamə ·
+  // onlayn xidmətlər. Heç biri yoxdursa sütun render olunmur, səhifə TƏK
+  // SÜTUN olur (27/28 bölmədə baş verir — bax .un-layout--single, 36-unit.css).
+  const sideHas = Boolean(
+    unit.head || contactHas || unit.receptionHours || esasname.length || unit.onlineServices.length,
+  );
 
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
   const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
@@ -446,79 +453,26 @@ export default async function UnitPage({
             </div>
           ) : null}
 
-          {/* ── 1. Struktur bölmə ── */}
-          {block1Has ? (
-            <section className={blockClass(0)}>
-              <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
-              {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
-              {unit.about ? <LongHtml raw={unit.about} html={aboutHtml} locale={locale} /> : null}
-              {esasname.length ? (
-                <>
-                  <div className="un-sub-title">{tr('Əsasnamə', locale)}</div>
-                  <DocList docs={esasname} locale={locale} />
-                </>
-              ) : null}
-            </section>
-          ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
-          ) : null}
-
-          {/* ── 2. Rəhbərlik və heyət ── */}
-          {block2Has ? (
-            <section className={blockClass(1)}>
-              <BlockTitle title={blockTitle2} documentId={unit.documentId} locale={locale} />
-              {unit.head ? (
-                <div className="un-sub-title">{tr('Rəhbər', locale)}</div>
-              ) : null}
-              {unit.head ? (
-                <ul className="ld-grid ld-grid--single" style={{ marginBottom: '1.75rem' }}>
-                  <li className="ld-card">
-                    <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="ld-plate">
-                      {headPhoto ? (
-                        <img className="ld-photo" src={headPhoto} alt="" loading="lazy" />
-                      ) : (
-                        <span className="ld-mono" aria-hidden="true">
-                          {(unit.head.displayName || unit.head.name || '—').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
-                        </span>
-                      )}
-                    </Link>
-                    <div className="ld-body">
-                      <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="ld-name">
-                        {unit.head.displayName || unit.head.name}
-                      </Link>
-                      {unit.head.position ? <div className="ld-position">{unit.head.position}</div> : null}
-                      {headDegree || unit.head.academicTitle ? (
-                        <div className="ld-degree">{[headDegree, unit.head.academicTitle].filter(Boolean).join(' · ')}</div>
-                      ) : null}
-                      <dl className="ld-contact">
-                        {unit.head.email ? (
-                          <>
-                            <dt>{tr('E-poçt', locale)}</dt>
-                            <dd><a href={`mailto:${unit.head.email}`}>{unit.head.email}</a></dd>
-                          </>
-                        ) : null}
-                        {unit.head.phone ? (
-                          <>
-                            <dt>{tr('Telefon', locale)}</dt>
-                            <dd><a href={`tel:${unit.head.phone.replace(/[^\d+]/g, '')}`}>{unit.head.phone}</a></dd>
-                          </>
-                        ) : null}
-                      </dl>
-                      {SHOW_ADMIN_LINKS ? (
-                        <div className="ld-admin">
-                          <span>{tr('Redaktə', locale)}:</span>
-                          <a href={adminUrl('api::person.person', unit.head.documentId, locale)} target="_blank" rel="noreferrer">
-                            {tr('şəxs', locale)}
-                          </a>
-                        </div>
-                      ) : null}
-                    </div>
-                  </li>
-                </ul>
+          {/* F4.5a — iki sütun: əsas mətn + yapışqan yan sütun (rəhbər/əlaqə/
+              qəbul saatları/əsasnamə/onlayn xidmətlər). Yan sütunda heç nə
+              yoxdursa (.un-layout--single) tək sütuna düşür. */}
+          <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
+            <div className="un-main">
+              {/* ── 1. Struktur bölmə ── */}
+              {block1Has ? (
+                <section className={blockClass(0)}>
+                  <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                  {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
+                  {unit.about ? <LongHtml raw={unit.about} html={aboutHtml} locale={locale} /> : null}
+                </section>
+              ) : SHOW_ADMIN_LINKS ? (
+                <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
               ) : null}
 
-              {staffSorted.length ? (
-                <>
+              {/* ── 2. Rəhbərlik və heyət — rəhbər kartı yan sütunda, burada YALNIZ heyət ── */}
+              {block2Has ? (
+                <section className={blockClass(1)}>
+                  <BlockTitle title={blockTitle2} documentId={unit.documentId} locale={locale} />
                   <div className="un-sub-title">{tr('Heyət', locale)} ({staffSorted.length})</div>
                   <ul className="un-staff-grid">
                     {staffSorted.map((p) => {
@@ -546,117 +500,44 @@ export default async function UnitPage({
                       );
                     })}
                   </ul>
-                </>
+                </section>
+              ) : SHOW_ADMIN_LINKS ? (
+                <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
               ) : null}
 
-              {unit.receptionHours ? (
-                <p style={{ marginTop: '1.5rem' }}>
-                  <strong>{tr('Qəbul saatları', locale)}:</strong> {unit.receptionHours}
-                </p>
+              {/* ── 3. Funksional fəaliyyət ── */}
+              {block3Has ? (
+                <section className={blockClass(2)}>
+                  <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
+                  {unit.functions ? (
+                    <>
+                      <div className="un-sub-title">{tr('Funksiyalar', locale)}</div>
+                      {functionCards ? (
+                        <FnCardGrid cards={functionCards} />
+                      ) : (
+                        <LongHtml raw={unit.functions} html={functionsHtml} locale={locale} />
+                      )}
+                    </>
+                  ) : null}
+                  {unit.services ? (
+                    <>
+                      <div className="un-sub-title">{tr('Xidmətlər', locale)}</div>
+                      {serviceCards ? (
+                        <FnCardGrid cards={serviceCards} />
+                      ) : (
+                        <LongHtml raw={unit.services} html={servicesHtml} locale={locale} />
+                      )}
+                    </>
+                  ) : null}
+                </section>
+              ) : SHOW_ADMIN_LINKS ? (
+                <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
               ) : null}
-            </section>
-          ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
-          ) : null}
 
-          {/* ── 3. Funksional fəaliyyət ── */}
-          {block3Has ? (
-            <section className={blockClass(2)}>
-              <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
-              {unit.functions ? (
-                <>
-                  <div className="un-sub-title">{tr('Funksiyalar', locale)}</div>
-                  {functionCards ? (
-                    <FnCardGrid cards={functionCards} />
-                  ) : (
-                    <LongHtml raw={unit.functions} html={functionsHtml} locale={locale} />
-                  )}
-                </>
-              ) : null}
-              {unit.services ? (
-                <>
-                  <div className="un-sub-title">{tr('Xidmətlər', locale)}</div>
-                  {serviceCards ? (
-                    <FnCardGrid cards={serviceCards} />
-                  ) : (
-                    <LongHtml raw={unit.services} html={servicesHtml} locale={locale} />
-                  )}
-                </>
-              ) : null}
-              {unit.onlineServices.length ? (
-                <>
-                  <div className="un-sub-title">{tr('Onlayn xidmətlər', locale)}</div>
-                  <div className="un-links">
-                    {unit.onlineServices.map((l, i) => (
-                      <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
-                        <i className="ti ti-external-link" aria-hidden="true" />
-                        {l.label}
-                      </a>
-                    ))}
-                  </div>
-                </>
-              ) : null}
-            </section>
-          ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
-          ) : null}
-
-          {/* ── 4. Kommunikasiya və yerləşmə ── */}
-          {block4Has ? (
-            <section className={blockClass(3)}>
-              <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
-              {contactHas ? (
-                <div className="na-event-info" style={{ maxWidth: 'none', margin: '0 0 1.25rem' }}>
-                  {unit.building ? (
-                    <div className="na-ei-row">
-                      <i className="ti ti-building na-ei-ic" aria-hidden="true" />
-                      <div>
-                        <div className="na-ei-k">{tr('Korpus', locale)}</div>
-                        <div className="na-ei-v">{unit.building}</div>
-                      </div>
-                    </div>
-                  ) : null}
-                  {unit.floor ? (
-                    <div className="na-ei-row">
-                      <i className="ti ti-stairs na-ei-ic" aria-hidden="true" />
-                      <div>
-                        <div className="na-ei-k">{tr('Mərtəbə', locale)}</div>
-                        <div className="na-ei-v">{unit.floor}</div>
-                      </div>
-                    </div>
-                  ) : null}
-                  {unit.room ? (
-                    <div className="na-ei-row">
-                      <i className="ti ti-map-pin na-ei-ic" aria-hidden="true" />
-                      <div>
-                        <div className="na-ei-k">{tr('Otaq', locale)}</div>
-                        <div className="na-ei-v">{unit.room}</div>
-                      </div>
-                    </div>
-                  ) : null}
-                  {unit.phoneExt ? (
-                    <div className="na-ei-row">
-                      <i className="ti ti-phone na-ei-ic" aria-hidden="true" />
-                      <div>
-                        <div className="na-ei-k">{tr('Daxili telefon', locale)}</div>
-                        <div className="na-ei-v">{unit.phoneExt}</div>
-                      </div>
-                    </div>
-                  ) : null}
-                  {unit.email ? (
-                    <div className="na-ei-row">
-                      <i className="ti ti-mail na-ei-ic" aria-hidden="true" />
-                      <div>
-                        <div className="na-ei-k">{tr('E-poçt', locale)}</div>
-                        <div className="na-ei-v"><a href={`mailto:${unit.email}`}>{unit.email}</a></div>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-              {unit.links.length ? (
-                <>
-                  <div className="un-sub-title">{tr('Faydalı linklər', locale)}</div>
+              {/* ── 4. Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib) ── */}
+              {block4Has ? (
+                <section className={blockClass(3)}>
+                  <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
                   <div className="un-links">
                     {unit.links.map((l, i) => (
                       <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
@@ -665,75 +546,210 @@ export default async function UnitPage({
                       </a>
                     ))}
                   </div>
-                </>
+                </section>
+              ) : SHOW_ADMIN_LINKS ? (
+                <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
               ) : null}
-            </section>
-          ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
-          ) : null}
 
-          {/* ── 5. Hesabatlılıq və şəffaflıq ── */}
-          {block5Has ? (
-            <section className={blockClass(4)}>
-              <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
-              {hesabat.length ? (
-                <>
-                  <div className="un-sub-title">{tr('İllik hesabatlar', locale)}</div>
-                  <DocList docs={hesabat} locale={locale} />
-                </>
+              {/* ── 5. Hesabatlılıq və şəffaflıq ── */}
+              {block5Has ? (
+                <section className={blockClass(4)}>
+                  <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                  {hesabat.length ? (
+                    <>
+                      <div className="un-sub-title">{tr('İllik hesabatlar', locale)}</div>
+                      <DocList docs={hesabat} locale={locale} />
+                    </>
+                  ) : null}
+                  {articles.length ? (
+                    <>
+                      <div className="un-sub-title">{tr('Xəbərlər', locale)}</div>
+                      <ul className="un-row-list">
+                        {articles.map((a) => (
+                          <li key={a.documentId} className="un-row">
+                            <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
+                            <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+                  {announcements.length ? (
+                    <>
+                      <div className="un-sub-title">{tr('Elanlar', locale)}</div>
+                      <ul className="un-row-list">
+                        {announcements.map((a) => (
+                          <li key={a.documentId} className="un-row">
+                            <span className="un-row-date">{fmtDate(a.publishAt ?? a.publishedAt, locale)}</span>
+                            <Link href={`/${locale}/elanlar/${a.slug}`} className="un-row-title">{a.title}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+                  {subunits.length ? (
+                    <>
+                      <div className="un-sub-title">{tr('Alt bölmələr', locale)}</div>
+                      <ul className="un-sub-grid">
+                        {subunits.map((c) => (
+                          <li key={c.slug}>
+                            <Link href={`/${locale}/struktur/${c.slug}`} className="stf-unit">
+                              <span className="stf-unit-name">{c.name}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+                </section>
+              ) : SHOW_ADMIN_LINKS ? (
+                <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
               ) : null}
-              {articles.length ? (
-                <>
-                  <div className="un-sub-title">{tr('Xəbərlər', locale)}</div>
-                  <ul className="un-row-list">
-                    {articles.map((a) => (
-                      <li key={a.documentId} className="un-row">
-                        <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
-                        <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
-              {announcements.length ? (
-                <>
-                  <div className="un-sub-title">{tr('Elanlar', locale)}</div>
-                  <ul className="un-row-list">
-                    {announcements.map((a) => (
-                      <li key={a.documentId} className="un-row">
-                        <span className="un-row-date">{fmtDate(a.publishAt ?? a.publishedAt, locale)}</span>
-                        <Link href={`/${locale}/elanlar/${a.slug}`} className="un-row-title">{a.title}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
-              {subunits.length ? (
-                <>
-                  <div className="un-sub-title">{tr('Alt bölmələr', locale)}</div>
-                  <ul className="un-sub-grid">
-                    {subunits.map((c) => (
-                      <li key={c.slug}>
-                        <Link href={`/${locale}/struktur/${c.slug}`} className="stf-unit">
-                          <span className="stf-unit-name">{c.name}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
-            </section>
-          ) : SHOW_ADMIN_LINKS ? (
-            <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
-          ) : null}
 
-          {SHOW_ADMIN_LINKS ? (
-            <div className="un-block" style={{ paddingTop: 0 }}>
-              <a href={adminUrl('api::unit.unit', unit.documentId, locale)} target="_blank" rel="noreferrer" className="un-link-btn">
-                {tr('Redaktə', locale)}: {tr('bölmə', locale)}
-              </a>
+              {SHOW_ADMIN_LINKS ? (
+                <div className="un-block" style={{ paddingTop: 0 }}>
+                  <a href={adminUrl('api::unit.unit', unit.documentId, locale)} target="_blank" rel="noreferrer" className="un-link-btn">
+                    {tr('Redaktə', locale)}: {tr('bölmə', locale)}
+                  </a>
+                </div>
+              ) : null}
             </div>
-          ) : null}
+
+            {sideHas ? (
+              <aside className="un-side">
+                {unit.head ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Rəhbər', locale)}</div>
+                    <ul className="ld-grid ld-grid--single">
+                      <li className="ld-card">
+                        <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="ld-plate">
+                          {headPhoto ? (
+                            <img className="ld-photo" src={headPhoto} alt="" loading="lazy" />
+                          ) : (
+                            <span className="ld-mono" aria-hidden="true">
+                              {(unit.head.displayName || unit.head.name || '—').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
+                            </span>
+                          )}
+                        </Link>
+                        <div className="ld-body">
+                          <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="ld-name">
+                            {unit.head.displayName || unit.head.name}
+                          </Link>
+                          {unit.head.position ? <div className="ld-position">{unit.head.position}</div> : null}
+                          {headDegree || unit.head.academicTitle ? (
+                            <div className="ld-degree">{[headDegree, unit.head.academicTitle].filter(Boolean).join(' · ')}</div>
+                          ) : null}
+                          <dl className="ld-contact">
+                            {unit.head.email ? (
+                              <>
+                                <dt>{tr('E-poçt', locale)}</dt>
+                                <dd><a href={`mailto:${unit.head.email}`}>{unit.head.email}</a></dd>
+                              </>
+                            ) : null}
+                            {unit.head.phone ? (
+                              <>
+                                <dt>{tr('Telefon', locale)}</dt>
+                                <dd><a href={`tel:${unit.head.phone.replace(/[^\d+]/g, '')}`}>{unit.head.phone}</a></dd>
+                              </>
+                            ) : null}
+                          </dl>
+                          {SHOW_ADMIN_LINKS ? (
+                            <div className="ld-admin">
+                              <span>{tr('Redaktə', locale)}:</span>
+                              <a href={adminUrl('api::person.person', unit.head.documentId, locale)} target="_blank" rel="noreferrer">
+                                {tr('şəxs', locale)}
+                              </a>
+                            </div>
+                          ) : null}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                ) : null}
+
+                {contactHas ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Əlaqə', locale)}</div>
+                    <div className="na-event-info" style={{ maxWidth: 'none', margin: 0 }}>
+                      {unit.building ? (
+                        <div className="na-ei-row">
+                          <i className="ti ti-building na-ei-ic" aria-hidden="true" />
+                          <div>
+                            <div className="na-ei-k">{tr('Korpus', locale)}</div>
+                            <div className="na-ei-v">{unit.building}</div>
+                          </div>
+                        </div>
+                      ) : null}
+                      {unit.floor ? (
+                        <div className="na-ei-row">
+                          <i className="ti ti-stairs na-ei-ic" aria-hidden="true" />
+                          <div>
+                            <div className="na-ei-k">{tr('Mərtəbə', locale)}</div>
+                            <div className="na-ei-v">{unit.floor}</div>
+                          </div>
+                        </div>
+                      ) : null}
+                      {unit.room ? (
+                        <div className="na-ei-row">
+                          <i className="ti ti-map-pin na-ei-ic" aria-hidden="true" />
+                          <div>
+                            <div className="na-ei-k">{tr('Otaq', locale)}</div>
+                            <div className="na-ei-v">{unit.room}</div>
+                          </div>
+                        </div>
+                      ) : null}
+                      {unit.phoneExt ? (
+                        <div className="na-ei-row">
+                          <i className="ti ti-phone na-ei-ic" aria-hidden="true" />
+                          <div>
+                            <div className="na-ei-k">{tr('Daxili telefon', locale)}</div>
+                            <div className="na-ei-v">{unit.phoneExt}</div>
+                          </div>
+                        </div>
+                      ) : null}
+                      {unit.email ? (
+                        <div className="na-ei-row">
+                          <i className="ti ti-mail na-ei-ic" aria-hidden="true" />
+                          <div>
+                            <div className="na-ei-k">{tr('E-poçt', locale)}</div>
+                            <div className="na-ei-v"><a href={`mailto:${unit.email}`}>{unit.email}</a></div>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+
+                {unit.receptionHours ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Qəbul saatları', locale)}</div>
+                    <p className="un-side-text">{unit.receptionHours}</p>
+                  </div>
+                ) : null}
+
+                {esasname.length ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Əsasnamə', locale)}</div>
+                    <DocList docs={esasname} locale={locale} />
+                  </div>
+                ) : null}
+
+                {unit.onlineServices.length ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Onlayn xidmətlər', locale)}</div>
+                    <div className="un-links">
+                      {unit.onlineServices.map((l, i) => (
+                        <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
+                          <i className="ti ti-external-link" aria-hidden="true" />
+                          {l.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </aside>
+            ) : null}
+          </div>
 
           <div style={{ paddingBottom: '48px' }}>
             <CorrectionIsland
