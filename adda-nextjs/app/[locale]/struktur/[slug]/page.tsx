@@ -381,6 +381,13 @@ export default async function UnitPage({
     unit.head || contactHas || unit.receptionHours || esasname.length || unit.onlineServices.length,
   );
 
+  // F4.5b — fakt zolağı: otaq · daxili telefon · qəbul saatları · heyət sayı
+  // · alt bölmə sayı. Uydurma metrika yoxdur, YALNIZ mövcud dəyərlər — bir
+  // dənə də yoxdursa zolaq render olunmur.
+  const factsHas = Boolean(
+    unit.room || unit.phoneExt || unit.receptionHours || staffSorted.length || subunits.length,
+  );
+
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
   const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
   const servicesHtml = unit.services ? await marked.parse(unit.services) : '';
@@ -442,6 +449,45 @@ export default async function UnitPage({
               ))}
               <span className="un-crumb-sep">/</span> <span className="un-crumb-cur">{unit.name}</span>
             </nav>
+            {factsHas ? (
+              <ul className="un-facts" aria-label={tr('Əsas faktlar', locale)}>
+                {unit.room ? (
+                  <li className="un-fact">
+                    <i className="ti ti-map-pin" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Otaq', locale)}</span>
+                    <span className="un-fact-v">{unit.room}</span>
+                  </li>
+                ) : null}
+                {unit.phoneExt ? (
+                  <li className="un-fact">
+                    <i className="ti ti-phone" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Daxili telefon', locale)}</span>
+                    <span className="un-fact-v">{unit.phoneExt}</span>
+                  </li>
+                ) : null}
+                {unit.receptionHours ? (
+                  <li className="un-fact">
+                    <i className="ti ti-clock" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Qəbul saatları', locale)}</span>
+                    <span className="un-fact-v">{unit.receptionHours}</span>
+                  </li>
+                ) : null}
+                {staffSorted.length ? (
+                  <li className="un-fact">
+                    <i className="ti ti-users" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Heyət', locale)}</span>
+                    <span className="un-fact-v">{staffSorted.length}</span>
+                  </li>
+                ) : null}
+                {subunits.length ? (
+                  <li className="un-fact">
+                    <i className="ti ti-sitemap" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Alt bölmə', locale)}</span>
+                    <span className="un-fact-v">{subunits.length}</span>
+                  </li>
+                ) : null}
+              </ul>
+            ) : null}
           </div>
         </section>
 

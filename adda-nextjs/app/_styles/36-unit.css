@@ -24,6 +24,32 @@
 .un-crumbs .un-crumb-sep { opacity: 0.5; }
 .un-crumbs .un-crumb-cur { color: var(--white); font-weight: 600; }
 
+/* ── F4.5b: fakt zolağı — otaq/daxili telefon/qəbul saatları/heyət/alt
+   bölmə, YALNIZ mövcud dəyərlər. `.np-hero` tünd navy fonundadır (bax
+   19-news-page.css .np-hero), ona görə şüşəvari (frosted) çip işlədilir. ── */
+.un-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+.un-fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.un-fact i { color: var(--gold-400); font-size: 1rem; }
+.un-fact-k { color: var(--navy-100); opacity: 0.85; }
+.un-fact-v { color: var(--white); font-weight: 600; }
+
 /* ── Blok konteyner ── */
 .un-block {
   padding: clamp(2rem, 4vw, 3rem) 0;
