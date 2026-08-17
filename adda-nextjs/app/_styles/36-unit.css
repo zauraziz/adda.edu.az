@@ -210,6 +210,23 @@
 }
 .un-row-title:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
 
+/* ── F4.5c: xəbər sətri şəkilli, elan sətri şəkilsiz qalır (elanın öz
+   sətri dəyişməyib — bax .un-row yuxarıda). Örtük yoxdursa neytral ikon
+   xanası, layout sınmır. ── */
+.un-row--news { align-items: center; }
+.un-row-thumb {
+  flex-shrink: 0;
+  width: 48px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--gold-100);
+  display: grid;
+  place-items: center;
+}
+.un-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.un-row-thumb i { color: var(--gold-600); font-size: 1rem; }
+
 .un-empty {
   font-family: var(--font-body);
   font-size: var(--text-sm);
@@ -340,6 +357,50 @@
   border-radius: 3px;
 }
 .un-expand[open] summary.un-expand-toggle { margin-bottom: 0.75rem; }
+
+/* ── F4.5c: alt bölmələr — səhifənin sonunda öz kart cərgəsi (HSE
+   "Другие программы" nümunəsi), blok ritminə DAXİL DEYİL — .un-layout-dan
+   sonra, ayrıca bölmə. ── */
+.un-subunits {
+  padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(3rem, 6vw, 4.5rem);
+  border-top: 1px solid var(--gray-200);
+}
+.un-subunit-grid {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.un-subunit-card {
+  display: block;
+  padding: 1.1rem 1.25rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  text-decoration: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.un-subunit-card:hover { border-color: rgba(201, 169, 97, 0.55); box-shadow: 0 10px 24px rgba(11, 61, 92, 0.08); }
+.un-subunit-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-900);
+  margin-bottom: 0.35rem;
+}
+.un-subunit-head {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-700, #0e4d73);
+  margin-bottom: 0.2rem;
+}
+.un-subunit-count {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
 
 /* ── F4.5a: iki sütun + yapışqan yan panel (HSE ba/bi struktur modelinə
    istinad — bax CLAUDE.md). Yan sütunda HEÇ NƏ yoxdursa (27/28 bölmədə

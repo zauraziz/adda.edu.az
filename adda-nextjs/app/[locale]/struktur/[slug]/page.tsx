@@ -344,13 +344,24 @@ export default async function UnitPage({
   const subunits = [...unit.children].sort(
     (a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name),
   );
-  const block5Has = Boolean(hesabat.length || articles.length || announcements.length || subunits.length);
+  // F4.5c — alt bölmələr artıq blok 5-in İÇİNDƏ deyil (səhifənin sonuna öz
+  // kart cərgəsinə keçib, aşağıda) — ona görə blok 5-in "var" statusu
+  // subunits-i SAYMIR, əks halda başlıq görünüb altı boş qalardı.
+  const block5Has = Boolean(hesabat.length || articles.length || announcements.length);
+
+  // F4.5c — hər alt bölmə kartında ad + rəhbər + heyət sayı. Rəhbər `allUnits`-dən
+  // (artıq yüklənib, əlavə sorğu yoxdur); heyət sayı üçün hər alt bölmə üçün
+  // `getUnitStaff` çağrılır (adətən 2-7 uşaq — qəbul edilə bilən əlavə yük).
+  const subunitHeadBySlug = new Map(allUnits.map((u) => [u.slug, u.head ?? null]));
+  const subunitStaffCounts = await Promise.all(
+    subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
+  );
 
   const blockTitle1 = tr('Struktur bölmə', locale);
-  const blockTitle2 = tr('Rəhbərlik və heyət', locale);
-  const blockTitle3 = tr('Funksional fəaliyyət', locale);
+  const blockTitle2 = tr('Kim işləyir?', locale);
+  const blockTitle3 = tr('Bölmə nə işlə məşğuldur?', locale);
   const blockTitle4 = tr('Faydalı linklər', locale);
-  const blockTitle5 = tr('Hesabatlılıq və şəffaflıq', locale);
+  const blockTitle5 = tr('Hesabatlar və xəbərlər', locale);
   const blockStatus = [
     { has: block1Has, title: blockTitle1 },
     { has: block2Has, title: blockTitle2 },
@@ -504,10 +515,21 @@ export default async function UnitPage({
               yoxdursa (.un-layout--single) tək sütuna düşür. */}
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── 1. Struktur bölmə ── */}
+              {/* ── 1. Struktur bölmə — F4.5c: başlıqsız, səhifə adı onsuz da yuxarıda ── */}
               {block1Has ? (
                 <section className={blockClass(0)}>
-                  <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                  {SHOW_ADMIN_LINKS ? (
+                    <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
+                      <a
+                        className="un-admin-edit"
+                        href={adminUrl('api::unit.unit', unit.documentId, locale)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {tr('redaktə', locale)}
+                      </a>
+                    </div>
+                  ) : null}
                   {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
                   {unit.about ? <LongHtml raw={unit.about} html={aboutHtml} locale={locale} /> : null}
                 </section>
@@ -551,23 +573,21 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
               ) : null}
 
-              {/* ── 3. Funksional fəaliyyət ── */}
+              {/* ── 3. Bölmə nə işlə məşğuldur? (F4.5c: sual formasında, əvvəlki
+                  "Funksional fəaliyyət") ── */}
               {block3Has ? (
                 <section className={blockClass(2)}>
                   <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
                   {unit.functions ? (
-                    <>
-                      <div className="un-sub-title">{tr('Funksiyalar', locale)}</div>
-                      {functionCards ? (
-                        <FnCardGrid cards={functionCards} />
-                      ) : (
-                        <LongHtml raw={unit.functions} html={functionsHtml} locale={locale} />
-                      )}
-                    </>
+                    functionCards ? (
+                      <FnCardGrid cards={functionCards} />
+                    ) : (
+                      <LongHtml raw={unit.functions} html={functionsHtml} locale={locale} />
+                    )
                   ) : null}
                   {unit.services ? (
                     <>
-                      <div className="un-sub-title">{tr('Xidmətlər', locale)}</div>
+                      <div className="un-sub-title">{tr('Hansı məsələ ilə müraciət edə bilərsiniz?', locale)}</div>
                       {serviceCards ? (
                         <FnCardGrid cards={serviceCards} />
                       ) : (
@@ -607,16 +627,24 @@ export default async function UnitPage({
                       <DocList docs={hesabat} locale={locale} />
                     </>
                   ) : null}
+                  {/* F4.5c — elanlar/xəbərlər ayrılır: xəbər şəkilli (kiçik üz qabığı
+                      şəkli), elan qısa/tarixli/şəkilsiz qalır. */}
                   {articles.length ? (
                     <>
                       <div className="un-sub-title">{tr('Xəbərlər', locale)}</div>
                       <ul className="un-row-list">
-                        {articles.map((a) => (
-                          <li key={a.documentId} className="un-row">
-                            <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
-                            <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
-                          </li>
-                        ))}
+                        {articles.map((a) => {
+                          const thumb = mediaUrl(a.cover);
+                          return (
+                            <li key={a.documentId} className="un-row un-row--news">
+                              <span className="un-row-thumb">
+                                {thumb ? <img src={thumb} alt="" loading="lazy" /> : <i className="ti ti-news" aria-hidden="true" />}
+                              </span>
+                              <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
+                              <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">{a.title}</Link>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </>
                   ) : null}
@@ -628,20 +656,6 @@ export default async function UnitPage({
                           <li key={a.documentId} className="un-row">
                             <span className="un-row-date">{fmtDate(a.publishAt ?? a.publishedAt, locale)}</span>
                             <Link href={`/${locale}/elanlar/${a.slug}`} className="un-row-title">{a.title}</Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : null}
-                  {subunits.length ? (
-                    <>
-                      <div className="un-sub-title">{tr('Alt bölmələr', locale)}</div>
-                      <ul className="un-sub-grid">
-                        {subunits.map((c) => (
-                          <li key={c.slug}>
-                            <Link href={`/${locale}/struktur/${c.slug}`} className="stf-unit">
-                              <span className="stf-unit-name">{c.name}</span>
-                            </Link>
                           </li>
                         ))}
                       </ul>
@@ -796,6 +810,30 @@ export default async function UnitPage({
               </aside>
             ) : null}
           </div>
+
+          {/* F4.5c — alt bölmələr blok 5-dən çıxıb səhifənin sonuna öz kart
+              cərgəsinə keçib (HSE "Другие программы" nümunəsi). Hər kartda
+              ad + rəhbər + heyət sayı — mövcud olmayan sahə göstərilmir. */}
+          {subunits.length ? (
+            <section className="un-subunits">
+              <h2 className="un-block-title">{tr('Alt bölmələr', locale)}</h2>
+              <ul className="un-subunit-grid">
+                {subunits.map((c, i) => {
+                  const h = subunitHeadBySlug.get(c.slug);
+                  const n = subunitStaffCounts[i] ?? 0;
+                  return (
+                    <li key={c.slug}>
+                      <Link href={`/${locale}/struktur/${c.slug}`} className="un-subunit-card">
+                        <div className="un-subunit-name">{c.name}</div>
+                        {h ? <div className="un-subunit-head">{h.name}</div> : null}
+                        {n ? <div className="un-subunit-count">{tr('Heyət', locale)}: {n}</div> : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ) : null}
 
           <div style={{ paddingBottom: '48px' }}>
             <CorrectionIsland
