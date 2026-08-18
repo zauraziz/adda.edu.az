@@ -464,6 +464,17 @@
   color: var(--navy-800);
   margin: 0;
 }
+/* F4.7d — «Sənədlər» daxilində hər kateqoriyanın kiçik etiketi. */
+.un-doc-cat {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin: 0.9rem 0 0.4rem;
+}
+.un-doc-cat:first-child { margin-top: 0; }
 /* F4.7c — rəhbər kartı dar sütuna uyğunlaşdırılır (.ld-card defolt 104px
    avatarla masaüstü genişlik üçün nəzərdə tutulub — 260-320px sütunda
    sıxılır). Foto/monoqram KVADRAT, sabit ölçü (əvvəl 72×88 düzbucaqlı idi). */

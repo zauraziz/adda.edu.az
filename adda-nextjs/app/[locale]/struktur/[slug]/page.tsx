@@ -42,6 +42,7 @@ import Footer from '../../../_components/Footer';
 import ContentPage from '../../../_components/ContentPage';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
+import { DocList, DOC_CATEGORY_ORDER, DOC_CATEGORY_LABEL_AZ, groupDocsByCategory } from '../../../_components/DocList';
 import {
   getDepartmentBySlug,
   getDepartmentSlugs,
@@ -52,7 +53,6 @@ import {
   getUnitArticles,
   getUnitAnnouncements,
   getUnits,
-  docText,
   mediaUrl,
   degreeLabel,
   STRAPI_URL,
@@ -257,25 +257,6 @@ function EmailWrap({ email }: { email: string }) {
   );
 }
 
-function DocList({ docs, locale }: { docs: UnitDocumentItem[]; locale: Locale; }) {
-  if (!docs.length) return null;
-  return (
-    <div className="na-files" style={{ maxWidth: 'none', margin: 0 }}>
-      {docs.map((d) => {
-        const { title } = docText(d, locale);
-        const url = mediaUrl(d.file);
-        if (!url) return null;
-        return (
-          <a key={d.documentId} href={url} className="na-file" target="_blank" rel="noopener noreferrer">
-            <i className="ti ti-file-download" />
-            <span>{title}{d.year ? ` (${d.year})` : ''}</span>
-          </a>
-        );
-      })}
-    </div>
-  );
-}
-
 export default async function UnitPage({
   params,
 }: {
@@ -354,10 +335,19 @@ export default async function UnitPage({
 
   const crumbs = buildCrumbs(unit, allUnits);
 
-  const esasname = docs.filter((d) => d.category === 'esasname');
   const hesabat = [...docs.filter((d) => d.category === 'hesabat')].sort(
     (a, b) => (b.year ?? 0) - (a.year ?? 0),
   );
+
+  // F4.7d — yan panelin «Sənədlər» bölməsi: hesabat İSTİSNA (əsas sütunda
+  // qalır, F4.6d), qalan kateqoriyalar sıra üzrə qruplaşdırılır. 5-dən
+  // çoxdursa ilk 5 göstərilir, qalanı /senedler səhifəsindən görünür.
+  const sideDocsAll = [...docs]
+    .filter((d) => d.category !== 'hesabat')
+    .sort((a, b) => DOC_CATEGORY_ORDER.indexOf(a.category) - DOC_CATEGORY_ORDER.indexOf(b.category));
+  const SIDE_DOC_LIMIT = 5;
+  const sideDocsTruncated = sideDocsAll.length > SIDE_DOC_LIMIT;
+  const sideDocGroups = groupDocsByCategory(sideDocsAll.slice(0, SIDE_DOC_LIMIT));
 
   // SIRALAMA: əvvəl rəhbər, sonra əlifba (name, localeCompare 'az' MƏCBURİ).
   const headSlug = unit.head?.slug;
@@ -428,11 +418,13 @@ export default async function UnitPage({
   });
   const blockClass = (n: 0 | 1 | 2 | 3 | 4 | 5) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
 
-  // F4.5a — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · əsasnamə ·
-  // onlayn xidmətlər. Heç biri yoxdursa sütun render olunmur, səhifə TƏK
-  // SÜTUN olur (27/28 bölmədə baş verir — bax .un-layout--single, 36-unit.css).
+  // F4.5a/F4.7d — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · onlayn
+  // xidmətlər · tabe olduğu qurum · sənədlər. Heç biri yoxdursa sütun
+  // render olunmur, səhifə TƏK SÜTUN olur (bax .un-layout--single,
+  // 36-unit.css). Düzəliş təklifi (CorrectionIsland) BU statusa DAXİL
+  // DEYİL — o, sütun varsa altına, yoxdursa əsas sütuna keçir (aşağıda).
   const sideHas = Boolean(
-    unit.head || contactHas || unit.receptionHours || esasname.length || unit.onlineServices.length,
+    unit.head || contactHas || unit.receptionHours || unit.onlineServices.length || unit.parent || sideDocsAll.length,
   );
 
   // F4.5b — fakt zolağı: otaq · daxili telefon · qəbul saatları · heyət sayı
@@ -835,13 +827,6 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {esasname.length ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Əsasnamə', locale)}</div>
-                    <DocList docs={esasname} locale={locale} />
-                  </div>
-                ) : null}
-
                 {unit.onlineServices.length ? (
                   <div>
                     <div className="un-sub-title">{tr('Onlayn xidmətlər', locale)}</div>
@@ -855,6 +840,47 @@ export default async function UnitPage({
                     </div>
                   </div>
                 ) : null}
+
+                {/* F4.7d — tabe olduğu qurum, slug hazırdır (unit.parent). */}
+                {unit.parent ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Tabe olduğu qurum', locale)}</div>
+                    <Link href={`/${locale}/struktur/${unit.parent.slug}`} className="un-link-btn">
+                      <i className="ti ti-sitemap" aria-hidden="true" />
+                      {unit.parent.name}
+                    </Link>
+                  </div>
+                ) : null}
+
+                {/* F4.7d — hesabatdan başqa bütün sənəd kateqoriyaları, sıraya
+                    görə qruplaşdırılıb. 5-dən çoxdursa ilk 5 + «Hamısı» keçidi. */}
+                {sideDocGroups.length ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Sənədlər', locale)}</div>
+                    {sideDocGroups.map((g) => (
+                      <div key={g.cat}>
+                        <div className="un-doc-cat">{tr(DOC_CATEGORY_LABEL_AZ[g.cat], locale)}</div>
+                        <DocList docs={g.items} locale={locale} />
+                      </div>
+                    ))}
+                    {sideDocsTruncated ? (
+                      <Link href={`/${locale}/struktur/${unit.slug}/senedler`} className="un-link-btn">
+                        {tr('Hamısı', locale)}
+                      </Link>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {/* F4.7d — «Bu səhifədə səhv gördünüz?» yan panelin ən altına
+                    köçürülüb. Yan panel yoxdursa (sideHas false) aşağıda əsas
+                    sütunda fallback edir. */}
+                <CorrectionIsland
+                  targetType="general"
+                  targetSlug={slug}
+                  title={unit.name}
+                  locale={locale}
+                  labels={correctionLabels}
+                />
               </aside>
             ) : null}
           </div>
@@ -884,13 +910,15 @@ export default async function UnitPage({
           ) : null}
 
           <div style={{ paddingBottom: '48px' }}>
-            <CorrectionIsland
-              targetType="general"
-              targetSlug={slug}
-              title={unit.name}
-              locale={locale}
-              labels={correctionLabels}
-            />
+            {!sideHas ? (
+              <CorrectionIsland
+                targetType="general"
+                targetSlug={slug}
+                title={unit.name}
+                locale={locale}
+                labels={correctionLabels}
+              />
+            ) : null}
           </div>
         </div>
       </main>
