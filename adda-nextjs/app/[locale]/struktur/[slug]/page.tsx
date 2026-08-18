@@ -109,6 +109,24 @@ export async function generateMetadata({
 
 const azSort = (a: string, b: string) => a.localeCompare(b, 'az');
 
+// F4.7a — başlıqlar bölmə adının sonluğundan törəyən tipdən qurulur (Mərkəz/
+// Mərkəzin, Kafedra/Kafedranın və s.). CLAUDE.md-dəki azLower MƏCBURİdir —
+// sadə toLowerCase() 'I'/'İ' hərflərini səhv çevirir. Uyğunluq yoxdursa
+// (məs. "Elmi Şura" — "şurası" YOX, çılpaq "Şura") tip sözü yazılmır.
+const azLower = (s: string) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
+const UNIT_TYPE_SUFFIXES: { suffix: string; nom: string; gen: string }[] = [
+  { suffix: 'mərkəzi', nom: 'Mərkəz', gen: 'Mərkəzin' },
+  { suffix: 'kafedrası', nom: 'Kafedra', gen: 'Kafedranın' },
+  { suffix: 'şöbəsi', nom: 'Şöbə', gen: 'Şöbənin' },
+  { suffix: 'fakültəsi', nom: 'Fakültə', gen: 'Fakültənin' },
+  { suffix: 'şurası', nom: 'Şura', gen: 'Şuranın' },
+  { suffix: 'kolleci', nom: 'Kollec', gen: 'Kollecin' },
+];
+function unitType(name: string): { nom: string; gen: string } | null {
+  const lower = azLower(name);
+  return UNIT_TYPE_SUFFIXES.find((t) => lower.endsWith(t.suffix)) ?? null;
+}
+
 /** `unit.parent` yalnız BİR səviyyə gəlir — tam ata zənciri düz siyahıdan qurulur. */
 function buildCrumbs(unit: UnitDetail, allUnits: OrgUnit[]): { slug: string; name: string }[] {
   const bySlug = new Map(allUnits.map((u) => [u.slug, u]));
@@ -169,16 +187,16 @@ function EmptyBlock({
 }
 
 // F4.4 — 1200 simvoldan uzun `about`/`functions`/`services` mətni (kart
-// toruna çevrilməyəndə) aç/yığ düyməsi arxasında açılır. Qısa mətn üçün
-// heç bir klient JS-i getmir — <ExpandBlock> yalnız HƏQİQƏTƏN uzun olanda
-// render olunur (F4.6c: düymə hər blokun öz adını daşıyır, açıq halda
-// "Yığ" olur — bu, native <details>-in avtomatik vermədiyi davranışdır).
+// toruna çevrilməyəndə) akkordeon arxasında açılır. Qısa mətn üçün heç bir
+// klient JS-i getmir — <ExpandBlock> yalnız HƏQİQƏTƏN uzun olanda render
+// olunur. F4.7a — başlığın özü açar (bax ExpandBlock), «ətraflı»/«Yığ»
+// sözləri yoxdur.
 const LONG_TEXT_THRESHOLD = 1200;
 
-function longText(raw: string, html: string, labelClosed: string, labelOpen: string) {
+function longText(raw: string, html: string, label: string) {
   const body = <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: html }} />;
   if (raw.length <= LONG_TEXT_THRESHOLD) return body;
-  return <ExpandBlock html={html} labelClosed={labelClosed} labelOpen={labelOpen} />;
+  return <ExpandBlock html={html} label={label} />;
 }
 
 // F4.4 — `functions`/`services` üçün markdown siyahısı kart toruna çevrilir.
@@ -357,9 +375,12 @@ export default async function UnitPage({
     subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
   );
 
-  const blockTitle1 = tr('Struktur bölmə', locale);
-  const blockTitle2 = tr('Kim işləyir?', locale);
-  const blockTitle3 = tr('Bölmə nə işlə məşğuldur?', locale);
+  // F4.7a — başlıqlar bölmə tipindən törəyir (məs. "Mərkəz haqqında",
+  // "Kafedranın heyəti"); uyğunluq yoxdursa fallback.
+  const unitT = unitType(unit.name);
+  const blockTitle1 = unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale);
+  const blockTitle2 = unitT ? `${unitT.gen} ${tr('heyəti', locale)}` : tr('Heyət', locale);
+  const blockTitle3 = tr('Fəaliyyət sahəsi', locale);
   const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
@@ -408,12 +429,11 @@ export default async function UnitPage({
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
-  // F4.6c — hər yığılmış blokun düyməsi öz adını daşıyır ("Ətraflı" YERİNƏ).
-  const expandLabelOpen = tr('Yığ', locale);
-  const aboutExpandLabel = `${tr('Bölmə haqqında', locale)} — ${tr('ətraflı', locale)}`;
-  const functionsExpandLabel = `${tr('Fəaliyyət sahəsi', locale)} — ${tr('ətraflı', locale)}`;
-  const servicesExpandLabel = `${tr('Xidmətlər', locale)} — ${tr('ətraflı', locale)}`;
-  const resultsExpandLabel = `${tr('Görülmüş işlər və nəticələr', locale)} — ${tr('ətraflı', locale)}`;
+  // F4.6c/F4.7a — hər yığılmış blokun akkordeon başlığı öz adını daşıyır.
+  const aboutExpandLabel = blockTitle1;
+  const functionsExpandLabel = blockTitle3;
+  const servicesExpandLabel = tr('Xidmətlər', locale);
+  const resultsExpandLabel = blockTitle5;
 
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
@@ -525,23 +545,12 @@ export default async function UnitPage({
               yoxdursa (.un-layout--single) tək sütuna düşür. */}
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── 1. Struktur bölmə — F4.5c: başlıqsız, səhifə adı onsuz da yuxarıda ── */}
+              {/* ── 1. <Tip> haqqında (F4.7a: başlıq bölmə tipindən törəyir) ── */}
               {block1Has ? (
                 <section className={blockClass(0)}>
-                  {SHOW_ADMIN_LINKS ? (
-                    <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
-                      <a
-                        className="un-admin-edit"
-                        href={adminUrl('api::unit.unit', unit.documentId, locale)}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {tr('redaktə', locale)}
-                      </a>
-                    </div>
-                  ) : null}
+                  <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
                   {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
-                  {unit.about ? longText(unit.about, aboutHtml, aboutExpandLabel, expandLabelOpen) : null}
+                  {unit.about ? longText(unit.about, aboutHtml, aboutExpandLabel) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
                 <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
@@ -583,8 +592,8 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
               ) : null}
 
-              {/* ── 3. Bölmə nə işlə məşğuldur? (F4.5c: sual formasında, əvvəlki
-                  "Funksional fəaliyyət") ── */}
+              {/* ── 3. Fəaliyyət sahəsi (F4.7a: sual formaları — "Kim işləyir?",
+                  "Bölmə nə işlə məşğuldur?" — silindi) ── */}
               {block3Has ? (
                 <section className={blockClass(2)}>
                   <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
@@ -592,16 +601,16 @@ export default async function UnitPage({
                     functionCards ? (
                       <FnCardGrid cards={functionCards} />
                     ) : (
-                      longText(unit.functions, functionsHtml, functionsExpandLabel, expandLabelOpen)
+                      longText(unit.functions, functionsHtml, functionsExpandLabel)
                     )
                   ) : null}
                   {unit.services ? (
                     <>
-                      <div className="un-sub-title">{tr('Hansı məsələ ilə müraciət edə bilərsiniz?', locale)}</div>
+                      <div className="un-sub-title">{tr('Xidmətlər', locale)}</div>
                       {serviceCards ? (
                         <FnCardGrid cards={serviceCards} />
                       ) : (
-                        longText(unit.services, servicesHtml, servicesExpandLabel, expandLabelOpen)
+                        longText(unit.services, servicesHtml, servicesExpandLabel)
                       )}
                     </>
                   ) : null}
@@ -631,7 +640,7 @@ export default async function UnitPage({
               {block5Has ? (
                 <section className={blockClass(4)}>
                   <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
-                  {unit.results ? longText(unit.results, resultsHtml, resultsExpandLabel, expandLabelOpen) : null}
+                  {unit.results ? longText(unit.results, resultsHtml, resultsExpandLabel) : null}
                   {hesabat.length ? (
                     <>
                       <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
