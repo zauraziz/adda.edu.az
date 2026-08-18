@@ -324,38 +324,69 @@
   margin-top: 0.15rem;
 }
 
-/* ── F4.4: uzun mətn (`about`/`functions`/`services` > 1200 simvol) — «Ətraflı».
-   Native <details>/<summary>: JS yoxdur, klaviatura pulsuz gəlir, HƏR
-   BLOK MÜSTƏQİLDİR (bir açılan digərini bağlamır — akkordeon deyil). ── */
+/* ── F4.7b: uzun mətn (`about`/`functions`/`services`/`results` > 1200
+   simvol) akkordeonu — HSE istinadı: bütöv enli kart, yumşaq künc, açıq
+   boz fon. BAŞLIĞIN ÖZÜ açar (ayrıca «ətraflı» düyməsi yoxdur — F4.7a),
+   sağda dairəvi ox. HƏR BLOK MÜSTƏQİLDİR (bir açılan digərini bağlamır —
+   akkordeon DEYİL, sərbəst <details> qrupu). ── */
+.un-expand {
+  display: block;
+  background: var(--gray-50, #f8fafc);
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+  overflow: hidden;
+  margin: 0 0 0.9rem;
+}
+.un-expand:last-child { margin-bottom: 0; }
 .un-expand summary.un-expand-toggle {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: space-between;
+  gap: 1rem;
   cursor: pointer;
   list-style: none;
+  padding: 1.1rem 1.4rem;
   font-family: var(--font-body);
-  font-size: var(--text-sm);
   font-weight: 600;
+  font-size: var(--text-base);
   color: var(--navy-800);
 }
 .un-expand summary.un-expand-toggle::-webkit-details-marker { display: none; }
-.un-expand summary.un-expand-toggle::after {
-  content: '›';
-  display: inline-block;
-  font-size: 1rem;
-  transform: rotate(90deg);
-}
-.un-expand[open] summary.un-expand-toggle::after { transform: rotate(-90deg); }
-@media (prefers-reduced-motion: no-preference) {
-  .un-expand summary.un-expand-toggle::after { transition: transform 180ms ease; }
-}
 .un-expand summary.un-expand-toggle:hover { color: var(--gold-600); }
+.un-expand summary.un-expand-toggle:hover .un-expand-arrow { border-color: var(--gold-400); }
 .un-expand summary.un-expand-toggle:focus-visible {
   outline: 2px solid var(--gold-500);
-  outline-offset: 3px;
-  border-radius: 3px;
+  outline-offset: -2px;
+  border-radius: 14px;
 }
-.un-expand[open] summary.un-expand-toggle { margin-bottom: 0.75rem; }
+.un-expand-arrow {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  display: grid;
+  place-items: center;
+}
+.un-expand-arrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--navy-800);
+  border-bottom: 2px solid var(--navy-800);
+  transform: rotate(45deg);
+  margin-top: -4px;
+}
+.un-expand[open] .un-expand-arrow {
+  transform: rotate(180deg);
+  background: var(--gold-100);
+  border-color: var(--gold-300);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .un-expand-arrow { transition: transform 220ms ease, background 200ms ease, border-color 200ms ease; }
+}
+.un-expand-body { padding: 0 1.4rem 1.4rem; }
 
 /* ── F4.5c: alt bölmələr — səhifənin sonunda öz kart cərgəsi (HSE
    "Другие программы" nümunəsi), blok ritminə DAXİL DEYİL — .un-layout-dan
