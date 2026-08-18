@@ -984,7 +984,7 @@ export interface UnitDocumentItem {
   description: string | null;
   descriptionRu: string | null;
   descriptionEn: string | null;
-  category: 'normativ' | 'esasname' | 'qerar' | 'hesabat' | 'etika' | 'akkreditasiya' | 'forma' | 'diger';
+  category: 'normativ' | 'esasname' | 'emr' | 'qerar' | 'hesabat' | 'etika' | 'akkreditasiya' | 'forma' | 'diger';
   year: number | null;
   file: StrapiMedia | null;
 }

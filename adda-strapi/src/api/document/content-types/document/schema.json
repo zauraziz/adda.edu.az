@@ -43,6 +43,7 @@
       "enum": [
         "normativ",
         "esasname",
+        "emr",
         "qerar",
         "hesabat",
         "etika",

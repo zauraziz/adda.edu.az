@@ -837,6 +837,7 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
       [
         'normativ',
         'esasname',
+        'emr',
         'qerar',
         'hesabat',
         'etika',
