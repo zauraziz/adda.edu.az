@@ -237,6 +237,26 @@ function FnCardGrid({ cards }: { cards: FnCard[] }) {
   );
 }
 
+/**
+ * F4.7c — e-poçt `overflow-wrap: anywhere` ilə söz ortasından qırılırdı
+ * («zaur.aziz@add / a.edu.az»). `<wbr>` yalnız `@` və `.`-dan sonra qırılma
+ * nöqtəsi əlavə edir, CSS-də `overflow-wrap: normal` ilə birlikdə (bax
+ * 36-unit.css .un-side .ld-contact dd) qırılma YALNIZ bu yerlərdə baş verir.
+ */
+function EmailWrap({ email }: { email: string }) {
+  const parts = email.split(/([@.])/);
+  return (
+    <>
+      {parts.map((p, i) => (
+        <span key={i}>
+          {p}
+          {p === '@' || p === '.' ? <wbr /> : null}
+        </span>
+      ))}
+    </>
+  );
+}
+
 function DocList({ docs, locale }: { docs: UnitDocumentItem[]; locale: Locale; }) {
   if (!docs.length) return null;
   return (
@@ -731,7 +751,7 @@ export default async function UnitPage({
                             {unit.head.email ? (
                               <>
                                 <dt>{tr('E-poçt', locale)}</dt>
-                                <dd><a href={`mailto:${unit.head.email}`}>{unit.head.email}</a></dd>
+                                <dd><a href={`mailto:${unit.head.email}`}><EmailWrap email={unit.head.email} /></a></dd>
                               </>
                             ) : null}
                             {unit.head.phone ? (

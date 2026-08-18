@@ -464,16 +464,38 @@
   color: var(--navy-800);
   margin: 0;
 }
-/* Rəhbər kartı dar sütuna uyğunlaşdırılır (.ld-card defolt 104px avatarla
-   masaüstü genişlik üçün nəzərdə tutulub — 260-320px sütunda sıxılır). */
+/* F4.7c — rəhbər kartı dar sütuna uyğunlaşdırılır (.ld-card defolt 104px
+   avatarla masaüstü genişlik üçün nəzərdə tutulub — 260-320px sütunda
+   sıxılır). Foto/monoqram KVADRAT, sabit ölçü (əvvəl 72×88 düzbucaqlı idi). */
 .un-side .ld-card {
   grid-template-columns: 72px minmax(0, 1fr);
   gap: 12px;
   padding: 14px;
 }
-.un-side .ld-plate { width: 72px; height: 88px; }
+.un-side .ld-plate { width: 72px; height: 72px; }
 .un-side .ld-mono { font-size: 1.4rem; }
 .un-side .ld-name { font-size: 1rem; }
+/* F4.7c — etiket üstdə kiçik/solğun, dəyər altda (yan-yana YOX): əvvəlki
+   iki-sütunlu `dt auto / dd 1fr` grid 260-320px sütunda sıxılıb oxunmaz
+   olurdu. E-poçt: `overflow-wrap: anywhere` YERİNƏ kiçik şrift + JSX-də
+   `@`/`.`-dan sonra <wbr> (bax page.tsx EmailWrap) — söz ortasından
+   qırılma bir daha olmur, yalnız məntiqi yerlərdə qırılır. */
+.un-side .ld-contact {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.un-side .ld-contact dt {
+  font-size: 0.72rem;
+  color: var(--gray-500);
+  margin-top: 0.6rem;
+}
+.un-side .ld-contact dt:first-child { margin-top: 0; }
+.un-side .ld-contact dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.82rem;
+  overflow-wrap: normal;
+  word-break: normal;
+}
 /* .na-event-info özü ağ/boz çərçivəli kart kimi qurulub — yan sütunun
    artıq öz çərçivəsi var, ikiqat çərçivə görünməsin deyə soyulur. */
 .un-side .na-event-info {
