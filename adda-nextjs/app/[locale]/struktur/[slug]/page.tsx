@@ -187,6 +187,10 @@ function AdminEditRow({ documentId, locale }: { documentId: string; locale: Loca
  * check:gaps hansı blokun boş olduğunu terminalda deyir, amma səhifədə
  * görünmürdü — məhz doldurulmalı yerdə keçid yox idi. İctimai görünüşdə
  * boş blok HEÇ VAXT render olunmur (yuxarıdakı əsas qayda dəyişmir).
+ *
+ * F4.8e — real (dolu) blokla qarışmasın deyə BlockTitle-dan AYRI render
+ * olunur: kəsik çərçivə/solğun fon (.un-block--empty, 36-unit.css) +
+ * başlıqda «yalnız admin» nişanı.
  */
 function EmptyBlock({
   title,
@@ -201,7 +205,20 @@ function EmptyBlock({
 }) {
   return (
     <section className={'un-block un-block--empty' + (tint ? ' un-block--tint' : '')}>
-      <BlockTitle title={title} documentId={documentId} locale={locale} />
+      <div className="un-block-head">
+        <h2 className="un-block-title">
+          {title}
+          <span className="un-admin-badge">{tr('yalnız admin', locale)}</span>
+        </h2>
+        <a
+          className="un-admin-edit"
+          href={adminUrl('api::unit.unit', documentId, locale)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {tr('redaktə', locale)}
+        </a>
+      </div>
       <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
     </section>
   );

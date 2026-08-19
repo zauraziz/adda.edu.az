@@ -113,8 +113,38 @@
 }
 .un-admin-edit:hover { color: var(--gold-600); }
 
-.un-block--empty { opacity: 0.55; }
+/* F4.8e — boş blok YALNIZ admin rejimində görünür (qəsdən), amma real
+   bölmə kimi görünürdü — qarışdırılmaması üçün kəsik çərçivə + solğun
+   fon, real bloklarla eyni bounded-box texnikası (.un-block--tint-dəki
+   kimi padding/mənfi margin), amma HEÇ VAXT ikisi birgə tətbiq olunmur
+   (blockTint boş blokları da sayır, amma --tint YALNIZ ictimai bloklara
+   aiddir — .un-block--empty öz fonunu üstələyir). */
+.un-block--empty {
+  background: var(--navy-50);
+  border: 1px dashed rgba(11, 61, 92, 0.25);
+  border-radius: 14px;
+  padding-left: clamp(1.25rem, 3vw, 2.5rem);
+  padding-right: clamp(1.25rem, 3vw, 2.5rem);
+  margin-left: calc(-1 * clamp(1.25rem, 3vw, 2.5rem));
+  margin-right: calc(-1 * clamp(1.25rem, 3vw, 2.5rem));
+}
+.un-block--empty.un-block:first-of-type { border-top: 1px dashed rgba(11, 61, 92, 0.25); }
 .un-block--empty .un-block-title { color: var(--gray-500); }
+.un-admin-badge {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.15rem 0.55rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--navy-700, #0e4d73);
+  background: var(--white);
+  border: 1px dashed rgba(11, 61, 92, 0.3);
+  border-radius: 999px;
+  vertical-align: middle;
+}
 .un-block-empty-note {
   font-family: var(--font-body);
   font-size: var(--text-sm);
