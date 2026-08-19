@@ -324,11 +324,14 @@
   margin-top: 0.15rem;
 }
 
-/* ── F4.7b: uzun mətn (`about`/`functions`/`services`/`results` > 1200
-   simvol) akkordeonu — HSE istinadı: bütöv enli kart, yumşaq künc, açıq
-   boz fon. BAŞLIĞIN ÖZÜ açar (ayrıca «ətraflı» düyməsi yoxdur — F4.7a),
-   sağda dairəvi ox. HƏR BLOK MÜSTƏQİLDİR (bir açılan digərini bağlamır —
-   akkordeon DEYİL, sərbəst <details> qrupu). ── */
+/* ── F4.7b/F4.8a: uzun mətn (`mission`/`about`/`functions`/`services`/
+   `results` > 1200 simvol) akkordeonu — HSE istinadı: bütöv enli kart,
+   yumşaq künc, açıq boz fon. ZOLAĞIN ÖZÜ h2 səviyyəli başlıqdır — ayrıca
+   <h2> YOXDUR (əvvəl blok öz h2-sini göstərir, altında akkordeon zolağı
+   EYNİ adı təkrarlayırdı). Semantika: <h2><button aria-expanded>…</button>
+   </h2> — native <details> yox, WAI-ARIA accordion nümunəsi (bax
+   ExpandBlock.tsx). Sağda dairəvi ox, HƏR BLOK MÜSTƏQİLDİR (bir açılan
+   digərini bağlamır). ── */
 .un-expand {
   display: block;
   background: var(--gray-50, #f8fafc);
@@ -338,23 +341,26 @@
   margin: 0 0 0.9rem;
 }
 .un-expand:last-child { margin-bottom: 0; }
-.un-expand summary.un-expand-toggle {
+.un-expand-head { margin: 0; }
+.un-expand-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
   cursor: pointer;
-  list-style: none;
+  background: none;
+  border: none;
   padding: 1.1rem 1.4rem;
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--text-base);
+  font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
+  text-align: left;
   color: var(--navy-800);
 }
-.un-expand summary.un-expand-toggle::-webkit-details-marker { display: none; }
-.un-expand summary.un-expand-toggle:hover { color: var(--gold-600); }
-.un-expand summary.un-expand-toggle:hover .un-expand-arrow { border-color: var(--gold-400); }
-.un-expand summary.un-expand-toggle:focus-visible {
+.un-expand-toggle:hover { color: var(--gold-600); }
+.un-expand-toggle:hover .un-expand-arrow { border-color: var(--gold-400); }
+.un-expand-toggle:focus-visible {
   outline: 2px solid var(--gold-500);
   outline-offset: -2px;
   border-radius: 14px;
@@ -378,7 +384,7 @@
   transform: rotate(45deg);
   margin-top: -4px;
 }
-.un-expand[open] .un-expand-arrow {
+.un-expand-toggle[aria-expanded="true"] .un-expand-arrow {
   transform: rotate(180deg);
   background: var(--gold-100);
   border-color: var(--gold-300);

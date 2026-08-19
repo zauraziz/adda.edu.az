@@ -162,6 +162,27 @@ function BlockTitle({ title, documentId, locale }: { title: string; documentId: 
 }
 
 /**
+ * F4.8a — blok öz h2-sini göstərmir (hər sahə öz başlığını daşıyır, bax
+ * longText/fieldBlock), amma admin redaktə keçidi itməməlidir. Sadəcə
+ * sağa düzülmüş kiçik keçid sətri.
+ */
+function AdminEditRow({ documentId, locale }: { documentId: string; locale: Locale }) {
+  if (!SHOW_ADMIN_LINKS) return null;
+  return (
+    <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
+      <a
+        className="un-admin-edit"
+        href={adminUrl('api::unit.unit', documentId, locale)}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {tr('redaktə', locale)}
+      </a>
+    </div>
+  );
+}
+
+/**
  * F4.3 — boş blok, YALNIZ SHOW_ADMIN_LINKS aktiv olanda render olunur.
  * check:gaps hansı blokun boş olduğunu terminalda deyir, amma səhifədə
  * görünmürdü — məhz doldurulmalı yerdə keçid yox idi. İctimai görünüşdə
@@ -186,17 +207,38 @@ function EmptyBlock({
   );
 }
 
-// F4.4 — 1200 simvoldan uzun `about`/`functions`/`services` mətni (kart
-// toruna çevrilməyəndə) akkordeon arxasında açılır. Qısa mətn üçün heç bir
-// klient JS-i getmir — <ExpandBlock> yalnız HƏQİQƏTƏN uzun olanda render
-// olunur. F4.7a — başlığın özü açar (bax ExpandBlock), «ətraflı»/«Yığ»
-// sözləri yoxdur.
+// F4.4/F4.8a — 1200 simvoldan uzun `mission`/`about`/`functions`/`services`/
+// `results` mətni akkordeon arxasında açılır, ZOLAĞIN ÖZÜ h2 səviyyəli
+// başlıqdır. Qısa mətn adi <h2>+mətndir, akkordeon yoxdur — hər iki halda
+// HƏR SAHƏ ÖZ BAŞLIĞINI DAŞIYIR, bloklar özləri ayrıca başlıq göstərmir
+// (əvvəl ad iki dəfə yazılırdı: həm blokun h2-si, həm akkordeon zolağı).
 const LONG_TEXT_THRESHOLD = 1200;
 
 function longText(raw: string, html: string, label: string) {
-  const body = <div className="na-body" style={{ maxWidth: 'none' }} dangerouslySetInnerHTML={{ __html: html }} />;
-  if (raw.length <= LONG_TEXT_THRESHOLD) return body;
+  if (raw.length <= LONG_TEXT_THRESHOLD) {
+    return (
+      <>
+        <h2 className="un-block-title">{label}</h2>
+        <div className="na-body" style={{ maxWidth: '72ch' }} dangerouslySetInnerHTML={{ __html: html }} />
+      </>
+    );
+  }
   return <ExpandBlock html={html} label={label} />;
+}
+
+/** Kart toruna çevrilən sahələr (functions/services) üçün: kartlar da öz
+ * başlığını daşıyır, sadəcə uzunluğa görə akkordeona düşmür (F4.4-dəki
+ * kart toru davranışı SAXLANILIB). */
+function fieldBlock(raw: string, html: string, cards: FnCard[] | null, label: string) {
+  if (cards) {
+    return (
+      <>
+        <h2 className="un-block-title">{label}</h2>
+        <FnCardGrid cards={cards} />
+      </>
+    );
+  }
+  return longText(raw, html, label);
 }
 
 // F4.4 — `functions`/`services` üçün markdown siyahısı kart toruna çevrilir.
@@ -441,12 +483,6 @@ export default async function UnitPage({
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
-  // F4.6c/F4.7a — hər yığılmış blokun akkordeon başlığı öz adını daşıyır.
-  const aboutExpandLabel = blockTitle1;
-  const functionsExpandLabel = blockTitle3;
-  const servicesExpandLabel = tr('Xidmətlər', locale);
-  const resultsExpandLabel = blockTitle5;
-
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
     prompt: tr('Düzəliş təklif et', locale),
@@ -557,12 +593,13 @@ export default async function UnitPage({
               yoxdursa (.un-layout--single) tək sütuna düşür. */}
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── 1. <Tip> haqqında (F4.7a: başlıq bölmə tipindən törəyir) ── */}
+              {/* ── 1. <Tip> haqqında — sahə öz başlığını daşıyır, blokun
+                  ayrıca h2-si yoxdur (F4.8a: əvvəl ad iki dəfə yazılırdı) ── */}
               {block1Has ? (
                 <section className={blockClass(0)}>
-                  <BlockTitle title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                  <AdminEditRow documentId={unit.documentId} locale={locale} />
                   {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
-                  {unit.about ? longText(unit.about, aboutHtml, aboutExpandLabel) : null}
+                  {unit.about ? longText(unit.about, aboutHtml, blockTitle1) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
                 <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
@@ -604,28 +641,13 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
               ) : null}
 
-              {/* ── 3. Fəaliyyət sahəsi (F4.7a: sual formaları — "Kim işləyir?",
-                  "Bölmə nə işlə məşğuldur?" — silindi) ── */}
+              {/* ── 3. Fəaliyyət sahəsi / Xidmətlər — hər sahə öz başlığını
+                  daşıyır (F4.8a), sual formaları silindi (F4.7a) ── */}
               {block3Has ? (
                 <section className={blockClass(2)}>
-                  <BlockTitle title={blockTitle3} documentId={unit.documentId} locale={locale} />
-                  {unit.functions ? (
-                    functionCards ? (
-                      <FnCardGrid cards={functionCards} />
-                    ) : (
-                      longText(unit.functions, functionsHtml, functionsExpandLabel)
-                    )
-                  ) : null}
-                  {unit.services ? (
-                    <>
-                      <div className="un-sub-title">{tr('Xidmətlər', locale)}</div>
-                      {serviceCards ? (
-                        <FnCardGrid cards={serviceCards} />
-                      ) : (
-                        longText(unit.services, servicesHtml, servicesExpandLabel)
-                      )}
-                    </>
-                  ) : null}
+                  <AdminEditRow documentId={unit.documentId} locale={locale} />
+                  {unit.functions ? fieldBlock(unit.functions, functionsHtml, functionCards, blockTitle3) : null}
+                  {unit.services ? fieldBlock(unit.services, servicesHtml, serviceCards, tr('Xidmətlər', locale)) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
                 <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
@@ -648,11 +670,12 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
               ) : null}
 
-              {/* ── 5. Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər) ── */}
+              {/* ── 5. Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər;
+                  F4.8a: mətn öz başlığını daşıyır, blokun ayrıca h2-si yoxdur) ── */}
               {block5Has ? (
                 <section className={blockClass(4)}>
-                  <BlockTitle title={blockTitle5} documentId={unit.documentId} locale={locale} />
-                  {unit.results ? longText(unit.results, resultsHtml, resultsExpandLabel) : null}
+                  <AdminEditRow documentId={unit.documentId} locale={locale} />
+                  {unit.results ? longText(unit.results, resultsHtml, blockTitle5) : null}
                   {hesabat.length ? (
                     <>
                       <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
