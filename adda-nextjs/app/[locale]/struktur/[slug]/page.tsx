@@ -391,20 +391,20 @@ export default async function UnitPage({
   const sideDocsTruncated = sideDocsAll.length > SIDE_DOC_LIMIT;
   const sideDocGroups = groupDocsByCategory(sideDocsAll.slice(0, SIDE_DOC_LIMIT));
 
-  // SIRALAMA: əvvəl rəhbər, sonra əlifba (name, localeCompare 'az' MƏCBURİ).
-  const headSlug = unit.head?.slug;
-  const staffSorted = [...staff].sort((a, b) => {
-    if (a.slug === headSlug) return -1;
-    if (b.slug === headSlug) return 1;
-    return azSort(a.name ?? '', b.name ?? '');
-  });
+  // F4.8c — heyət siyahısında rəhbər TƏKRARLANMIR (yan paneldə onsuz da
+  // var, bax .un-side rəhbər kartı) — `unit.head.documentId` ilə süzülür,
+  // sıralama sadə əlifba (name, localeCompare 'az' MƏCBURİ). Fakt zolağının
+  // "Heyət" sayı isə TAM heyəti göstərir (bax `staff.length`, aşağıda).
+  const staffList = staff
+    .filter((p) => !unit.head || p.documentId !== unit.head.documentId)
+    .sort((a, b) => azSort(a.name ?? '', b.name ?? ''));
 
   const headPhoto = unit.head ? mediaUrl(unit.head.photo) : null;
   const headDegree = unit.head ? degreeLabel(unit.head.academicDegree) : null;
 
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
   const block1Has = Boolean(unit.mission || unit.about);
-  const block2Has = Boolean(staffSorted.length);
+  const block2Has = Boolean(staffList.length);
   const block3Has = Boolean(unit.functions || unit.services);
   const block4Has = Boolean(unit.links.length);
   const subunits = [...unit.children].sort(
@@ -475,7 +475,7 @@ export default async function UnitPage({
   // · alt bölmə sayı. Uydurma metrika yoxdur, YALNIZ mövcud dəyərlər — bir
   // dənə də yoxdursa zolaq render olunmur.
   const factsHas = Boolean(
-    unit.room || unit.phoneExt || unit.receptionHours || staffSorted.length || subunits.length,
+    unit.room || unit.phoneExt || unit.receptionHours || staff.length || subunits.length,
   );
 
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
@@ -563,11 +563,11 @@ export default async function UnitPage({
                     <span className="un-fact-v">{unit.receptionHours}</span>
                   </li>
                 ) : null}
-                {staffSorted.length ? (
+                {staff.length ? (
                   <li className="un-fact">
                     <i className="ti ti-users" aria-hidden="true" />
                     <span className="un-fact-k">{tr('Heyət', locale)}</span>
-                    <span className="un-fact-v">{staffSorted.length}</span>
+                    <span className="un-fact-v">{staff.length}</span>
                   </li>
                 ) : null}
                 {subunits.length ? (
@@ -612,13 +612,14 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
               ) : null}
 
-              {/* ── 2. Rəhbərlik və heyət — rəhbər kartı yan sütunda, burada YALNIZ heyət ── */}
+              {/* ── 2. Rəhbərlik və heyət — rəhbər kartı yan sütunda, burada YALNIZ
+                  heyət (rəhbər siyahıdan çıxarılıb — F4.8c, təkrarlanmasın) ── */}
               {block2Has ? (
                 <section className={blockClass(1)}>
                   <BlockTitle title={blockTitle2} documentId={unit.documentId} locale={locale} />
-                  <div className="un-sub-title">{tr('Heyət', locale)} ({staffSorted.length})</div>
+                  <div className="un-sub-title">{tr('Heyət', locale)}</div>
                   <ul className="un-staff-grid">
-                    {staffSorted.map((p) => {
+                    {staffList.map((p) => {
                       const role = (p.roles ?? []).find((r) => r.unitName === unit.name);
                       const post = role?.position || p.position || '';
                       const initials = (p.displayName || p.name || '—')
