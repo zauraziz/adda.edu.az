@@ -59,7 +59,9 @@
 .un-block-title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.7rem);
+  /* F4.8d — vahid h2 şkalası; .un-expand-toggle (akkordeon zolağı) EYNİ
+     clamp-i işlədir ki, adi <h2> və akkordeon başlığı eyni ölçüdə olsun. */
+  font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
   color: var(--navy-900);
   margin: 0 0 1.4rem;
 }
@@ -130,6 +132,26 @@
   margin: 1.6rem 0 0.7rem;
 }
 .un-sub-title:first-child { margin-top: 0; }
+/* F4.8d — əsas sütunda .un-sub-title kiçik BÖYÜK HƏRFLİ etiket DEYİL,
+   h3 səviyyəli alt-başlıqdır (Heyət, Hesabat sənədləri, Elanlar); yan
+   sütunda isə (Rəhbər, Əlaqə, Sənədlər...) 0.75rem etiket olaraq qalır. */
+.un-main .un-sub-title {
+  font-size: clamp(1.05rem, 1rem + 0.15vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--navy-800);
+  margin: 1.8rem 0 0.6rem;
+}
+.un-main .un-sub-title:first-child { margin-top: 0; }
+/* F4.8d — gövdə mətni: 16px / 1.6 sətir hündürlüyü, ~72 simvol maks. sütun
+   (bax page.tsx-də inline maxWidth: '72ch'). Baza .na-body (19-news-page.css)
+   xəbər səhifələri üçün daha böyükdür (--text-lg/1.75) — struktur səhifəsi
+   üçün ayrıca kiçildilir. */
+.un-main .na-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
 
 /* ── Missiya (qısa lead) ── */
 .un-mission {
@@ -463,9 +485,10 @@
   border: 1px solid var(--gray-200);
   border-radius: 18px;
 }
+/* F4.8d — yan panel: etiketlər 0.75rem, dəyərlər 0.9rem, hər yerdə vahid. */
 .un-side-text {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
+  font-size: 0.9rem;
   line-height: 1.55;
   color: var(--navy-800);
   margin: 0;
@@ -473,7 +496,7 @@
 /* F4.7d — «Sənədlər» daxilində hər kateqoriyanın kiçik etiketi. */
 .un-doc-cat {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -502,14 +525,14 @@
   gap: 0;
 }
 .un-side .ld-contact dt {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--gray-500);
   margin-top: 0.6rem;
 }
 .un-side .ld-contact dt:first-child { margin-top: 0; }
 .un-side .ld-contact dd {
   margin: 0.1rem 0 0;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -523,6 +546,8 @@
   border: none;
   border-radius: 0;
 }
+.un-side .na-ei-k { font-size: 0.75rem; }
+.un-side .na-ei-v { font-size: 0.9rem; }
 
 @media (max-width: 900px) {
   .un-layout { grid-template-columns: minmax(0, 1fr); }
