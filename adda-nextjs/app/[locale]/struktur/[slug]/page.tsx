@@ -431,6 +431,8 @@ export default async function UnitPage({
   // "Kafedranın heyəti"); uyğunluq yoxdursa fallback.
   const unitT = unitType(unit.name);
   const blockTitle1 = unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale);
+  // F4.8b — missiya AYRICA başlıq daşıyır (genitiv), "haqqında" ilə qarışmır.
+  const missionTitle = unitT ? `${unitT.gen} ${tr('missiyası', locale)}` : tr('Missiya', locale);
   const blockTitle2 = unitT ? `${unitT.gen} ${tr('heyəti', locale)}` : tr('Heyət', locale);
   const blockTitle3 = tr('Fəaliyyət sahəsi', locale);
   const blockTitle4 = tr('Faydalı linklər', locale);
@@ -593,12 +595,17 @@ export default async function UnitPage({
               yoxdursa (.un-layout--single) tək sütuna düşür. */}
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── 1. <Tip> haqqında — sahə öz başlığını daşıyır, blokun
-                  ayrıca h2-si yoxdur (F4.8a: əvvəl ad iki dəfə yazılırdı) ── */}
+              {/* ── 1. «<Tipin> missiyası» (F4.8b) + «<Tip> haqqında» — hər sahə
+                  öz başlığını daşıyır, blokun ayrıca h2-si yoxdur (F4.8a) ── */}
               {block1Has ? (
                 <section className={blockClass(0)}>
                   <AdminEditRow documentId={unit.documentId} locale={locale} />
-                  {unit.mission ? <p className="un-mission">{unit.mission}</p> : null}
+                  {unit.mission ? (
+                    <>
+                      <h2 className="un-block-title">{missionTitle}</h2>
+                      <p className="un-mission">{unit.mission}</p>
+                    </>
+                  ) : null}
                   {unit.about ? longText(unit.about, aboutHtml, blockTitle1) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
