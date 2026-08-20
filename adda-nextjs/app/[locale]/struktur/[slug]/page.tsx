@@ -43,6 +43,7 @@ import ContentPage from '../../../_components/ContentPage';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import StaffReveal from '../../../_components/StaffReveal';
+import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
 import { DocList, DOC_CATEGORY_ORDER, DOC_CATEGORY_LABEL_AZ, groupDocsByCategory } from '../../../_components/DocList';
 import {
   getDepartmentBySlug,
@@ -71,8 +72,6 @@ import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
 
 export const revalidate = 300;
-
-const SHOW_ADMIN_LINKS = process.env.NEXT_PUBLIC_ADMIN_EDIT_LINKS === 'true';
 
 function adminUrl(uid: string, documentId: string, locale: Locale): string {
   return (
@@ -144,12 +143,15 @@ function buildCrumbs(unit: UnitDetail, allUnits: OrgUnit[]): { slug: string; nam
   return chain;
 }
 
-/** F4.3 — blok başlığı + admin rejimində kiçik «redaktə» keçidi. */
+/** F4.3/F4.9b — blok başlığı + admin sessiyasında kiçik «redaktə» keçidi.
+ * `<AdminOnly>` klient adasıdır (bax _components/AdminGate.tsx) — kimlik
+ * yoxlaması `/api/identity/is-admin`-dən hidrasiyadan sonra gəlir, server
+ * heç kimin admin olub-olmadığını bilmir (səhifə statik qalır). */
 function BlockTitle({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
   return (
     <div className="un-block-head">
       <h2 className="un-block-title">{title}</h2>
-      {SHOW_ADMIN_LINKS ? (
+      <AdminOnly>
         <a
           className="un-admin-edit"
           href={adminUrl('api::unit.unit', documentId, locale)}
@@ -158,7 +160,7 @@ function BlockTitle({ title, documentId, locale }: { title: string; documentId: 
         >
           {tr('redaktə', locale)}
         </a>
-      ) : null}
+      </AdminOnly>
     </div>
   );
 }
@@ -169,26 +171,28 @@ function BlockTitle({ title, documentId, locale }: { title: string; documentId: 
  * sağa düzülmüş kiçik keçid sətri.
  */
 function AdminEditRow({ documentId, locale }: { documentId: string; locale: Locale }) {
-  if (!SHOW_ADMIN_LINKS) return null;
   return (
-    <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
-      <a
-        className="un-admin-edit"
-        href={adminUrl('api::unit.unit', documentId, locale)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {tr('redaktə', locale)}
-      </a>
-    </div>
+    <AdminOnly>
+      <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
+        <a
+          className="un-admin-edit"
+          href={adminUrl('api::unit.unit', documentId, locale)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {tr('redaktə', locale)}
+        </a>
+      </div>
+    </AdminOnly>
   );
 }
 
 /**
- * F4.3 — boş blok, YALNIZ SHOW_ADMIN_LINKS aktiv olanda render olunur.
- * check:gaps hansı blokun boş olduğunu terminalda deyir, amma səhifədə
- * görünmürdü — məhz doldurulmalı yerdə keçid yox idi. İctimai görünüşdə
- * boş blok HEÇ VAXT render olunmur (yuxarıdakı əsas qayda dəyişmir).
+ * F4.3/F4.9b — boş blok, YALNIZ təsdiqlənmiş admin sessiyasında görünür
+ * (bax çağıran yerdəki <AdminOnly> örtüyü). check:gaps hansı blokun boş
+ * olduğunu terminalda deyir, amma səhifədə görünmürdü — məhz doldurulmalı
+ * yerdə keçid yox idi. İctimai görünüşdə boş blok HEÇ VAXT render olunmur
+ * (yuxarıdakı əsas qayda dəyişmir).
  *
  * F4.8e — real (dolu) blokla qarışmasın deyə BlockTitle-dan AYRI render
  * olunur: kəsik çərçivə/solğun fon (.un-block--empty, 36-unit.css) +
@@ -503,13 +507,14 @@ export default async function UnitPage({
   const openBlockCount = blockStatus.filter((b) => b.has).length;
   const closedBlockTitles = blockStatus.filter((b) => !b.has).map((b) => b.title);
 
-  // F4.4 — ağ/boz ritm YALNIZ faktiki render olunan bloklara görə sayılır.
-  // Boş bloklar public görünüşdə heç render olunmur, admin rejimində isə
-  // (EmptyBlock kimi) render olunur — hər iki halda sayğac DOĞRU işləməlidir.
+  // F4.4/F4.9b — ağ/boz ritm YALNIZ ictimai görünüşdə faktiki render olunan
+  // bloklara görə sayılır. Admin boş-blok görünüşü artıq server-də deyil,
+  // klient adasında qərarlaşır (kimlik naməlum ola bilər) — tint hesabı
+  // bunu gözləyə bilməz, ona görə YALNIZ `b.has`. Boş blokun tint-i vizual
+  // olaraq önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
   let tintCursor = 0;
   const blockTint = blockStatus.map((b) => {
-    const willRender = b.has || SHOW_ADMIN_LINKS;
-    if (!willRender) return false;
+    if (!b.has) return false;
     const tint = tintCursor % 2 === 1;
     tintCursor++;
     return tint;
@@ -643,12 +648,15 @@ export default async function UnitPage({
         </section>
 
         <div className="container">
-          {SHOW_ADMIN_LINKS ? (
+          {/* F4.9b — admin bəzəkləri klient adasında (bax _components/AdminGate.tsx):
+              server statik qalır, kimlik yoxlaması hidrasiyadan sonra baş verir. */}
+          <AdminProvider>
+          <AdminOnly>
             <div className="un-admin-status">
               {tr('Bloklar', locale)}: {openBlockCount}/{blockStatus.length}
               {closedBlockTitles.length ? ' · ' + tr('boş', locale) + ': ' + closedBlockTitles.join(', ') : ''}
             </div>
-          ) : null}
+          </AdminOnly>
 
           {/* F4.5a — iki sütun: əsas mətn + yapışqan yan sütun (rəhbər/əlaqə/
               qəbul saatları/əsasnamə/onlayn xidmətlər). Yan sütunda heç nə
@@ -668,9 +676,11 @@ export default async function UnitPage({
                   ) : null}
                   {unit.about ? longText(unit.about, aboutHtml, blockTitle1) : null}
                 </section>
-              ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
-              ) : null}
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
+                </AdminOnly>
+              )}
 
               {/* ── Fəaliyyət sahəsi / Xidmətlər — hər sahə öz başlığını
                   daşıyır (F4.8a), sual formaları silindi (F4.7a) ── */}
@@ -680,9 +690,11 @@ export default async function UnitPage({
                   {unit.functions ? fieldBlock(unit.functions, functionsHtml, functionCards, blockTitle3) : null}
                   {unit.services ? fieldBlock(unit.services, servicesHtml, serviceCards, tr('Xidmətlər', locale)) : null}
                 </section>
-              ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
-              ) : null}
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
+                </AdminOnly>
+              )}
 
               {/* ── Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib) ── */}
               {block4Has ? (
@@ -697,9 +709,11 @@ export default async function UnitPage({
                     ))}
                   </div>
                 </section>
-              ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
-              ) : null}
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
+                </AdminOnly>
+              )}
 
               {/* ── Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər;
                   F4.8a: mətn öz başlığını daşıyır, blokun ayrıca h2-si yoxdur) ── */}
@@ -714,9 +728,11 @@ export default async function UnitPage({
                     </>
                   ) : null}
                 </section>
-              ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
-              ) : null}
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
+                </AdminOnly>
+              )}
 
               {/* ── Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
                   varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz
@@ -756,17 +772,19 @@ export default async function UnitPage({
                     </>
                   ) : null}
                 </section>
-              ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
-              ) : null}
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
+                </AdminOnly>
+              )}
 
-              {SHOW_ADMIN_LINKS ? (
+              <AdminOnly>
                 <div className="un-block" style={{ paddingTop: 0 }}>
                   <a href={adminUrl('api::unit.unit', unit.documentId, locale)} target="_blank" rel="noreferrer" className="un-link-btn">
                     {tr('Redaktə', locale)}: {tr('bölmə', locale)}
                   </a>
                 </div>
-              ) : null}
+              </AdminOnly>
             </div>
 
             {sideHas ? (
@@ -807,14 +825,14 @@ export default async function UnitPage({
                               </>
                             ) : null}
                           </dl>
-                          {SHOW_ADMIN_LINKS ? (
+                          <AdminOnly>
                             <div className="ld-admin">
                               <span>{tr('Redaktə', locale)}:</span>
                               <a href={adminUrl('api::person.person', unit.head.documentId, locale)} target="_blank" rel="noreferrer">
                                 {tr('şəxs', locale)}
                               </a>
                             </div>
-                          ) : null}
+                          </AdminOnly>
                         </div>
                       </li>
                     </ul>
@@ -997,6 +1015,7 @@ export default async function UnitPage({
               />
             ) : null}
           </div>
+          </AdminProvider>
         </div>
       </main>
       <Footer menu={menu} locale={locale} />

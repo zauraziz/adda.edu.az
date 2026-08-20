@@ -164,7 +164,7 @@
   color: #c9a961;
 }
 
-/* Admin redakte setri — yalniz NEXT_PUBLIC_ADMIN_EDIT_LINKS=true olanda. */
+/* F4.9b — admin redaktə sətri, yalnız təsdiqlənmiş admin sessiyasında (bax _components/AdminGate.tsx). */
 .ld-admin {
   display: flex;
   gap: 10px;

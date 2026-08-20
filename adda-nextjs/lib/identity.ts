@@ -36,6 +36,23 @@ export function identityConfigured(): boolean {
   return secret().length >= 16;
 }
 
+/**
+ * F4.9b — admin e-poçt siyahısı. SERVER-ONLY dəyişən (`ADMIN_EMAILS`,
+ * `NEXT_PUBLIC_` prefiksi YOXDUR — brauzerə düşməməlidir). Vergüllə ayrılır.
+ * `azLower` MƏCBURİdir (CLAUDE.md) — sadə toLowerCase() 'I'/'İ' hərflərini
+ * səhv çevirir.
+ */
+const azLowerEmail = (s: string) => s.trim().replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
+
+export function isAdminEmail(email: string | undefined | null): boolean {
+  if (!email) return false;
+  const list = (process.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map((e) => azLowerEmail(e))
+    .filter(Boolean);
+  return list.includes(azLowerEmail(email));
+}
+
 function b64url(input: string): string {
   return Buffer.from(input, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }

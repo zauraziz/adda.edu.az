@@ -39,6 +39,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
+import { AdminProvider, AdminOnly } from '../../_components/AdminGate';
 import {
   getMenu,
   getLeadership,
@@ -66,15 +67,10 @@ const COUNCIL_SLUG = 'elmi-sura';
 const LEADERSHIP_EXTRA = ['elmi-katib', 'rektorun-musaviri'];
 
 /**
- * Admin redaktə keçidləri.
- *
- * QAPALI olduğu üçün ictimai saytda görünmür — `NEXT_PUBLIC_ADMIN_EDIT_LINKS=true`
- * yalnız demo mühitində qoyulur. Bu, qəsdən belədir: CMS ünvanını hər ziyarətçiyə
- * göstərmək nə gərəklidir, nə də səliqəlidir.
- *
- * `NEXT_PUBLIC_` prefiksi məcburidir — onsuz dəyər brauzer paketinə düşmür.
+ * F4.9b — admin redaktə keçidləri artıq build-time bayrağına deyil, əsl
+ * kimliyə bağlıdır (bax _components/AdminGate.tsx <AdminOnly>). Server
+ * statik qalır, kimlik yoxlaması klient adasında hidrasiyadan sonra baş verir.
  */
-const SHOW_ADMIN_LINKS = process.env.NEXT_PUBLIC_ADMIN_EDIT_LINKS === 'true';
 
 /** Strapi 5 content-manager URL-i. Dil parametri olmadan `en` açılır. */
 function adminUrl(uid: string, documentId: string, locale: Locale): string {
@@ -221,7 +217,7 @@ function LeaderCard({
           {tr('Bölmə haqqında', locale)}
           <i className="ti ti-arrow-right" aria-hidden="true" />
         </Link>
-        {SHOW_ADMIN_LINKS ? (
+        <AdminOnly>
           <div className="ld-admin">
             <span>{tr('Redaktə', locale)}:</span>
             <a href={adminUrl('api::person.person', head.documentId, locale)} target="_blank" rel="noreferrer">
@@ -231,7 +227,7 @@ function LeaderCard({
               {tr('bölmə', locale)}
             </a>
           </div>
-        ) : null}
+        </AdminOnly>
       </div>
     </li>
   );
@@ -302,6 +298,7 @@ export default async function LeadershipPage({
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
       <main>
+        <AdminProvider>
         <section className="np-hero">
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('İdarəetmə', locale)}</div>
@@ -344,6 +341,7 @@ export default async function LeadershipPage({
             </div>
           </section>
         ) : null}
+        </AdminProvider>
       </main>
       <Footer menu={menu} locale={locale} />
     </>

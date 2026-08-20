@@ -82,8 +82,9 @@
   margin-right: calc(-1 * clamp(1.25rem, 3vw, 2.5rem));
 }
 
-/* ── F4.3: admin redaktə keçidləri — YALNIZ NEXT_PUBLIC_ADMIN_EDIT_LINKS=true
-   olanda görünür, ictimai səhifəni dəyişmir. ── */
+/* ── F4.3/F4.9b: admin redaktə keçidləri — YALNIZ təsdiqlənmiş admin
+   sessiyasında görünür (klient adası, bax _components/AdminGate.tsx),
+   ictimai səhifəni dəyişmir. ── */
 .un-admin-status {
   font-family: var(--font-body);
   font-size: var(--text-xs);
