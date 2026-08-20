@@ -14,7 +14,7 @@ export function DocList({ docs, locale }: { docs: UnitDocumentItem[]; locale: Lo
         if (!url) return null;
         return (
           <a key={d.documentId} href={url} className="na-file" target="_blank" rel="noopener noreferrer">
-            <i className="ti ti-file-download" />
+            <i className="ti ti-file-text" aria-hidden="true" />
             <span>{title}{d.year ? ` (${d.year})` : ''}</span>
           </a>
         );

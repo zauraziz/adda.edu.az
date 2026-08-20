@@ -881,7 +881,7 @@ export default async function UnitPage({
                       ) : null}
                       {unit.room ? (
                         <div className="na-ei-row">
-                          <i className="ti ti-map-pin na-ei-ic" aria-hidden="true" />
+                          <i className="ti ti-door na-ei-ic" aria-hidden="true" />
                           <div>
                             <div className="na-ei-k">{tr('Otaq', locale)}</div>
                             <div className="na-ei-v">{unit.room}</div>
@@ -913,7 +913,10 @@ export default async function UnitPage({
                 {unit.receptionHours ? (
                   <div>
                     <div className="un-sub-title">{tr('Qəbul saatları', locale)}</div>
-                    <p className="un-side-text">{unit.receptionHours}</p>
+                    <p className="un-side-text un-side-text--icon">
+                      <i className="ti ti-clock" aria-hidden="true" />
+                      {unit.receptionHours}
+                    </p>
                   </div>
                 ) : null}
 

@@ -587,6 +587,21 @@
   color: var(--navy-800);
   margin: 0;
 }
+.un-side-text--icon { display: flex; align-items: flex-start; gap: 0.5rem; }
+.un-side-text--icon i { flex-shrink: 0; margin-top: 0.15rem; }
+/* ── F4.9f: ikonlar — 18px, rəng currentColor (optik mərkəzləşdirmə üçün
+   inline-flex), Tabler ikon şriftindən (paket ƏLAVƏ OLUNMAYIB). Yan
+   panelin ikon lüğəti: ti-building/ti-stairs/ti-door/ti-phone/ti-mail/
+   ti-clock/ti-sitemap/ti-file-text. Başlıqlarda ikon yoxdur — yalnız
+   etiket/düymələrdə. ── */
+.un-side i.ti,
+.un-side .na-ei-ic {
+  font-size: 18px;
+  color: currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 /* F4.7d — «Sənədlər» daxilində hər kateqoriyanın kiçik etiketi. */
 .un-doc-cat {
   font-family: var(--font-body);
