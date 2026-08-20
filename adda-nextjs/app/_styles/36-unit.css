@@ -175,14 +175,65 @@
   margin: 1.8rem 0 0.6rem;
 }
 .un-main .un-sub-title:first-child { margin-top: 0; }
-/* F4.8d — gövdə mətni: 16px / 1.6 sətir hündürlüyü, ~72 simvol maks. sütun
-   (bax page.tsx-də inline maxWidth: '72ch'). Baza .na-body (19-news-page.css)
-   xəbər səhifələri üçün daha böyükdür (--text-lg/1.75) — struktur səhifəsi
-   üçün ayrıca kiçildilir. */
-.un-main .na-body {
+/* ── F4.9c: richtext çıxışı üçün vahid stil qatı (.prose). Paylaşılan
+   .na-body (19-news-page.css) xəbər səhifələri üçün nəzərdə tutulub
+   (--text-lg/1.75, 720px) — struktur səhifəsi öz qatını işlədir ki,
+   xəbər səhifələrinə toxunmadan sərbəst tənzimlənsin. Fraunces YALNIZ
+   başlıqlarda, Manrope gövdədə. ── */
+.prose {
+  max-width: 68ch;
+  font-family: var(--font-body);
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  color: var(--gray-900, #111827);
 }
+.prose > * + * { margin-top: 0.9em; }
+.prose > *:first-child { margin-top: 0; }
+.prose h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--navy-800);
+  line-height: 1.3;
+  margin: 1.8em 0 0.6em;
+}
+.prose h4 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--navy-800);
+  line-height: 1.3;
+  margin: 1.6em 0 0.5em;
+}
+.prose ul,
+.prose ol { margin: 0 0 0 1.25em; }
+.prose li { margin: 0.35em 0; }
+.prose a {
+  color: var(--navy-800);
+  text-decoration: none;
+}
+.prose a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.prose blockquote {
+  margin: 0.9em 0 0;
+  padding-left: 1em;
+  border-left: 3px solid var(--gold-500);
+  color: var(--gray-700, #33424f);
+  font-style: normal;
+}
+.prose img { max-width: 100%; height: auto; border-radius: 12px; }
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.prose th,
+.prose td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+}
+.prose th { font-weight: 600; color: var(--navy-800); }
 
 /* ── Missiya (qısa lead) ── */
 .un-mission {

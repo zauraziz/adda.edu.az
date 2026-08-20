@@ -27,7 +27,7 @@ export default function ExpandBlock({ html, label }: { html: string; label: stri
         </button>
       </h2>
       <div className="un-expand-body" hidden={!open}>
-        <div className="na-body" style={{ maxWidth: '72ch' }} dangerouslySetInnerHTML={{ __html: html }} />
+        <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
       </div>
     </div>
   );

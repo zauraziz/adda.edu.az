@@ -242,7 +242,7 @@ function longText(raw: string, html: string, label: string) {
     return (
       <>
         <h2 className="un-block-title">{label}</h2>
-        <div className="na-body" style={{ maxWidth: '72ch' }} dangerouslySetInnerHTML={{ __html: html }} />
+        <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
       </>
     );
   }
