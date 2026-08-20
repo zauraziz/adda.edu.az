@@ -51,8 +51,12 @@
 .un-fact-v { color: var(--white); font-weight: 600; }
 
 /* ── Blok konteyner ── */
+/* F4.9e — boşluq şkalası: 4/8/12/16/24/32/48px, başqa dəyər yoxdur. Blok
+   üst+alt doldurma 24px+24px qonşu blokla görüşəndə 48px ümumi araya
+   verir (əvvəl clamp(...,3rem) demək olar ki iki qat idi). Mobildə 16px
+   (=32px ümumi), bax aşağıdakı media sorğusu. */
 .un-block {
-  padding: clamp(2rem, 4vw, 3rem) 0;
+  padding: 24px 0;
   border-top: 1px solid var(--gray-200);
 }
 .un-block:first-of-type { border-top: none; }
@@ -63,7 +67,8 @@
      clamp-i işlədir ki, adi <h2> və akkordeon başlığı eyni ölçüdə olsun. */
   font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
   color: var(--navy-900);
-  margin: 0 0 1.4rem;
+  /* F4.9e — başlıq/məzmun arası 16px. */
+  margin: 0 0 16px;
 }
 
 /* ── F4.4: bölmə ritmi — ağ / çox açıq boz, RENDER OLUNAN bloklara görə
@@ -100,7 +105,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
-  margin: 0 0 1.4rem;
+  /* F4.9e — başlıq/məzmun arası 16px. */
+  margin: 0 0 16px;
 }
 .un-block-head .un-block-title { margin: 0; }
 .un-admin-edit {
@@ -339,6 +345,8 @@
   .un-row-date { min-width: 0; }
   .un-row--news { align-items: stretch; }
   .un-row-thumb { width: 100%; aspect-ratio: 16 / 9; margin-bottom: 0.3rem; }
+  /* F4.9e — mobildə bloklar arası 32px (16px+16px), masaüstündəki 48px-dən az. */
+  .un-block { padding: 16px 0; }
 }
 
 /* ── F4.4: funksiya/xidmət kart toru — markdown siyahısından qurulur
@@ -351,7 +359,8 @@
   margin: 0 0 0.5rem;
 }
 .un-card {
-  padding: 1.1rem 1.25rem;
+  /* F4.9e — kart daxili doldurma 16px. */
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-top: 3px solid var(--gold-500);
@@ -455,7 +464,8 @@
   cursor: pointer;
   background: none;
   border: none;
-  padding: 1.1rem 1.4rem;
+  /* F4.9e — kart daxili doldurma 16px. */
+  padding: 16px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
@@ -496,7 +506,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .un-expand-arrow { transition: transform 220ms ease, background 200ms ease, border-color 200ms ease; }
 }
-.un-expand-body { padding: 0 1.4rem 1.4rem; }
+.un-expand-body { padding: 0 16px 16px; }
 
 /* ── F4.5c: alt bölmələr — səhifənin sonunda öz kart cərgəsi (HSE
    "Другие программы" nümunəsi), blok ritminə DAXİL DEYİL — .un-layout-dan
@@ -515,7 +525,8 @@
 }
 .un-subunit-card {
   display: block;
-  padding: 1.1rem 1.25rem;
+  /* F4.9e — kart daxili doldurma 16px. */
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: 14px;
@@ -561,6 +572,7 @@
   top: 98px;
   display: flex;
   flex-direction: column;
+  /* F4.9e — yan panel bölmələri arası 24px (artıq şkalada idi). */
   gap: 1.5rem;
   padding: 1.5rem;
   background: var(--gray-50, #f8fafc);
