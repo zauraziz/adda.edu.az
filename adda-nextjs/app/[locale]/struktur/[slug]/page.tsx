@@ -42,6 +42,7 @@ import Footer from '../../../_components/Footer';
 import ContentPage from '../../../_components/ContentPage';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
+import StaffReveal from '../../../_components/StaffReveal';
 import { DocList, DOC_CATEGORY_ORDER, DOC_CATEGORY_LABEL_AZ, groupDocsByCategory } from '../../../_components/DocList';
 import {
   getDepartmentBySlug,
@@ -60,6 +61,7 @@ import {
   type UnitDetail,
   type UnitDocumentItem,
   type Person,
+  type StrapiMedia,
   type Article,
   type Announcement,
   type Department,
@@ -316,6 +318,41 @@ function EmailWrap({ email }: { email: string }) {
   );
 }
 
+/** F4.9a — yan panelin kompakt heyət sətri: monoqram/foto (28px) + ad + vəzifə. */
+function StaffMiniRow({
+  p,
+  unitName,
+  locale,
+}: {
+  p: Person & { photo: StrapiMedia | null };
+  unitName: string;
+  locale: Locale;
+}) {
+  const role = (p.roles ?? []).find((r) => r.unitName === unitName);
+  const post = role?.position || p.position || '';
+  const photo = mediaUrl(p.photo);
+  const initials = (p.displayName || p.name || '—')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+  return (
+    <li className="un-staff-mini">
+      <Link href={`/${locale}/emekdas/${p.slug}`} className="un-staff-mini-pic" aria-hidden="true" tabIndex={-1}>
+        {photo ? <img src={photo} alt="" loading="lazy" /> : <span className="un-staff-mini-mono">{initials}</span>}
+      </Link>
+      <div className="un-staff-mini-body">
+        <Link href={`/${locale}/emekdas/${p.slug}`} className="un-staff-mini-name">
+          {p.displayName || p.name}
+        </Link>
+        {post ? <div className="un-staff-mini-post">{post}</div> : null}
+      </div>
+    </li>
+  );
+}
+
 export default async function UnitPage({
   params,
 }: {
@@ -387,7 +424,7 @@ export default async function UnitPage({
   const [allUnits, docs, staff, articles, announcements] = await Promise.all([
     getUnits(locale).catch(() => [] as OrgUnit[]),
     getUnitDocuments(unit.slug).catch(() => [] as UnitDocumentItem[]),
-    getUnitStaff(unit.slug, unit.name).catch(() => [] as Person[]),
+    getUnitStaff(unit.slug, unit.name).catch(() => [] as (Person & { photo: StrapiMedia | null })[]),
     getUnitArticles(unit.slug, locale, 6),
     getUnitAnnouncements(unit.slug, locale, 6),
   ]);
@@ -421,7 +458,6 @@ export default async function UnitPage({
 
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
   const block1Has = Boolean(unit.mission || unit.about);
-  const block2Has = Boolean(staffList.length);
   const block3Has = Boolean(unit.functions || unit.services);
   const block4Has = Boolean(unit.links.length);
   const subunits = [...unit.children].sort(
@@ -450,14 +486,15 @@ export default async function UnitPage({
   const blockTitle1 = unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale);
   // F4.8b — missiya AYRICA başlıq daşıyır (genitiv), "haqqında" ilə qarışmır.
   const missionTitle = unitT ? `${unitT.gen} ${tr('missiyası', locale)}` : tr('Missiya', locale);
-  const blockTitle2 = unitT ? `${unitT.gen} ${tr('heyəti', locale)}` : tr('Heyət', locale);
   const blockTitle3 = tr('Fəaliyyət sahəsi', locale);
   const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
+  // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side); əsas
+  // sütunda 5 blok qalır (1/3/4/5/6 — 2 saxlanılan nömrələmə deyil, sadəcə
+  // əvvəlki adlar).
   const blockStatus = [
     { has: block1Has, title: blockTitle1 },
-    { has: block2Has, title: blockTitle2 },
     { has: block3Has, title: blockTitle3 },
     { has: block4Has, title: blockTitle4 },
     { has: block5Has, title: blockTitle5 },
@@ -477,7 +514,7 @@ export default async function UnitPage({
     tintCursor++;
     return tint;
   });
-  const blockClass = (n: 0 | 1 | 2 | 3 | 4 | 5) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
+  const blockClass = (n: 0 | 1 | 2 | 3 | 4) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
 
   // F4.5a/F4.7d — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · onlayn
   // xidmətlər · tabe olduğu qurum · sənədlər. Heç biri yoxdursa sütun
@@ -485,7 +522,13 @@ export default async function UnitPage({
   // 36-unit.css). Düzəliş təklifi (CorrectionIsland) BU statusa DAXİL
   // DEYİL — o, sütun varsa altına, yoxdursa əsas sütuna keçir (aşağıda).
   const sideHas = Boolean(
-    unit.head || contactHas || unit.receptionHours || unit.onlineServices.length || unit.parent || sideDocsAll.length,
+    unit.head ||
+      staffList.length ||
+      contactHas ||
+      unit.receptionHours ||
+      unit.onlineServices.length ||
+      unit.parent ||
+      sideDocsAll.length,
   );
 
   // F4.5b — fakt zolağı: otaq · daxili telefon · qəbul saatları · heyət sayı
@@ -629,58 +672,21 @@ export default async function UnitPage({
                 <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
               ) : null}
 
-              {/* ── 2. Rəhbərlik və heyət — rəhbər kartı yan sütunda, burada YALNIZ
-                  heyət (rəhbər siyahıdan çıxarılıb — F4.8c, təkrarlanmasın) ── */}
-              {block2Has ? (
-                <section className={blockClass(1)}>
-                  <BlockTitle title={blockTitle2} documentId={unit.documentId} locale={locale} />
-                  <div className="un-sub-title">{tr('Heyət', locale)}</div>
-                  <ul className="un-staff-grid">
-                    {staffList.map((p) => {
-                      const role = (p.roles ?? []).find((r) => r.unitName === unit.name);
-                      const post = role?.position || p.position || '';
-                      const initials = (p.displayName || p.name || '—')
-                        .split(/\s+/)
-                        .filter(Boolean)
-                        .slice(0, 2)
-                        .map((w) => w[0])
-                        .join('')
-                        .toUpperCase();
-                      return (
-                        <li key={p.documentId} className="un-staff-card">
-                          <Link href={`/${locale}/emekdas/${p.slug}`} className="un-staff-mono" aria-hidden="true" tabIndex={-1}>
-                            {initials}
-                          </Link>
-                          <div className="un-staff-body">
-                            <Link href={`/${locale}/emekdas/${p.slug}`} className="un-staff-name">
-                              {p.displayName || p.name}
-                            </Link>
-                            {post ? <div className="un-staff-post">{post}</div> : null}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
-              ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle2} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
-              ) : null}
-
-              {/* ── 3. Fəaliyyət sahəsi / Xidmətlər — hər sahə öz başlığını
+              {/* ── Fəaliyyət sahəsi / Xidmətlər — hər sahə öz başlığını
                   daşıyır (F4.8a), sual formaları silindi (F4.7a) ── */}
               {block3Has ? (
-                <section className={blockClass(2)}>
+                <section className={blockClass(1)}>
                   <AdminEditRow documentId={unit.documentId} locale={locale} />
                   {unit.functions ? fieldBlock(unit.functions, functionsHtml, functionCards, blockTitle3) : null}
                   {unit.services ? fieldBlock(unit.services, servicesHtml, serviceCards, tr('Xidmətlər', locale)) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
+                <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
               ) : null}
 
-              {/* ── 4. Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib) ── */}
+              {/* ── Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib) ── */}
               {block4Has ? (
-                <section className={blockClass(3)}>
+                <section className={blockClass(2)}>
                   <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
                   <div className="un-links">
                     {unit.links.map((l, i) => (
@@ -692,13 +698,13 @@ export default async function UnitPage({
                   </div>
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
+                <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
               ) : null}
 
-              {/* ── 5. Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər;
+              {/* ── Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər;
                   F4.8a: mətn öz başlığını daşıyır, blokun ayrıca h2-si yoxdur) ── */}
               {block5Has ? (
-                <section className={blockClass(4)}>
+                <section className={blockClass(3)}>
                   <AdminEditRow documentId={unit.documentId} locale={locale} />
                   {unit.results ? longText(unit.results, resultsHtml, blockTitle5) : null}
                   {hesabat.length ? (
@@ -709,14 +715,14 @@ export default async function UnitPage({
                   ) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
+                <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
               ) : null}
 
-              {/* ── 6. Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
+              {/* ── Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
                   varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz
                   qabığı şəkli), elan qısa/tarixli/şəkilsiz qalır (F4.5c). ── */}
               {block6Has ? (
-                <section className={blockClass(5)}>
+                <section className={blockClass(4)}>
                   <BlockTitle title={blockTitle6} documentId={unit.documentId} locale={locale} />
                   {articles.length ? (
                     <ul className="un-row-list">
@@ -751,7 +757,7 @@ export default async function UnitPage({
                   ) : null}
                 </section>
               ) : SHOW_ADMIN_LINKS ? (
-                <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={blockTint[5]} />
+                <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
               ) : null}
 
               {SHOW_ADMIN_LINKS ? (
@@ -812,6 +818,29 @@ export default async function UnitPage({
                         </div>
                       </li>
                     </ul>
+                  </div>
+                ) : null}
+
+                {/* F4.9a — heyət yan panelə keçib (Rəhbərdən sonra, Əlaqədən
+                    əvvəl). Sticky panel ekrandan uzun olmasın deyə ilk 6-dan
+                    sonrakılar «Hamısı (N)» arxasında (bax StaffReveal). */}
+                {staffList.length ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Heyət', locale)}</div>
+                    <ul className="un-staff-mini-list">
+                      {staffList.slice(0, 6).map((p) => (
+                        <StaffMiniRow key={p.documentId} p={p} unitName={unit.name} locale={locale} />
+                      ))}
+                    </ul>
+                    {staffList.length > 6 ? (
+                      <StaffReveal moreLabel={`${tr('Hamısı', locale)} (${staffList.length})`}>
+                        <ul className="un-staff-mini-list">
+                          {staffList.slice(6).map((p) => (
+                            <StaffMiniRow key={p.documentId} p={p} unitName={unit.name} locale={locale} />
+                          ))}
+                        </ul>
+                      </StaffReveal>
+                    ) : null}
                   </div>
                 ) : null}
 

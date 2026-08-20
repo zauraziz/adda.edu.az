@@ -579,6 +579,75 @@
 .un-side .na-ei-k { font-size: 0.75rem; }
 .un-side .na-ei-v { font-size: 0.9rem; }
 
+/* ── F4.9a: yan panelin kompakt heyət sətri — monoqram/foto 28px, ad,
+   vəzifə. Rəhbər kartından (.ld-card) fərqli qəsdən sadədir: bu sadəcə
+   siyahı sətridir, kart deyil. ── */
+.un-staff-mini-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.un-staff-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.un-staff-mini-pic {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, var(--navy-900, #0b3d5c), #12547c);
+  text-decoration: none;
+}
+.un-staff-mini-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.un-staff-mini-mono {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+.un-staff-mini-body { min-width: 0; }
+.un-staff-mini-name {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--navy-900);
+  text-decoration: none;
+  line-height: 1.25;
+}
+.un-staff-mini-name:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
+.un-staff-mini-post {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  line-height: 1.2;
+}
+.un-staff-more {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.6rem;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-800);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.un-staff-more:hover { color: var(--gold-600); }
+.un-staff-more:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; border-radius: 3px; }
+
 @media (max-width: 900px) {
   .un-layout { grid-template-columns: minmax(0, 1fr); }
   /* F4.5, bənd 6 — mobildə yan sütun mətndən ƏVVƏLƏ keçir: "kimə zəng
