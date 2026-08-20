@@ -586,38 +586,89 @@
   margin: 0.9rem 0 0.4rem;
 }
 .un-doc-cat:first-child { margin-top: 0; }
-/* F4.7c — rəhbər kartı dar sütuna uyğunlaşdırılır (.ld-card defolt 104px
-   avatarla masaüstü genişlik üçün nəzərdə tutulub — 260-320px sütunda
-   sıxılır). Foto/monoqram KVADRAT, sabit ölçü (əvvəl 72×88 düzbucaqlı idi). */
-.un-side .ld-card {
-  grid-template-columns: 72px minmax(0, 1fr);
-  gap: 12px;
-  padding: 14px;
+/* ── F4.9d: rəhbər kartı yenidən qurulub — .ld-card (paylaşılan, /rehberlik
+   də işlədir) ARTIQ İŞLƏNMİR, öz sinifləri var. ÜST SƏTİR: foto/monoqram
+   (64px kvadrat, yumşaq künc) + sağında vəzifə (kiçik, solğun, uppercase
+   YOX). ALTINDA: ad (Fraunces), sonra e-poçt/telefon (etiket üstdə,
+   dəyər altda — F4.7c-dəki eyni səbəb: dar sütunda yan-yana sıxılırdı).
+   ƏN ALT: nazik ayırıcıdan sonra solğun redaktə (yalnız admin). ── */
+.un-head-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
-.un-side .ld-plate { width: 72px; height: 72px; }
-.un-side .ld-mono { font-size: 1.4rem; }
-.un-side .ld-name { font-size: 1rem; }
-/* F4.7c — etiket üstdə kiçik/solğun, dəyər altda (yan-yana YOX): əvvəlki
-   iki-sütunlu `dt auto / dd 1fr` grid 260-320px sütunda sıxılıb oxunmaz
-   olurdu. E-poçt: `overflow-wrap: anywhere` YERİNƏ kiçik şrift + JSX-də
-   `@`/`.`-dan sonra <wbr> (bax page.tsx EmailWrap) — söz ortasından
-   qırılma bir daha olmur, yalnız məntiqi yerlərdə qırılır. */
-.un-side .ld-contact {
-  grid-template-columns: 1fr;
-  gap: 0;
+.un-head-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
-.un-side .ld-contact dt {
+.un-head-plate {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, var(--navy-900, #0b3d5c), #12547c);
+  text-decoration: none;
+}
+.un-head-plate img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.un-head-mono {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+.un-head-position {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  line-height: 1.35;
+}
+.un-head-name {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--navy-900);
+  text-decoration: none;
+}
+.un-head-name:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
+/* E-poçt: `overflow-wrap: anywhere`/`break-all` YERİNƏ kiçik şrift + JSX-də
+   `@`-dan sonra <wbr> (bax page.tsx EmailWrap) — qırılma YALNIZ orada baş verir. */
+.un-head-contact {
+  margin: 0.2rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.un-head-contact dt {
   font-size: 0.75rem;
   color: var(--gray-500);
-  margin-top: 0.6rem;
 }
-.un-side .ld-contact dt:first-child { margin-top: 0; }
-.un-side .ld-contact dd {
+.un-head-contact dd {
   margin: 0.1rem 0 0;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  color: var(--navy-800);
   overflow-wrap: normal;
   word-break: normal;
 }
+.un-head-contact a { color: inherit; text-decoration: none; }
+.un-head-contact a:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
+.un-head-admin {
+  margin-top: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed rgba(11, 61, 92, 0.15);
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  color: #9aa4ae;
+}
+.un-head-admin a { color: #7b8794; text-decoration: none; border-bottom: 1px dotted currentColor; }
+.un-head-admin a:hover { color: var(--gold-600); }
 /* .na-event-info özü ağ/boz çərçivəli kart kimi qurulub — yan sütunun
    artıq öz çərçivəsi var, ikiqat çərçivə görünməsin deyə soyulur. */
 .un-side .na-event-info {

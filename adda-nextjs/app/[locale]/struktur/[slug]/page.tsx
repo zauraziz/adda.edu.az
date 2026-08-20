@@ -56,7 +56,6 @@ import {
   getUnitAnnouncements,
   getUnits,
   mediaUrl,
-  degreeLabel,
   STRAPI_URL,
   type SiteMenu,
   type UnitDetail,
@@ -303,21 +302,20 @@ function FnCardGrid({ cards }: { cards: FnCard[] }) {
 }
 
 /**
- * F4.7c — e-poçt `overflow-wrap: anywhere` ilə söz ortasından qırılırdı
- * («zaur.aziz@add / a.edu.az»). `<wbr>` yalnız `@` və `.`-dan sonra qırılma
- * nöqtəsi əlavə edir, CSS-də `overflow-wrap: normal` ilə birlikdə (bax
- * 36-unit.css .un-side .ld-contact dd) qırılma YALNIZ bu yerlərdə baş verir.
+ * F4.7c/F4.9d — e-poçt `overflow-wrap: anywhere` ilə söz ortasından qırılırdı
+ * («zaur.aziz@add / a.edu.az»). `word-break: break-all` da işlədilmir (eyni
+ * problem). `<wbr>` YALNIZ `@`-dan sonra qırılma nöqtəsi əlavə edir, CSS-də
+ * `overflow-wrap: normal` ilə birlikdə (bax 36-unit.css .un-head-contact dd)
+ * qırılma YALNIZ bu yerdə baş verir.
  */
 function EmailWrap({ email }: { email: string }) {
-  const parts = email.split(/([@.])/);
+  const at = email.indexOf('@');
+  if (at === -1) return <>{email}</>;
   return (
     <>
-      {parts.map((p, i) => (
-        <span key={i}>
-          {p}
-          {p === '@' || p === '.' ? <wbr /> : null}
-        </span>
-      ))}
+      {email.slice(0, at + 1)}
+      <wbr />
+      {email.slice(at + 1)}
     </>
   );
 }
@@ -458,7 +456,6 @@ export default async function UnitPage({
     .sort((a, b) => azSort(a.name ?? '', b.name ?? ''));
 
   const headPhoto = unit.head ? mediaUrl(unit.head.photo) : null;
-  const headDegree = unit.head ? degreeLabel(unit.head.academicDegree) : null;
 
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
   const block1Has = Boolean(unit.mission || unit.about);
@@ -789,53 +786,51 @@ export default async function UnitPage({
 
             {sideHas ? (
               <aside className="un-side">
+                {/* F4.9d — rəhbər kartı: üst sətir foto(64px kvadrat)+vəzifə,
+                    altında ad, sonra e-poçt/telefon (etiket üstdə, dəyər
+                    altda), ən altda nazik ayırıcı + solğun redaktə. */}
                 {unit.head ? (
                   <div>
                     <div className="un-sub-title">{tr('Rəhbər', locale)}</div>
-                    <ul className="ld-grid ld-grid--single">
-                      <li className="ld-card">
-                        <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="ld-plate">
+                    <div className="un-head-card">
+                      <div className="un-head-top">
+                        <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="un-head-plate">
                           {headPhoto ? (
-                            <img className="ld-photo" src={headPhoto} alt="" loading="lazy" />
+                            <img src={headPhoto} alt="" loading="lazy" />
                           ) : (
-                            <span className="ld-mono" aria-hidden="true">
+                            <span className="un-head-mono" aria-hidden="true">
                               {(unit.head.displayName || unit.head.name || '—').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
                             </span>
                           )}
                         </Link>
-                        <div className="ld-body">
-                          <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="ld-name">
-                            {unit.head.displayName || unit.head.name}
-                          </Link>
-                          {unit.head.position ? <div className="ld-position">{unit.head.position}</div> : null}
-                          {headDegree || unit.head.academicTitle ? (
-                            <div className="ld-degree">{[headDegree, unit.head.academicTitle].filter(Boolean).join(' · ')}</div>
-                          ) : null}
-                          <dl className="ld-contact">
-                            {unit.head.email ? (
-                              <>
-                                <dt>{tr('E-poçt', locale)}</dt>
-                                <dd><a href={`mailto:${unit.head.email}`}><EmailWrap email={unit.head.email} /></a></dd>
-                              </>
-                            ) : null}
-                            {unit.head.phone ? (
-                              <>
-                                <dt>{tr('Telefon', locale)}</dt>
-                                <dd><a href={`tel:${unit.head.phone.replace(/[^\d+]/g, '')}`}>{unit.head.phone}</a></dd>
-                              </>
-                            ) : null}
-                          </dl>
-                          <AdminOnly>
-                            <div className="ld-admin">
-                              <span>{tr('Redaktə', locale)}:</span>
-                              <a href={adminUrl('api::person.person', unit.head.documentId, locale)} target="_blank" rel="noreferrer">
-                                {tr('şəxs', locale)}
-                              </a>
-                            </div>
-                          </AdminOnly>
+                        {unit.head.position ? <div className="un-head-position">{unit.head.position}</div> : null}
+                      </div>
+                      <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="un-head-name">
+                        {unit.head.displayName || unit.head.name}
+                      </Link>
+                      <dl className="un-head-contact">
+                        {unit.head.email ? (
+                          <div>
+                            <dt>{tr('E-poçt', locale)}</dt>
+                            <dd><a href={`mailto:${unit.head.email}`}><EmailWrap email={unit.head.email} /></a></dd>
+                          </div>
+                        ) : null}
+                        {unit.head.phone ? (
+                          <div>
+                            <dt>{tr('Telefon', locale)}</dt>
+                            <dd><a href={`tel:${unit.head.phone.replace(/[^\d+]/g, '')}`}>{unit.head.phone}</a></dd>
+                          </div>
+                        ) : null}
+                      </dl>
+                      <AdminOnly>
+                        <div className="un-head-admin">
+                          <span>{tr('Redaktə', locale)}:</span>
+                          <a href={adminUrl('api::person.person', unit.head.documentId, locale)} target="_blank" rel="noreferrer">
+                            {tr('şəxs', locale)}
+                          </a>
                         </div>
-                      </li>
-                    </ul>
+                      </AdminOnly>
+                    </div>
                   </div>
                 ) : null}
 
