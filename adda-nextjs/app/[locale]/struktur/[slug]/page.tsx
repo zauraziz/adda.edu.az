@@ -44,7 +44,7 @@ import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import StaffReveal from '../../../_components/StaffReveal';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
-import { DocList, DOC_CATEGORY_ORDER, DOC_CATEGORY_LABEL_AZ, groupDocsByCategory } from '../../../_components/DocList';
+import { DocList, DOC_CATEGORY_ORDER } from '../../../_components/DocList';
 import {
   getDepartmentBySlug,
   getDepartmentSlugs,
@@ -56,6 +56,7 @@ import {
   getUnitAnnouncements,
   getUnits,
   mediaUrl,
+  docText,
   STRAPI_URL,
   type SiteMenu,
   type UnitDetail,
@@ -512,20 +513,20 @@ export default async function UnitPage({
     (a, b) => (b.year ?? 0) - (a.year ?? 0),
   );
 
-  // F4.7d — yan panelin «Sənədlər» bölməsi: hesabat İSTİSNA (əsas sütunda
-  // qalır, F4.6d), qalan kateqoriyalar sıra üzrə qruplaşdırılır. 5-dən
-  // çoxdursa ilk 5 göstərilir, qalanı /senedler səhifəsindən görünür.
-  const sideDocsAll = [...docs]
-    .filter((d) => d.category !== 'hesabat')
-    .sort((a, b) => DOC_CATEGORY_ORDER.indexOf(a.category) - DOC_CATEGORY_ORDER.indexOf(b.category));
-  const SIDE_DOC_LIMIT = 5;
-  const sideDocsTruncated = sideDocsAll.length > SIDE_DOC_LIMIT;
-  const sideDocGroups = groupDocsByCategory(sideDocsAll.slice(0, SIDE_DOC_LIMIT));
-
-  // F4.11b — «Hüquqi sənədlər» əsas sütun bloku: eyni `sideDocsAll` (hesabat
-  // İSTİSNA), amma KƏSİLMƏDƏN — yan panelin 5-lik limiti bura tətbiq olunmur.
-  const legalDocGroups = groupDocsByCategory(sideDocsAll);
-  const legalDocsHas = Boolean(legalDocGroups.length);
+  // F4.13 — sənədlər YALNIZ yan paneldə, hesabat İSTİSNA (əsas sütunda qalır,
+  // F4.6d). Kəsmə/kateqoriya-başlığı YOXDUR — düz siyahı, çünki gedəcək yer
+  // qalmayıb (əsas sütundakı «Hüquqi sənədlər» bloku F4.11b-də silinib).
+  // Sıra: əvvəl esasname (DOC_CATEGORY_ORDER-in özündə onsuz da 0-cı indeksdə),
+  // sonra qalan kateqoriyalar sıra üzrə; hər kateqoriya daxilində `year`
+  // azalan, sonra ad. Faylı olmayan sənəd (mediaUrl null) daxil edilmir.
+  const sideDocsSorted = [...docs]
+    .filter((d) => d.category !== 'hesabat' && Boolean(mediaUrl(d.file)))
+    .sort(
+      (a, b) =>
+        DOC_CATEGORY_ORDER.indexOf(a.category) - DOC_CATEGORY_ORDER.indexOf(b.category) ||
+        (b.year ?? 0) - (a.year ?? 0) ||
+        azSort(docText(a, locale).title, docText(b, locale).title),
+    );
 
   // F4.8c — heyət siyahısında rəhbər TƏKRARLANMIR (yan paneldə onsuz da
   // var, bax .un-side rəhbər kartı) — `unit.head.documentId` ilə süzülür,
@@ -557,7 +558,7 @@ export default async function UnitPage({
   const resultsHas = Boolean(unit.results || hesabat.length);
   // F4.11d — akkordeon qrupunun BEŞİNCİ (sonuncu) elementi.
   const strategyHas = Boolean(unit.strategy);
-  // F4.11e — «Açıq vəzifələr» qısa siyahısı və akkordeon qrupundan AYRI FAQ bloku.
+  // F4.11e/F4.13 — «Vakansiyalar» qısa siyahısı və akkordeon qrupundan AYRI FAQ bloku.
   const vacanciesHas = Boolean(unit.vacancies.length);
   const faqHas = Boolean(unit.faq.length);
   // F4.10/F4.11d — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər
@@ -575,18 +576,6 @@ export default async function UnitPage({
     subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
   );
 
-  // F4.11f — eyni `parent`-ə malik digər bölmələr (özü istisna), «Alt
-  // bölmələr»lə EYNİ kart nümunəsi (ad + rəhbər + heyət sayı). `parent`
-  // yoxdursa siyahı boşdur, blok görünmür.
-  const siblings = unit.parent
-    ? [...allUnits]
-        .filter((u) => u.slug !== unit.slug && u.parent?.slug === unit.parent?.slug)
-        .sort((a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name))
-    : [];
-  const siblingStaffCounts = await Promise.all(
-    siblings.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
-  );
-
   // F4.7a — başlıqlar bölmə tipindən törəyir (məs. "Mərkəz haqqında",
   // "Kafedranın heyəti"); uyğunluq yoxdursa fallback.
   const unitT = unitType(unit.name);
@@ -597,12 +586,12 @@ export default async function UnitPage({
   const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
-  const blockTitleLegal = tr('Hüquqi sənədlər', locale);
   const blockTitleStrategy = tr('Strateji hədəflər üzrə öhdəliklər', locale);
-  const blockTitleVacancies = tr('Açıq vəzifələr', locale);
+  // F4.13 — «Açıq vəzifələr» -> «Vakansiyalar» (yalnız başlıq, davranış eyni).
+  const blockTitleVacancies = tr('Vakansiyalar', locale);
   const blockTitleFaq = tr('Tez-tez verilən suallar', locale);
   // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
-  // F4.10/F4.11d/F4.11e — admin diaqnostikası indi 10 AYRI sahə sayır (əvvəl
+  // F4.10/F4.11d/F4.11e — admin diaqnostikası indi 9 AYRI sahə sayır (əvvəl
   // 5 birləşdirilmiş blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) —
   // CMS-də konkret hansı sahənin boş olduğunu göstərir.
   const fieldStatus = [
@@ -613,7 +602,6 @@ export default async function UnitPage({
     { has: resultsHas, title: blockTitle5 },
     { has: strategyHas, title: blockTitleStrategy },
     { has: block4Has, title: blockTitle4 },
-    { has: legalDocsHas, title: blockTitleLegal },
     { has: vacanciesHas, title: blockTitleVacancies },
     { has: faqHas, title: blockTitleFaq },
     { has: block6Has, title: blockTitle6 },
@@ -629,12 +617,11 @@ export default async function UnitPage({
   // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
   // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
   // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
-  type TopKey = 'mission' | 'group' | 'links' | 'legalDocs' | 'vacancies' | 'faq' | 'news';
+  type TopKey = 'mission' | 'group' | 'links' | 'vacancies' | 'faq' | 'news';
   const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
     { key: 'mission', has: missionHas, tintable: true },
     { key: 'group', has: groupHas, tintable: false },
     { key: 'links', has: block4Has, tintable: true },
-    { key: 'legalDocs', has: legalDocsHas, tintable: true },
     { key: 'vacancies', has: vacanciesHas, tintable: true },
     { key: 'faq', has: faqHas, tintable: true },
     { key: 'news', has: block6Has, tintable: true },
@@ -661,7 +648,7 @@ export default async function UnitPage({
       unit.receptionHours ||
       unit.onlineServices.length ||
       unit.parent ||
-      sideDocsAll.length,
+      sideDocsSorted.length,
   );
 
   // F4.5b — fakt zolağı: otaq · daxili telefon · qəbul saatları · heyət sayı
@@ -914,26 +901,7 @@ export default async function UnitPage({
                 </AdminOnly>
               )}
 
-              {/* ── F4.11b: Hüquqi sənədlər — `unit.documents`, hesabat İSTİSNA
-                  (F4.6d-də qalır), kateqoriyaya görə qruplaşdırılıb (bax
-                  DocList.tsx). Faylı olmayan sənəd DocList içində süzülür. ── */}
-              {legalDocsHas ? (
-                <section className={blockClass('legalDocs')}>
-                  <BlockTitle title={blockTitleLegal} documentId={unit.documentId} locale={locale} />
-                  {legalDocGroups.map((g) => (
-                    <div key={g.cat}>
-                      <div className="un-sub-title">{tr(DOC_CATEGORY_LABEL_AZ[g.cat], locale)}</div>
-                      <DocList docs={g.items} locale={locale} />
-                    </div>
-                  ))}
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock title={blockTitleLegal} documentId={unit.documentId} locale={locale} tint={tintByKey.legalDocs} />
-                </AdminOnly>
-              )}
-
-              {/* ── F4.11e: Açıq vəzifələr — `unit.vacancies`, qısa siyahı. ── */}
+              {/* ── F4.11e/F4.13: Vakansiyalar — `unit.vacancies`, qısa siyahı. ── */}
               {vacanciesHas ? (
                 <section className={blockClass('vacancies')}>
                   <BlockTitle title={blockTitleVacancies} documentId={unit.documentId} locale={locale} />
@@ -1202,22 +1170,12 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {/* F4.7d — hesabatdan başqa bütün sənəd kateqoriyaları, sıraya
-                    görə qruplaşdırılıb. 5-dən çoxdursa ilk 5 + «Hamısı» keçidi. */}
-                {sideDocGroups.length ? (
+                {/* F4.13 — hesabatdan başqa bütün sənədlər, düz siyahı (kateqoriya
+                    alt başlığı YOXDUR — ad özünü izah edir), kəsmə yoxdur. */}
+                {sideDocsSorted.length ? (
                   <div>
                     <div className="un-sub-title">{tr('Sənədlər', locale)}</div>
-                    {sideDocGroups.map((g) => (
-                      <div key={g.cat}>
-                        <div className="un-doc-cat">{tr(DOC_CATEGORY_LABEL_AZ[g.cat], locale)}</div>
-                        <DocList docs={g.items} locale={locale} />
-                      </div>
-                    ))}
-                    {sideDocsTruncated ? (
-                      <Link href={`/${locale}/struktur/${unit.slug}/senedler`} className="un-link-btn">
-                        {tr('Hamısı', locale)}
-                      </Link>
-                    ) : null}
+                    <DocList docs={sideDocsSorted} locale={locale} />
                   </div>
                 ) : null}
 
@@ -1245,30 +1203,6 @@ export default async function UnitPage({
                 {subunits.map((c, i) => {
                   const h = subunitHeadBySlug.get(c.slug);
                   const n = subunitStaffCounts[i] ?? 0;
-                  return (
-                    <li key={c.slug}>
-                      <Link href={`/${locale}/struktur/${c.slug}`} className="un-subunit-card">
-                        <div className="un-subunit-name">{c.name}</div>
-                        {h ? <div className="un-subunit-head">{h.name}</div> : null}
-                        {n ? <div className="un-subunit-count">{tr('Heyət', locale)}: {n}</div> : null}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ) : null}
-
-          {/* F4.11f — qohum bölmələr: eyni valideynin digər övladları, «Alt
-              bölmələr»lə EYNİ kart nümunəsi. `parent` yoxdursa/qardaş
-              yoxdursa (siblings boşdur) blok görünmür. */}
-          {siblings.length ? (
-            <section className="un-subunits">
-              <h2 className="un-block-title">{tr('Qohum bölmələr', locale)}</h2>
-              <ul className="un-subunit-grid">
-                {siblings.map((c, i) => {
-                  const h = subunitHeadBySlug.get(c.slug);
-                  const n = siblingStaffCounts[i] ?? 0;
                   return (
                     <li key={c.slug}>
                       <Link href={`/${locale}/struktur/${c.slug}`} className="un-subunit-card">
