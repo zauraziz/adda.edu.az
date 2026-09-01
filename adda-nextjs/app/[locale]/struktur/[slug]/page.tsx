@@ -447,6 +447,11 @@ export default async function UnitPage({
   const sideDocsTruncated = sideDocsAll.length > SIDE_DOC_LIMIT;
   const sideDocGroups = groupDocsByCategory(sideDocsAll.slice(0, SIDE_DOC_LIMIT));
 
+  // F4.11b — «Hüquqi sənədlər» əsas sütun bloku: eyni `sideDocsAll` (hesabat
+  // İSTİSNA), amma KƏSİLMƏDƏN — yan panelin 5-lik limiti bura tətbiq olunmur.
+  const legalDocGroups = groupDocsByCategory(sideDocsAll);
+  const legalDocsHas = Boolean(legalDocGroups.length);
+
   // F4.8c — heyət siyahısında rəhbər TƏKRARLANMIR (yan paneldə onsuz da
   // var, bax .un-side rəhbər kartı) — `unit.head.documentId` ilə süzülür,
   // sıralama sadə əlifba (name, localeCompare 'az' MƏCBURİ). Fakt zolağının
@@ -497,6 +502,7 @@ export default async function UnitPage({
   const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
+  const blockTitleLegal = tr('Hüquqi sənədlər', locale);
   // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
   // F4.10 — admin diaqnostikası indi 7 AYRI sahə sayır (əvvəl 5 birləşdirilmiş
   // blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) — CMS-də konkret
@@ -508,6 +514,7 @@ export default async function UnitPage({
     { has: servicesHas, title: tr('Xidmətlər', locale) },
     { has: resultsHas, title: blockTitle5 },
     { has: block4Has, title: blockTitle4 },
+    { has: legalDocsHas, title: blockTitleLegal },
     { has: block6Has, title: blockTitle6 },
   ];
   const openBlockCount = fieldStatus.filter((f) => f.has).length;
@@ -521,11 +528,12 @@ export default async function UnitPage({
   // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
   // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
   // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
-  type TopKey = 'mission' | 'group' | 'links' | 'news';
+  type TopKey = 'mission' | 'group' | 'links' | 'legalDocs' | 'news';
   const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
     { key: 'mission', has: missionHas, tintable: true },
     { key: 'group', has: groupHas, tintable: false },
     { key: 'links', has: block4Has, tintable: true },
+    { key: 'legalDocs', has: legalDocsHas, tintable: true },
     { key: 'news', has: block6Has, tintable: true },
   ];
   let tintCursor = 0;
@@ -785,6 +793,25 @@ export default async function UnitPage({
               ) : (
                 <AdminOnly>
                   <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={tintByKey.links} />
+                </AdminOnly>
+              )}
+
+              {/* ── F4.11b: Hüquqi sənədlər — `unit.documents`, hesabat İSTİSNA
+                  (F4.6d-də qalır), kateqoriyaya görə qruplaşdırılıb (bax
+                  DocList.tsx). Faylı olmayan sənəd DocList içində süzülür. ── */}
+              {legalDocsHas ? (
+                <section className={blockClass('legalDocs')}>
+                  <BlockTitle title={blockTitleLegal} documentId={unit.documentId} locale={locale} />
+                  {legalDocGroups.map((g) => (
+                    <div key={g.cat}>
+                      <div className="un-sub-title">{tr(DOC_CATEGORY_LABEL_AZ[g.cat], locale)}</div>
+                      <DocList docs={g.items} locale={locale} />
+                    </div>
+                  ))}
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitleLegal} documentId={unit.documentId} locale={locale} tint={tintByKey.legalDocs} />
                 </AdminOnly>
               )}
 
