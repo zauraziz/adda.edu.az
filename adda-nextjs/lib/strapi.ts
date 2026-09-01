@@ -996,6 +996,16 @@ export function docText(d: UnitDocumentItem, locale: Locale): { title: string; d
   return { title, description };
 }
 
+/** F4.11a — `unit.receptionSlots[].day`, sxemdəki enum ilə BİRƏBİR. */
+export type ReceptionDay = 'bazar_ertesi' | 'cerşenbe_axsami' | 'cerşenbe' | 'cume_axsami' | 'cume' | 'senbe';
+
+export interface ReceptionSlot {
+  day: ReceptionDay;
+  timeFrom: string | null;
+  timeTo: string | null;
+  note: string | null;
+}
+
 export interface UnitDetail {
   documentId: string;
   name: string;
@@ -1003,6 +1013,8 @@ export interface UnitDetail {
   about: string | null;
   mission: string | null;
   receptionHours: string | null;
+  /** F4.11a — doludursa `receptionHours` sətrinin ƏVƏZİNƏ göstərilir (F4.11c). */
+  receptionSlots: ReceptionSlot[];
   functions: string | null;
   services: string | null;
   /** F4.6d — "Görülmüş işlər və nəticələr" (hesabat sənədlərindən ayrı, mətn). */
@@ -1033,6 +1045,7 @@ export async function getUnitDetail(slug: string, locale: Locale = 'az'): Promis
     'pagination[pageSize]': 1,
     'populate[onlineServices]': true,
     'populate[links]': true,
+    'populate[receptionSlots]': true,
     'populate[parent][fields][0]': 'slug',
     'populate[parent][fields][1]': 'name',
     'populate[children][fields][0]': 'slug',

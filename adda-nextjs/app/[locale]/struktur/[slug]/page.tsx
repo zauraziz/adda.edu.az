@@ -60,6 +60,8 @@ import {
   type SiteMenu,
   type UnitDetail,
   type UnitDocumentItem,
+  type ReceptionDay,
+  type ReceptionSlot,
   type Person,
   type StrapiMedia,
   type Article,
@@ -108,6 +110,79 @@ export async function generateMetadata({
 }
 
 const azSort = (a: string, b: string) => a.localeCompare(b, 'az');
+
+// F4.11c — `receptionSlots` həftə sırası (bax unit/reception-slot.json enum-u,
+// EYNİ sıra). Əlifba ilə YOX — "Şənbə" (Ə-dən sonra) əlifba sırasında sona
+// düşərdi, amma həftədə altıncı gündür.
+const RECEPTION_DAY_ORDER: ReceptionDay[] = [
+  'bazar_ertesi',
+  'cerşenbe_axsami',
+  'cerşenbe',
+  'cume_axsami',
+  'cume',
+  'senbe',
+];
+const RECEPTION_DAY_FULL: Record<ReceptionDay, string> = {
+  bazar_ertesi: 'Bazar ertəsi',
+  cerşenbe_axsami: 'Çərşənbə axşamı',
+  cerşenbe: 'Çərşənbə',
+  cume_axsami: 'Cümə axşamı',
+  cume: 'Cümə',
+  senbe: 'Şənbə',
+};
+// F4.11c — ARDICIL BİRLƏŞDİRİLMİŞ sıra üçün qısaldılmış ad («B.e–Cümə»);
+// artıq bir sözdən ibarət günlər (Çərşənbə/Cümə/Şənbə) qısalmır.
+const RECEPTION_DAY_SHORT: Record<ReceptionDay, string> = {
+  bazar_ertesi: 'B.e',
+  cerşenbe_axsami: 'Ç.a',
+  cerşenbe: 'Çərşənbə',
+  cume_axsami: 'C.a',
+  cume: 'Cümə',
+  senbe: 'Şənbə',
+};
+
+function fmtReceptionTime(t: string | null): string {
+  return t ? t.slice(0, 5) : '';
+}
+
+interface ReceptionRow { label: string; time: string; note: string | null }
+
+/**
+ * F4.11c — həftə sırasına düzür, ARDICIL eyni saatlı (və eyni qeydli)
+ * günləri BİRLƏŞDİRİR («B.e–Cümə 09:00–17:00»). Fasilə (aradan bir gün
+ * çıxarsa) birləşməni pozur. Tək gün qısaltma ALMIR, tam ad göstərir.
+ */
+function buildReceptionRows(slots: ReceptionSlot[], locale: Locale): ReceptionRow[] {
+  const bySlot = new Map(slots.map((s) => [s.day, s]));
+  const ordered = RECEPTION_DAY_ORDER.filter((d) => bySlot.has(d)).map((d) => bySlot.get(d) as ReceptionSlot);
+  const rows: ReceptionRow[] = [];
+  let i = 0;
+  while (i < ordered.length) {
+    let j = i;
+    while (
+      j + 1 < ordered.length &&
+      RECEPTION_DAY_ORDER.indexOf(ordered[j + 1].day) === RECEPTION_DAY_ORDER.indexOf(ordered[j].day) + 1 &&
+      ordered[j + 1].timeFrom === ordered[i].timeFrom &&
+      ordered[j + 1].timeTo === ordered[i].timeTo &&
+      (ordered[j + 1].note ?? '') === (ordered[i].note ?? '')
+    ) {
+      j++;
+    }
+    const start = ordered[i];
+    const end = ordered[j];
+    const label =
+      j > i
+        ? `${tr(RECEPTION_DAY_SHORT[start.day], locale)}–${tr(RECEPTION_DAY_SHORT[end.day], locale)}`
+        : tr(RECEPTION_DAY_FULL[start.day], locale);
+    rows.push({
+      label,
+      time: `${fmtReceptionTime(start.timeFrom)}–${fmtReceptionTime(start.timeTo)}`,
+      note: start.note,
+    });
+    i = j + 1;
+  }
+  return rows;
+}
 
 // F4.7a — başlıqlar bölmə adının sonluğundan törəyən tipdən qurulur (Mərkəz/
 // Mərkəzin, Kafedra/Kafedranın və s.). CLAUDE.md-dəki azLower MƏCBURİdir —
@@ -463,6 +538,8 @@ export default async function UnitPage({
   const headPhoto = unit.head ? mediaUrl(unit.head.photo) : null;
 
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
+  // F4.11c — `receptionSlots` doludursa köhnə `receptionHours` sətrinin ƏVƏZİNƏ göstərilir.
+  const receptionRows = buildReceptionRows(unit.receptionSlots, locale);
   const missionHas = Boolean(unit.mission);
   const aboutHas = Boolean(unit.about);
   const functionsHas = Boolean(unit.functions);
@@ -554,6 +631,7 @@ export default async function UnitPage({
     unit.head ||
       staffList.length ||
       contactHas ||
+      receptionRows.length ||
       unit.receptionHours ||
       unit.onlineServices.length ||
       unit.parent ||
@@ -994,7 +1072,24 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {unit.receptionHours ? (
+                {/* F4.11c — `receptionSlots` doludursa gün-gün cədvəl (ardıcıl
+                    eyni saatlı günlər birləşir), boşdursa köhnə sətir. */}
+                {receptionRows.length ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Qəbul saatları', locale)}</div>
+                    <div className="na-event-info" style={{ maxWidth: 'none', margin: 0 }}>
+                      {receptionRows.map((r, i) => (
+                        <div key={i} className="na-ei-row">
+                          <i className="ti ti-clock na-ei-ic" aria-hidden="true" />
+                          <div>
+                            <div className="na-ei-k">{r.label}</div>
+                            <div className="na-ei-v">{r.time}{r.note ? ` · ${r.note}` : ''}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : unit.receptionHours ? (
                   <div>
                     <div className="un-sub-title">{tr('Qəbul saatları', locale)}</div>
                     <p className="un-side-text un-side-text--icon">
