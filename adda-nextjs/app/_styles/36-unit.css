@@ -4,6 +4,15 @@
    .na-event-info, .np-chip artıq mövcuddur (35/28/19-cu fayllar). Bura yalnız
    bu səhifəyə xas hissələr düşür. */
 
+/* ── F4.11d: yaranma tarixi/əsası — adın altında kiçik, solğun sətir ── */
+.un-established-note {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-100);
+  opacity: 0.75;
+}
+
 /* ── Breadcrumb ── */
 .un-crumbs {
   display: flex;

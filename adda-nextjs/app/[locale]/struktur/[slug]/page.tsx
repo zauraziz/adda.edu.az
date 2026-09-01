@@ -555,10 +555,13 @@ export default async function UnitPage({
   // PDF sənədləri.
   // F4.6e — xəbər/elan artıq bu sahədə deyil, ayrıca "Əlaqəli xəbərlər" blokundadır.
   const resultsHas = Boolean(unit.results || hesabat.length);
-  // F4.10 — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər və
-  // nəticələr» VAHİD akkordeon qrupudur (bax .un-expand-group aşağıda);
-  // qrup ictimai görünürsə bu 4 sahədən ƏN AZI biri doludur.
-  const groupHas = aboutHas || functionsHas || servicesHas || resultsHas;
+  // F4.11d — akkordeon qrupunun BEŞİNCİ (sonuncu) elementi.
+  const strategyHas = Boolean(unit.strategy);
+  // F4.10/F4.11d — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər
+  // və nəticələr»/«Strateji hədəflər üzrə öhdəliklər» VAHİD akkordeon
+  // qrupudur (bax .un-expand-group aşağıda); qrup ictimai görünürsə bu 5
+  // sahədən ƏN AZI biri doludur.
+  const groupHas = aboutHas || functionsHas || servicesHas || resultsHas || strategyHas;
   const block6Has = Boolean(articles.length || announcements.length);
 
   // F4.5c — hər alt bölmə kartında ad + rəhbər + heyət sayı. Rəhbər `allUnits`-dən
@@ -580,16 +583,18 @@ export default async function UnitPage({
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
   const blockTitleLegal = tr('Hüquqi sənədlər', locale);
+  const blockTitleStrategy = tr('Strateji hədəflər üzrə öhdəliklər', locale);
   // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
-  // F4.10 — admin diaqnostikası indi 7 AYRI sahə sayır (əvvəl 5 birləşdirilmiş
-  // blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) — CMS-də konkret
-  // hansı sahənin boş olduğunu göstərir.
+  // F4.10/F4.11d — admin diaqnostikası indi 8 AYRI sahə sayır (əvvəl 5
+  // birləşdirilmiş blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) —
+  // CMS-də konkret hansı sahənin boş olduğunu göstərir.
   const fieldStatus = [
     { has: missionHas, title: missionTitle },
     { has: aboutHas, title: blockTitle1 },
     { has: functionsHas, title: blockTitle3 },
     { has: servicesHas, title: tr('Xidmətlər', locale) },
     { has: resultsHas, title: blockTitle5 },
+    { has: strategyHas, title: blockTitleStrategy },
     { has: block4Has, title: blockTitle4 },
     { has: legalDocsHas, title: blockTitleLegal },
     { has: block6Has, title: blockTitle6 },
@@ -649,6 +654,7 @@ export default async function UnitPage({
   const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
   const servicesHtml = unit.services ? await marked.parse(unit.services) : '';
   const resultsHtml = unit.results ? await marked.parse(unit.results) : '';
+  const strategyHtml = unit.strategy ? await marked.parse(unit.strategy) : '';
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
@@ -697,6 +703,8 @@ export default async function UnitPage({
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('Struktur', locale)}</div>
             <h1 className="np-h1">{unit.name}</h1>
+            {/* F4.11d — yaranma tarixi və əsası, adın altında kiçik/solğun sətir. */}
+            {unit.establishedNote ? <p className="un-established-note">{unit.establishedNote}</p> : null}
             <nav className="un-crumbs" aria-label={tr('Struktur', locale)}>
               <Link href={`/${locale}/struktur`}>{tr('Struktur', locale)}</Link>
               {crumbs.map((c) => (
@@ -775,8 +783,9 @@ export default async function UnitPage({
                 </section>
               ) : null}
 
-              {/* ── F4.10: Haqqında / Fəaliyyət sahəsi / Xidmətlər / Görülmüş
-                  işlər və nəticələr — VAHİD akkordeon qrupu. Eyni konteyner
+              {/* ── F4.10/F4.11d: Haqqında / Fəaliyyət sahəsi / Xidmətlər /
+                  Görülmüş işlər və nəticələr / Strateji hədəflər üzrə
+                  öhdəliklər — VAHİD akkordeon qrupu. Eyni konteyner
                   (ExpandBlock/.un-expand), eyni davranış, aralarında bölmə
                   ayırıcısı yoxdur, F4.5b tint tətbiq olunmur (bax
                   .un-expand-group, 36-unit.css). Hər sahə müstəqil aç/bağla —
@@ -837,6 +846,15 @@ export default async function UnitPage({
                         <EmptyExpandItem title={blockTitle5} documentId={unit.documentId} locale={locale} />
                       </AdminOnly>
                     )}
+                    {strategyHas ? (
+                      <ExpandBlock label={blockTitleStrategy}>
+                        <div className="prose" dangerouslySetInnerHTML={{ __html: strategyHtml }} />
+                      </ExpandBlock>
+                    ) : (
+                      <AdminOnly>
+                        <EmptyExpandItem title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
+                      </AdminOnly>
+                    )}
                   </div>
                 </section>
               ) : (
@@ -848,6 +866,7 @@ export default async function UnitPage({
                       <EmptyExpandItem title={blockTitle3} documentId={unit.documentId} locale={locale} />
                       <EmptyExpandItem title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
                       <EmptyExpandItem title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
                     </div>
                   </section>
                 </AdminOnly>

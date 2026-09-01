@@ -1019,6 +1019,10 @@ export interface UnitDetail {
   services: string | null;
   /** F4.6d — "Görülmüş işlər və nəticələr" (hesabat sənədlərindən ayrı, mətn). */
   results: string | null;
+  /** F4.11a/F4.11d — akkordeon qrupunun beşinci elementi. */
+  strategy: string | null;
+  /** F4.11a/F4.11d — adın altında kiçik/solğun sətir (yaranma tarixi və əsası). */
+  establishedNote: string | null;
   building: string | null;
   floor: string | null;
   room: string | null;
