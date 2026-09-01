@@ -575,6 +575,18 @@ export default async function UnitPage({
     subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
   );
 
+  // F4.11f — eyni `parent`-ə malik digər bölmələr (özü istisna), «Alt
+  // bölmələr»lə EYNİ kart nümunəsi (ad + rəhbər + heyət sayı). `parent`
+  // yoxdursa siyahı boşdur, blok görünmür.
+  const siblings = unit.parent
+    ? [...allUnits]
+        .filter((u) => u.slug !== unit.slug && u.parent?.slug === unit.parent?.slug)
+        .sort((a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name))
+    : [];
+  const siblingStaffCounts = await Promise.all(
+    siblings.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
+  );
+
   // F4.7a — başlıqlar bölmə tipindən törəyir (məs. "Mərkəz haqqında",
   // "Kafedranın heyəti"); uyğunluq yoxdursa fallback.
   const unitT = unitType(unit.name);
@@ -1233,6 +1245,30 @@ export default async function UnitPage({
                 {subunits.map((c, i) => {
                   const h = subunitHeadBySlug.get(c.slug);
                   const n = subunitStaffCounts[i] ?? 0;
+                  return (
+                    <li key={c.slug}>
+                      <Link href={`/${locale}/struktur/${c.slug}`} className="un-subunit-card">
+                        <div className="un-subunit-name">{c.name}</div>
+                        {h ? <div className="un-subunit-head">{h.name}</div> : null}
+                        {n ? <div className="un-subunit-count">{tr('Heyət', locale)}: {n}</div> : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ) : null}
+
+          {/* F4.11f — qohum bölmələr: eyni valideynin digər övladları, «Alt
+              bölmələr»lə EYNİ kart nümunəsi. `parent` yoxdursa/qardaş
+              yoxdursa (siblings boşdur) blok görünmür. */}
+          {siblings.length ? (
+            <section className="un-subunits">
+              <h2 className="un-block-title">{tr('Qohum bölmələr', locale)}</h2>
+              <ul className="un-subunit-grid">
+                {siblings.map((c, i) => {
+                  const h = subunitHeadBySlug.get(c.slug);
+                  const n = siblingStaffCounts[i] ?? 0;
                   return (
                     <li key={c.slug}>
                       <Link href={`/${locale}/struktur/${c.slug}`} className="un-subunit-card">
