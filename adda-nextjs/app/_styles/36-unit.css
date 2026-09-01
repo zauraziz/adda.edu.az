@@ -350,6 +350,23 @@
   color: var(--gray-500);
 }
 
+/* ── F4.11e: Açıq vəzifələr — sadə siyahı, tarix sütunu yoxdur (.un-row-dən fərqli). ── */
+.un-vacancy-list { list-style: none; margin: 0; padding: 0; }
+.un-vacancy-row { padding: 0.65rem 0; border-bottom: 1px solid var(--gray-200); }
+.un-vacancy-row:last-child { border-bottom: none; }
+.un-vacancy-position {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--navy-800);
+}
+.un-vacancy-note {
+  margin-top: 0.2rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
 @media (max-width: 560px) {
   .un-row { flex-direction: column; gap: 0.15rem; }
   .un-row-date { min-width: 0; }

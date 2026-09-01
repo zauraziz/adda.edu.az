@@ -557,6 +557,9 @@ export default async function UnitPage({
   const resultsHas = Boolean(unit.results || hesabat.length);
   // F4.11d — akkordeon qrupunun BEŞİNCİ (sonuncu) elementi.
   const strategyHas = Boolean(unit.strategy);
+  // F4.11e — «Açıq vəzifələr» qısa siyahısı və akkordeon qrupundan AYRI FAQ bloku.
+  const vacanciesHas = Boolean(unit.vacancies.length);
+  const faqHas = Boolean(unit.faq.length);
   // F4.10/F4.11d — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər
   // və nəticələr»/«Strateji hədəflər üzrə öhdəliklər» VAHİD akkordeon
   // qrupudur (bax .un-expand-group aşağıda); qrup ictimai görünürsə bu 5
@@ -584,9 +587,11 @@ export default async function UnitPage({
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
   const blockTitleLegal = tr('Hüquqi sənədlər', locale);
   const blockTitleStrategy = tr('Strateji hədəflər üzrə öhdəliklər', locale);
+  const blockTitleVacancies = tr('Açıq vəzifələr', locale);
+  const blockTitleFaq = tr('Tez-tez verilən suallar', locale);
   // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
-  // F4.10/F4.11d — admin diaqnostikası indi 8 AYRI sahə sayır (əvvəl 5
-  // birləşdirilmiş blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) —
+  // F4.10/F4.11d/F4.11e — admin diaqnostikası indi 10 AYRI sahə sayır (əvvəl
+  // 5 birləşdirilmiş blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) —
   // CMS-də konkret hansı sahənin boş olduğunu göstərir.
   const fieldStatus = [
     { has: missionHas, title: missionTitle },
@@ -597,6 +602,8 @@ export default async function UnitPage({
     { has: strategyHas, title: blockTitleStrategy },
     { has: block4Has, title: blockTitle4 },
     { has: legalDocsHas, title: blockTitleLegal },
+    { has: vacanciesHas, title: blockTitleVacancies },
+    { has: faqHas, title: blockTitleFaq },
     { has: block6Has, title: blockTitle6 },
   ];
   const openBlockCount = fieldStatus.filter((f) => f.has).length;
@@ -610,12 +617,14 @@ export default async function UnitPage({
   // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
   // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
   // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
-  type TopKey = 'mission' | 'group' | 'links' | 'legalDocs' | 'news';
+  type TopKey = 'mission' | 'group' | 'links' | 'legalDocs' | 'vacancies' | 'faq' | 'news';
   const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
     { key: 'mission', has: missionHas, tintable: true },
     { key: 'group', has: groupHas, tintable: false },
     { key: 'links', has: block4Has, tintable: true },
     { key: 'legalDocs', has: legalDocsHas, tintable: true },
+    { key: 'vacancies', has: vacanciesHas, tintable: true },
+    { key: 'faq', has: faqHas, tintable: true },
     { key: 'news', has: block6Has, tintable: true },
   ];
   let tintCursor = 0;
@@ -909,6 +918,44 @@ export default async function UnitPage({
               ) : (
                 <AdminOnly>
                   <EmptyBlock title={blockTitleLegal} documentId={unit.documentId} locale={locale} tint={tintByKey.legalDocs} />
+                </AdminOnly>
+              )}
+
+              {/* ── F4.11e: Açıq vəzifələr — `unit.vacancies`, qısa siyahı. ── */}
+              {vacanciesHas ? (
+                <section className={blockClass('vacancies')}>
+                  <BlockTitle title={blockTitleVacancies} documentId={unit.documentId} locale={locale} />
+                  <ul className="un-vacancy-list">
+                    {unit.vacancies.map((v, i) => (
+                      <li key={i} className="un-vacancy-row">
+                        <div className="un-vacancy-position">{v.position}</div>
+                        {v.note ? <div className="un-vacancy-note">{v.note}</div> : null}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitleVacancies} documentId={unit.documentId} locale={locale} tint={tintByKey.vacancies} />
+                </AdminOnly>
+              )}
+
+              {/* ── F4.11e: FAQ — akkordeon qrupundan AYRI, amma EYNİ üslubda
+                  (bax .un-expand-group, ExpandBlock hər sual üçün). ── */}
+              {faqHas ? (
+                <section className={blockClass('faq')}>
+                  <BlockTitle title={blockTitleFaq} documentId={unit.documentId} locale={locale} />
+                  <div className="un-expand-group">
+                    {unit.faq.map((f, i) => (
+                      <ExpandBlock key={i} label={f.question}>
+                        <p className="prose" style={{ whiteSpace: 'pre-line' }}>{f.answer}</p>
+                      </ExpandBlock>
+                    ))}
+                  </div>
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock title={blockTitleFaq} documentId={unit.documentId} locale={locale} tint={tintByKey.faq} />
                 </AdminOnly>
               )}
 

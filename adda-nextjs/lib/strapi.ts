@@ -1030,6 +1030,10 @@ export interface UnitDetail {
   email: string | null;
   onlineServices: NavLinkItem[];
   links: NavLinkItem[];
+  /** F4.11e — «Açıq vəzifələr» qısa siyahısı. */
+  vacancies: { position: string; note: string | null }[];
+  /** F4.11e — akkordeon qrupundan AYRI, eyni üslublu FAQ bloku. */
+  faq: { question: string; answer: string }[];
   parent: { slug: string; name: string } | null;
   children: { slug: string; name: string; sortOrder?: number }[];
   head: LeaderPerson | null;
@@ -1050,6 +1054,8 @@ export async function getUnitDetail(slug: string, locale: Locale = 'az'): Promis
     'populate[onlineServices]': true,
     'populate[links]': true,
     'populate[receptionSlots]': true,
+    'populate[vacancies]': true,
+    'populate[faq]': true,
     'populate[parent][fields][0]': 'slug',
     'populate[parent][fields][1]': 'name',
     'populate[children][fields][0]': 'slug',
