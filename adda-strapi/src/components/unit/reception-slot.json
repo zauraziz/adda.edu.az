@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_unit_reception_slots",
+  "info": {
+    "displayName": "Qəbul saatı",
+    "description": "Bir günlük qəbul vaxt aralığı (F4.11).",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "day": {
+      "type": "enumeration",
+      "enum": [
+        "bazar_ertesi",
+        "cerşenbe_axsami",
+        "cerşenbe",
+        "cume_axsami",
+        "cume",
+        "senbe"
+      ],
+      "required": true
+    },
+    "timeFrom": {
+      "type": "time"
+    },
+    "timeTo": {
+      "type": "time"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

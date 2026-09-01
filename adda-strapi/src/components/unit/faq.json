@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_unit_faqs",
+  "info": {
+    "displayName": "FAQ",
+    "description": "Bölmə səhifəsində tez-tez verilən sual + cavab.",
+    "icon": "question"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "answer": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

@@ -217,6 +217,44 @@ export interface StaffVacancy extends Struct.ComponentSchema {
   };
 }
 
+export interface UnitFaq extends Struct.ComponentSchema {
+  collectionName: 'components_unit_faqs';
+  info: {
+    description: 'B\u00F6lm\u0259 s\u0259hif\u0259sind\u0259 tez-tez veril\u0259n sual + cavab.';
+    displayName: 'FAQ';
+    icon: 'question';
+  };
+  attributes: {
+    answer: Schema.Attribute.Text & Schema.Attribute.Required;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface UnitReceptionSlot extends Struct.ComponentSchema {
+  collectionName: 'components_unit_reception_slots';
+  info: {
+    description: 'Bir g\u00FCnl\u00FCk q\u0259bul vaxt aral\u0131\u011F\u0131 (F4.11).';
+    displayName: 'Q\u0259bul saat\u0131';
+    icon: 'clock';
+  };
+  attributes: {
+    day: Schema.Attribute.Enumeration<
+      [
+        'bazar_ertesi',
+        'cer\u015Fenbe_axsami',
+        'cer\u015Fenbe',
+        'cume_axsami',
+        'cume',
+        'senbe',
+      ]
+    > &
+      Schema.Attribute.Required;
+    note: Schema.Attribute.String;
+    timeFrom: Schema.Attribute.Time;
+    timeTo: Schema.Attribute.Time;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
@@ -236,6 +274,8 @@ declare module '@strapi/strapi' {
       'staff.scholar': StaffScholar;
       'staff.tag': StaffTag;
       'staff.vacancy': StaffVacancy;
+      'unit.faq': UnitFaq;
+      'unit.reception-slot': UnitReceptionSlot;
     }
   }
 }

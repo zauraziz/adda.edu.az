@@ -153,6 +153,42 @@
         }
       }
     },
+    "strategy": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "establishedNote": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "faq": {
+      "type": "component",
+      "repeatable": true,
+      "component": "unit.faq",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "receptionSlots": {
+      "type": "component",
+      "repeatable": true,
+      "component": "unit.reception-slot",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "head": {
       "type": "relation",
       "relation": "manyToOne",
