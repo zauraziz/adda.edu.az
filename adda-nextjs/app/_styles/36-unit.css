@@ -63,8 +63,9 @@
 .un-block-title {
   font-family: var(--font-display);
   font-weight: 600;
-  /* F4.8d — vahid h2 şkalası; .un-expand-toggle (akkordeon zolağı) EYNİ
-     clamp-i işlədir ki, adi <h2> və akkordeon başlığı eyni ölçüdə olsun. */
+  /* F4.8d — vahid h2 şkalası. F4.10: .un-expand-toggle (akkordeon qrupu
+     zolağı) artıq bu clamp-i İŞLƏTMİR — kilidli 1.5rem/400 sabitinə keçib,
+     bax aşağıda .un-expand-toggle. */
   font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
   color: var(--navy-900);
   /* F4.9e — başlıq/məzmun arası 16px. */
@@ -437,23 +438,22 @@
   margin-top: 0.15rem;
 }
 
-/* ── F4.7b/F4.8a: uzun mətn (`mission`/`about`/`functions`/`services`/
-   `results` > 1200 simvol) akkordeonu — HSE istinadı: bütöv enli kart,
-   yumşaq künc, açıq boz fon. ZOLAĞIN ÖZÜ h2 səviyyəli başlıqdır — ayrıca
-   <h2> YOXDUR (əvvəl blok öz h2-sini göstərir, altında akkordeon zolağı
-   EYNİ adı təkrarlayırdı). Semantika: <h2><button aria-expanded>…</button>
-   </h2> — native <details> yox, WAI-ARIA accordion nümunəsi (bax
-   ExpandBlock.tsx). Sağda dairəvi ox, HƏR BLOK MÜSTƏQİLDİR (bir açılan
-   digərini bağlamır). ── */
+/* ── F4.7b/F4.8a/F4.10: akkordeon — HSE istinadı: bütöv enli kart, yumşaq
+   künc, açıq boz fon. ZOLAĞIN ÖZÜ h2 səviyyəli başlıqdır — ayrıca <h2>
+   YOXDUR (əvvəl blok öz h2-sini göstərir, altında akkordeon zolağı EYNİ adı
+   təkrarlayırdı). Semantika: <h2><button aria-expanded>…</button></h2> —
+   native <details> yox, WAI-ARIA accordion nümunəsi (bax ExpandBlock.tsx).
+   Sağda dairəvi ox, HƏR BLOK MÜSTƏQİLDİR (bir açılan digərini bağlamır).
+   F4.10 — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər və
+   nəticələr» VAHİD qrup kimi göstərilir (bax .un-expand-group aşağıda);
+   ara məsafə artıq margin-bottom DEYİL, qrup konteynerinin `gap`-idir. ── */
 .un-expand {
   display: block;
   background: var(--gray-50, #f8fafc);
   border: 1px solid var(--gray-200);
   border-radius: 18px;
   overflow: hidden;
-  margin: 0 0 0.9rem;
 }
-.un-expand:last-child { margin-bottom: 0; }
 .un-expand-head { margin: 0; }
 .un-expand-toggle {
   display: flex;
@@ -467,8 +467,11 @@
   /* F4.9e — kart daxili doldurma 16px. */
   padding: 16px;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
+  /* F4.10 — kilidli ölçü/çəki: 1.5rem/400, açıq və bağlı vəziyyətdə fərq
+     yoxdur (bax .un-block-title — ayrıca clamp/600 işlədir, F4.8d-dəki
+     "ikisi eyni ölçüdə" qaydası akkordeon zolağı üçün F4.10-da ləğv edildi). */
+  font-weight: 400;
+  font-size: 1.5rem;
   text-align: left;
   color: var(--navy-800);
 }
@@ -507,6 +510,40 @@
   .un-expand-arrow { transition: transform 220ms ease, background 200ms ease, border-color 200ms ease; }
 }
 .un-expand-body { padding: 0 16px 16px; }
+
+/* ── F4.10: akkordeon qrupu — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/
+   «Görülmüş işlər və nəticələr» eyni konteynerdə, aralarında bölmə
+   ayırıcısı (border/hr) YOXDUR, F4.5b tint bu qrupa TƏTBİQ OLUNMUR (hər
+   kart öz fonunu daşıyır, .un-expand yuxarıda). Ara məsafə 7px — F4.9e-nin
+   4/8/12/16/24/32/48px şkalasından FƏRQLİ, qəsdən: sonradan "səhvdir" deyə
+   8px-ə dəyişdirilməsin. Tək element olanda da (yalnız bir sahə doludur)
+   eyni qabıq kifayətdir, əlavə "tək başına qrup" stili lazım deyil. ── */
+.un-expand-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+/* F4.10 — qrup daxilində boş sahə (YALNIZ admin, bax page.tsx
+   EmptyExpandItem): eyni .un-expand qabığı, kəsik sərhədlə fərqlənir
+   (bax .un-block--empty, eyni rəng dili). */
+.un-expand--empty {
+  background: var(--navy-50);
+  border: 1px dashed rgba(11, 61, 92, 0.25);
+  padding: 16px;
+}
+.un-expand-empty-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 8px;
+}
+.un-expand-empty-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: var(--gray-500);
+}
 
 /* ── F4.5c: alt bölmələr — səhifənin sonunda öz kart cərgəsi (HSE
    "Другие программы" nümunəsi), blok ritminə DAXİL DEYİL — .un-layout-dan

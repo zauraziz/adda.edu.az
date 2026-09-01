@@ -229,39 +229,39 @@ function EmptyBlock({
   );
 }
 
-// F4.4/F4.8a — 1200 simvoldan uzun `mission`/`about`/`functions`/`services`/
-// `results` mətni akkordeon arxasında açılır, ZOLAĞIN ÖZÜ h2 səviyyəli
-// başlıqdır. Qısa mətn adi <h2>+mətndir, akkordeon yoxdur — hər iki halda
-// HƏR SAHƏ ÖZ BAŞLIĞINI DAŞIYIR, bloklar özləri ayrıca başlıq göstərmir
-// (əvvəl ad iki dəfə yazılırdı: həm blokun h2-si, həm akkordeon zolağı).
-const LONG_TEXT_THRESHOLD = 1200;
-
-function longText(raw: string, html: string, label: string) {
-  if (raw.length <= LONG_TEXT_THRESHOLD) {
-    return (
-      <>
-        <h2 className="un-block-title">{label}</h2>
-        <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
-      </>
-    );
-  }
-  return <ExpandBlock html={html} label={label} />;
+/**
+ * F4.10 — akkordeon qrupu (.un-expand-group) daxilində boş sahə, YALNIZ
+ * admin sessiyasında (bax çağıran yerdəki <AdminOnly>). EmptyBlock-dan
+ * fərqli olaraq bounded/tinted section YOX — qrupun içindəki digər
+ * .un-expand kartları ilə eyni qabıqda, sadəcə kəsik sərhədlə (.un-expand--empty).
+ */
+function EmptyExpandItem({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
+  return (
+    <div className="un-expand un-expand--empty">
+      <div className="un-expand-empty-head">
+        <span className="un-expand-empty-title">
+          {title}
+          <span className="un-admin-badge">{tr('yalnız admin', locale)}</span>
+        </span>
+        <a
+          className="un-admin-edit"
+          href={adminUrl('api::unit.unit', documentId, locale)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {tr('redaktə', locale)}
+        </a>
+      </div>
+      <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
+    </div>
+  );
 }
 
-/** Kart toruna çevrilən sahələr (functions/services) üçün: kartlar da öz
- * başlığını daşıyır, sadəcə uzunluğa görə akkordeona düşmür (F4.4-dəki
- * kart toru davranışı SAXLANILIB). */
-function fieldBlock(raw: string, html: string, cards: FnCard[] | null, label: string) {
-  if (cards) {
-    return (
-      <>
-        <h2 className="un-block-title">{label}</h2>
-        <FnCardGrid cards={cards} />
-      </>
-    );
-  }
-  return longText(raw, html, label);
-}
+// F4.10 — `about`/`functions`/`services`/`results` artıq VAHİD akkordeon
+// qrupudur (bax UnitPage-dəki un-expand-group), uzunluqdan asılı olmayaraq
+// HAMISI ExpandBlock qabığında göstərilir (əvvəlki 1200-simvol eşiyi və
+// qısa-mətn/akkordeon ayrımı LƏĞV EDİLDİ — "eyni konteyner, eyni davranış"
+// tələbi qarışıq görünüşə yol vermir).
 
 // F4.4 — `functions`/`services` üçün markdown siyahısı kart toruna çevrilir.
 // Format: `- **Başlıq** — açıqlama`. YALNIZ hər sətir bullet-lə başlayırsa
@@ -458,19 +458,25 @@ export default async function UnitPage({
   const headPhoto = unit.head ? mediaUrl(unit.head.photo) : null;
 
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
-  const block1Has = Boolean(unit.mission || unit.about);
-  const block3Has = Boolean(unit.functions || unit.services);
+  const missionHas = Boolean(unit.mission);
+  const aboutHas = Boolean(unit.about);
+  const functionsHas = Boolean(unit.functions);
+  const servicesHas = Boolean(unit.services);
   const block4Has = Boolean(unit.links.length);
   const subunits = [...unit.children].sort(
     (a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name),
   );
-  // F4.5c — alt bölmələr artıq blok 5-in İÇİNDƏ deyil (səhifənin sonuna öz
-  // kart cərgəsinə keçib, aşağıda) — ona görə "var" statusu subunits-i
-  // SAYMIR, əks halda başlıq görünüb altı boş qalardı.
+  // F4.5c — alt bölmələr artıq nəticələr sahəsinin İÇİNDƏ deyil (səhifənin
+  // sonuna öz kart cərgəsinə keçib, aşağıda) — ona görə "var" statusu
+  // subunits-i SAYMIR, əks halda başlıq görünüb altı boş qalardı.
   // F4.6d — hesabat bloku ikiyə bölünür: nəticə mətni (unit.results) + varsa
   // PDF sənədləri.
-  // F4.6e — xəbər/elan artıq bu blokda deyil, ayrıca "Əlaqəli xəbərlər" blokundadır.
-  const block5Has = Boolean(unit.results || hesabat.length);
+  // F4.6e — xəbər/elan artıq bu sahədə deyil, ayrıca "Əlaqəli xəbərlər" blokundadır.
+  const resultsHas = Boolean(unit.results || hesabat.length);
+  // F4.10 — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər və
+  // nəticələr» VAHİD akkordeon qrupudur (bax .un-expand-group aşağıda);
+  // qrup ictimai görünürsə bu 4 sahədən ƏN AZI biri doludur.
+  const groupHas = aboutHas || functionsHas || servicesHas || resultsHas;
   const block6Has = Boolean(articles.length || announcements.length);
 
   // F4.5c — hər alt bölmə kartında ad + rəhbər + heyət sayı. Rəhbər `allUnits`-dən
@@ -491,32 +497,45 @@ export default async function UnitPage({
   const blockTitle4 = tr('Faydalı linklər', locale);
   const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
-  // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side); əsas
-  // sütunda 5 blok qalır (1/3/4/5/6 — 2 saxlanılan nömrələmə deyil, sadəcə
-  // əvvəlki adlar).
-  const blockStatus = [
-    { has: block1Has, title: blockTitle1 },
-    { has: block3Has, title: blockTitle3 },
+  // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
+  // F4.10 — admin diaqnostikası indi 7 AYRI sahə sayır (əvvəl 5 birləşdirilmiş
+  // blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) — CMS-də konkret
+  // hansı sahənin boş olduğunu göstərir.
+  const fieldStatus = [
+    { has: missionHas, title: missionTitle },
+    { has: aboutHas, title: blockTitle1 },
+    { has: functionsHas, title: blockTitle3 },
+    { has: servicesHas, title: tr('Xidmətlər', locale) },
+    { has: resultsHas, title: blockTitle5 },
     { has: block4Has, title: blockTitle4 },
-    { has: block5Has, title: blockTitle5 },
     { has: block6Has, title: blockTitle6 },
   ];
-  const openBlockCount = blockStatus.filter((b) => b.has).length;
-  const closedBlockTitles = blockStatus.filter((b) => !b.has).map((b) => b.title);
+  const openBlockCount = fieldStatus.filter((f) => f.has).length;
+  const closedBlockTitles = fieldStatus.filter((f) => !f.has).map((f) => f.title);
 
-  // F4.4/F4.9b — ağ/boz ritm YALNIZ ictimai görünüşdə faktiki render olunan
-  // bloklara görə sayılır. Admin boş-blok görünüşü artıq server-də deyil,
-  // klient adasında qərarlaşır (kimlik naməlum ola bilər) — tint hesabı
-  // bunu gözləyə bilməz, ona görə YALNIZ `b.has`. Boş blokun tint-i vizual
-  // olaraq önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
+  // F4.4/F4.9b/F4.10 — ağ/boz ritm YALNIZ ictimai görünüşdə faktiki render
+  // olunan bloklara görə sayılır (missiya/qrup/linklər/xəbərlər). Akkordeon
+  // qrupu (F4.10: "F4.5b tint bu qrupa tətbiq olunmur") HEÇ VAXT tint almır,
+  // amma növbəni İRƏLİ APARIR ki, ondan sonrakı bloklar (linklər/xəbərlər)
+  // öz alternasiya növbəsini itirməsin. Admin boş-blok görünüşü artıq
+  // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
+  // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
+  // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
+  type TopKey = 'mission' | 'group' | 'links' | 'news';
+  const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
+    { key: 'mission', has: missionHas, tintable: true },
+    { key: 'group', has: groupHas, tintable: false },
+    { key: 'links', has: block4Has, tintable: true },
+    { key: 'news', has: block6Has, tintable: true },
+  ];
   let tintCursor = 0;
-  const blockTint = blockStatus.map((b) => {
-    if (!b.has) return false;
-    const tint = tintCursor % 2 === 1;
+  const tintByKey = {} as Record<TopKey, boolean>;
+  for (const s of topSections) {
+    if (!s.has) continue;
+    tintByKey[s.key] = s.tintable && tintCursor % 2 === 1;
     tintCursor++;
-    return tint;
-  });
-  const blockClass = (n: 0 | 1 | 2 | 3 | 4) => 'un-block' + (blockTint[n] ? ' un-block--tint' : '');
+  }
+  const blockClass = (key: TopKey) => 'un-block' + (tintByKey[key] ? ' un-block--tint' : '');
 
   // F4.5a/F4.7d — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · onlayn
   // xidmətlər · tabe olduğu qurum · sənədlər. Heç biri yoxdursa sütun
@@ -650,7 +669,7 @@ export default async function UnitPage({
           <AdminProvider>
           <AdminOnly>
             <div className="un-admin-status">
-              {tr('Bloklar', locale)}: {openBlockCount}/{blockStatus.length}
+              {tr('Bloklar', locale)}: {openBlockCount}/{fieldStatus.length}
               {closedBlockTitles.length ? ' · ' + tr('boş', locale) + ': ' + closedBlockTitles.join(', ') : ''}
             </div>
           </AdminOnly>
@@ -660,42 +679,99 @@ export default async function UnitPage({
               yoxdursa (.un-layout--single) tək sütuna düşür. */}
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── 1. «<Tipin> missiyası» (F4.8b) + «<Tip> haqqında» — hər sahə
-                  öz başlığını daşıyır, blokun ayrıca h2-si yoxdur (F4.8a) ── */}
-              {block1Has ? (
-                <section className={blockClass(0)}>
+              {/* ── Missiya (F4.8b) — akkordeon qrupundan KƏNAR, tək cümləlik
+                  ləp (bax .un-mission), F4.10-un dörd sahəsinə daxil deyil. ── */}
+              {missionHas ? (
+                <section className={blockClass('mission')}>
                   <AdminEditRow documentId={unit.documentId} locale={locale} />
-                  {unit.mission ? (
-                    <>
-                      <h2 className="un-block-title">{missionTitle}</h2>
-                      <p className="un-mission">{unit.mission}</p>
-                    </>
-                  ) : null}
-                  {unit.about ? longText(unit.about, aboutHtml, blockTitle1) : null}
+                  <h2 className="un-block-title">{missionTitle}</h2>
+                  <p className="un-mission">{unit.mission}</p>
+                </section>
+              ) : null}
+
+              {/* ── F4.10: Haqqında / Fəaliyyət sahəsi / Xidmətlər / Görülmüş
+                  işlər və nəticələr — VAHİD akkordeon qrupu. Eyni konteyner
+                  (ExpandBlock/.un-expand), eyni davranış, aralarında bölmə
+                  ayırıcısı yoxdur, F4.5b tint tətbiq olunmur (bax
+                  .un-expand-group, 36-unit.css). Hər sahə müstəqil aç/bağla —
+                  biri digərini bağlamır. ── */}
+              {groupHas ? (
+                <section className="un-block un-accordion-group">
+                  <AdminEditRow documentId={unit.documentId} locale={locale} />
+                  <div className="un-expand-group">
+                    {aboutHas ? (
+                      <ExpandBlock label={blockTitle1}>
+                        <div className="prose" dangerouslySetInnerHTML={{ __html: aboutHtml }} />
+                      </ExpandBlock>
+                    ) : (
+                      <AdminOnly>
+                        <EmptyExpandItem title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                      </AdminOnly>
+                    )}
+                    {functionsHas ? (
+                      <ExpandBlock label={blockTitle3}>
+                        {functionCards ? (
+                          <FnCardGrid cards={functionCards} />
+                        ) : (
+                          <div className="prose" dangerouslySetInnerHTML={{ __html: functionsHtml }} />
+                        )}
+                      </ExpandBlock>
+                    ) : (
+                      <AdminOnly>
+                        <EmptyExpandItem title={blockTitle3} documentId={unit.documentId} locale={locale} />
+                      </AdminOnly>
+                    )}
+                    {servicesHas ? (
+                      <ExpandBlock label={tr('Xidmətlər', locale)}>
+                        {serviceCards ? (
+                          <FnCardGrid cards={serviceCards} />
+                        ) : (
+                          <div className="prose" dangerouslySetInnerHTML={{ __html: servicesHtml }} />
+                        )}
+                      </ExpandBlock>
+                    ) : (
+                      <AdminOnly>
+                        <EmptyExpandItem title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
+                      </AdminOnly>
+                    )}
+                    {resultsHas ? (
+                      <ExpandBlock label={blockTitle5}>
+                        {unit.results ? (
+                          <div className="prose" dangerouslySetInnerHTML={{ __html: resultsHtml }} />
+                        ) : null}
+                        {hesabat.length ? (
+                          <>
+                            <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
+                            <DocList docs={hesabat} locale={locale} />
+                          </>
+                        ) : null}
+                      </ExpandBlock>
+                    ) : (
+                      <AdminOnly>
+                        <EmptyExpandItem title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                      </AdminOnly>
+                    )}
+                  </div>
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitle1} documentId={unit.documentId} locale={locale} tint={blockTint[0]} />
+                  <section className="un-block un-accordion-group">
+                    <AdminEditRow documentId={unit.documentId} locale={locale} />
+                    <div className="un-expand-group">
+                      <EmptyExpandItem title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem title={blockTitle3} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                    </div>
+                  </section>
                 </AdminOnly>
               )}
 
-              {/* ── Fəaliyyət sahəsi / Xidmətlər — hər sahə öz başlığını
-                  daşıyır (F4.8a), sual formaları silindi (F4.7a) ── */}
-              {block3Has ? (
-                <section className={blockClass(1)}>
-                  <AdminEditRow documentId={unit.documentId} locale={locale} />
-                  {unit.functions ? fieldBlock(unit.functions, functionsHtml, functionCards, blockTitle3) : null}
-                  {unit.services ? fieldBlock(unit.services, servicesHtml, serviceCards, tr('Xidmətlər', locale)) : null}
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock title={blockTitle3} documentId={unit.documentId} locale={locale} tint={blockTint[1]} />
-                </AdminOnly>
-              )}
-
-              {/* ── Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib) ── */}
+              {/* ── Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib).
+                  F4.10 — əvvəllər Fəaliyyət/Xidmətlər ilə Nəticələr arasında
+                  idi, akkordeon qrupunu ikiyə bölürdü; indi qrupdan SONRA. ── */}
               {block4Has ? (
-                <section className={blockClass(2)}>
+                <section className={blockClass('links')}>
                   <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
                   <div className="un-links">
                     {unit.links.map((l, i) => (
@@ -708,26 +784,7 @@ export default async function UnitPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={blockTint[2]} />
-                </AdminOnly>
-              )}
-
-              {/* ── Görülmüş işlər və nəticələr (F4.6d: mətn + varsa PDF-lər;
-                  F4.8a: mətn öz başlığını daşıyır, blokun ayrıca h2-si yoxdur) ── */}
-              {block5Has ? (
-                <section className={blockClass(3)}>
-                  <AdminEditRow documentId={unit.documentId} locale={locale} />
-                  {unit.results ? longText(unit.results, resultsHtml, blockTitle5) : null}
-                  {hesabat.length ? (
-                    <>
-                      <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
-                      <DocList docs={hesabat} locale={locale} />
-                    </>
-                  ) : null}
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock title={blockTitle5} documentId={unit.documentId} locale={locale} tint={blockTint[3]} />
+                  <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={tintByKey.links} />
                 </AdminOnly>
               )}
 
@@ -735,7 +792,7 @@ export default async function UnitPage({
                   varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz
                   qabığı şəkli), elan qısa/tarixli/şəkilsiz qalır (F4.5c). ── */}
               {block6Has ? (
-                <section className={blockClass(4)}>
+                <section className={blockClass('news')}>
                   <BlockTitle title={blockTitle6} documentId={unit.documentId} locale={locale} />
                   {articles.length ? (
                     <ul className="un-row-list">
@@ -771,7 +828,7 @@ export default async function UnitPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={blockTint[4]} />
+                  <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={tintByKey.news} />
                 </AdminOnly>
               )}
 
