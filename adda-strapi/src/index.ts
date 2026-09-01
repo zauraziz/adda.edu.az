@@ -3147,5 +3147,132 @@ export default {
       strapi.log.error('[seed] esasname seed xetasi: ' + (err as Error).message);
     }
 
+    // ── Nümunəvi məzmun — YALNIZ QARALAMA (F4.13) ─────────────────────────
+    //
+    // ƏHATƏ: YALNIZ `tehsil-innovasiyalari-ve-reqemsal-heller-merkezi`.
+    // Digər bölmələrin faktlarını bilmirik, ona görə TOXUNULMUR.
+    //
+    // `publish()` BURADA QƏSDƏN ÇAĞIRILMIR — yalnız `az` qaralamasına
+    // yazılır, Zaur admin paneldə oxuyub təsdiqləyəcək (bax CLAUDE.md
+    // "Strapi 5": `update()` yalnız qaralamaya yazır, adətən dərhal
+    // `publish()` izləyir — bu dəfə İSTİSNA, qəsdən).
+    //
+    // Sahə BOŞ DEYİLSƏ TOXUNULMUR (üstündən yazma yoxdur) — hər sahə ayrıca
+    // yoxlanılır, ona görə ikinci işləmə 0 dəyişiklik verir (idempotent).
+    //
+    // `establishedNote`/`vacancies` BURADA YAZILMIR — əmr nömrəsi/tarix və
+    // real açıq vəzifə mə'lumatı olmadan uydurmaq YANLIŞDIR.
+    try {
+      if (process.env.SAMPLE_CONTENT !== 'true') {
+        strapi.log.info('[seed] Numunevi mezmun (F4.13) oturuldu. Ucun SAMPLE_CONTENT=true.');
+      } else {
+        const TARGET_SLUG = 'tehsil-innovasiyalari-ve-reqemsal-heller-merkezi';
+
+        const units = (await strapi.documents('api::unit.unit').findMany({
+          locale: 'az',
+          filters: { slug: { $eq: TARGET_SLUG } },
+          status: 'draft',
+          fields: ['slug', 'strategy'],
+          populate: ['faq', 'receptionSlots'],
+          limit: 2,
+        })) as unknown as Array<{
+          documentId: string;
+          strategy?: string | null;
+          faq?: Array<{ question: string; answer: string }>;
+          receptionSlots?: Array<{ day: string; timeFrom?: string | null; timeTo?: string | null }>;
+        }>;
+
+        if (units.length !== 1) {
+          strapi.log.error('[seed] numunevi mezmun XETA - bolme tapilmadi: ' + TARGET_SLUG);
+        } else {
+          const u = units[0];
+          const data: Record<string, unknown> = {};
+          let written = 0;
+          let skipped = 0;
+
+          const SAMPLE_STRATEGY =
+            'Mərkəz Akademiyanın rəqəmsal transformasiya istiqamətində aşağıdakı öhdəlikləri daşıyır:\n\n' +
+            '- Tədris və inzibati proseslərin mərhələli şəkildə elektron formaya keçirilməsi\n' +
+            '- Rəqəmsal xidmətlərin vahid standart və istifadəçi təcrübəsi üzrə uyğunlaşdırılması\n' +
+            '- Struktur bölmələrin rəqəmsal bacarıqlarının artırılmasına metodiki dəstək\n' +
+            '- Akademiyanın rəsmi rəqəmsal təmsilçiliyinin aktual və dəqiq saxlanılması';
+
+          if (u.strategy) {
+            skipped++;
+            strapi.log.info('[seed] numunevi mezmun: strategy atlandi (doludur)');
+          } else {
+            data.strategy = SAMPLE_STRATEGY;
+            written++;
+            strapi.log.info('[seed] numunevi mezmun: strategy yazilir');
+          }
+
+          const SAMPLE_FAQ = [
+            {
+              question: 'Bölməmizin sayt səhifəsindəki məlumatı necə yeniləyə bilərik?',
+              answer:
+                'Yeniləmə tələbi ilə mərkəzə müraciət edin. Məzmun bölmənin özü tərəfindən təqdim olunur, mərkəz texniki yerləşdirməni və format uyğunluğunu təmin edir.',
+            },
+            {
+              question: 'Elektron tədris platformasında texniki problem yaranıb, kimə müraciət edim?',
+              answer:
+                'Platforma ilə bağlı texniki müraciətlər mərkəzə ünvanlanır. Müraciətdə problemin baş verdiyi səhifə və vaxt göstərilsə, həlli sürətlənir.',
+            },
+            {
+              question: 'Yeni rəqəmsal xidmət təklifim var, necə irəli sürə bilərəm?',
+              answer:
+                'Təklifi yazılı şəkildə mərkəzə təqdim edin. Təkliflər texniki reallaşdırıla bilmə və Akademiyanın rəqəmsal inkişaf istiqamətlərinə uyğunluq baxımından qiymətləndirilir.',
+            },
+            {
+              question: 'Tədris materiallarımı elektron formata keçirmək üçün dəstək ala bilərəmmi?',
+              answer:
+                'Bəli. Mərkəz müəllimlərə elektron tədris resurslarının hazırlanması və platformalarda yerləşdirilməsi üzrə metodiki dəstək göstərir.',
+            },
+            {
+              question: 'Rəqəmsal xidmətlərdən istifadə zamanı problem yaşayan tələbə hara müraciət etməlidir?',
+              answer: 'Tələbələr texniki problemlərlə bağlı mərkəzə birbaşa müraciət edə bilər.',
+            },
+          ];
+
+          if (u.faq && u.faq.length > 0) {
+            skipped++;
+            strapi.log.info('[seed] numunevi mezmun: faq atlandi (doludur)');
+          } else {
+            data.faq = SAMPLE_FAQ;
+            written++;
+            strapi.log.info('[seed] numunevi mezmun: faq yazilir (5 giris)');
+          }
+
+          const SAMPLE_RECEPTION_SLOTS = [
+            { day: 'cerşenbe_axsami', timeFrom: '10:00:00.000', timeTo: '12:00:00.000' },
+            { day: 'cume_axsami', timeFrom: '10:00:00.000', timeTo: '12:00:00.000' },
+          ];
+
+          if (u.receptionSlots && u.receptionSlots.length > 0) {
+            skipped++;
+            strapi.log.info('[seed] numunevi mezmun: receptionSlots atlandi (doludur)');
+          } else {
+            data.receptionSlots = SAMPLE_RECEPTION_SLOTS;
+            written++;
+            strapi.log.info('[seed] numunevi mezmun: receptionSlots yazilir (2 giris)');
+          }
+
+          if (Object.keys(data).length > 0) {
+            await strapi.documents('api::unit.unit').update({
+              documentId: u.documentId,
+              locale: 'az',
+              data: data as never,
+            });
+            // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
+          }
+
+          strapi.log.info(
+            '[seed] Numunevi mezmun (F4.13): ' + written + ' sahe yazildi, ' + skipped + ' atlandi.',
+          );
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] numunevi mezmun xetasi: ' + (err as Error).message);
+    }
+
   },
 };
