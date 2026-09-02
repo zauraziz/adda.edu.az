@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import type { Core } from '@strapi/strapi';
-import { readXlsxSheetCells, cellAt } from './lib/xlsx-lite';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -3276,121 +3276,63 @@ export default {
       strapi.log.error('[seed] numunevi mezmun xetasi: ' + (err as Error).message);
     }
 
-    // ── Tədris planı — proqramın kurs cədvəli (F5.1b, PLAN_SEED) ──────────
+    // ── Tədris planı — proqramın kurs cədvəli (F5.1b/F5.2b, PLAN_SEED) ─────
     //
-    // MƏNBƏ: `tools/migration/data/TP_6006006_DN_2026.xlsx` — orijinal
-    // `.xlsb` Node-da oxunmur (BIFF12 ikili format), bu mühitdə `soffice`
-    // yoxdur, ona görə Excel COM ilə BİR DƏFƏLİK `.xlsx`-ə çevrilib repoya
-    // qoyulub (bax tools/migration/.gitignore-dəki açıq istisna). Oxuma
-    // `./lib/xlsx-lite` ilədir — YENİ npm asılılığı ƏLAVƏ EDİLMƏYİB.
+    // MƏNBƏ: `tools/migration/data/tedris-plani-6006006-2026.json` — BİR
+    // DƏFƏLİK `tools/migration/data/TP_6006006_DN_2026.xlsx`-dən çıxarılıb
+    // (units.json ilə EYNİ format: düz massiv, JSON.stringify(...,null,2)).
+    // F5.2b-yə qədər burada 190 sətirlik əl ilə yazılmış OOXML oxuyucusu
+    // (`./lib/xlsx-lite`) var idi — SİLİNİB: paylaşılan sətir cədvəli/inline
+    // string kimi tələləri var, səhv səssiz keçə bilərdi. JSON isə plan
+    // dəyişəndə YENİDƏN YARADILIR (mənbə `.xlsx` arxiv kimi qalır, seed
+    // onu OXUMUR).
     //
     // ƏHATƏ: YALNIZ `deniz-naviqasiyasi-muhendisliyi` proqramı. `courses`
     // sahəsi DOLUDURSA TOXUNULMUR. `publish()` ÇAĞIRILMIR — yalnız `az`
     // qaralamasına yazılır.
     //
-    // YOXLAMA: fənn sayı/kredit cəmi/blok cəmləri sənədin ÖZ "00" blok
-    // sətirləri və "Cəmi:" sətri ilə RIYAZI OLARAQ TUTUŞDURULUR (xarici
-    // sabit deyil). F5.1 müzakirəsində Excel COM ilə əl ilə yoxlanıb: 46
-    // fənn/təcrübə sətri, kredit cəmi 240, blok cəmləri ÜF-B00=30,
-    // İF-B00=120, ATMF-B00=60 — bu `xlsx-lite` parseri EYNİ nəticəni verir
-    // (ilkin tapşırıqdakı "51" rəqəmi səhv imiş, Zaur təsdiqləyib).
+    // YOXLAMA: fənn sayı/kredit cəmi/blok cəmləri JSON-dakı `groupCode`-a
+    // görə RIYAZI OLARAQ YENİDƏN HESABLANIR (xarici sabit deyil) — F5.1-də
+    // Excel COM ilə əl ilə yoxlanıb: 46 fənn/təcrübə sətri, kredit cəmi 240,
+    // blok cəmləri ÜF-B00=30, İF-B00=120, ATMF-B00=60 (ilkin tapşırıqdakı
+    // "51" rəqəmi səhv imiş, Zaur təsdiqləyib).
     try {
       if (process.env.PLAN_SEED !== 'true') {
         strapi.log.info('[seed] Tedris plani (F5.1b) oturuldu. Ucun PLAN_SEED=true.');
       } else {
         const PLAN_PROGRAM_SLUG = 'deniz-naviqasiyasi-muhendisliyi';
-        const XLSX_PATH = path.join(
+        const PLAN_JSON_PATH = path.join(
           strapi.dirs.app.root,
           '..',
           'tools',
           'migration',
           'data',
-          'TP_6006006_DN_2026.xlsx',
+          'tedris-plani-6006006-2026.json',
         );
-        const SHEET_NAME = 'TP1 ';
-        // F5.1b: A=№ B=şifr F=ad V=kredit Y=ümumi saat AB=auditoriyadan
-        // kənar (selfStudy) AE=auditoriya (audit) AT=prerekvizit
-        // AX=korekvizit BB=semestr BF=həftəlik yük.
-        const COL = {
-          no: 'A',
-          code: 'B',
-          name: 'F',
-          credits: 'V',
-          totalHours: 'Y',
-          selfStudy: 'AB',
-          audit: 'AE',
-          prereq: 'AT',
-          coreq: 'AX',
-          semester: 'BB',
-          weeklyLoad: 'BF',
-        };
-        const DATA_START_ROW = 36;
-        const DATA_END_ROW = 90;
 
         interface PlanCourse {
           code?: string;
           name: string;
-          credits?: number;
-          totalHours?: number;
-          auditHours?: number;
-          selfStudyHours?: number;
-          semester?: string;
-          prerequisite?: string;
-          corequisite?: string;
-          weeklyLoad?: string;
-          groupCode?: string;
+          credits?: number | null;
+          totalHours?: number | null;
+          auditHours?: number | null;
+          selfStudyHours?: number | null;
+          semester?: string | null;
+          prerequisite?: string | null;
+          corequisite?: string | null;
+          weeklyLoad?: string | null;
+          groupCode?: string | null;
           isPractice: boolean;
         }
 
-        const toInt = (s: string | null): number | undefined => {
-          if (!s) return undefined;
-          const n = parseInt(s, 10);
-          return isNaN(n) ? undefined : n;
-        };
-
         try {
-          const cells = readXlsxSheetCells(XLSX_PATH, SHEET_NAME);
-          const courses: PlanCourse[] = [];
+          const courses: PlanCourse[] = JSON.parse(readFileSync(PLAN_JSON_PATH, 'utf8'));
+
           const blockTotals: Record<string, number> = {};
-          let group = '';
           let creditSum = 0;
-
-          for (let r = DATA_START_ROW; r <= DATA_END_ROW; r++) {
-            const A = cellAt(cells, COL.no, r);
-            const B = cellAt(cells, COL.code, r);
-            const F = cellAt(cells, COL.name, r);
-            const V = cellAt(cells, COL.credits, r);
-            if (!B && !F) continue;
-            // "1|2|3|4|5|6" tekrarlanan basliq setri - ATLANIR.
-            if (A === '1' && B === '2' && F === '3' && V === '4') continue;
-            // sifr "00" ile bitir -> blok basligidir, fenn deyil.
-            if (B && /00$/.test(B)) {
-              group = B;
-              blockTotals[B] = toInt(V) ?? 0;
-              continue;
-            }
-            // imza/cemi setri (sifr bos) - ATLANIR.
-            if (!B) continue;
-
-            const isPractice = /^(T-|YDA-)/.test(B);
-            const credits = toInt(V);
-            if (credits) creditSum += credits;
-
-            courses.push({
-              code: B,
-              name: F as string,
-              credits,
-              totalHours: toInt(cellAt(cells, COL.totalHours, r)),
-              auditHours: toInt(cellAt(cells, COL.audit, r)),
-              selfStudyHours: toInt(cellAt(cells, COL.selfStudy, r)),
-              semester: cellAt(cells, COL.semester, r) ?? undefined,
-              prerequisite: cellAt(cells, COL.prereq, r) ?? undefined,
-              corequisite: cellAt(cells, COL.coreq, r) ?? undefined,
-              weeklyLoad: cellAt(cells, COL.weeklyLoad, r) ?? undefined,
-              // T-/YDA- setirleri hec bir "00" bloka aid deyil - qrupsuz.
-              groupCode: isPractice ? undefined : group,
-              isPractice,
-            });
+          for (const c of courses) {
+            if (c.credits) creditSum += c.credits;
+            if (c.groupCode) blockTotals[c.groupCode] = (blockTotals[c.groupCode] ?? 0) + (c.credits ?? 0);
           }
 
           const EXPECTED_COUNT = 46;

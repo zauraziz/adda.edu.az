@@ -12,9 +12,10 @@ data/*
 !data/redirects.json
 !data/media.json
 
-# F5.1b — PLAN_SEED (adda-strapi/src/index.ts) bunu OXUYUR: Render-də
-# soffice/Excel yoxdur, ona görə .xlsb-dən BİR DƏFƏLİK çevrilmiş .xlsx
-# repoda qalmalıdır (mənbə .xlsb özü çevrilmir, girmir).
+# F5.1b/F5.2b — PLAN_SEED (adda-strapi/src/index.ts) OXUYUR:
+# tedris-plani-6006006-2026.json (units.json ilə eyni format). .xlsx ARXİV
+# kimi qalır (F5.2b-dən sonra seed onu artıq OXUMUR, silinmir).
+!data/tedris-plani-6006006-2026.json
 !data/TP_6006006_DN_2026.xlsx
 
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
