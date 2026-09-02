@@ -1,0 +1,49 @@
+{
+  "collectionName": "components_program_courses",
+  "info": {
+    "displayName": "Fənn",
+    "description": "Tədris planı sətri — bir fənn (F5.1).",
+    "icon": "book"
+  },
+  "options": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "credits": {
+      "type": "integer"
+    },
+    "totalHours": {
+      "type": "integer"
+    },
+    "auditHours": {
+      "type": "integer"
+    },
+    "selfStudyHours": {
+      "type": "integer"
+    },
+    "semester": {
+      "type": "string"
+    },
+    "prerequisite": {
+      "type": "string"
+    },
+    "corequisite": {
+      "type": "string"
+    },
+    "weeklyLoad": {
+      "type": "string"
+    },
+    "groupCode": {
+      "type": "string"
+    },
+    "isPractice": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

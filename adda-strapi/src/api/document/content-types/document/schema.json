@@ -69,6 +69,12 @@
       "relation": "manyToMany",
       "target": "api::unit.unit",
       "inversedBy": "documents"
+    },
+    "programs": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::program.program",
+      "inversedBy": "documents"
     }
   }
 }

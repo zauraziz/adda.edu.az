@@ -870,6 +870,7 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
       'api::document.document'
     > &
       Schema.Attribute.Private;
+    programs: Schema.Attribute.Relation<'manyToMany', 'api::program.program'>;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     titleEn: Schema.Attribute.String;
@@ -1547,6 +1548,36 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    careerPaths: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    code: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    competencies: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    conventions: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    courses: Schema.Attribute.Component<'program.course', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1563,6 +1594,10 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    documents: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::document.document'
+    >;
     durationYears: Schema.Attribute.Integer &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1575,6 +1610,30 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::program.program'
     >;
+    outcomes: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    overview: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    planYear: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    practiceNote: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'> &
       Schema.Attribute.Required &
@@ -1590,6 +1649,13 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    totalCredits: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    unit: Schema.Attribute.Relation<'manyToOne', 'api::unit.unit'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

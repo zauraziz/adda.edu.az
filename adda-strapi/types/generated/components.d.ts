@@ -104,6 +104,29 @@ export interface NavQuicklink extends Struct.ComponentSchema {
   };
 }
 
+export interface ProgramCourse extends Struct.ComponentSchema {
+  collectionName: 'components_program_courses';
+  info: {
+    description: 'T\u0259dris plan\u0131 s\u0259tri \u2014 bir f\u0259nn (F5.1).';
+    displayName: 'F\u0259nn';
+    icon: 'book';
+  };
+  attributes: {
+    auditHours: Schema.Attribute.Integer;
+    code: Schema.Attribute.String;
+    corequisite: Schema.Attribute.String;
+    credits: Schema.Attribute.Integer;
+    groupCode: Schema.Attribute.String;
+    isPractice: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    prerequisite: Schema.Attribute.String;
+    selfStudyHours: Schema.Attribute.Integer;
+    semester: Schema.Attribute.String;
+    totalHours: Schema.Attribute.Integer;
+    weeklyLoad: Schema.Attribute.String;
+  };
+}
+
 export interface StaffEducation extends Struct.ComponentSchema {
   collectionName: 'components_staff_educations';
   info: {
@@ -266,6 +289,7 @@ declare module '@strapi/strapi' {
       'nav.portal': NavPortal;
       'nav.portalcard': NavPortalcard;
       'nav.quicklink': NavQuicklink;
+      'program.course': ProgramCourse;
       'staff.education': StaffEducation;
       'staff.experience': StaffExperience;
       'staff.language': StaffLanguage;
