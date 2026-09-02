@@ -1141,6 +1141,67 @@ export async function getUnitAnnouncements(unitSlug: string, locale: Locale = 'a
   }
 }
 
+/** ── İxtisas detalı (/[locale]/ixtisaslar/[slug], F5.1) ── */
+
+/** F5.1a — `program.courses`, `program.course` komponentindən (localized DEYİL). */
+export interface ProgramCourse {
+  code: string | null;
+  name: string;
+  credits: number | null;
+  totalHours: number | null;
+  auditHours: number | null;
+  selfStudyHours: number | null;
+  semester: string | null;
+  prerequisite: string | null;
+  corequisite: string | null;
+  weeklyLoad: string | null;
+  groupCode: string | null;
+  isPractice: boolean;
+}
+
+export interface ProgramDetail {
+  documentId: string;
+  title: string;
+  slug: string;
+  degree: 'bachelor' | 'master' | 'phd';
+  durationYears: number | null;
+  description: string | null;
+  code: string | null;
+  planYear: number | null;
+  totalCredits: number | null;
+  overview: string | null;
+  outcomes: string | null;
+  competencies: string | null;
+  careerPaths: string | null;
+  conventions: string | null;
+  practiceNote: string | null;
+  faculty: FacultyRef | null;
+  unit: { slug: string; name: string } | null;
+  courses: ProgramCourse[];
+}
+
+export async function getProgramDetail(slug: string, locale: Locale = 'az'): Promise<ProgramDetail | null> {
+  const json = await strapiFetch<StrapiList<ProgramDetail>>('/programs', {
+    locale,
+    'filters[slug][$eq]': slug,
+    'pagination[pageSize]': 1,
+    'populate[faculty][fields][0]': 'name',
+    'populate[faculty][fields][1]': 'slug',
+    'populate[unit][fields][0]': 'name',
+    'populate[unit][fields][1]': 'slug',
+    'populate[courses]': true,
+  });
+  return json.data?.[0] ?? null;
+}
+
+/** İxtisasa bağlı sənədlər — `document.programs` çoxa-çox, `document` lokallaşdırılmayıb. */
+export async function getProgramDocuments(programSlug: string): Promise<UnitDocumentItem[]> {
+  return fetchAllPages<UnitDocumentItem>('/documents', {
+    'filters[programs][slug][$eq]': programSlug,
+    'populate[file]': true,
+  });
+}
+
 /** ── Rəhbərlik (/[locale]/rehberlik) ── */
 
 export interface LeaderPerson {

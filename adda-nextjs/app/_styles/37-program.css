@@ -1,0 +1,68 @@
+/* 37-program.css — /[locale]/ixtisaslar/[slug] (F5.1c)
+   Struktur bölmə səhifəsi ilə EYNİ dizayn dili (36-unit.css) — bu fayl
+   YALNIZ o səhifədə olmayan hissəni daşıyır: tədris planı cədvəli.
+   Navy #0B3D5C, qızılı #C9A961, Fraunces (başlıq) + Manrope (mətn). */
+
+/* ── Tədris planı: semestr qrupu ── */
+.pr-plan-group { margin: 0 0 24px; }
+.pr-plan-group:last-child { margin-bottom: 0; }
+
+/* F5.1c — mobildə üfüqi sürüşən cədvəl, ilk sütun (şifr+ad) sabit qalır ki,
+   sağa sürüşəndə hansı fənn olduğu itməsin. */
+.pr-plan-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+.pr-plan-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.pr-plan-table th,
+.pr-plan-table td {
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+.pr-plan-table th {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  background: var(--gray-50, #f8fafc);
+}
+.pr-plan-table td:nth-child(2) { white-space: normal; min-width: 220px; }
+.pr-plan-table tr:last-child td { border-bottom: none; }
+.pr-plan-table th:first-child,
+.pr-plan-table td:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--white);
+  box-shadow: 1px 0 0 var(--gray-200);
+}
+.pr-plan-table th:first-child { background: var(--gray-50, #f8fafc); }
+
+/* F5.1c — təcrübə sətirləri (isPractice) ayrıca işarələnir: qızılı sol xətt
+   + solğun fon, kredit/saat sütunları çox vaxt boş olur (mənbədə belədir). */
+.pr-plan-row--practice td { background: var(--gold-50, #fdf8ef); }
+.pr-plan-row--practice td:first-child { background: var(--gold-50, #fdf8ef); box-shadow: 2px 0 0 var(--gold-400); }
+
+.pr-plan-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--gold-700, #8a6d1f);
+  background: var(--gold-100);
+  border-radius: 999px;
+  white-space: nowrap;
+}
