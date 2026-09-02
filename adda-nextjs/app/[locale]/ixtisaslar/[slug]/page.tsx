@@ -39,6 +39,7 @@ import Footer from '../../../_components/Footer';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
+import { BlockTitle, AdminEditRow, EmptyBlock, EmptyExpandItem } from '../../../_components/AdminOnly';
 import { DocList } from '../../../_components/DocList';
 import {
   getProgramDetail,
@@ -46,7 +47,6 @@ import {
   getProgramSlugs,
   getMenu,
   withAzFallback,
-  STRAPI_URL,
   type ProgramDetail,
   type ProgramCourse,
   type SiteMenu,
@@ -87,104 +87,9 @@ function groupBySemester(courses: ProgramCourse[]): SemesterGroup[] {
     .sort((a, b) => semesterRank(a.semester) - semesterRank(b.semester));
 }
 
-function adminUrl(uid: string, documentId: string, locale: Locale): string {
-  return (
-    `${STRAPI_URL}/admin/content-manager/collection-types/${uid}/${documentId}` +
-    `?plugins[i18n][locale]=${locale}`
-  );
-}
-
-/** F4.3/F4.9b örnəyi — blok başlığı + admin sessiyasında kiçik "redaktə" keçidi. */
-function BlockTitle({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
-  return (
-    <div className="un-block-head">
-      <h2 className="un-block-title">{title}</h2>
-      <AdminOnly>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::program.program', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </AdminOnly>
-    </div>
-  );
-}
-
-function AdminEditRow({ documentId, locale }: { documentId: string; locale: Locale }) {
-  return (
-    <AdminOnly>
-      <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::program.program', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </div>
-    </AdminOnly>
-  );
-}
-
-/** F4.3/F4.9b örnəyi — boş blok, YALNIZ təsdiqlənmiş admin sessiyasında görünür. */
-function EmptyBlock({
-  title,
-  documentId,
-  locale,
-  tint,
-}: {
-  title: string;
-  documentId: string;
-  locale: Locale;
-  tint: boolean;
-}) {
-  return (
-    <section className={'un-block un-block--empty' + (tint ? ' un-block--tint' : '')}>
-      <div className="un-block-head">
-        <h2 className="un-block-title">
-          {title}
-          <span className="un-admin-badge">{tr('yalnız admin', locale)}</span>
-        </h2>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::program.program', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </div>
-      <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
-    </section>
-  );
-}
-
-/** F4.10 örnəyi — akkordeon qrupu (.un-expand-group) daxilində boş sahə, YALNIZ admin sessiyasında. */
-function EmptyExpandItem({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
-  return (
-    <div className="un-expand un-expand--empty">
-      <div className="un-expand-empty-head">
-        <span className="un-expand-empty-title">
-          {title}
-          <span className="un-admin-badge">{tr('yalnız admin', locale)}</span>
-        </span>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::program.program', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </div>
-      <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
-    </div>
-  );
-}
+// F5.2a — BlockTitle/AdminEditRow/EmptyBlock/EmptyExpandItem/adminUrl
+// artıq _components/AdminOnly.tsx-dədir (struktur/ixtisas səhifələri
+// eyni komponentləri idxal edir, iki nüsxə saxlanılmır).
 
 export async function generateStaticParams() {
   const out: Array<{ locale: string; slug: string }> = [];
@@ -399,7 +304,7 @@ export default async function ProgramPage({
                   tətbiq olunmur (bax .un-expand-group, 36-unit.css). ── */}
               {groupHas ? (
                 <section className="un-block un-accordion-group">
-                  <AdminEditRow documentId={program.documentId} locale={locale} />
+                  <AdminEditRow uid="api::program.program" documentId={program.documentId} locale={locale} />
                   <div className="un-expand-group">
                     {overviewHas ? (
                       <ExpandBlock label={blockTitleOverview}>
@@ -407,7 +312,7 @@ export default async function ProgramPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitleOverview} documentId={program.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::program.program" title={blockTitleOverview} documentId={program.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {outcomesHas ? (
@@ -416,7 +321,7 @@ export default async function ProgramPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitleOutcomes} documentId={program.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::program.program" title={blockTitleOutcomes} documentId={program.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {competenciesHas ? (
@@ -425,7 +330,7 @@ export default async function ProgramPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitleCompetencies} documentId={program.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::program.program" title={blockTitleCompetencies} documentId={program.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {careerPathsHas ? (
@@ -434,7 +339,7 @@ export default async function ProgramPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {conventionsHas ? (
@@ -443,7 +348,7 @@ export default async function ProgramPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitleConventions} documentId={program.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::program.program" title={blockTitleConventions} documentId={program.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                   </div>
@@ -451,13 +356,13 @@ export default async function ProgramPage({
               ) : (
                 <AdminOnly>
                   <section className="un-block un-accordion-group">
-                    <AdminEditRow documentId={program.documentId} locale={locale} />
+                    <AdminEditRow uid="api::program.program" documentId={program.documentId} locale={locale} />
                     <div className="un-expand-group">
-                      <EmptyExpandItem title={blockTitleOverview} documentId={program.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitleOutcomes} documentId={program.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitleCompetencies} documentId={program.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitleConventions} documentId={program.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::program.program" title={blockTitleOverview} documentId={program.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::program.program" title={blockTitleOutcomes} documentId={program.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::program.program" title={blockTitleCompetencies} documentId={program.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::program.program" title={blockTitleConventions} documentId={program.documentId} locale={locale} />
                     </div>
                   </section>
                 </AdminOnly>
@@ -468,7 +373,7 @@ export default async function ProgramPage({
                   ilk sütun sabit (bax .pr-plan-scroll, 37-program.css). ── */}
               {coursesHas ? (
                 <section className={'un-block' + (tintByKey.plan ? ' un-block--tint' : '')}>
-                  <BlockTitle title={blockTitlePlan} documentId={program.documentId} locale={locale} />
+                  <BlockTitle uid="api::program.program" title={blockTitlePlan} documentId={program.documentId} locale={locale} />
                   {program.practiceNote ? <p className="un-mission">{program.practiceNote}</p> : null}
                   {semesterGroups.map((g) => (
                     <div key={g.semester ?? '—'} className="pr-plan-group">
@@ -507,7 +412,7 @@ export default async function ProgramPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitlePlan} documentId={program.documentId} locale={locale} tint={tintByKey.plan} />
+                  <EmptyBlock uid="api::program.program" title={blockTitlePlan} documentId={program.documentId} locale={locale} tint={tintByKey.plan} />
                 </AdminOnly>
               )}
             </div>

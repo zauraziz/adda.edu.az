@@ -44,6 +44,7 @@ import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import StaffReveal from '../../../_components/StaffReveal';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
+import { adminUrl, BlockTitle, AdminEditRow, EmptyBlock, EmptyExpandItem } from '../../../_components/AdminOnly';
 import { DocList, DOC_CATEGORY_ORDER } from '../../../_components/DocList';
 import {
   getDepartmentBySlug,
@@ -57,7 +58,6 @@ import {
   getUnits,
   mediaUrl,
   docText,
-  STRAPI_URL,
   type SiteMenu,
   type UnitDetail,
   type UnitDocumentItem,
@@ -74,13 +74,6 @@ import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
 
 export const revalidate = 300;
-
-function adminUrl(uid: string, documentId: string, locale: Locale): string {
-  return (
-    `${STRAPI_URL}/admin/content-manager/collection-types/${uid}/${documentId}` +
-    `?plugins[i18n][locale]=${locale}`
-  );
-}
 
 export async function generateStaticParams() {
   const out: Array<{ locale: string; slug: string }> = [];
@@ -218,120 +211,9 @@ function buildCrumbs(unit: UnitDetail, allUnits: OrgUnit[]): { slug: string; nam
   return chain;
 }
 
-/** F4.3/F4.9b — blok başlığı + admin sessiyasında kiçik «redaktə» keçidi.
- * `<AdminOnly>` klient adasıdır (bax _components/AdminGate.tsx) — kimlik
- * yoxlaması `/api/identity/is-admin`-dən hidrasiyadan sonra gəlir, server
- * heç kimin admin olub-olmadığını bilmir (səhifə statik qalır). */
-function BlockTitle({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
-  return (
-    <div className="un-block-head">
-      <h2 className="un-block-title">{title}</h2>
-      <AdminOnly>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::unit.unit', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </AdminOnly>
-    </div>
-  );
-}
-
-/**
- * F4.8a — blok öz h2-sini göstərmir (hər sahə öz başlığını daşıyır, bax
- * longText/fieldBlock), amma admin redaktə keçidi itməməlidir. Sadəcə
- * sağa düzülmüş kiçik keçid sətri.
- */
-function AdminEditRow({ documentId, locale }: { documentId: string; locale: Locale }) {
-  return (
-    <AdminOnly>
-      <div className="un-block-head" style={{ justifyContent: 'flex-end' }}>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::unit.unit', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </div>
-    </AdminOnly>
-  );
-}
-
-/**
- * F4.3/F4.9b — boş blok, YALNIZ təsdiqlənmiş admin sessiyasında görünür
- * (bax çağıran yerdəki <AdminOnly> örtüyü). check:gaps hansı blokun boş
- * olduğunu terminalda deyir, amma səhifədə görünmürdü — məhz doldurulmalı
- * yerdə keçid yox idi. İctimai görünüşdə boş blok HEÇ VAXT render olunmur
- * (yuxarıdakı əsas qayda dəyişmir).
- *
- * F4.8e — real (dolu) blokla qarışmasın deyə BlockTitle-dan AYRI render
- * olunur: kəsik çərçivə/solğun fon (.un-block--empty, 36-unit.css) +
- * başlıqda «yalnız admin» nişanı.
- */
-function EmptyBlock({
-  title,
-  documentId,
-  locale,
-  tint,
-}: {
-  title: string;
-  documentId: string;
-  locale: Locale;
-  tint: boolean;
-}) {
-  return (
-    <section className={'un-block un-block--empty' + (tint ? ' un-block--tint' : '')}>
-      <div className="un-block-head">
-        <h2 className="un-block-title">
-          {title}
-          <span className="un-admin-badge">{tr('yalnız admin', locale)}</span>
-        </h2>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::unit.unit', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </div>
-      <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
-    </section>
-  );
-}
-
-/**
- * F4.10 — akkordeon qrupu (.un-expand-group) daxilində boş sahə, YALNIZ
- * admin sessiyasında (bax çağıran yerdəki <AdminOnly>). EmptyBlock-dan
- * fərqli olaraq bounded/tinted section YOX — qrupun içindəki digər
- * .un-expand kartları ilə eyni qabıqda, sadəcə kəsik sərhədlə (.un-expand--empty).
- */
-function EmptyExpandItem({ title, documentId, locale }: { title: string; documentId: string; locale: Locale }) {
-  return (
-    <div className="un-expand un-expand--empty">
-      <div className="un-expand-empty-head">
-        <span className="un-expand-empty-title">
-          {title}
-          <span className="un-admin-badge">{tr('yalnız admin', locale)}</span>
-        </span>
-        <a
-          className="un-admin-edit"
-          href={adminUrl('api::unit.unit', documentId, locale)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {tr('redaktə', locale)}
-        </a>
-      </div>
-      <p className="un-block-empty-note">{tr('Bu blok boşdur.', locale)}</p>
-    </div>
-  );
-}
+// F5.2a — BlockTitle/AdminEditRow/EmptyBlock/EmptyExpandItem/adminUrl
+// artıq _components/AdminOnly.tsx-dədir (struktur/ixtisas səhifələri
+// eyni komponentləri idxal edir, iki nüsxə saxlanılmır).
 
 // F4.10 — `about`/`functions`/`services`/`results` artıq VAHİD akkordeon
 // qrupudur (bax UnitPage-dəki un-expand-group), uzunluqdan asılı olmayaraq
@@ -785,7 +667,7 @@ export default async function UnitPage({
                   ləp (bax .un-mission), F4.10-un dörd sahəsinə daxil deyil. ── */}
               {missionHas ? (
                 <section className={blockClass('mission')}>
-                  <AdminEditRow documentId={unit.documentId} locale={locale} />
+                  <AdminEditRow uid="api::unit.unit" documentId={unit.documentId} locale={locale} />
                   <h2 className="un-block-title">{missionTitle}</h2>
                   <p className="un-mission">{unit.mission}</p>
                 </section>
@@ -800,7 +682,7 @@ export default async function UnitPage({
                   biri digərini bağlamır. ── */}
               {groupHas ? (
                 <section className="un-block un-accordion-group">
-                  <AdminEditRow documentId={unit.documentId} locale={locale} />
+                  <AdminEditRow uid="api::unit.unit" documentId={unit.documentId} locale={locale} />
                   <div className="un-expand-group">
                     {aboutHas ? (
                       <ExpandBlock label={blockTitle1}>
@@ -808,7 +690,7 @@ export default async function UnitPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::unit.unit" title={blockTitle1} documentId={unit.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {functionsHas ? (
@@ -821,7 +703,7 @@ export default async function UnitPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitle3} documentId={unit.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::unit.unit" title={blockTitle3} documentId={unit.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {servicesHas ? (
@@ -834,7 +716,7 @@ export default async function UnitPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::unit.unit" title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {resultsHas ? (
@@ -851,7 +733,7 @@ export default async function UnitPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::unit.unit" title={blockTitle5} documentId={unit.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                     {strategyHas ? (
@@ -860,7 +742,7 @@ export default async function UnitPage({
                       </ExpandBlock>
                     ) : (
                       <AdminOnly>
-                        <EmptyExpandItem title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
+                        <EmptyExpandItem uid="api::unit.unit" title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
                       </AdminOnly>
                     )}
                   </div>
@@ -868,13 +750,13 @@ export default async function UnitPage({
               ) : (
                 <AdminOnly>
                   <section className="un-block un-accordion-group">
-                    <AdminEditRow documentId={unit.documentId} locale={locale} />
+                    <AdminEditRow uid="api::unit.unit" documentId={unit.documentId} locale={locale} />
                     <div className="un-expand-group">
-                      <EmptyExpandItem title={blockTitle1} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitle3} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitle5} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::unit.unit" title={blockTitle1} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::unit.unit" title={blockTitle3} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::unit.unit" title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::unit.unit" title={blockTitle5} documentId={unit.documentId} locale={locale} />
+                      <EmptyExpandItem uid="api::unit.unit" title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
                     </div>
                   </section>
                 </AdminOnly>
@@ -885,7 +767,7 @@ export default async function UnitPage({
                   idi, akkordeon qrupunu ikiyə bölürdü; indi qrupdan SONRA. ── */}
               {block4Has ? (
                 <section className={blockClass('links')}>
-                  <BlockTitle title={blockTitle4} documentId={unit.documentId} locale={locale} />
+                  <BlockTitle uid="api::unit.unit" title={blockTitle4} documentId={unit.documentId} locale={locale} />
                   <div className="un-links">
                     {unit.links.map((l, i) => (
                       <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
@@ -897,14 +779,14 @@ export default async function UnitPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitle4} documentId={unit.documentId} locale={locale} tint={tintByKey.links} />
+                  <EmptyBlock uid="api::unit.unit" title={blockTitle4} documentId={unit.documentId} locale={locale} tint={tintByKey.links} />
                 </AdminOnly>
               )}
 
               {/* ── F4.11e/F4.13: Vakansiyalar — `unit.vacancies`, qısa siyahı. ── */}
               {vacanciesHas ? (
                 <section className={blockClass('vacancies')}>
-                  <BlockTitle title={blockTitleVacancies} documentId={unit.documentId} locale={locale} />
+                  <BlockTitle uid="api::unit.unit" title={blockTitleVacancies} documentId={unit.documentId} locale={locale} />
                   <ul className="un-vacancy-list">
                     {unit.vacancies.map((v, i) => (
                       <li key={i} className="un-vacancy-row">
@@ -916,7 +798,7 @@ export default async function UnitPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitleVacancies} documentId={unit.documentId} locale={locale} tint={tintByKey.vacancies} />
+                  <EmptyBlock uid="api::unit.unit" title={blockTitleVacancies} documentId={unit.documentId} locale={locale} tint={tintByKey.vacancies} />
                 </AdminOnly>
               )}
 
@@ -924,7 +806,7 @@ export default async function UnitPage({
                   (bax .un-expand-group, ExpandBlock hər sual üçün). ── */}
               {faqHas ? (
                 <section className={blockClass('faq')}>
-                  <BlockTitle title={blockTitleFaq} documentId={unit.documentId} locale={locale} />
+                  <BlockTitle uid="api::unit.unit" title={blockTitleFaq} documentId={unit.documentId} locale={locale} />
                   <div className="un-expand-group">
                     {unit.faq.map((f, i) => (
                       <ExpandBlock key={i} label={f.question}>
@@ -935,7 +817,7 @@ export default async function UnitPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitleFaq} documentId={unit.documentId} locale={locale} tint={tintByKey.faq} />
+                  <EmptyBlock uid="api::unit.unit" title={blockTitleFaq} documentId={unit.documentId} locale={locale} tint={tintByKey.faq} />
                 </AdminOnly>
               )}
 
@@ -944,7 +826,7 @@ export default async function UnitPage({
                   qabığı şəkli), elan qısa/tarixli/şəkilsiz qalır (F4.5c). ── */}
               {block6Has ? (
                 <section className={blockClass('news')}>
-                  <BlockTitle title={blockTitle6} documentId={unit.documentId} locale={locale} />
+                  <BlockTitle uid="api::unit.unit" title={blockTitle6} documentId={unit.documentId} locale={locale} />
                   {articles.length ? (
                     <ul className="un-row-list">
                       {articles.map((a) => {
@@ -979,7 +861,7 @@ export default async function UnitPage({
                 </section>
               ) : (
                 <AdminOnly>
-                  <EmptyBlock title={blockTitle6} documentId={unit.documentId} locale={locale} tint={tintByKey.news} />
+                  <EmptyBlock uid="api::unit.unit" title={blockTitle6} documentId={unit.documentId} locale={locale} tint={tintByKey.news} />
                 </AdminOnly>
               )}
 
