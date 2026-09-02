@@ -3370,34 +3370,84 @@ export default {
                   .join(', '),
             );
 
+            // F5.2c: skalyar sahələr (code/planYear/totalCredits/unit) EYNİ
+            // proqrama, EYNİ qaralamaya, hər biri AYRICA "boşdursa" yoxlaması ilə.
+            const PLAN_KAFEDRA_SLUG = 'deniz-naviqasiyasi-kafedrasi';
+
             const programs = (await strapi.documents('api::program.program').findMany({
               locale: 'az',
               filters: { slug: { $eq: PLAN_PROGRAM_SLUG } },
               status: 'draft',
-              fields: ['slug'],
-              populate: ['courses'],
+              fields: ['slug', 'code', 'planYear', 'totalCredits'],
+              populate: ['courses', 'unit'],
               limit: 2,
-            })) as unknown as Array<{ documentId: string; courses?: unknown[] }>;
+            })) as unknown as Array<{
+              documentId: string;
+              courses?: unknown[];
+              code?: string | null;
+              planYear?: number | null;
+              totalCredits?: number | null;
+              unit?: { documentId: string } | null;
+            }>;
 
             if (programs.length !== 1) {
               strapi.log.error('[seed] Tedris plani XETA - proqram tapilmadi: ' + PLAN_PROGRAM_SLUG);
             } else {
               const p = programs[0];
+              const data: Record<string, unknown> = {};
+
               if (p.courses && p.courses.length > 0) {
-                strapi.log.info(
-                  '[seed] Tedris plani atlandi (doludur, ' +
-                    p.courses.length +
-                    ' fenn movcuddur): ' +
-                    PLAN_PROGRAM_SLUG,
-                );
+                strapi.log.info('[seed] Tedris plani: courses atlandi (doludur, ' + p.courses.length + ' fenn).');
+              } else {
+                data.courses = courses;
+              }
+
+              if (p.code) {
+                strapi.log.info('[seed] Tedris plani: code atlandi (doludur).');
+              } else {
+                data.code = '6006006';
+              }
+
+              if (p.planYear) {
+                strapi.log.info('[seed] Tedris plani: planYear atlandi (doludur).');
+              } else {
+                data.planYear = 2026;
+              }
+
+              if (p.totalCredits) {
+                strapi.log.info('[seed] Tedris plani: totalCredits atlandi (doludur).');
+              } else {
+                data.totalCredits = EXPECTED_CREDIT_SUM;
+              }
+
+              if (p.unit) {
+                strapi.log.info('[seed] Tedris plani: unit atlandi (doludur).');
+              } else {
+                const units = (await strapi.documents('api::unit.unit').findMany({
+                  locale: 'az',
+                  filters: { slug: { $eq: PLAN_KAFEDRA_SLUG } },
+                  fields: ['slug'],
+                  limit: 2,
+                })) as unknown as Array<{ documentId: string }>;
+                if (units.length === 1) {
+                  data.unit = units[0].documentId;
+                } else {
+                  strapi.log.error('[seed] Tedris plani XETA - kafedra tapilmadi: ' + PLAN_KAFEDRA_SLUG);
+                }
+              }
+
+              if (Object.keys(data).length === 0) {
+                strapi.log.info('[seed] Tedris plani: hec bir sahe yazilmadi (hamisi doludur): ' + PLAN_PROGRAM_SLUG);
               } else {
                 await strapi.documents('api::program.program').update({
                   documentId: p.documentId,
                   locale: 'az',
-                  data: { courses } as never,
+                  data: data as never,
                 });
                 // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
-                strapi.log.info('[seed] Tedris plani yazildi (' + courses.length + ' fenn): ' + PLAN_PROGRAM_SLUG);
+                strapi.log.info(
+                  '[seed] Tedris plani yazildi (' + Object.keys(data).join(', ') + '): ' + PLAN_PROGRAM_SLUG,
+                );
               }
             }
           }
