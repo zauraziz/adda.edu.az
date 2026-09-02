@@ -61,9 +61,10 @@ const DEGREE_LABEL: Record<ProgramDetail['degree'], string> = {
   phd: 'Doktorantura',
 };
 
-// F5.1c — semestr sırası roman rəqəmlərlə, ƏLİFBA İLƏ YOX (VIII "V"-dən
-// əvvəl əlifba sırasına düşərdi). Semestri boş olan sətirlər (məs. üzmə
-// təcrübəsi sətirləri) sona düşür.
+// F5.1c/F5.3 — semestr sırası roman rəqəmlərlə, ƏLİFBA İLƏ YOX (VIII "V"-dən
+// əvvəl əlifba sırasına düşərdi). Semestri olmayan sətirlər (üzmə təcrübəsi)
+// bu qruplaşdırmaya heç DAXİL EDİLMİR — bax `swimPracticeCourses`, ayrıca
+// "Üzmə təcrübəsi" blokunda göstərilir.
 const SEMESTER_ORDER = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 function semesterRank(s: string | null): number {
   if (!s) return SEMESTER_ORDER.length;
@@ -72,18 +73,19 @@ function semesterRank(s: string | null): number {
 }
 
 interface SemesterGroup {
-  semester: string | null;
+  semester: string;
   courses: ProgramCourse[];
 }
+/** Çağıran YALNIZ `semester` doldurulmuş fənləri ötürməlidir (bax `swimPracticeCourses`). */
 function groupBySemester(courses: ProgramCourse[]): SemesterGroup[] {
   const map = new Map<string, ProgramCourse[]>();
   for (const c of courses) {
-    const key = c.semester ?? '';
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(c);
+    if (!c.semester) continue;
+    if (!map.has(c.semester)) map.set(c.semester, []);
+    map.get(c.semester)!.push(c);
   }
   return [...map.entries()]
-    .map(([semester, list]) => ({ semester: semester || null, courses: list }))
+    .map(([semester, list]) => ({ semester, courses: list }))
     .sort((a, b) => semesterRank(a.semester) - semesterRank(b.semester));
 }
 
@@ -137,6 +139,15 @@ export default async function ProgramPage({
 
   const coursesHas = Boolean(program.courses.length);
   const semesterGroups = coursesHas ? groupBySemester(program.courses) : [];
+  // F5.3 — semestri olmayan təcrübə sətirləri (T-B01..T-B04) ayrıca
+  // "Üzmə təcrübəsi" blokunda göstərilir, "Semestr müəyyən edilməyib"
+  // başlığı LƏĞV EDİLDİ. Semestri olan təcrübə (T-B05, VIII) öz
+  // semestrində qalır — bu filtrə düşmür.
+  const swimPracticeCourses = program.courses.filter((c) => c.isPractice && !c.semester);
+  // F5.3 — prerekvizit/korekvizit sütunları ŞƏRTİ: heç bir fənndə dəyər
+  // yoxdursa sütun ÜMUMİYYƏTLƏ göstərilmir (46 fənndə hazırda ikisi də boş).
+  const hasPrerequisite = program.courses.some((c) => c.prerequisite);
+  const hasCorequisite = program.courses.some((c) => c.corequisite);
 
   const blockTitleOverview = tr('Proqram haqqında', locale);
   const blockTitleOutcomes = tr('Təlim nəticələri', locale);
@@ -171,9 +182,10 @@ export default async function ProgramPage({
     tintCursor++;
   }
 
-  const sideHas = Boolean(
-    program.code || program.durationYears || program.totalCredits || program.unit || docs.length || program.planYear,
-  );
+  // F5.3 — şifr/dərəcə/müddət/kredit fakt zolağında onsuz da var (aşağıda,
+  // np-hero), yan paneldə TƏKRARLANMIR — orada YALNIZ kafedra keçidi,
+  // plan ili və sənədlər qalır.
+  const sideHas = Boolean(program.unit || docs.length || program.planYear);
 
   const factsHas = Boolean(program.degree || program.durationYears || program.totalCredits || program.code);
 
@@ -368,18 +380,19 @@ export default async function ProgramPage({
                 </AdminOnly>
               )}
 
-              {/* ── F5.1c: Tədris planı — akkordeon qrupundan AYRI blok,
-                  semestr üzrə qruplaşdırılıb. Mobildə üfüqi sürüşən cədvəl,
-                  ilk sütun sabit (bax .pr-plan-scroll, 37-program.css). ── */}
+              {/* ── F5.1c/F5.3: Tədris planı — akkordeon qrupundan AYRI blok,
+                  semestr üzrə qruplaşdırılıb. Saat "Cəmi/Auditoriya/Sərbəst"
+                  üç sütuna bölünüb, mobildə "Cəmi" ilk görünən sütundur,
+                  qalanı üfüqi sürüşmədədir (bax .pr-plan-scroll,
+                  37-program.css). Prerekvizit/korekvizit ŞƏRTİ göstərilir —
+                  heç bir fənndə dəyər yoxdursa sütun ÜMUMİYYƏTLƏ yoxdur. ── */}
               {coursesHas ? (
                 <section className={'un-block' + (tintByKey.plan ? ' un-block--tint' : '')}>
                   <BlockTitle uid="api::program.program" title={blockTitlePlan} documentId={program.documentId} locale={locale} />
                   {program.practiceNote ? <p className="un-mission">{program.practiceNote}</p> : null}
                   {semesterGroups.map((g) => (
-                    <div key={g.semester ?? '—'} className="pr-plan-group">
-                      <div className="un-sub-title">
-                        {g.semester ? tr('Semestr', locale) + ' ' + g.semester : tr('Semestr müəyyən edilməyib', locale)}
-                      </div>
+                    <div key={g.semester} className="pr-plan-group">
+                      <div className="un-sub-title">{tr('Semestr', locale) + ' ' + g.semester}</div>
                       <div className="pr-plan-scroll">
                         <table className="pr-plan-table">
                           <thead>
@@ -387,21 +400,29 @@ export default async function ProgramPage({
                               <th>{tr('Şifr', locale)}</th>
                               <th>{tr('Fənn', locale)}</th>
                               <th>{tr('Kredit', locale)}</th>
-                              <th>{tr('Saat', locale)}</th>
-                              <th>{tr('Prerekvizit', locale)}</th>
+                              <th>{tr('Cəmi', locale)}</th>
+                              <th>{tr('Auditoriya', locale)}</th>
+                              <th>{tr('Sərbəst', locale)}</th>
+                              {hasPrerequisite ? <th>{tr('Prerekvizit', locale)}</th> : null}
+                              {hasCorequisite ? <th>{tr('Korekvizit', locale)}</th> : null}
                             </tr>
                           </thead>
                           <tbody>
                             {g.courses.map((c, i) => (
                               <tr key={i} className={c.isPractice ? 'pr-plan-row--practice' : undefined}>
                                 <td>
-                                  {c.code}
-                                  {c.isPractice ? <span className="pr-plan-badge">{tr('Təcrübə', locale)}</span> : null}
+                                  <span className="pr-plan-code">
+                                    <span>{c.code}</span>
+                                    {c.isPractice ? <span className="pr-plan-badge">{tr('Təcrübə', locale)}</span> : null}
+                                  </span>
                                 </td>
                                 <td>{c.name}</td>
                                 <td>{c.credits ?? ''}</td>
                                 <td>{c.totalHours ?? ''}</td>
-                                <td>{c.prerequisite ?? ''}</td>
+                                <td>{c.auditHours ?? ''}</td>
+                                <td>{c.selfStudyHours ?? ''}</td>
+                                {hasPrerequisite ? <td>{c.prerequisite ?? ''}</td> : null}
+                                {hasCorequisite ? <td>{c.corequisite ?? ''}</td> : null}
                               </tr>
                             ))}
                           </tbody>
@@ -409,6 +430,26 @@ export default async function ProgramPage({
                       </div>
                     </div>
                   ))}
+
+                  {/* ── F5.3: Üzmə təcrübəsi — semestrsiz təcrübə sətirləri
+                      (T-B05 kimi semestrli təcrübə öz semestr qrupunda qalır,
+                      bura düşmür). ── */}
+                  {swimPracticeCourses.length ? (
+                    <div className="pr-plan-group">
+                      <div className="un-sub-title">{tr('Üzmə təcrübəsi', locale)}</div>
+                      <p className="pr-plan-swim-note">
+                        {tr(
+                          'STCW-78 (A-II/1, A-II/2) tələbinə uyğun olaraq təhsil müddəti ərzində 52 həftə üzmə təcrübəsi nəzərdə tutulub.',
+                          locale,
+                        )}
+                      </p>
+                      <ul className="pr-plan-swim-list">
+                        {swimPracticeCourses.map((c, i) => (
+                          <li key={i}>{c.name}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </section>
               ) : (
                 <AdminOnly>
@@ -419,34 +460,9 @@ export default async function ProgramPage({
 
             {sideHas ? (
               <aside className="un-side">
-                {program.code ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Şifr', locale)}</div>
-                    <p className="un-side-text">{program.code}</p>
-                  </div>
-                ) : null}
-
-                {program.degree ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Dərəcə', locale)}</div>
-                    <p className="un-side-text">{tr(DEGREE_LABEL[program.degree], locale)}</p>
-                  </div>
-                ) : null}
-
-                {program.durationYears ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Müddət', locale)}</div>
-                    <p className="un-side-text">{program.durationYears} {tr('il', locale)}</p>
-                  </div>
-                ) : null}
-
-                {program.totalCredits ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Kredit', locale)}</div>
-                    <p className="un-side-text">{program.totalCredits}</p>
-                  </div>
-                ) : null}
-
+                {/* F5.3 — şifr/dərəcə/müddət/kredit BURADAN ÇIXARILIB (fakt
+                    zolağında var, yuxarıda) — yan paneldə YALNIZ kafedra
+                    keçidi, sənədlər və plan ili qalır. */}
                 {program.unit ? (
                   <div>
                     <div className="un-sub-title">{tr('Kafedra', locale)}</div>

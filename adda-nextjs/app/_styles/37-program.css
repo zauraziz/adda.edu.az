@@ -53,9 +53,15 @@
 .pr-plan-row--practice td { background: var(--gold-50, #fdf8ef); }
 .pr-plan-row--practice td:first-child { background: var(--gold-50, #fdf8ef); box-shadow: 2px 0 0 var(--gold-400); }
 
+/* F5.3 — şifr + "Təcrübə" nişanı: AYRICA elementlər, `gap` ilə ayrılır (əvvəl
+   yapışıq görünürdü). Nişanın öz margin-i YOXDUR, boşluğu valideyn verir. */
+.pr-plan-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .pr-plan-badge {
   display: inline-block;
-  margin-left: 0.5rem;
   padding: 0.1rem 0.5rem;
   font-size: 0.68rem;
   font-weight: 700;
@@ -66,3 +72,27 @@
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* F5.3 — Üzmə təcrübəsi: semestrsiz təcrübə sətirləri cədvəldən çıxıb
+   ayrıca qeyd + siyahı kimi göstərilir (kredit/saat sütunları onsuz da
+   bu sətirlərdə həmişə boş idi). */
+.pr-plan-swim-note {
+  margin: 0 0 12px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-700, #33424f);
+}
+.pr-plan-swim-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pr-plan-swim-list li {
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-800);
+  background: var(--gold-50, #fdf8ef);
+  border-radius: 8px;
+}
+.pr-plan-swim-list li + li { margin-top: 0.4rem; }
