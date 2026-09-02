@@ -3459,5 +3459,105 @@ export default {
       strapi.log.error('[seed] tedris plani seed xetasi: ' + (err as Error).message);
     }
 
+    // ── İxtisas mətnləri — proqramın akkordeon mətnləri (F5.4, PROGRAM_TEXT_SEED) ──
+    //
+    // MƏNBƏ: `tools/migration/data/program-texts-6006006.json` (Zaur qoyub).
+    // Fayl PARSE OLUNUR, mətn koda köçürülmür — fayl mənbədir, burada mətn
+    // sabiti YOXDUR.
+    //
+    // Beş sahə: overview/competencies/careerPaths/practiceNote/conventions.
+    // Sahə BOŞ DEYİLSƏ TOXUNULMUR (üstündən yazma yoxdur). YALNIZ `az`
+    // qaralamasına — `publish()` BURADA ÇAĞIRILMIR.
+    //
+    // Tədris planı 2026-dan, bu mətnlər 2020-ci il Təhsil Proqramından —
+    // ziyarətçi hansı sənədə baxdığını bilsin deyə hər yazılan sahənin
+    // SONUNA JSON-dakı `sourceNote` ayrıca abzas kimi əlavə olunur
+    // (kursivsiz — sadə paraqraf, `\n\n` ilə ayrılıb).
+    try {
+      if (process.env.PROGRAM_TEXT_SEED !== 'true') {
+        strapi.log.info('[seed] Ixtisas metnleri (F5.4) oturuldu. Ucun PROGRAM_TEXT_SEED=true.');
+      } else {
+        const TEXT_JSON_PATH = path.join(
+          strapi.dirs.app.root,
+          '..',
+          'tools',
+          'migration',
+          'data',
+          'program-texts-6006006.json',
+        );
+
+        interface ProgramTextSeed {
+          programSlug: string;
+          sourceNote: string;
+          fields: {
+            overview?: string;
+            competencies?: string;
+            careerPaths?: string;
+            practiceNote?: string;
+            conventions?: string;
+          };
+        }
+        const TEXT_FIELD_KEYS = ['overview', 'competencies', 'careerPaths', 'practiceNote', 'conventions'] as const;
+
+        try {
+          const seed: ProgramTextSeed = JSON.parse(readFileSync(TEXT_JSON_PATH, 'utf8'));
+
+          const programs = (await strapi.documents('api::program.program').findMany({
+            locale: 'az',
+            filters: { slug: { $eq: seed.programSlug } },
+            status: 'draft',
+            fields: ['slug', ...TEXT_FIELD_KEYS],
+            limit: 2,
+          })) as unknown as Array<{ documentId: string } & Record<(typeof TEXT_FIELD_KEYS)[number], string | null>>;
+
+          if (programs.length !== 1) {
+            strapi.log.error('[seed] Ixtisas metnleri XETA - proqram tapilmadi: ' + seed.programSlug);
+          } else {
+            const p = programs[0];
+            const data: Record<string, unknown> = {};
+            let skipped = 0;
+
+            for (const key of TEXT_FIELD_KEYS) {
+              const raw = seed.fields[key];
+              if (!raw) continue; // JSON-da bu sahə yoxdur - tetiklenmir.
+              if (p[key]) {
+                skipped++;
+                strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' atlandi (doludur).');
+                continue;
+              }
+              const withNote = raw + '\n\n' + seed.sourceNote;
+              data[key] = withNote;
+              strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' yazilir (' + withNote.length + ' simvol).');
+            }
+
+            if (Object.keys(data).length === 0) {
+              strapi.log.info(
+                '[seed] Ixtisas metnleri: hec bir sahe yazilmadi (' + skipped + ' atlandi): ' + seed.programSlug,
+              );
+            } else {
+              await strapi.documents('api::program.program').update({
+                documentId: p.documentId,
+                locale: 'az',
+                data: data as never,
+              });
+              // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
+              strapi.log.info(
+                '[seed] Ixtisas metnleri yazildi (' +
+                  Object.keys(data).join(', ') +
+                  '), ' +
+                  skipped +
+                  ' atlandi: ' +
+                  seed.programSlug,
+              );
+            }
+          }
+        } catch (e) {
+          strapi.log.error('[seed] Ixtisas metnleri oxuma xetasi: ' + (e as Error).message);
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] ixtisas metnleri seed xetasi: ' + (err as Error).message);
+    }
+
   },
 };
