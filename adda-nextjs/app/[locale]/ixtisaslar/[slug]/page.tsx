@@ -64,6 +64,53 @@ const DEGREE_LABEL: Record<ProgramDetail['degree'], string> = {
   phd: 'Doktorantura',
 };
 
+// F5.5d — schema.org `educationalCredentialAwarded` VERİLƏN dərəcə/diplomun
+// ADI-dır ("Bakalavr"), `DEGREE_LABEL`-dəki təhsil PİLLƏSİ ADINDAN
+// ("Bakalavriat") FƏRQLİDİR — qarışdırılmasın.
+const EDU_CREDENTIAL_LABEL: Record<ProgramDetail['degree'], string> = {
+  bachelor: 'Bakalavr',
+  master: 'Magistr',
+  phd: 'Fəlsəfə doktoru',
+};
+
+/**
+ * F5.5d — schema.org Course strukturlaşdırılmış məlumatı. YALNIZ MÖVCUD
+ * proqram sahələrindən qurulur — boş sahə açarı JSON-LD-yə ÜMUMİYYƏTLƏ
+ * düşmür (məs. `totalCredits` boşdursa `numberOfCredits` yoxdur, "0" da
+ * yazılmır). `provider`/`hasCourseInstance` müəssisə haqqında SABİT
+ * faktlardır (heç bir CMS sahəsindən asılı deyil), ona görə HƏMİŞƏ var.
+ */
+function buildCourseJsonLd(program: ProgramDetail): Record<string, unknown> {
+  const jsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: program.title,
+    provider: {
+      '@type': 'Organization',
+      name: 'Azərbaycan Dövlət Dəniz Akademiyası',
+    },
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'full-time',
+    },
+  };
+  if (program.overview) {
+    // ilk abzas — boş sətirə qədər, markdown işarələri çıxarılıb (JSON-LD
+    // adi mətn gözləyir, HTML/markdown YOX).
+    const firstParagraph = program.overview
+      .split(/\r?\n\s*\r?\n/)[0]
+      .replace(/[#*_`>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (firstParagraph) jsonLd.description = firstParagraph;
+  }
+  if (program.code) jsonLd.courseCode = program.code;
+  if (program.degree) jsonLd.educationalCredentialAwarded = EDU_CREDENTIAL_LABEL[program.degree];
+  if (program.totalCredits) jsonLd.numberOfCredits = program.totalCredits;
+  if (program.durationYears) jsonLd.timeRequired = 'P' + program.durationYears + 'Y';
+  return jsonLd;
+}
+
 // F5.1c/F5.3 — semestr sırası roman rəqəmlərlə, ƏLİFBA İLƏ YOX (VIII "V"-dən
 // əvvəl əlifba sırasına düşərdi). Semestri olmayan sətirlər (üzmə təcrübəsi)
 // bu qruplaşdırmaya heç DAXİL EDİLMİR — bax `swimPracticeCourses`, ayrıca
@@ -278,6 +325,10 @@ export default async function ProgramPage({
 
   const notice = isFallback ? fallbackNotice(locale) : null;
 
+  // F5.5d — script içindəki `</script>`-ə bənzər ardıcıllıqları qırmaq üçün
+  // `<` işarəsi qaçırılır (Next.js-in öz JSON-LD nümunəsindəki qayda).
+  const courseJsonLd = JSON.stringify(buildCourseJsonLd(program)).replace(/</g, '\\u003c');
+
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
     prompt: tr('Düzəliş təklif et', locale),
@@ -317,6 +368,14 @@ export default async function ProgramPage({
 
   return (
     <>
+      {/* F5.5d — schema.org Course strukturlaşdırılmış məlumatı (bax
+          buildCourseJsonLd yuxarıda). AYRI səhifələrə BÖLÜNMÜR — vahid
+          axtarış niyyəti üçün bir güclü səhifə beş nazik səhifədən
+          üstündür, keçid çəkisi bölünməsin deyə. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: courseJsonLd }}
+      />
       <SiteHeaderStack menu={menu} locale={locale} />
       <main>
         <section className="np-hero">
