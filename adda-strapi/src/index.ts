@@ -3334,12 +3334,27 @@ export default {
 
         // Kod prefiksi -> blok/təcrübə (F5.8c). Mənbə fayllar ön-filtrlənib
         // (yalnız real kurslar), ona görə mövqe-əsaslı izləmə lazım deyil.
-        function deriveGroup(code: string | null | undefined): { groupCode: string | null; isPractice: boolean } {
+        // F5.8e — tanınmayan prefiks artıq SƏSSİZ deyil: davranış eynidir
+        // (fənn yenə `courses`-a yazılır, kredit cəminə düşür), amma indi
+        // xəbərdarlıq loqlanır ki, cəm-yoxlaması bunu gözdən qaçırdıqda
+        // (30+120+60 düz görünsə də konkret fənn heç bir bloka bağlanmasa)
+        // kim baxmalıdırsa görsün.
+        function deriveGroup(
+          code: string | null | undefined,
+          name: string,
+        ): { groupCode: string | null; isPractice: boolean } {
           const c = (code ?? '').toUpperCase();
           if (c.startsWith('ÜF') || c.startsWith('ÜSF')) return { groupCode: 'ÜF-B00', isPractice: false };
           if (c.startsWith('İF')) return { groupCode: 'İF-B00', isPractice: false };
           if (c.startsWith('ATMF')) return { groupCode: 'ATMF-B00', isPractice: false };
           if (c.startsWith('T') || c.startsWith('YDA')) return { groupCode: null, isPractice: true };
+          strapi.log.warn(
+            '[seed] taninmayan fenn prefiksi: ' +
+              (code ?? '(kod yoxdur)') +
+              ' - ' +
+              name +
+              ' (hec bir bloka baglanmadi, yalniz umumi cemde sayilir)',
+          );
           return { groupCode: null, isPractice: false };
         }
 
@@ -3365,7 +3380,7 @@ export default {
             const programSlug = planFile.programSlug;
 
             const courses = planFile.courses.map((c) => {
-              const { groupCode, isPractice } = deriveGroup(c.code);
+              const { groupCode, isPractice } = deriveGroup(c.code, c.name);
               return {
                 code: c.code ?? null,
                 name: c.name,
@@ -3384,9 +3399,17 @@ export default {
 
             const blockTotals: Record<string, number> = {};
             let creditSum = 0;
+            let orphanCount = 0;
             for (const c of courses) {
               if (c.credits) creditSum += c.credits;
               if (c.groupCode) blockTotals[c.groupCode] = (blockTotals[c.groupCode] ?? 0) + (c.credits ?? 0);
+              if (!c.groupCode && !c.isPractice) orphanCount++;
+            }
+
+            if (orphanCount > 0) {
+              strapi.log.warn(
+                '[seed] ' + programSlug + ': ' + orphanCount + ' fenn hec bir bloka baglanmadi (yuxarida siyahilanib)',
+              );
             }
 
             const expectedCount = planFile.meta.expectedCourseCount;
