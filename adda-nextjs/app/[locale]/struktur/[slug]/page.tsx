@@ -46,6 +46,7 @@ import StaffReveal from '../../../_components/StaffReveal';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
 import { adminUrl, BlockTitle, AdminEditRow, EmptyBlock, EmptyExpandItem } from '../../../_components/AdminOnly';
 import { DocList, DOC_CATEGORY_ORDER } from '../../../_components/DocList';
+import { unitType } from '@/lib/unit-type';
 import {
   getDepartmentBySlug,
   getDepartmentSlugs,
@@ -178,23 +179,10 @@ function buildReceptionRows(slots: ReceptionSlot[], locale: Locale): ReceptionRo
   return rows;
 }
 
-// F4.7a — başlıqlar bölmə adının sonluğundan törəyən tipdən qurulur (Mərkəz/
-// Mərkəzin, Kafedra/Kafedranın və s.). CLAUDE.md-dəki azLower MƏCBURİdir —
-// sadə toLowerCase() 'I'/'İ' hərflərini səhv çevirir. Uyğunluq yoxdursa
-// (məs. "Elmi Şura" — "şurası" YOX, çılpaq "Şura") tip sözü yazılmır.
-const azLower = (s: string) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
-const UNIT_TYPE_SUFFIXES: { suffix: string; nom: string; gen: string }[] = [
-  { suffix: 'mərkəzi', nom: 'Mərkəz', gen: 'Mərkəzin' },
-  { suffix: 'kafedrası', nom: 'Kafedra', gen: 'Kafedranın' },
-  { suffix: 'şöbəsi', nom: 'Şöbə', gen: 'Şöbənin' },
-  { suffix: 'fakültəsi', nom: 'Fakültə', gen: 'Fakültənin' },
-  { suffix: 'şurası', nom: 'Şura', gen: 'Şuranın' },
-  { suffix: 'kolleci', nom: 'Kollec', gen: 'Kollecin' },
-];
-function unitType(name: string): { nom: string; gen: string } | null {
-  const lower = azLower(name);
-  return UNIT_TYPE_SUFFIXES.find((t) => lower.endsWith(t.suffix)) ?? null;
-}
+// F4.7a/F5.11 — başlıqlar bölmə adının sonluğundan törəyən tipdən qurulur
+// (Mərkəz/Mərkəzin, Kafedra/Kafedranın və s.). `unitType`/`UNIT_TYPE_SUFFIXES`
+// `kafedralar/page.tsx` ilə PAYLAŞILIR (bax lib/unit-type.ts) — suffiks
+// siyahısı TƏKRARLANMASIN deyə buradan çıxarılıb.
 
 /** `unit.parent` yalnız BİR səviyyə gəlir — tam ata zənciri düz siyahıdan qurulur. */
 function buildCrumbs(unit: UnitDetail, allUnits: OrgUnit[]): { slug: string; name: string }[] {

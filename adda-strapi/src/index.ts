@@ -463,6 +463,39 @@ const SEED = {
                 "url": "/fakulteler/gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
               }
             ]
+          },
+          {
+            "title": "Kafedralar",
+            "links": [
+              {
+                "label": "Tətbiqi mexanika kafedrası",
+                "url": "/struktur/tetbiqi-mexanika-kafedrasi"
+              },
+              {
+                "label": "Gəmi energetik qurğuları kafedrası",
+                "url": "/struktur/gemi-energetik-qurgulari-kafedrasi"
+              },
+              {
+                "label": "Gəmi elektroavtomatikası kafedrası",
+                "url": "/struktur/gemi-elektroavtomatikasi-kafedrasi"
+              },
+              {
+                "label": "Dəniz naviqasiyası kafedrası",
+                "url": "/struktur/deniz-naviqasiyasi-kafedrasi"
+              },
+              {
+                "label": "Gəmiqayırma və gəmi təmiri kafedrası",
+                "url": "/struktur/gemiqayirma-ve-gemi-temiri-kafedrasi"
+              },
+              {
+                "label": "İngilis dili kafedrası",
+                "url": "/struktur/ingilis-dili-kafedrasi"
+              },
+              {
+                "label": "Humanitar fənlər kafedrası",
+                "url": "/struktur/humanitar-fenler-kafedrasi"
+              }
+            ]
           }
         ]
       },
