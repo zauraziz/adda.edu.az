@@ -30,11 +30,12 @@ import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/35-leadership.css';
+import '../../_styles/38-kafedra.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import { getMenu, getLeadership, mediaUrl, type SiteMenu, type LeadershipUnit } from '@/lib/strapi';
+import { getMenu, getLeadership, type SiteMenu, type LeadershipUnit } from '@/lib/strapi';
 import { unitType } from '@/lib/unit-type';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -62,45 +63,19 @@ function personName(u: LeadershipUnit): string {
   return u.head?.displayName?.trim() || u.head?.name?.trim() || '';
 }
 
-/** Fotosuz kartlar üçün monoqram. */
-function initials(full: string): string {
-  const parts = full.split(/\s+/).filter(Boolean);
-  if (!parts.length) return '—';
-  const first = parts[0]?.[0] ?? '';
-  const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : '';
-  return (first + last).toUpperCase();
-}
-
-function KafedraCard({
-  unit,
-  facultyName,
-  locale,
-}: {
-  unit: LeadershipUnit;
-  facultyName: string | null;
-  locale: Locale;
-}) {
+function KafedraCard({ unit, locale }: { unit: LeadershipUnit; locale: Locale }) {
   const head = unit.head;
   const headName = head ? personName(unit) : '';
-  const photo = head ? mediaUrl(head.photo) : null;
-  // Rəhbəri olmayan kafedra da göstərilir — monoqram bu halda kafedranın
-  // öz adından qurulur ki, plaket boş qalmasın.
-  const monoSource = headName || unit.name;
 
   return (
-    <li className="ld-card">
-      <Link href={`/${locale}/struktur/${unit.slug}`} className="ld-plate">
-        {photo ? (
-          <img className="ld-photo" src={photo} alt="" loading="lazy" />
-        ) : (
-          <span className="ld-mono" aria-hidden="true">
-            {initials(monoSource)}
-          </span>
-        )}
-      </Link>
+    // F5.12 — foto/monoqram sahəsi (`.ld-plate`) və fakültə adı sətri
+    // (`.ld-unit`) BURADAN silinib; qruplaşdırma (FacultyGroup başlığı)
+    // TOXUNULMAYIB. `.ld-card`/`.ld-plate` rehberlik səhifəsi ilə ORTAQ
+    // sinifdir (35-leadership.css) — ona görə bu kart `.kf-card` (səhifəyə
+    // xas, 38-kafedra.css) işlədir, `.ld-card` YOX.
+    <li className="kf-card">
       <div className="ld-body">
-        {facultyName ? <div className="ld-unit">{facultyName}</div> : null}
-        <Link href={`/${locale}/struktur/${unit.slug}`} className="ld-name">
+        <Link href={`/${locale}/struktur/${unit.slug}`} className="ld-name kf-card-hit">
           {unit.name}
         </Link>
         {head ? (
@@ -118,17 +93,7 @@ function KafedraCard({
   );
 }
 
-function FacultyGroup({
-  title,
-  units,
-  facultyName,
-  locale,
-}: {
-  title: string;
-  units: LeadershipUnit[];
-  facultyName: string | null;
-  locale: Locale;
-}) {
+function FacultyGroup({ title, units, locale }: { title: string; units: LeadershipUnit[]; locale: Locale }) {
   if (!units.length) return null;
   return (
     <section className="ld-group">
@@ -136,7 +101,7 @@ function FacultyGroup({
         <h2 className="ld-h2">{title}</h2>
         <ul className="ld-grid">
           {units.map((u) => (
-            <KafedraCard key={u.slug} unit={u} facultyName={facultyName} locale={locale} />
+            <KafedraCard key={u.slug} unit={u} locale={locale} />
           ))}
         </ul>
       </div>
@@ -192,7 +157,6 @@ export default async function KafedraListPage({ params }: { params: Promise<{ lo
               key={g.parentSlug}
               title={g.facultyName ?? tr('Digər kafedralar', locale)}
               units={g.units}
-              facultyName={g.facultyName}
               locale={locale}
             />
           ))

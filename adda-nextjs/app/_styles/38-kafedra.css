@@ -1,0 +1,34 @@
+/* 38-kafedra.css — /[locale]/kafedralar (F5.12)
+
+   Qəsdən `.ld-card`/`.ld-plate`-dən (35-leadership.css) AYRI sinif adları
+   işlədir: o siniflər rehberlik səhifəsi ilə ORTAQDIR, oradakı foto plaketi
+   burada silinib, ona görə paylaşılan qaydanı dəyişmək rehberlikdəki
+   fotoları da aparardı. */
+
+.kf-card {
+  position: relative;
+  display: block;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid rgba(11, 61, 92, 0.1);
+  border-radius: 14px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.kf-card:hover {
+  border-color: rgba(201, 169, 97, 0.55);
+  box-shadow: 0 10px 28px rgba(11, 61, 92, 0.09);
+}
+
+/* Foto/monoqram sahəsi getdikdən sonra kartın klikləmə sahəsi azalmasın
+   deyə ad keçidi bütün kartı örtür ("stretched link"). "Kafedra haqqında"
+   keçidi eyni ünvana aparır, örtüyün ÜSTÜNDƏ qalır ki, öz hover-i işləsin. */
+.kf-card-hit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.kf-card .ld-more {
+  position: relative;
+  z-index: 2;
+}
