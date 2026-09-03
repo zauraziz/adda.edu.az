@@ -12,15 +12,19 @@ data/*
 !data/redirects.json
 !data/media.json
 
-# F5.1b/F5.2b — PLAN_SEED (adda-strapi/src/index.ts) OXUYUR:
-# tedris-plani-6006006-2026.json (units.json ilə eyni format). .xlsx ARXİV
-# kimi qalır (F5.2b-dən sonra seed onu artıq OXUMUR, silinmir).
+# F5.1b/F5.2b/F5.8c — PLAN_SEED (adda-strapi/src/index.ts) OXUYUR (hər
+# proqram üçün ayrıca `tedris-plani-*.json`, F5.8c-dən qovluq gəzilir).
+# .xlsx ARXİV kimi qalır (F5.2b-dən sonra seed onu artıq OXUMUR, silinmir).
 !data/tedris-plani-6006006-2026.json
+!data/tedris-plani-6006012-2026.json
 !data/TP_6006006_DN_2026.xlsx
 
-# F5.4/F5.7 — PROGRAM_TEXT_SEED (adda-strapi/src/index.ts) OXUYUR.
+# F5.4/F5.7/F5.8c — PROGRAM_TEXT_SEED (adda-strapi/src/index.ts) OXUYUR
+# (hər proqram üçün ayrıca `program-texts-*.json`/`program-outcomes-*.json`,
+# F5.8c-dən qovluq gəzilir).
 !data/program-texts-6006006.json
 !data/program-outcomes-6006006.json
+!data/program-texts-6006012.json
 
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML

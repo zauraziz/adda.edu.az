@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import path from 'node:path';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import type { Core } from '@strapi/strapi';
 
 /**
@@ -3276,101 +3276,147 @@ export default {
       strapi.log.error('[seed] numunevi mezmun xetasi: ' + (err as Error).message);
     }
 
-    // ── Tədris planı — proqramın kurs cədvəli (F5.1b/F5.2b, PLAN_SEED) ─────
+    // ── Tədris planı — proqramın kurs cədvəli (F5.1b/F5.2b/F5.8c, PLAN_SEED) ─
     //
-    // MƏNBƏ: `tools/migration/data/tedris-plani-6006006-2026.json` — BİR
-    // DƏFƏLİK `tools/migration/data/TP_6006006_DN_2026.xlsx`-dən çıxarılıb
-    // (units.json ilə EYNİ format: düz massiv, JSON.stringify(...,null,2)).
-    // F5.2b-yə qədər burada 190 sətirlik əl ilə yazılmış OOXML oxuyucusu
-    // (`./lib/xlsx-lite`) var idi — SİLİNİB: paylaşılan sətir cədvəli/inline
-    // string kimi tələləri var, səhv səssiz keçə bilərdi. JSON isə plan
-    // dəyişəndə YENİDƏN YARADILIR (mənbə `.xlsx` arxiv kimi qalır, seed
-    // onu OXUMUR).
+    // MƏNBƏ: `tools/migration/data/tedris-plani-*.json` — hər proqram üçün
+    // AYRICA fayl. F5.8c-dən etibarən BÜTÜN uyğun fayllar `readdirSync` ilə
+    // TAPILIR (tək proqrama hardcode olunmuş fayl yolu YOXDUR) — hər faylın
+    // öz `programSlug`-ı ilə uyğun proqram tapılır, hər biri AYRICA
+    // try/catch-də (biri uğursuz olsa digərini bloklamasın). Bu, F5.9+ üçün
+    // də hazır infrastrukturdur.
     //
-    // ƏHATƏ: YALNIZ `deniz-naviqasiyasi-muhendisliyi` proqramı. `courses`
-    // sahəsi DOLUDURSA TOXUNULMUR. `publish()` ÇAĞIRILMIR — yalnız `az`
-    // qaralamasına yazılır.
+    // Kanonik format (F5.8c): { programSlug, meta: { code, planYear,
+    // totalCredits, studyForm, expectedCourseCount, expectedBlocks,
+    // kafedraSlug }, courses: [{ no, code, name, credit, total, selfstudy,
+    // audit, prereq, coreq, semester, weekly }] }. `groupCode`/`isPractice`
+    // JSON-da SAXLANMIR — kod prefiksindən BURADA törədilir (bax
+    // `deriveGroup`) — köhnə mövqe-əsaslı "00"-sətir-başlığı izləməsinin
+    // YERİNƏ, çünki bəzi mənbə faylları artıq ön-filtrlənib, block-header
+    // sətirləri yoxdur.
     //
-    // YOXLAMA: fənn sayı/kredit cəmi/blok cəmləri JSON-dakı `groupCode`-a
-    // görə RIYAZI OLARAQ YENİDƏN HESABLANIR (xarici sabit deyil) — F5.1-də
-    // Excel COM ilə əl ilə yoxlanıb: 46 fənn/təcrübə sətri, kredit cəmi 240,
-    // blok cəmləri ÜF-B00=30, İF-B00=120, ATMF-B00=60 (ilkin tapşırıqdakı
-    // "51" rəqəmi səhv imiş, Zaur təsdiqləyib).
+    // `courses` sahəsi DOLUDURSA TOXUNULMUR. `publish()` ÇAĞIRILMIR — yalnız
+    // `az` qaralamasına yazılır.
+    //
+    // YOXLAMA: fənn sayı/kredit cəmi/blok cəmləri HƏR FAYLIN ÖZ `meta`-sına
+    // qarşı yoxlanılır (sabit dəyər yazılmır).
     try {
       if (process.env.PLAN_SEED !== 'true') {
         strapi.log.info('[seed] Tedris plani (F5.1b) oturuldu. Ucun PLAN_SEED=true.');
       } else {
-        const PLAN_PROGRAM_SLUG = 'deniz-naviqasiyasi-muhendisliyi';
-        const PLAN_JSON_PATH = path.join(
-          strapi.dirs.app.root,
-          '..',
-          'tools',
-          'migration',
-          'data',
-          'tedris-plani-6006006-2026.json',
-        );
+        const PLAN_DATA_DIR = path.join(strapi.dirs.app.root, '..', 'tools', 'migration', 'data');
 
-        interface PlanCourse {
-          code?: string;
+        interface PlanCourseRaw {
+          code?: string | null;
           name: string;
-          credits?: number | null;
-          totalHours?: number | null;
-          auditHours?: number | null;
-          selfStudyHours?: number | null;
+          credit?: number | null;
+          total?: number | null;
+          selfstudy?: number | null;
+          audit?: number | null;
+          prereq?: string | null;
+          coreq?: string | null;
           semester?: string | null;
-          prerequisite?: string | null;
-          corequisite?: string | null;
-          weeklyLoad?: string | null;
-          groupCode?: string | null;
-          isPractice: boolean;
+          weekly?: number | string | null;
         }
 
-        // F5.8a — JSON indi `{ meta, courses }`-dır (əvvəl düz massiv idi).
-        // `meta.studyForm` YENİ oxunur; qalan `meta` sahələri (gözlənilən
-        // yoxlama cəmləri) hələ İSTİFADƏ OLUNMUR — F5.8c-də (çoxfayllı
-        // gəzinti ilə birgə) qoşulacaq, hələlik EXPECTED_* sabitləri qalır.
         interface PlanSeedFile {
-          meta: { programSlug: string; studyForm?: 'eyani' | 'qiyabi' };
-          courses: PlanCourse[];
+          programSlug: string;
+          meta: {
+            code?: string;
+            planYear?: number;
+            totalCredits?: number;
+            studyForm?: string;
+            expectedCourseCount?: number;
+            expectedBlocks?: Record<string, number>;
+            kafedraSlug?: string;
+          };
+          courses: PlanCourseRaw[];
         }
 
+        // Kod prefiksi -> blok/təcrübə (F5.8c). Mənbə fayllar ön-filtrlənib
+        // (yalnız real kurslar), ona görə mövqe-əsaslı izləmə lazım deyil.
+        function deriveGroup(code: string | null | undefined): { groupCode: string | null; isPractice: boolean } {
+          const c = (code ?? '').toUpperCase();
+          if (c.startsWith('ÜF') || c.startsWith('ÜSF')) return { groupCode: 'ÜF-B00', isPractice: false };
+          if (c.startsWith('İF')) return { groupCode: 'İF-B00', isPractice: false };
+          if (c.startsWith('ATMF')) return { groupCode: 'ATMF-B00', isPractice: false };
+          if (c.startsWith('T') || c.startsWith('YDA')) return { groupCode: null, isPractice: true };
+          return { groupCode: null, isPractice: false };
+        }
+
+        // F5.8a/c — `studyForm` dil DEYİL, fakt (schema.json localized:false).
+        // Mənbə fayllar diakritikli (`əyani`) və ASCII (`eyani`) yaza bilər.
+        function normalizeStudyForm(v: string | undefined): 'eyani' | 'qiyabi' | null {
+          if (!v) return null;
+          if (v === 'eyani' || v === 'əyani') return 'eyani';
+          if (v === 'qiyabi' || v === 'qiyabı') return 'qiyabi';
+          return null;
+        }
+
+        let planFiles: string[] = [];
         try {
-          const planFile: PlanSeedFile = JSON.parse(readFileSync(PLAN_JSON_PATH, 'utf8'));
-          const courses = planFile.courses;
+          planFiles = readdirSync(PLAN_DATA_DIR).filter((f) => /^tedris-plani-.*\.json$/.test(f));
+        } catch (e) {
+          strapi.log.error('[seed] Tedris plani XETA - data qovlugu oxuna bilmedi: ' + (e as Error).message);
+        }
 
-          const blockTotals: Record<string, number> = {};
-          let creditSum = 0;
-          for (const c of courses) {
-            if (c.credits) creditSum += c.credits;
-            if (c.groupCode) blockTotals[c.groupCode] = (blockTotals[c.groupCode] ?? 0) + (c.credits ?? 0);
-          }
+        for (const fileName of planFiles) {
+          try {
+            const planFile: PlanSeedFile = JSON.parse(readFileSync(path.join(PLAN_DATA_DIR, fileName), 'utf8'));
+            const programSlug = planFile.programSlug;
 
-          const EXPECTED_COUNT = 46;
-          const EXPECTED_CREDIT_SUM = 240;
-          const EXPECTED_BLOCKS: Record<string, number> = {
-            'ÜF-B00': 30,
-            'İF-B00': 120,
-            'ATMF-B00': 60,
-          };
+            const courses = planFile.courses.map((c) => {
+              const { groupCode, isPractice } = deriveGroup(c.code);
+              return {
+                code: c.code ?? null,
+                name: c.name,
+                credits: c.credit ?? null,
+                totalHours: c.total ?? null,
+                auditHours: c.audit ?? null,
+                selfStudyHours: c.selfstudy ?? null,
+                semester: c.semester ?? null,
+                prerequisite: c.prereq ?? null,
+                corequisite: c.coreq ?? null,
+                weeklyLoad: c.weekly !== null && c.weekly !== undefined ? String(c.weekly) : null,
+                groupCode,
+                isPractice,
+              };
+            });
 
-          const errors: string[] = [];
-          if (courses.length !== EXPECTED_COUNT) {
-            errors.push('fenn sayi ' + courses.length + ' (gozlenilen ' + EXPECTED_COUNT + ')');
-          }
-          if (creditSum !== EXPECTED_CREDIT_SUM) {
-            errors.push('kredit cemi ' + creditSum + ' (gozlenilen ' + EXPECTED_CREDIT_SUM + ')');
-          }
-          for (const [code, expected] of Object.entries(EXPECTED_BLOCKS)) {
-            if (blockTotals[code] !== expected) {
-              errors.push('blok ' + code + ' cemi ' + (blockTotals[code] ?? '-') + ' (gozlenilen ' + expected + ')');
+            const blockTotals: Record<string, number> = {};
+            let creditSum = 0;
+            for (const c of courses) {
+              if (c.credits) creditSum += c.credits;
+              if (c.groupCode) blockTotals[c.groupCode] = (blockTotals[c.groupCode] ?? 0) + (c.credits ?? 0);
             }
-          }
 
-          if (errors.length > 0) {
-            strapi.log.error('[seed] Tedris plani XETA - yoxlama uygun gelmir, YAZILMIR: ' + errors.join('; '));
-          } else {
+            const expectedCount = planFile.meta.expectedCourseCount;
+            const expectedCreditSum = planFile.meta.totalCredits;
+            const expectedBlocks = planFile.meta.expectedBlocks ?? {};
+
+            const errors: string[] = [];
+            if (expectedCount != null && courses.length !== expectedCount) {
+              errors.push('fenn sayi ' + courses.length + ' (gozlenilen ' + expectedCount + ')');
+            }
+            if (expectedCreditSum != null && creditSum !== expectedCreditSum) {
+              errors.push('kredit cemi ' + creditSum + ' (gozlenilen ' + expectedCreditSum + ')');
+            }
+            for (const [code, expected] of Object.entries(expectedBlocks)) {
+              if (blockTotals[code] !== expected) {
+                errors.push('blok ' + code + ' cemi ' + (blockTotals[code] ?? '-') + ' (gozlenilen ' + expected + ')');
+              }
+            }
+
+            if (errors.length > 0) {
+              strapi.log.error(
+                '[seed] Tedris plani XETA (' + fileName + ') - yoxlama uygun gelmir, YAZILMIR: ' + errors.join('; '),
+              );
+              continue;
+            }
+
             strapi.log.info(
-              '[seed] Tedris plani yoxlama OK: ' +
+              '[seed] Tedris plani yoxlama OK (' +
+                fileName +
+                '): ' +
                 courses.length +
                 ' fenn, kredit cemi ' +
                 creditSum +
@@ -3380,13 +3426,9 @@ export default {
                   .join(', '),
             );
 
-            // F5.2c: skalyar sahələr (code/planYear/totalCredits/unit) EYNİ
-            // proqrama, EYNİ qaralamaya, hər biri AYRICA "boşdursa" yoxlaması ilə.
-            const PLAN_KAFEDRA_SLUG = 'deniz-naviqasiyasi-kafedrasi';
-
             const programs = (await strapi.documents('api::program.program').findMany({
               locale: 'az',
-              filters: { slug: { $eq: PLAN_PROGRAM_SLUG } },
+              filters: { slug: { $eq: programSlug } },
               status: 'draft',
               fields: ['slug', 'code', 'planYear', 'totalCredits', 'studyForm'],
               populate: ['courses', 'unit'],
@@ -3402,77 +3444,78 @@ export default {
             }>;
 
             if (programs.length !== 1) {
-              strapi.log.error('[seed] Tedris plani XETA - proqram tapilmadi: ' + PLAN_PROGRAM_SLUG);
+              strapi.log.error('[seed] Tedris plani XETA (' + fileName + ') - proqram tapilmadi: ' + programSlug);
+              continue;
+            }
+
+            const p = programs[0];
+            const data: Record<string, unknown> = {};
+
+            if (p.courses && p.courses.length > 0) {
+              strapi.log.info('[seed] Tedris plani: courses atlandi (doludur, ' + p.courses.length + ' fenn).');
             } else {
-              const p = programs[0];
-              const data: Record<string, unknown> = {};
+              data.courses = courses;
+            }
 
-              if (p.courses && p.courses.length > 0) {
-                strapi.log.info('[seed] Tedris plani: courses atlandi (doludur, ' + p.courses.length + ' fenn).');
-              } else {
-                data.courses = courses;
-              }
+            if (p.code) {
+              strapi.log.info('[seed] Tedris plani: code atlandi (doludur).');
+            } else if (planFile.meta.code) {
+              data.code = planFile.meta.code;
+            }
 
-              if (p.code) {
-                strapi.log.info('[seed] Tedris plani: code atlandi (doludur).');
-              } else {
-                data.code = '6006006';
-              }
+            if (p.planYear) {
+              strapi.log.info('[seed] Tedris plani: planYear atlandi (doludur).');
+            } else if (planFile.meta.planYear) {
+              data.planYear = planFile.meta.planYear;
+            }
 
-              if (p.planYear) {
-                strapi.log.info('[seed] Tedris plani: planYear atlandi (doludur).');
-              } else {
-                data.planYear = 2026;
-              }
+            if (p.totalCredits) {
+              strapi.log.info('[seed] Tedris plani: totalCredits atlandi (doludur).');
+            } else if (expectedCreditSum != null) {
+              data.totalCredits = expectedCreditSum;
+            }
 
-              if (p.totalCredits) {
-                strapi.log.info('[seed] Tedris plani: totalCredits atlandi (doludur).');
-              } else {
-                data.totalCredits = EXPECTED_CREDIT_SUM;
-              }
+            const normalizedStudyForm = normalizeStudyForm(planFile.meta.studyForm);
+            if (p.studyForm) {
+              strapi.log.info('[seed] Tedris plani: studyForm atlandi (doludur).');
+            } else if (!normalizedStudyForm) {
+              strapi.log.info('[seed] Tedris plani: studyForm atlandi (JSON meta-da yoxdur).');
+            } else {
+              data.studyForm = normalizedStudyForm;
+            }
 
-              // F5.8a — `studyForm` dil DEYİL, fakt (schema.json localized:false).
-              if (p.studyForm) {
-                strapi.log.info('[seed] Tedris plani: studyForm atlandi (doludur).');
-              } else if (!planFile.meta.studyForm) {
-                strapi.log.info('[seed] Tedris plani: studyForm atlandi (JSON meta-da yoxdur).');
+            if (p.unit) {
+              strapi.log.info('[seed] Tedris plani: unit atlandi (doludur).');
+            } else if (!planFile.meta.kafedraSlug) {
+              strapi.log.info('[seed] Tedris plani: unit atlandi (JSON meta-da kafedraSlug yoxdur).');
+            } else {
+              const units = (await strapi.documents('api::unit.unit').findMany({
+                locale: 'az',
+                filters: { slug: { $eq: planFile.meta.kafedraSlug } },
+                fields: ['slug'],
+                limit: 2,
+              })) as unknown as Array<{ documentId: string }>;
+              if (units.length === 1) {
+                data.unit = units[0].documentId;
               } else {
-                data.studyForm = planFile.meta.studyForm;
-              }
-
-              if (p.unit) {
-                strapi.log.info('[seed] Tedris plani: unit atlandi (doludur).');
-              } else {
-                const units = (await strapi.documents('api::unit.unit').findMany({
-                  locale: 'az',
-                  filters: { slug: { $eq: PLAN_KAFEDRA_SLUG } },
-                  fields: ['slug'],
-                  limit: 2,
-                })) as unknown as Array<{ documentId: string }>;
-                if (units.length === 1) {
-                  data.unit = units[0].documentId;
-                } else {
-                  strapi.log.error('[seed] Tedris plani XETA - kafedra tapilmadi: ' + PLAN_KAFEDRA_SLUG);
-                }
-              }
-
-              if (Object.keys(data).length === 0) {
-                strapi.log.info('[seed] Tedris plani: hec bir sahe yazilmadi (hamisi doludur): ' + PLAN_PROGRAM_SLUG);
-              } else {
-                await strapi.documents('api::program.program').update({
-                  documentId: p.documentId,
-                  locale: 'az',
-                  data: data as never,
-                });
-                // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
-                strapi.log.info(
-                  '[seed] Tedris plani yazildi (' + Object.keys(data).join(', ') + '): ' + PLAN_PROGRAM_SLUG,
-                );
+                strapi.log.error('[seed] Tedris plani XETA - kafedra tapilmadi: ' + planFile.meta.kafedraSlug);
               }
             }
+
+            if (Object.keys(data).length === 0) {
+              strapi.log.info('[seed] Tedris plani: hec bir sahe yazilmadi (hamisi doludur): ' + programSlug);
+            } else {
+              await strapi.documents('api::program.program').update({
+                documentId: p.documentId,
+                locale: 'az',
+                data: data as never,
+              });
+              // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
+              strapi.log.info('[seed] Tedris plani yazildi (' + Object.keys(data).join(', ') + '): ' + programSlug);
+            }
+          } catch (e) {
+            strapi.log.error('[seed] Tedris plani oxuma xetasi (' + fileName + '): ' + (e as Error).message);
           }
-        } catch (e) {
-          strapi.log.error('[seed] Tedris plani oxuma xetasi: ' + (e as Error).message);
         }
       }
     } catch (err) {
@@ -3499,74 +3542,88 @@ export default {
       'humanitar-fenler-kafedrasi': 'gemi-suruculuyu-fakultesi',
     };
 
-    // ── İxtisas mətnləri — proqramın akkordeon mətnləri (F5.4, PROGRAM_TEXT_SEED) ──
+    // ── İxtisas mətnləri — proqramın akkordeon mətnləri (F5.4/F5.7/F5.8c, PROGRAM_TEXT_SEED) ──
     //
-    // MƏNBƏ: `tools/migration/data/program-texts-6006006.json` (Zaur qoyub).
-    // Fayl PARSE OLUNUR, mətn koda köçürülmür — fayl mənbədir, burada mətn
-    // sabiti YOXDUR.
+    // MƏNBƏ: `tools/migration/data/program-texts-*.json` VƏ
+    // `program-outcomes-*.json` — F5.8c-dən etibarən BÜTÜN uyğun fayllar
+    // `readdirSync` ilə TAPILIR (tək proqrama hardcode olunmuş fayl yolu
+    // YOXDUR), hər faylın öz `programSlug`-ı ilə uyğun proqram tapılır.
+    // Fayllar PARSE OLUNUR, mətn koda köçürülmür — fayl mənbədir.
     //
-    // Beş sahə: overview/competencies/careerPaths/practiceNote/conventions.
-    // Sahə BOŞ DEYİLSƏ TOXUNULMUR (üstündən yazma yoxdur). YALNIZ `az`
-    // qaralamasına — `publish()` BURADA ÇAĞIRILMIR.
+    // `fields` obyektindəki AÇARLAR GENERİKDİR (sabit siyahı deyil) — hansı
+    // sxem sahəsi mövcuddursa (overview/outcomes/competencies/careerPaths/
+    // conventions/practiceNote) o yazılır. Fayllar arasında fərq ola bilər:
+    // bəzi proqramlar (6006006) mətnləri VƏ outcomes-u AYRI fayllarda verir,
+    // bəziləri (6006012) hamısını TƏK faylda birləşdirir. Sahə BOŞ DEYİLSƏ
+    // TOXUNULMUR. YALNIZ `az` qaralamasına — `publish()` BURADA ÇAĞIRILMIR.
     //
-    // Tədris planı 2026-dan, bu mətnlər 2020-ci il Təhsil Proqramından —
-    // ziyarətçi hansı sənədə baxdığını bilsin deyə hər yazılan sahənin
-    // SONUNA JSON-dakı `sourceNote` ayrıca abzas kimi əlavə olunur
-    // (kursivsiz — sadə paraqraf, `\n\n` ilə ayrılıb).
+    // Hər yazılan sahənin SONUNA JSON-dakı qeyd ayrıca abzas kimi əlavə
+    // olunur (`\n\n` ilə ayrılıb): `outcomes` üçün `sourceNoteOutcomes`
+    // (mövcuddursa) yoxsa `sourceNote`, qalan sahələr üçün həmişə `sourceNote`.
     try {
       if (process.env.PROGRAM_TEXT_SEED !== 'true') {
         strapi.log.info('[seed] Ixtisas metnleri (F5.4) oturuldu. Ucun PROGRAM_TEXT_SEED=true.');
       } else {
-        const TEXT_JSON_PATH = path.join(
-          strapi.dirs.app.root,
-          '..',
-          'tools',
-          'migration',
-          'data',
-          'program-texts-6006006.json',
-        );
+        const TEXT_DATA_DIR = path.join(strapi.dirs.app.root, '..', 'tools', 'migration', 'data');
 
-        interface ProgramTextSeed {
+        const ALL_TEXT_KEYS = [
+          'overview',
+          'outcomes',
+          'competencies',
+          'careerPaths',
+          'conventions',
+          'practiceNote',
+        ] as const;
+        type TextKey = (typeof ALL_TEXT_KEYS)[number];
+
+        interface ProgramTextSeedFile {
           programSlug: string;
           sourceNote: string;
-          fields: {
-            overview?: string;
-            competencies?: string;
-            careerPaths?: string;
-            practiceNote?: string;
-            conventions?: string;
-          };
+          sourceNoteOutcomes?: string;
+          fields: Partial<Record<TextKey, string>>;
         }
-        const TEXT_FIELD_KEYS = ['overview', 'competencies', 'careerPaths', 'practiceNote', 'conventions'] as const;
 
+        let textFiles: string[] = [];
         try {
-          const seed: ProgramTextSeed = JSON.parse(readFileSync(TEXT_JSON_PATH, 'utf8'));
+          textFiles = readdirSync(TEXT_DATA_DIR).filter(
+            (f) => /^program-texts-.*\.json$/.test(f) || /^program-outcomes-.*\.json$/.test(f),
+          );
+        } catch (e) {
+          strapi.log.error('[seed] Ixtisas metnleri XETA - data qovlugu oxuna bilmedi: ' + (e as Error).message);
+        }
 
-          const programs = (await strapi.documents('api::program.program').findMany({
-            locale: 'az',
-            filters: { slug: { $eq: seed.programSlug } },
-            status: 'draft',
-            fields: ['slug', ...TEXT_FIELD_KEYS],
-            populate: {
-              faculty: { fields: ['slug'] },
-              unit: { fields: ['slug'] },
-            },
-            limit: 2,
-          })) as unknown as Array<
-            { documentId: string; faculty?: { documentId: string } | null; unit?: { documentId: string; slug: string } | null } & Record<
-              (typeof TEXT_FIELD_KEYS)[number],
-              string | null
-            >
-          >;
+        for (const fileName of textFiles) {
+          try {
+            const seed: ProgramTextSeedFile = JSON.parse(readFileSync(path.join(TEXT_DATA_DIR, fileName), 'utf8'));
 
-          if (programs.length !== 1) {
-            strapi.log.error('[seed] Ixtisas metnleri XETA - proqram tapilmadi: ' + seed.programSlug);
-          } else {
+            const programs = (await strapi.documents('api::program.program').findMany({
+              locale: 'az',
+              filters: { slug: { $eq: seed.programSlug } },
+              status: 'draft',
+              fields: ['slug', ...ALL_TEXT_KEYS],
+              populate: {
+                faculty: { fields: ['slug'] },
+                unit: { fields: ['slug'] },
+              },
+              limit: 2,
+            })) as unknown as Array<
+              {
+                documentId: string;
+                faculty?: { documentId: string } | null;
+                unit?: { documentId: string; slug: string } | null;
+              } & Record<TextKey, string | null>
+            >;
+
+            if (programs.length !== 1) {
+              strapi.log.error('[seed] Ixtisas metnleri XETA (' + fileName + ') - proqram tapilmadi: ' + seed.programSlug);
+              continue;
+            }
+
             const p = programs[0];
             const data: Record<string, unknown> = {};
             let skipped = 0;
 
-            for (const key of TEXT_FIELD_KEYS) {
+            for (const key of ALL_TEXT_KEYS) {
               const raw = seed.fields[key];
               if (!raw) continue; // JSON-da bu sahə yoxdur - tetiklenmir.
               if (p[key]) {
@@ -3574,13 +3631,14 @@ export default {
                 strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' atlandi (doludur).');
                 continue;
               }
-              const withNote = raw + '\n\n' + seed.sourceNote;
+              const note = key === 'outcomes' && seed.sourceNoteOutcomes ? seed.sourceNoteOutcomes : seed.sourceNote;
+              const withNote = raw + '\n\n' + note;
               data[key] = withNote;
               strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' yazilir (' + withNote.length + ' simvol).');
             }
 
             // F5.5b/F5.6 — `faculty` sxemdə var, bu proqramda boş ola bilər.
-            // KAFEDRA_FACULTY sabitindən (bax aşağıda) tapılır — `unit.parent`
+            // KAFEDRA_FACULTY sabitindən (yuxarıda) tapılır — `unit.parent`
             // zənciri ARTIQ GƏZİLMİR, birbaşa kafedranın öz slug-ı ilə axtarılır.
             if (p.faculty) {
               strapi.log.info('[seed] Ixtisas metnleri: faculty atlandi (doludur).');
@@ -3622,66 +3680,9 @@ export default {
                   seed.programSlug,
               );
             }
+          } catch (e) {
+            strapi.log.error('[seed] Ixtisas metnleri oxuma xetasi (' + fileName + '): ' + (e as Error).message);
           }
-        } catch (e) {
-          strapi.log.error('[seed] Ixtisas metnleri oxuma xetasi: ' + (e as Error).message);
-        }
-
-        // F5.7 — `outcomes`, AYRICA fayldan (F5.4-də yazılmayıb). YENİ flag
-        // yoxdur, eyni PROGRAM_TEXT_SEED bayrağı ilə işləyir. Öz `sourceNote`-u
-        // var — mövcud beş sahənin qeydindən FƏRQLİDİR ("xülasə" olduğunu
-        // göstərir), ona görə ayrıca JSON/ayrıca try (biri uğursuz olsa
-        // digərini bloklamasın).
-        try {
-          const OUTCOMES_JSON_PATH = path.join(
-            strapi.dirs.app.root,
-            '..',
-            'tools',
-            'migration',
-            'data',
-            'program-outcomes-6006006.json',
-          );
-
-          interface ProgramOutcomesSeed {
-            programSlug: string;
-            sourceNote: string;
-            fields: { outcomes?: string };
-          }
-          const outcomesSeed: ProgramOutcomesSeed = JSON.parse(readFileSync(OUTCOMES_JSON_PATH, 'utf8'));
-
-          if (!outcomesSeed.fields.outcomes) {
-            strapi.log.info('[seed] Ixtisas metnleri: outcomes JSON-da yoxdur, atlanir.');
-          } else {
-            const outcomePrograms = (await strapi.documents('api::program.program').findMany({
-              locale: 'az',
-              filters: { slug: { $eq: outcomesSeed.programSlug } },
-              status: 'draft',
-              fields: ['slug', 'outcomes'],
-              limit: 2,
-            })) as unknown as Array<{ documentId: string; outcomes: string | null }>;
-
-            if (outcomePrograms.length !== 1) {
-              strapi.log.error(
-                '[seed] Ixtisas metnleri XETA - proqram tapilmadi (outcomes): ' + outcomesSeed.programSlug,
-              );
-            } else {
-              const op = outcomePrograms[0];
-              if (op.outcomes) {
-                strapi.log.info('[seed] Ixtisas metnleri: outcomes atlandi (doludur).');
-              } else {
-                const withNote = outcomesSeed.fields.outcomes + '\n\n' + outcomesSeed.sourceNote;
-                await strapi.documents('api::program.program').update({
-                  documentId: op.documentId,
-                  locale: 'az',
-                  data: { outcomes: withNote } as never,
-                });
-                // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
-                strapi.log.info('[seed] Ixtisas metnleri: outcomes yazilir (' + withNote.length + ' simvol).');
-              }
-            }
-          }
-        } catch (e) {
-          strapi.log.error('[seed] Ixtisas metnleri (outcomes) oxuma xetasi: ' + (e as Error).message);
         }
       }
     } catch (err) {
