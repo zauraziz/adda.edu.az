@@ -3459,6 +3459,26 @@ export default {
       strapi.log.error('[seed] tedris plani seed xetasi: ' + (err as Error).message);
     }
 
+    // F5.6 — kafedra -> fakültə uyğunluğu, EXPLICIT sabit (F3.26-dakı
+    // DEPT_UNIT_MAP nümunəsi ilə). Slug uyğunluğu (unit.slug === faculty.slug)
+    // TƏSADÜFİ DEYİL — akademiyada cəmi 2 fakültə var, hər ikisi (`unit` VƏ
+    // `faculty` content type-ları) EYNİ kanonik addan yaradılıb (bax
+    // tools/migration/data/extracted/faculty.json). Yeni fakültə əlavə
+    // olunarsa BURA da ƏL İLƏ əlavə edilməlidir.
+    //
+    // EYNİ sabit `adda-nextjs/lib/strapi.ts`-də (page.tsx-in `facultyDisplay`
+    // geri dönüşü üçün) TƏKRARLANIB — adda-strapi və adda-nextjs AYRI
+    // layihələrdir (import mümkün deyil), dəyişəndə HƏR İKİSİ yenilənməlidir.
+    const KAFEDRA_FACULTY: Record<string, string> = {
+      'tetbiqi-mexanika-kafedrasi': 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi',
+      'gemi-energetik-qurgulari-kafedrasi': 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi',
+      'gemi-elektroavtomatikasi-kafedrasi': 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi',
+      'deniz-naviqasiyasi-kafedrasi': 'gemi-suruculuyu-fakultesi',
+      'gemiqayirma-ve-gemi-temiri-kafedrasi': 'gemi-suruculuyu-fakultesi',
+      'ingilis-dili-kafedrasi': 'gemi-suruculuyu-fakultesi',
+      'humanitar-fenler-kafedrasi': 'gemi-suruculuyu-fakultesi',
+    };
+
     // ── İxtisas mətnləri — proqramın akkordeon mətnləri (F5.4, PROGRAM_TEXT_SEED) ──
     //
     // MƏNBƏ: `tools/migration/data/program-texts-6006006.json` (Zaur qoyub).
@@ -3509,11 +3529,11 @@ export default {
             fields: ['slug', ...TEXT_FIELD_KEYS],
             populate: {
               faculty: { fields: ['slug'] },
-              unit: { fields: ['slug'], populate: { parent: { fields: ['slug'] } } },
+              unit: { fields: ['slug'] },
             },
             limit: 2,
           })) as unknown as Array<
-            { documentId: string; faculty?: { documentId: string } | null; unit?: { documentId: string; parent?: { slug: string } | null } | null } & Record<
+            { documentId: string; faculty?: { documentId: string } | null; unit?: { documentId: string; slug: string } | null } & Record<
               (typeof TEXT_FIELD_KEYS)[number],
               string | null
             >
@@ -3539,29 +3559,26 @@ export default {
               strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' yazilir (' + withNote.length + ' simvol).');
             }
 
-            // F5.5b — `faculty` sxemdə var, bu proqramda boş ola bilər.
-            // `unit` (kafedra) artıq PLAN_SEED-dən (F5.2c) bağlıdırsa, onun
-            // `parent`-i (struktur iyerarxiyasında fakültə) EYNİ slug-la
-            // `api::faculty.faculty`-də axtarılır (bax page.tsx `facultyDisplay`
-            // - eyni məntiq, burada BİR DƏFƏLİK yazılır).
+            // F5.5b/F5.6 — `faculty` sxemdə var, bu proqramda boş ola bilər.
+            // KAFEDRA_FACULTY sabitindən (bax aşağıda) tapılır — `unit.parent`
+            // zənciri ARTIQ GƏZİLMİR, birbaşa kafedranın öz slug-ı ilə axtarılır.
             if (p.faculty) {
               strapi.log.info('[seed] Ixtisas metnleri: faculty atlandi (doludur).');
-            } else if (!p.unit?.parent) {
-              strapi.log.info('[seed] Ixtisas metnleri: faculty atlandi (kafedra/valideyn tapilmadi).');
+            } else if (!p.unit || !KAFEDRA_FACULTY[p.unit.slug]) {
+              strapi.log.info('[seed] Ixtisas metnleri: faculty atlandi (kafedra KAFEDRA_FACULTY-də yoxdur).');
             } else {
+              const facultySlug = KAFEDRA_FACULTY[p.unit.slug];
               const faculties = (await strapi.documents('api::faculty.faculty').findMany({
                 locale: 'az',
-                filters: { slug: { $eq: p.unit.parent.slug } },
+                filters: { slug: { $eq: facultySlug } },
                 fields: ['slug'],
                 limit: 2,
               })) as unknown as Array<{ documentId: string }>;
               if (faculties.length === 1) {
                 data.faculty = faculties[0].documentId;
-                strapi.log.info('[seed] Ixtisas metnleri: faculty yazilir (' + p.unit.parent.slug + ').');
+                strapi.log.info('[seed] Ixtisas metnleri: faculty yazilir (' + facultySlug + ').');
               } else {
-                strapi.log.error(
-                  '[seed] Ixtisas metnleri XETA - fakulte tapilmadi: ' + p.unit.parent.slug,
-                );
+                strapi.log.error('[seed] Ixtisas metnleri XETA - fakulte tapilmadi: ' + facultySlug);
               }
             }
 

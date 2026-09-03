@@ -350,3 +350,9 @@ olunur. Çevirmə kimdə?
 - **Ad uyğunlaşdırması sətir müqayisəsinə bağlanmamalıdır.** Bir dırnaq fərqi
   22 nəfəri səssizcə itirib.
 - Səhv olanda **etiraf et və düzəlt** — səbəbi gizlətmə.
+
+
+## Fakültə həlli
+
+`KAFEDRA_FACULTY` sabiti, `lib/strapi.ts`. Slug uyğunluğu
+(unit.slug === faculty.slug) qəsdəndir, F5.6-da sənədləşib.

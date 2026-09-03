@@ -1176,11 +1176,33 @@ export interface ProgramDetail {
   conventions: string | null;
   practiceNote: string | null;
   faculty: FacultyRef | null;
-  // F5.5b — `parent` (kafedranın öz fakültəsi, `unit` iyerarxiyasında) YALNIZ
-  // `faculty` boşdursa geri dönüş üçün lazımdır (bax page.tsx `facultyDisplay`).
-  unit: { slug: string; name: string; parent: { slug: string } | null } | null;
+  unit: { slug: string; name: string } | null;
   courses: ProgramCourse[];
 }
+
+/**
+ * F5.6 — kafedra -> fakültə uyğunluğu, EXPLICIT sabit (F3.26-dakı
+ * DEPT_UNIT_MAP nümunəsi ilə). Slug uyğunluğu (unit.slug === faculty.slug)
+ * TƏSADÜFİ DEYİL — akademiyada cəmi 2 fakültə var, hər ikisi (`unit` VƏ
+ * `faculty` content type-ları) EYNİ kanonik addan yaradılıb (bax
+ * tools/migration/data/extracted/faculty.json), amma bu indiyədək HEÇ
+ * YERDƏ yazılmayıb — iki yerdə (bura və PROGRAM_TEXT_SEED) `unit.parent`
+ * zənciri gəzilərək TƏXMİN edilirdi. Yeni fakültə əlavə olunarsa BURA da
+ * ƏL İLƏ əlavə edilməlidir.
+ *
+ * EYNİ sabit `adda-strapi/src/index.ts`-də PROGRAM_TEXT_SEED üçün
+ * TƏKRARLANIB — adda-nextjs və adda-strapi AYRI layihələrdir (import
+ * mümkün deyil), ona görə dəyişəndə HƏR İKİSİ yenilənməlidir.
+ */
+export const KAFEDRA_FACULTY: Record<string, string> = {
+  'tetbiqi-mexanika-kafedrasi': 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi',
+  'gemi-energetik-qurgulari-kafedrasi': 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi',
+  'gemi-elektroavtomatikasi-kafedrasi': 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi',
+  'deniz-naviqasiyasi-kafedrasi': 'gemi-suruculuyu-fakultesi',
+  'gemiqayirma-ve-gemi-temiri-kafedrasi': 'gemi-suruculuyu-fakultesi',
+  'ingilis-dili-kafedrasi': 'gemi-suruculuyu-fakultesi',
+  'humanitar-fenler-kafedrasi': 'gemi-suruculuyu-fakultesi',
+};
 
 export async function getProgramDetail(slug: string, locale: Locale = 'az'): Promise<ProgramDetail | null> {
   const json = await strapiFetch<StrapiList<ProgramDetail>>('/programs', {
@@ -1191,7 +1213,6 @@ export async function getProgramDetail(slug: string, locale: Locale = 'az'): Pro
     'populate[faculty][fields][1]': 'slug',
     'populate[unit][fields][0]': 'name',
     'populate[unit][fields][1]': 'slug',
-    'populate[unit][populate][parent][fields][0]': 'slug',
     'populate[courses]': true,
   });
   return json.data?.[0] ?? null;

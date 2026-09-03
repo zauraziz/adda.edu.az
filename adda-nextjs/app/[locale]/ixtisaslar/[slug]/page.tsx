@@ -50,6 +50,7 @@ import {
   getFacultyBySlug,
   getMenu,
   withAzFallback,
+  KAFEDRA_FACULTY,
   type ProgramDetail,
   type ProgramCourse,
   type SiteMenu,
@@ -237,15 +238,13 @@ export default async function ProgramPage({
 
   const docs = await getProgramDocuments(program.slug).catch(() => []);
 
-  // F5.5b — `program.faculty` sxemdə var, amma boş ola bilər. Boşdursa
-  // kafedranın (`unit`) öz valideynindən (`unit.parent`, struktur
-  // iyerarxiyasında fakültə) götürülür — `unit` və `faculty` PARALEL
-  // kolleksiyalardır, amma bu qurumda eyni slug-ı işlədirlər (məs.
-  // gemi-suruculuyu-fakultesi hər ikisində), ona görə birbaşa uyğunlaşdırıla bilir.
+  // F5.5b/F5.6 — `program.faculty` sxemdə var, amma boş ola bilər. Boşdursa
+  // KAFEDRA_FACULTY sabitindən (bax lib/strapi.ts) götürülür — `unit.parent`
+  // zənciri ARTIQ GƏZİLMİR, birbaşa kafedranın öz slug-ı ilə axtarılır.
   const facultyDisplay = program.faculty
     ? { name: program.faculty.name, slug: program.faculty.slug }
-    : program.unit?.parent
-      ? await getFacultyBySlug(program.unit.parent.slug, locale)
+    : program.unit && KAFEDRA_FACULTY[program.unit.slug]
+      ? await getFacultyBySlug(KAFEDRA_FACULTY[program.unit.slug], locale)
           .then((f) => (f ? { name: f.name, slug: f.slug } : null))
           .catch(() => null)
       : null;
