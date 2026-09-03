@@ -45,6 +45,7 @@ import {
   getProgramDetail,
   getProgramDocuments,
   getProgramSlugs,
+  getFacultyBySlug,
   getMenu,
   withAzFallback,
   type ProgramDetail,
@@ -187,6 +188,19 @@ export default async function ProgramPage({
 
   const docs = await getProgramDocuments(program.slug).catch(() => []);
 
+  // F5.5b — `program.faculty` sxemdə var, amma boş ola bilər. Boşdursa
+  // kafedranın (`unit`) öz valideynindən (`unit.parent`, struktur
+  // iyerarxiyasında fakültə) götürülür — `unit` və `faculty` PARALEL
+  // kolleksiyalardır, amma bu qurumda eyni slug-ı işlədirlər (məs.
+  // gemi-suruculuyu-fakultesi hər ikisində), ona görə birbaşa uyğunlaşdırıla bilir.
+  const facultyDisplay = program.faculty
+    ? { name: program.faculty.name, slug: program.faculty.slug }
+    : program.unit?.parent
+      ? await getFacultyBySlug(program.unit.parent.slug, locale)
+          .then((f) => (f ? { name: f.name, slug: f.slug } : null))
+          .catch(() => null)
+      : null;
+
   const overviewHas = Boolean(program.overview);
   const outcomesHas = Boolean(program.outcomes);
   const competenciesHas = Boolean(program.competencies);
@@ -249,12 +263,14 @@ export default async function ProgramPage({
     tintCursor++;
   }
 
-  // F5.3 — şifr/dərəcə/müddət/kredit fakt zolağında onsuz da var (aşağıda,
-  // np-hero), yan paneldə TƏKRARLANMIR — orada YALNIZ kafedra keçidi,
-  // plan ili və sənədlər qalır.
-  const sideHas = Boolean(program.unit || docs.length || program.planYear);
+  // F5.3/F5.5b — şifr/dərəcə/müddət/kredit fakt zolağında onsuz da var
+  // (aşağıda, np-hero), yan paneldə TƏKRARLANMIR — orada YALNIZ fakültə/
+  // kafedra keçidi, plan ili və sənədlər qalır.
+  const sideHas = Boolean(facultyDisplay || program.unit || docs.length || program.planYear);
 
-  const factsHas = Boolean(program.degree || program.durationYears || program.totalCredits || program.code);
+  const factsHas = Boolean(
+    program.degree || program.durationYears || program.totalCredits || program.code || facultyDisplay,
+  );
 
   const overviewHtml = program.overview ? await marked.parse(program.overview) : '';
   const outcomesHtml = program.outcomes ? await marked.parse(program.outcomes) : '';
@@ -315,6 +331,15 @@ export default async function ProgramPage({
             </nav>
             {factsHas ? (
               <ul className="un-facts" aria-label={tr('Əsas faktlar', locale)}>
+                {facultyDisplay ? (
+                  <li className="un-fact">
+                    <i className="ti ti-building-arch" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Fakültə', locale)}</span>
+                    <Link href={`/${locale}/fakulteler/${facultyDisplay.slug}`} className="un-fact-v">
+                      {facultyDisplay.name}
+                    </Link>
+                  </li>
+                ) : null}
                 {program.degree ? (
                   <li className="un-fact">
                     <i className="ti ti-school" aria-hidden="true" />
@@ -506,9 +531,19 @@ export default async function ProgramPage({
 
             {sideHas ? (
               <aside className="un-side">
-                {/* F5.3 — şifr/dərəcə/müddət/kredit BURADAN ÇIXARILIB (fakt
-                    zolağında var, yuxarıda) — yan paneldə YALNIZ kafedra
-                    keçidi, sənədlər və plan ili qalır. */}
+                {/* F5.3/F5.5b — şifr/dərəcə/müddət/kredit BURADAN ÇIXARILIB
+                    (fakt zolağında var, yuxarıda) — yan paneldə YALNIZ
+                    fakültə/kafedra keçidi, sənədlər və plan ili qalır. */}
+                {facultyDisplay ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Fakültə', locale)}</div>
+                    <Link href={`/${locale}/fakulteler/${facultyDisplay.slug}`} className="un-link-btn">
+                      <i className="ti ti-building-arch" aria-hidden="true" />
+                      {facultyDisplay.name}
+                    </Link>
+                  </div>
+                ) : null}
+
                 {program.unit ? (
                   <div>
                     <div className="un-sub-title">{tr('Kafedra', locale)}</div>

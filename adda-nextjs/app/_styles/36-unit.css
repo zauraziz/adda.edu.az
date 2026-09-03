@@ -58,6 +58,10 @@
 .un-fact i { color: var(--gold-400); font-size: 1rem; }
 .un-fact-k { color: var(--navy-100); opacity: 0.85; }
 .un-fact-v { color: var(--white); font-weight: 600; }
+/* F5.5b — `.un-fact-v` bəzən keçiddir (məs. fakültə) — anchor defolt
+   mavi/altı xətli görünüşünü irsi etmir. */
+a.un-fact-v { text-decoration: none; }
+a.un-fact-v:hover { text-decoration: underline; text-underline-offset: 2px; }
 
 /* ── Blok konteyner ── */
 /* F4.9e — boşluq şkalası: 4/8/12/16/24/32/48px, başqa dəyər yoxdur. Blok

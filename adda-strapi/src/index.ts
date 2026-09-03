@@ -3507,8 +3507,17 @@ export default {
             filters: { slug: { $eq: seed.programSlug } },
             status: 'draft',
             fields: ['slug', ...TEXT_FIELD_KEYS],
+            populate: {
+              faculty: { fields: ['slug'] },
+              unit: { fields: ['slug'], populate: { parent: { fields: ['slug'] } } },
+            },
             limit: 2,
-          })) as unknown as Array<{ documentId: string } & Record<(typeof TEXT_FIELD_KEYS)[number], string | null>>;
+          })) as unknown as Array<
+            { documentId: string; faculty?: { documentId: string } | null; unit?: { documentId: string; parent?: { slug: string } | null } | null } & Record<
+              (typeof TEXT_FIELD_KEYS)[number],
+              string | null
+            >
+          >;
 
           if (programs.length !== 1) {
             strapi.log.error('[seed] Ixtisas metnleri XETA - proqram tapilmadi: ' + seed.programSlug);
@@ -3528,6 +3537,32 @@ export default {
               const withNote = raw + '\n\n' + seed.sourceNote;
               data[key] = withNote;
               strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' yazilir (' + withNote.length + ' simvol).');
+            }
+
+            // F5.5b — `faculty` sxemdə var, bu proqramda boş ola bilər.
+            // `unit` (kafedra) artıq PLAN_SEED-dən (F5.2c) bağlıdırsa, onun
+            // `parent`-i (struktur iyerarxiyasında fakültə) EYNİ slug-la
+            // `api::faculty.faculty`-də axtarılır (bax page.tsx `facultyDisplay`
+            // - eyni məntiq, burada BİR DƏFƏLİK yazılır).
+            if (p.faculty) {
+              strapi.log.info('[seed] Ixtisas metnleri: faculty atlandi (doludur).');
+            } else if (!p.unit?.parent) {
+              strapi.log.info('[seed] Ixtisas metnleri: faculty atlandi (kafedra/valideyn tapilmadi).');
+            } else {
+              const faculties = (await strapi.documents('api::faculty.faculty').findMany({
+                locale: 'az',
+                filters: { slug: { $eq: p.unit.parent.slug } },
+                fields: ['slug'],
+                limit: 2,
+              })) as unknown as Array<{ documentId: string }>;
+              if (faculties.length === 1) {
+                data.faculty = faculties[0].documentId;
+                strapi.log.info('[seed] Ixtisas metnleri: faculty yazilir (' + p.unit.parent.slug + ').');
+              } else {
+                strapi.log.error(
+                  '[seed] Ixtisas metnleri XETA - fakulte tapilmadi: ' + p.unit.parent.slug,
+                );
+              }
             }
 
             if (Object.keys(data).length === 0) {

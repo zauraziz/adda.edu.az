@@ -1176,7 +1176,9 @@ export interface ProgramDetail {
   conventions: string | null;
   practiceNote: string | null;
   faculty: FacultyRef | null;
-  unit: { slug: string; name: string } | null;
+  // F5.5b — `parent` (kafedranın öz fakültəsi, `unit` iyerarxiyasında) YALNIZ
+  // `faculty` boşdursa geri dönüş üçün lazımdır (bax page.tsx `facultyDisplay`).
+  unit: { slug: string; name: string; parent: { slug: string } | null } | null;
   courses: ProgramCourse[];
 }
 
@@ -1189,6 +1191,7 @@ export async function getProgramDetail(slug: string, locale: Locale = 'az'): Pro
     'populate[faculty][fields][1]': 'slug',
     'populate[unit][fields][0]': 'name',
     'populate[unit][fields][1]': 'slug',
+    'populate[unit][populate][parent][fields][0]': 'slug',
     'populate[courses]': true,
   });
   return json.data?.[0] ?? null;
