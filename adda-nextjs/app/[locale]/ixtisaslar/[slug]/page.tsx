@@ -65,6 +65,12 @@ const DEGREE_LABEL: Record<ProgramDetail['degree'], string> = {
   phd: 'Doktorantura',
 };
 
+// F5.8a — dil DEYİL, fakt (bax schema.json `studyForm`, localized:false).
+const STUDY_FORM_LABEL: Record<NonNullable<ProgramDetail['studyForm']>, string> = {
+  eyani: 'Əyani',
+  qiyabi: 'Qiyabi',
+};
+
 // F5.5d — schema.org `educationalCredentialAwarded` VERİLƏN dərəcə/diplomun
 // ADI-dır ("Bakalavr"), `DEGREE_LABEL`-dəki təhsil PİLLƏSİ ADINDAN
 // ("Bakalavriat") FƏRQLİDİR — qarışdırılmasın.
@@ -313,7 +319,12 @@ export default async function ProgramPage({
   const sideHas = Boolean(tocItems.length || facultyDisplay || program.unit || docs.length || program.planYear);
 
   const factsHas = Boolean(
-    program.degree || program.durationYears || program.totalCredits || program.code || facultyDisplay,
+    program.degree ||
+      program.durationYears ||
+      program.studyForm ||
+      program.totalCredits ||
+      program.code ||
+      facultyDisplay,
   );
 
   const overviewHtml = program.overview ? await marked.parse(program.overview) : '';
@@ -408,6 +419,16 @@ export default async function ProgramPage({
                     <i className="ti ti-calendar" aria-hidden="true" />
                     <span className="un-fact-k">{tr('Müddət', locale)}</span>
                     <span className="un-fact-v">{program.durationYears} {tr('il', locale)}</span>
+                  </li>
+                ) : null}
+                {/* F5.8a — dil deyil, fakt: yan paneldə YOX (F5.3-də şifr/
+                    dərəcə/müddət/kredit təkrarı buradan çıxarılmışdı, eyni
+                    qayda) — YALNIZ fakt zolağında. */}
+                {program.studyForm ? (
+                  <li className="un-fact">
+                    <i className="ti ti-building-bank" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Təhsil forması', locale)}</span>
+                    <span className="un-fact-v">{tr(STUDY_FORM_LABEL[program.studyForm], locale)}</span>
                   </li>
                 ) : null}
                 {program.totalCredits ? (

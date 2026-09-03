@@ -1642,6 +1642,12 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    studyForm: Schema.Attribute.Enumeration<['eyani', 'qiyabi']> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{

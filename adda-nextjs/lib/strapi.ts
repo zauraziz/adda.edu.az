@@ -1165,6 +1165,8 @@ export interface ProgramDetail {
   slug: string;
   degree: 'bachelor' | 'master' | 'phd';
   durationYears: number | null;
+  /** F5.8a — dil DEYİL, fakt: lokallaşdırılmayıb. */
+  studyForm: 'eyani' | 'qiyabi' | null;
   description: string | null;
   code: string | null;
   planYear: number | null;

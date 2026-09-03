@@ -57,6 +57,18 @@
         }
       }
     },
+    "studyForm": {
+      "type": "enumeration",
+      "enum": [
+        "eyani",
+        "qiyabi"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "faculty": {
       "type": "relation",
       "relation": "manyToOne",

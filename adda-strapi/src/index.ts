@@ -3325,8 +3325,18 @@ export default {
           isPractice: boolean;
         }
 
+        // F5.8a — JSON indi `{ meta, courses }`-dır (əvvəl düz massiv idi).
+        // `meta.studyForm` YENİ oxunur; qalan `meta` sahələri (gözlənilən
+        // yoxlama cəmləri) hələ İSTİFADƏ OLUNMUR — F5.8c-də (çoxfayllı
+        // gəzinti ilə birgə) qoşulacaq, hələlik EXPECTED_* sabitləri qalır.
+        interface PlanSeedFile {
+          meta: { programSlug: string; studyForm?: 'eyani' | 'qiyabi' };
+          courses: PlanCourse[];
+        }
+
         try {
-          const courses: PlanCourse[] = JSON.parse(readFileSync(PLAN_JSON_PATH, 'utf8'));
+          const planFile: PlanSeedFile = JSON.parse(readFileSync(PLAN_JSON_PATH, 'utf8'));
+          const courses = planFile.courses;
 
           const blockTotals: Record<string, number> = {};
           let creditSum = 0;
@@ -3378,7 +3388,7 @@ export default {
               locale: 'az',
               filters: { slug: { $eq: PLAN_PROGRAM_SLUG } },
               status: 'draft',
-              fields: ['slug', 'code', 'planYear', 'totalCredits'],
+              fields: ['slug', 'code', 'planYear', 'totalCredits', 'studyForm'],
               populate: ['courses', 'unit'],
               limit: 2,
             })) as unknown as Array<{
@@ -3387,6 +3397,7 @@ export default {
               code?: string | null;
               planYear?: number | null;
               totalCredits?: number | null;
+              studyForm?: string | null;
               unit?: { documentId: string } | null;
             }>;
 
@@ -3418,6 +3429,15 @@ export default {
                 strapi.log.info('[seed] Tedris plani: totalCredits atlandi (doludur).');
               } else {
                 data.totalCredits = EXPECTED_CREDIT_SUM;
+              }
+
+              // F5.8a — `studyForm` dil DEYİL, fakt (schema.json localized:false).
+              if (p.studyForm) {
+                strapi.log.info('[seed] Tedris plani: studyForm atlandi (doludur).');
+              } else if (!planFile.meta.studyForm) {
+                strapi.log.info('[seed] Tedris plani: studyForm atlandi (JSON meta-da yoxdur).');
+              } else {
+                data.studyForm = planFile.meta.studyForm;
               }
 
               if (p.unit) {
