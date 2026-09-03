@@ -1,7 +1,89 @@
-/* 37-program.css — /[locale]/ixtisaslar/[slug] (F5.1c)
+/* 37-program.css — /[locale]/ixtisaslar/[slug] (F5.1c/F5.5c)
    Struktur bölmə səhifəsi ilə EYNİ dizayn dili (36-unit.css) — bu fayl
-   YALNIZ o səhifədə olmayan hissəni daşıyır: tədris planı cədvəli.
+   YALNIZ o səhifədə olmayan hissəni daşıyır: tədris planı cədvəli və
+   mündəricat (ProgramToc.tsx).
    Navy #0B3D5C, qızılı #C9A961, Fraunces (başlıq) + Manrope (mətn). */
+
+/* F5.5c — beş mətn bölməsi akkordeon ƏVƏZİNƏ tam açıq render olunur,
+   lövbərli keçid lazımdır. Sabit header (82px) altında qalmasın deyə
+   `scroll-margin-top` — `.un-side` sticky-nin `top: 98px`-i ilə eyni ölçü
+   (bax 36-unit.css). Hərəkətə həssaslıq üstünlüyü olanlarda YUMŞAQ SÜRÜŞMƏ
+   söndürülür. */
+.pr-anchor { scroll-margin-top: 98px; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* ── F5.5c: Mündəricat (ProgramToc.tsx) ──
+   EYNİ komponent iki yerdə render olunur (bax page.tsx) — bu iki sinif
+   arasında YALNIZ biri görünür, ekran ölçüsündən asılı olaraq. */
+.pr-toc--desktop { display: none; }
+.pr-toc--mobile { display: block; margin: 0 0 24px; }
+
+@media (min-width: 901px) {
+  .pr-toc--desktop {
+    display: block;
+    padding-bottom: 1rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .pr-toc--mobile { display: none; }
+  .pr-toc--desktop .pr-toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .pr-toc--desktop .pr-toc-link {
+    display: block;
+    padding: 0.3rem 0 0.3rem 0.7rem;
+    border-left: 2px solid var(--gray-200);
+    font-size: 0.85rem;
+    color: var(--gray-500);
+  }
+  .pr-toc--desktop .pr-toc-link--active {
+    border-left-color: var(--gold-500);
+    color: var(--navy-900);
+    font-weight: 600;
+  }
+}
+
+.pr-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pr-toc-link {
+  text-decoration: none;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.pr-toc-link:hover { color: var(--gold-600); }
+
+/* F5.5c — mobil: üfüqi sürüşən çip cərgəsi (.pr-plan-scroll-dən fərqli,
+   bura CƏDVƏL yox, keçid çipləridir). */
+.pr-toc--mobile .pr-toc-list {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  -webkit-overflow-scrolling: touch;
+}
+.pr-toc--mobile .pr-toc-link {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 0.4rem 0.9rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-800);
+  white-space: nowrap;
+}
+.pr-toc--mobile .pr-toc-link--active {
+  background: var(--navy-900);
+  border-color: var(--navy-900);
+  color: var(--white);
+}
 
 /* ── Tədris planı: semestr qrupu ── */
 .pr-plan-group { margin: 0 0 24px; }
