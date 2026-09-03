@@ -3606,6 +3606,63 @@ export default {
         } catch (e) {
           strapi.log.error('[seed] Ixtisas metnleri oxuma xetasi: ' + (e as Error).message);
         }
+
+        // F5.7 — `outcomes`, AYRICA fayldan (F5.4-də yazılmayıb). YENİ flag
+        // yoxdur, eyni PROGRAM_TEXT_SEED bayrağı ilə işləyir. Öz `sourceNote`-u
+        // var — mövcud beş sahənin qeydindən FƏRQLİDİR ("xülasə" olduğunu
+        // göstərir), ona görə ayrıca JSON/ayrıca try (biri uğursuz olsa
+        // digərini bloklamasın).
+        try {
+          const OUTCOMES_JSON_PATH = path.join(
+            strapi.dirs.app.root,
+            '..',
+            'tools',
+            'migration',
+            'data',
+            'program-outcomes-6006006.json',
+          );
+
+          interface ProgramOutcomesSeed {
+            programSlug: string;
+            sourceNote: string;
+            fields: { outcomes?: string };
+          }
+          const outcomesSeed: ProgramOutcomesSeed = JSON.parse(readFileSync(OUTCOMES_JSON_PATH, 'utf8'));
+
+          if (!outcomesSeed.fields.outcomes) {
+            strapi.log.info('[seed] Ixtisas metnleri: outcomes JSON-da yoxdur, atlanir.');
+          } else {
+            const outcomePrograms = (await strapi.documents('api::program.program').findMany({
+              locale: 'az',
+              filters: { slug: { $eq: outcomesSeed.programSlug } },
+              status: 'draft',
+              fields: ['slug', 'outcomes'],
+              limit: 2,
+            })) as unknown as Array<{ documentId: string; outcomes: string | null }>;
+
+            if (outcomePrograms.length !== 1) {
+              strapi.log.error(
+                '[seed] Ixtisas metnleri XETA - proqram tapilmadi (outcomes): ' + outcomesSeed.programSlug,
+              );
+            } else {
+              const op = outcomePrograms[0];
+              if (op.outcomes) {
+                strapi.log.info('[seed] Ixtisas metnleri: outcomes atlandi (doludur).');
+              } else {
+                const withNote = outcomesSeed.fields.outcomes + '\n\n' + outcomesSeed.sourceNote;
+                await strapi.documents('api::program.program').update({
+                  documentId: op.documentId,
+                  locale: 'az',
+                  data: { outcomes: withNote } as never,
+                });
+                // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
+                strapi.log.info('[seed] Ixtisas metnleri: outcomes yazilir (' + withNote.length + ' simvol).');
+              }
+            }
+          }
+        } catch (e) {
+          strapi.log.error('[seed] Ixtisas metnleri (outcomes) oxuma xetasi: ' + (e as Error).message);
+        }
       }
     } catch (err) {
       strapi.log.error('[seed] ixtisas metnleri seed xetasi: ' + (err as Error).message);
