@@ -50,10 +50,12 @@ import {
   getProgramSlugs,
   getFacultyBySlug,
   getMenu,
+  getPrograms,
   withAzFallback,
   KAFEDRA_FACULTY,
   type ProgramDetail,
   type ProgramCourse,
+  type Program,
   type SiteMenu,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, fallbackNotice, type Locale } from '@/lib/i18n';
@@ -236,14 +238,19 @@ export default async function ProgramPage({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
 
-  const [{ doc: program, isFallback }, menu] = await Promise.all([
+  const [{ doc: program, isFallback }, menu, allPrograms] = await Promise.all([
     withAzFallback((loc) => getProgramDetail(slug, loc), locale),
     getMenu(locale).catch(() => null as SiteMenu | null),
+    getPrograms(locale).catch(() => [] as Program[]),
   ]);
 
   if (!program) notFound();
 
   const docs = await getProgramDocuments(program.slug).catch(() => []);
+
+  // F5.14b — cari proqram çıxarılır, qalanı yan panel DEYİL, səhifə
+  // sonunda kart cərgəsi (abituriyent ixtisasları müqayisə etsin).
+  const otherPrograms = allPrograms.filter((p) => p.slug !== program.slug);
 
   // F5.5b/F5.6 — `program.faculty` sxemdə var, amma boş ola bilər. Boşdursa
   // KAFEDRA_FACULTY sabitindən (bax lib/strapi.ts) götürülür — `unit.parent`
@@ -663,6 +670,31 @@ export default async function ProgramPage({
               </aside>
             ) : null}
           </div>
+
+          {/* F5.14b — «Digər ixtisaslar»: struktur səhifəsindəki F4.13-də
+              qəsdən silinmiş «qohum bölmələr» bloku ilə QARIŞDIRILMASIN —
+              bura fərqli məntiqdir (abituriyent ixtisas seçərkən müqayisə
+              ehtiyacı). İxtisaslar siyahısı (`/ixtisaslar`) ilə EYNİ kart
+              üslubu (`.np-grid`/`.np-card`, bax 19-news-page.css) — YENİ
+              CSS YAZILMAYIB. */}
+          {otherPrograms.length ? (
+            <section className="un-block">
+              <h2 className="un-block-title">{tr('Digər ixtisaslar', locale)}</h2>
+              <div className="np-grid">
+                {otherPrograms.map((p) => (
+                  <Link key={p.slug} href={`/${locale}/ixtisaslar/${p.slug}`} className="np-card">
+                    <span className="np-card-body">
+                      <h3 className="np-card-title">{p.title}</h3>
+                      <span className="np-meta">
+                        <span className="np-chip">{tr(DEGREE_LABEL[p.degree], locale)}</span>
+                        {p.durationYears ? <span className="np-date">{p.durationYears} {tr('il', locale)}</span> : null}
+                      </span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <div style={{ paddingBottom: '48px' }}>
             {!sideHas ? (
