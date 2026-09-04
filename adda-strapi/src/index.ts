@@ -3349,6 +3349,14 @@ export default {
           coreq?: string | null;
           semester?: string | null;
           weekly?: number | string | null;
+          // F5.15 — yeni fayl formatı (bax tedris-plani-gemiqayirma-magistr.json)
+          // bu ikisini BİRBAŞA verir: MF/İMF/İSF/D prefiksləri deriveGroup()-a
+          // tanış deyil, üstəlik İMF/İSF eyni kod altında İKİ FƏRQLİ groupCode-a
+          // (ixtisaslaşma yolu) bölünür — prefiksdən TÖRƏDİLƏ BİLMƏZ, mənbədən
+          // gəlməlidir. Sahə mövcuddursa (D-B01 kimi groupCode:null DAXİL)
+          // BİRBAŞA istifadə olunur.
+          groupCode?: string | null;
+          isPractice?: boolean | null;
         }
 
         interface PlanSeedFile {
@@ -3413,7 +3421,14 @@ export default {
             const programSlug = planFile.programSlug;
 
             const courses = planFile.courses.map((c) => {
-              const { groupCode, isPractice } = deriveGroup(c.code, c.name);
+              // F5.15 — sətirdə groupCode/isPractice AÇIQ verilibsə (key
+              // mövcuddursa, D-B01 kimi groupCode:null DAXİL) BİRBAŞA
+              // istifadə olunur, deriveGroup() ÇAĞIRILMIR. Sahələr
+              // ÜMUMİYYƏTLƏ yoxdursa (köhnə 4 fayl) deriveGroup ehtiyat kimi işləyir.
+              const hasExplicitGroup = c.groupCode !== undefined || c.isPractice !== undefined;
+              const { groupCode, isPractice } = hasExplicitGroup
+                ? { groupCode: c.groupCode ?? null, isPractice: c.isPractice ?? false }
+                : deriveGroup(c.code, c.name);
               return {
                 code: c.code ?? null,
                 name: c.name,
