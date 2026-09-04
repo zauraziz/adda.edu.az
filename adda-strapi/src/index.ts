@@ -3369,6 +3369,11 @@ export default {
             expectedCourseCount?: number;
             expectedBlocks?: Record<string, number>;
             kafedraSlug?: string;
+            // F5.15c — alternativ ixtisaslaşma yolu olan proqramlarda (məs.
+            // magistratura) `courses[]`-un sadə cəmi YAZILAN `totalCredits`-dən
+            // fərqlidir (F5.15b) — yoxlama VARSA bunu, YOXDURSA `totalCredits`-i
+            // işlədir.
+            verificationCredits?: number;
           };
           courses: PlanCourseRaw[];
         }
@@ -3463,13 +3468,18 @@ export default {
             const expectedCount = planFile.meta.expectedCourseCount;
             const expectedCreditSum = planFile.meta.totalCredits;
             const expectedBlocks = planFile.meta.expectedBlocks ?? {};
+            // F5.15c — YOXLAMA hədəfi `expectedCreditSum`-dan (= totalCredits,
+            // YAZILAN dəyər, aşağıda toxunulmur) AYRIDIR. `verificationCredits`
+            // VARSA yoxlama bunu işlədir, YOXDURSA (köhnə fayllar) eyni
+            // `expectedCreditSum`-a düşür — davranış EYNİ qalır.
+            const creditSumCheckTarget = planFile.meta.verificationCredits ?? expectedCreditSum;
 
             const errors: string[] = [];
             if (expectedCount != null && courses.length !== expectedCount) {
               errors.push('fenn sayi ' + courses.length + ' (gozlenilen ' + expectedCount + ')');
             }
-            if (expectedCreditSum != null && creditSum !== expectedCreditSum) {
-              errors.push('kredit cemi ' + creditSum + ' (gozlenilen ' + expectedCreditSum + ')');
+            if (creditSumCheckTarget != null && creditSum !== creditSumCheckTarget) {
+              errors.push('kredit cemi ' + creditSum + ' (gozlenilen ' + creditSumCheckTarget + ')');
             }
             for (const [code, expected] of Object.entries(expectedBlocks)) {
               if (blockTotals[code] !== expected) {
