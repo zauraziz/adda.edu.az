@@ -43,6 +43,7 @@ import ContentPage from '../../../_components/ContentPage';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import StaffReveal from '../../../_components/StaffReveal';
+import LeaderCard from '../../../_components/LeaderCard';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
 import { adminUrl, BlockTitle, AdminEditRow, EmptyBlock, EmptyExpandItem } from '../../../_components/AdminOnly';
 import { DocList, DOC_CATEGORY_ORDER } from '../../../_components/DocList';
@@ -247,25 +248,6 @@ function FnCardGrid({ cards }: { cards: FnCard[] }) {
   );
 }
 
-/**
- * F4.7c/F4.9d — e-poçt `overflow-wrap: anywhere` ilə söz ortasından qırılırdı
- * («zaur.aziz@add / a.edu.az»). `word-break: break-all` da işlədilmir (eyni
- * problem). `<wbr>` YALNIZ `@`-dan sonra qırılma nöqtəsi əlavə edir, CSS-də
- * `overflow-wrap: normal` ilə birlikdə (bax 36-unit.css .un-head-contact dd)
- * qırılma YALNIZ bu yerdə baş verir.
- */
-function EmailWrap({ email }: { email: string }) {
-  const at = email.indexOf('@');
-  if (at === -1) return <>{email}</>;
-  return (
-    <>
-      {email.slice(0, at + 1)}
-      <wbr />
-      {email.slice(at + 1)}
-    </>
-  );
-}
-
 /** F4.9a — yan panelin kompakt heyət sətri: monoqram/foto (28px) + ad + vəzifə. */
 function StaffMiniRow({
   p,
@@ -406,7 +388,6 @@ export default async function UnitPage({
     .filter((p) => !unit.head || p.documentId !== unit.head.documentId)
     .sort((a, b) => azSort(a.name ?? '', b.name ?? ''));
 
-  const headPhoto = unit.head ? mediaUrl(unit.head.photo) : null;
 
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
   // F4.11c — `receptionSlots` doludursa köhnə `receptionHours` sətrinin ƏVƏZİNƏ göstərilir.
@@ -864,53 +845,9 @@ export default async function UnitPage({
 
             {sideHas ? (
               <aside className="un-side">
-                {/* F4.9d — rəhbər kartı: üst sətir foto(64px kvadrat)+vəzifə,
-                    altında ad, sonra e-poçt/telefon (etiket üstdə, dəyər
-                    altda), ən altda nazik ayırıcı + solğun redaktə. */}
-                {unit.head ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Rəhbər', locale)}</div>
-                    <div className="un-head-card">
-                      <div className="un-head-top">
-                        <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="un-head-plate">
-                          {headPhoto ? (
-                            <img src={headPhoto} alt="" loading="lazy" />
-                          ) : (
-                            <span className="un-head-mono" aria-hidden="true">
-                              {(unit.head.displayName || unit.head.name || '—').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
-                            </span>
-                          )}
-                        </Link>
-                        {unit.head.position ? <div className="un-head-position">{unit.head.position}</div> : null}
-                      </div>
-                      <Link href={`/${locale}/emekdas/${unit.head.slug}`} className="un-head-name">
-                        {unit.head.displayName || unit.head.name}
-                      </Link>
-                      <dl className="un-head-contact">
-                        {unit.head.email ? (
-                          <div>
-                            <dt>{tr('E-poçt', locale)}</dt>
-                            <dd><a href={`mailto:${unit.head.email}`}><EmailWrap email={unit.head.email} /></a></dd>
-                          </div>
-                        ) : null}
-                        {unit.head.phone ? (
-                          <div>
-                            <dt>{tr('Telefon', locale)}</dt>
-                            <dd><a href={`tel:${unit.head.phone.replace(/[^\d+]/g, '')}`}>{unit.head.phone}</a></dd>
-                          </div>
-                        ) : null}
-                      </dl>
-                      <AdminOnly>
-                        <div className="un-head-admin">
-                          <span>{tr('Redaktə', locale)}:</span>
-                          <a href={adminUrl('api::person.person', unit.head.documentId, locale)} target="_blank" rel="noreferrer">
-                            {tr('şəxs', locale)}
-                          </a>
-                        </div>
-                      </AdminOnly>
-                    </div>
-                  </div>
-                ) : null}
+                {/* F4.9d/F5.14a — rəhbər kartı `_components/LeaderCard.tsx`-də
+                    (ixtisas səhifəsi ilə paylaşılır). */}
+                {unit.head ? <LeaderCard head={unit.head} locale={locale} /> : null}
 
                 {/* F4.9a — heyət yan panelə keçib (Rəhbərdən sonra, Əlaqədən
                     əvvəl). Sticky panel ekrandan uzun olmasın deyə ilk 6-dan

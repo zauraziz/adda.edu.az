@@ -1178,7 +1178,8 @@ export interface ProgramDetail {
   conventions: string | null;
   practiceNote: string | null;
   faculty: FacultyRef | null;
-  unit: { slug: string; name: string } | null;
+  /** F5.14a — `head` LeaderCard üçün (bax _components/LeaderCard.tsx). */
+  unit: { slug: string; name: string; head: LeaderPerson | null } | null;
   courses: ProgramCourse[];
 }
 
@@ -1215,6 +1216,19 @@ export async function getProgramDetail(slug: string, locale: Locale = 'az'): Pro
     'populate[faculty][fields][1]': 'slug',
     'populate[unit][fields][0]': 'name',
     'populate[unit][fields][1]': 'slug',
+    // F5.14a — kafedra müdiri LeaderCard üçün, `getUnitDetail`-dəki `head`
+    // populate ilə EYNİ sahə siyahısı (bax yuxarıda).
+    'populate[unit][populate][head][fields][0]': 'name',
+    'populate[unit][populate][head][fields][1]': 'displayName',
+    'populate[unit][populate][head][fields][2]': 'slug',
+    'populate[unit][populate][head][fields][3]': 'position',
+    'populate[unit][populate][head][fields][4]': 'academicDegree',
+    'populate[unit][populate][head][fields][5]': 'academicTitle',
+    'populate[unit][populate][head][fields][6]': 'email',
+    'populate[unit][populate][head][fields][7]': 'phone',
+    'populate[unit][populate][head][fields][8]': 'office',
+    'populate[unit][populate][head][fields][9]': 'building',
+    'populate[unit][populate][head][populate][photo][fields][0]': 'url',
     'populate[courses]': true,
   });
   return json.data?.[0] ?? null;

@@ -40,6 +40,7 @@ import Footer from '../../../_components/Footer';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import ProgramToc from '../../../_components/ProgramToc';
+import LeaderCard from '../../../_components/LeaderCard';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
 import { BlockTitle, AdminEditRow, EmptyBlock } from '../../../_components/AdminOnly';
 import { DocList } from '../../../_components/DocList';
@@ -633,6 +634,10 @@ export default async function ProgramPage({
                     </Link>
                   </div>
                 ) : null}
+
+                {/* F5.14a — kafedra müdiri, «Sənədlər»dən əvvəl (struktur
+                    səhifəsi ilə eyni komponent, bax _components/LeaderCard.tsx). */}
+                {program.unit?.head ? <LeaderCard head={program.unit.head} locale={locale} /> : null}
 
                 {docs.length ? (
                   <div>
