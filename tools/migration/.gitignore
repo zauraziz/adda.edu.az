@@ -18,6 +18,7 @@ data/*
 !data/tedris-plani-6006006-2026.json
 !data/tedris-plani-6006012-2026.json
 !data/tedris-plani-6006008-2026.json
+!data/tedris-plani-gemiqayirma.json
 !data/TP_6006006_DN_2026.xlsx
 
 # F5.4/F5.7/F5.8c — PROGRAM_TEXT_SEED (adda-strapi/src/index.ts) OXUYUR
@@ -27,6 +28,7 @@ data/*
 !data/program-outcomes-6006006.json
 !data/program-texts-6006012.json
 !data/program-texts-6006008.json
+!data/program-texts-gemiqayirma.json
 
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML
