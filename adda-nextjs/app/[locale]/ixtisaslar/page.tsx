@@ -1,5 +1,12 @@
-// K26 — /[locale]/ixtisaslar
+// K26 / F5.17 — /[locale]/ixtisaslar
 // K26-3-de menyudan bura link qoymusdum, amma siyahi sehifesi yox idi -> 404.
+//
+// F5.17 — kart toru YERİNƏ dərəcə tabları (Bakalavr/Magistr, klik ilə keçid)
+// + fakültəyə görə qruplaşdırılmış sətir siyahısı + ad üzrə axtarış.
+// Tərcümə/qruplaşdırma BURADA (server), interaktivlik ProgramDirectoryIsland-da
+// (StaffDirectory/StaffDirectoryIsland ilə eyni iş bölgüsü, bax o fayllar).
+// `Doktorantura` proqram yoxdursa tab da yoxdur — `.filter((g) => g.items.length)`
+// K26-dan bəri dəyişməyib, sadəcə H2 bölmələri tab keçidinə çevrilib.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -20,10 +27,15 @@ import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/28-staff.css';
+import '../../_styles/29-directory.css';
+import '../../_styles/38-programs-list.css';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
+import ProgramDirectoryIsland, {
+  type ProgramDegreeGroup,
+  type ProgramRow,
+} from '../../_components/ProgramDirectoryIsland';
 import { getMenu, getPrograms, type Program, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -33,6 +45,12 @@ const DEGREE: Record<Program['degree'], string> = {
   bachelor: 'Bakalavriat',
   master: 'Magistratura',
   phd: 'Doktorantura',
+};
+
+// F5.8a — dil DEYİL, fakt (bax ProgramDetail eyni sabit, [slug]/page.tsx — TOXUNULMUR).
+const STUDY_FORM_LABEL: Record<NonNullable<Program['studyForm']>, string> = {
+  eyani: 'Əyani',
+  qiyabi: 'Qiyabi',
 };
 
 export function generateStaticParams() {
@@ -61,9 +79,23 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
     getPrograms(locale).catch(() => [] as Program[]),
   ]);
 
-  const groups = (Object.keys(DEGREE) as Program['degree'][])
-    .map((d) => ({ degree: d, list: programs.filter((p) => p.degree === d) }))
-    .filter((g) => g.list.length);
+  const groups: ProgramDegreeGroup[] = (Object.keys(DEGREE) as Program['degree'][])
+    .map((d) => ({
+      degree: d,
+      label: tr(DEGREE[d], locale),
+      items: programs
+        .filter((p) => p.degree === d)
+        .map(
+          (p): ProgramRow => ({
+            slug: p.slug,
+            title: p.title,
+            facultyName: p.faculty?.name ?? null,
+            durationYears: p.durationYears,
+            studyFormLabel: p.studyForm ? tr(STUDY_FORM_LABEL[p.studyForm], locale) : null,
+          }),
+        ),
+    }))
+    .filter((g) => g.items.length);
 
   return (
     <>
@@ -80,22 +112,20 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
         <section className="np-wrap">
           <div className="container">
             {groups.length ? (
-              groups.map((g) => (
-                <section key={g.degree} className="stf-sec">
-                  <h2 className="stf-sec-title">{tr(DEGREE[g.degree], locale)}</h2>
-                  <div className="np-grid">
-                    {g.list.map((p) => (
-                      <Link key={p.slug} href={`/${locale}/ixtisaslar/${p.slug}`} className="np-card">
-                        <span className="np-card-body">
-                          {p.faculty ? <span className="np-meta"><span className="np-chip">{p.faculty.name}</span></span> : null}
-                          <h3 className="np-card-title">{p.title}</h3>
-                          {p.description ? <p className="np-card-ex">{p.description.slice(0, 160)}</p> : null}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-              ))
+              <ProgramDirectoryIsland
+                groups={groups}
+                basePath={`/${locale}/ixtisaslar`}
+                labels={{
+                  searchPlaceholder: tr('Ad üzrə axtarın', locale),
+                  found: tr('Tapıldı', locale),
+                  noResults: tr('Heç nə tapılmadı.', locale),
+                  colProgram: tr('Proqram', locale),
+                  colDuration: tr('Müddət', locale),
+                  colForm: tr('Təhsil forması', locale),
+                  years: tr('il', locale),
+                  other: tr('Digər', locale),
+                }}
+              />
             ) : (
               <p className="np-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>
             )}

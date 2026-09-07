@@ -60,6 +60,8 @@ export interface Program {
   description: string | null;
   degree: 'bachelor' | 'master' | 'phd';
   durationYears: number | null;
+  /** F5.8a — dil DEYİL, fakt (bax ProgramDetail eyni sahə, schema.json localized:false). */
+  studyForm: 'eyani' | 'qiyabi' | null;
   locale: Locale;
 }
 
