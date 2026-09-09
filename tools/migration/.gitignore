@@ -41,6 +41,18 @@ data/*
 !data/program-texts-dnm-magistr.json
 !data/program-texts-geqi-magistr.json
 !data/program-texts-eem-magistr.json
+!data/tedris-plani-dnm-magistr.json
+!data/program-texts-dnm-magistr.json
+!data/tedris-plani-geqi-magistr.json
+!data/program-texts-geqi-magistr.json
+!data/tedris-plani-eem-magistr.json
+!data/program-texts-eem-magistr.json
+
+# F5.19 — 4 köhnə struktur bakalavr qeydi (AZ/EN, əyani/qiyabi).
+!data/tedris-plani-az-050609.json
+!data/tedris-plani-az-050605.json
+!data/tedris-plani-en-050609.json
+!data/tedris-plani-en-050605.json
 
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML

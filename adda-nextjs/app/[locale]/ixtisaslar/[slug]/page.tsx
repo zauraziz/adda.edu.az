@@ -127,7 +127,8 @@ function buildCourseJsonLd(program: ProgramDetail): Record<string, unknown> {
 // əvvəl əlifba sırasına düşərdi). Semestri olmayan sətirlər (üzmə təcrübəsi)
 // bu qruplaşdırmaya heç DAXİL EDİLMİR — bax `swimPracticeCourses`, ayrıca
 // "Üzmə təcrübəsi" blokunda göstərilir.
-const SEMESTER_ORDER = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+// F5.19 — köhnə 5 illik bakalavr planları IX/X semestrlə gəlir.
+const SEMESTER_ORDER = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 function semesterRank(s: string | null): number {
   if (!s) return SEMESTER_ORDER.length;
   const i = SEMESTER_ORDER.indexOf(s);
