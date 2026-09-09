@@ -1116,12 +1116,15 @@ export async function getUnitDocuments(unitSlug: string): Promise<UnitDocumentIt
  */
 /** F4.9a — yan panelin kompakt heyət sətri foto dəstəkləyir (əksəriyyətdə
  * yoxdur, monoqrama düşür) — `photo` yalnız BURADA populate olunur, ona görə
- * baza `Person` tipinə deyil, YALNIZ bu funksiyanın qayıtma tipinə əlavədir. */
+ * baza `Person` tipinə deyil, YALNIZ bu funksiyanın qayıtma tipinə əlavədir.
+ * F5.18d — `academicTitle`/`academicDegree` eyni səbəbdən əlavədir: bu
+ * sahələr `fields[]` məhdudlaşdırılmadığı üçün cavabda onsuz da GƏLİR,
+ * sadəcə əvvəllər tipdə göstərilməmişdi (kafedra heyət sayı üçün lazımdır). */
 export async function getUnitStaff(
   unitSlug: string,
   unitName: string,
-): Promise<(Person & { photo: StrapiMedia | null })[]> {
-  return fetchAllPages<Person & { photo: StrapiMedia | null }>('/people', {
+): Promise<(Person & { photo: StrapiMedia | null; academicTitle: string | null; academicDegree: AcademicDegree | null })[]> {
+  return fetchAllPages<Person & { photo: StrapiMedia | null; academicTitle: string | null; academicDegree: AcademicDegree | null }>('/people', {
     'filters[$or][0][unit][slug][$eq]': unitSlug,
     'filters[$or][1][roles][unitName][$eq]': unitName,
     'populate[roles]': true,

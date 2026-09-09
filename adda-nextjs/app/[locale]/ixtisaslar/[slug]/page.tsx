@@ -51,6 +51,7 @@ import {
   getFacultyBySlug,
   getMenu,
   getPrograms,
+  getUnitStaff,
   withAzFallback,
   KAFEDRA_FACULTY,
   type ProgramDetail,
@@ -247,6 +248,17 @@ export default async function ProgramPage({
   if (!program) notFound();
 
   const docs = await getProgramDocuments(program.slug).catch(() => []);
+
+  // F5.18d — kafedra heyət sayı, academicTitle-ə görə. `getUnitStaff` MÖVCUD
+  // funksiyadır (bax lib/strapi.ts, struktur səhifəsi ilə eyni mənbə) —
+  // burada TƏKRAR YAZILMIR, sadəcə çağırılır.
+  const unitStaff = program.unit
+    ? await getUnitStaff(program.unit.slug, program.unit.name).catch(() => [])
+    : [];
+  const professorCount = unitStaff.filter((p) => p.academicTitle === 'Professor').length;
+  const dosentCount = unitStaff.filter((p) => p.academicTitle === 'Dosent').length;
+  const degreedCount = unitStaff.filter((p) => p.academicDegree && p.academicDegree !== 'yoxdur').length;
+  const staffStatsHas = Boolean(program.unit && unitStaff.length);
 
   // F5.14b — cari proqram çıxarılır, qalanı yan panel DEYİL, səhifə
   // sonunda kart cərgəsi (abituriyent ixtisasları müqayisə etsin).
@@ -645,6 +657,26 @@ export default async function ProgramPage({
                 {/* F5.14a — kafedra müdiri, «Sənədlər»dən əvvəl (struktur
                     səhifəsi ilə eyni komponent, bax _components/LeaderCard.tsx). */}
                 {program.unit?.head ? <LeaderCard head={program.unit.head} locale={locale} /> : null}
+
+                {/* F5.18d — kafedra heyət sayı (academicTitle-ə görə). Kafedra
+                    tapılmazsa VƏ YA heyət boşdursa bütün blok görünmür. */}
+                {staffStatsHas ? (
+                  <div>
+                    <div className="un-sub-title">{tr('Kafedra heyəti', locale)}</div>
+                    <p className="un-side-text un-side-text--icon">
+                      <i className="ti ti-school" aria-hidden="true" />
+                      {tr('Professor', locale)}: {professorCount}
+                    </p>
+                    <p className="un-side-text un-side-text--icon">
+                      <i className="ti ti-certificate" aria-hidden="true" />
+                      {tr('Dosent', locale)}: {dosentCount}
+                    </p>
+                    <p className="un-side-text un-side-text--icon">
+                      <i className="ti ti-users" aria-hidden="true" />
+                      {tr('Elmi dərəcəli heyət', locale)}: {degreedCount}
+                    </p>
+                  </div>
+                ) : null}
 
                 {docs.length ? (
                   <div>
