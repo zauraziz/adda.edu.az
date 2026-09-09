@@ -104,6 +104,20 @@ export interface NavQuicklink extends Struct.ComponentSchema {
   };
 }
 
+export interface ProgramAdmissionScore extends Struct.ComponentSchema {
+  collectionName: 'components_program_admission_scores';
+  info: {
+    description: 'Bir il \u00FC\u00E7\u00FCn q\u0259bul bal\u0131 - \u00F6d\u0259ni\u015Fli/\u00F6d\u0259ni\u015Fsiz (F5.18b).';
+    displayName: 'Q\u0259bul bal\u0131';
+    icon: 'chart-bar';
+  };
+  attributes: {
+    minScoreFree: Schema.Attribute.Integer;
+    minScorePaid: Schema.Attribute.Integer;
+    year: Schema.Attribute.Integer & Schema.Attribute.Required;
+  };
+}
+
 export interface ProgramCourse extends Struct.ComponentSchema {
   collectionName: 'components_program_courses';
   info: {
@@ -124,6 +138,19 @@ export interface ProgramCourse extends Struct.ComponentSchema {
     semester: Schema.Attribute.String;
     totalHours: Schema.Attribute.Integer;
     weeklyLoad: Schema.Attribute.String;
+  };
+}
+
+export interface ProgramLanguage extends Struct.ComponentSchema {
+  collectionName: 'components_program_languages';
+  info: {
+    description: 'Proqram\u0131n t\u0259dris dili (F5.18b).';
+    displayName: 'T\u0259dris dili';
+    icon: 'globe';
+  };
+  attributes: {
+    code: Schema.Attribute.Enumeration<['az', 'ru', 'en']> &
+      Schema.Attribute.Required;
   };
 }
 
@@ -289,7 +316,9 @@ declare module '@strapi/strapi' {
       'nav.portal': NavPortal;
       'nav.portalcard': NavPortalcard;
       'nav.quicklink': NavQuicklink;
+      'program.admission-score': ProgramAdmissionScore;
       'program.course': ProgramCourse;
+      'program.language': ProgramLanguage;
       'staff.education': StaffEducation;
       'staff.experience': StaffExperience;
       'staff.language': StaffLanguage;

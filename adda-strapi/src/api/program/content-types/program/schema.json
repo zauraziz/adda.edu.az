@@ -175,6 +175,34 @@
           "localized": false
         }
       }
+    },
+    "tuitionFee": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "languages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.language",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "admissionScores": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.admission-score",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     }
   }
 }

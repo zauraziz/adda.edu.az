@@ -1548,6 +1548,15 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    admissionScores: Schema.Attribute.Component<
+      'program.admission-score',
+      true
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     careerPaths: Schema.Attribute.RichText &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1605,6 +1614,12 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
         };
       }>;
     faculty: Schema.Attribute.Relation<'manyToOne', 'api::faculty.faculty'>;
+    languages: Schema.Attribute.Component<'program.language', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1656,6 +1671,12 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
         };
       }>;
     totalCredits: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    tuitionFee: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;

@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_program_languages",
+  "info": {
+    "displayName": "Tədris dili",
+    "description": "Proqramın tədris dili (F5.18b).",
+    "icon": "globe"
+  },
+  "options": {},
+  "attributes": {
+    "code": {
+      "type": "enumeration",
+      "enum": ["az", "ru", "en"],
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_program_admission_scores",
+  "info": {
+    "displayName": "Qəbul balı",
+    "description": "Bir il üçün qəbul balı - ödənişli/ödənişsiz (F5.18b).",
+    "icon": "chart-bar"
+  },
+  "options": {},
+  "attributes": {
+    "year": {
+      "type": "integer",
+      "required": true
+    },
+    "minScorePaid": {
+      "type": "integer"
+    },
+    "minScoreFree": {
+      "type": "integer"
+    }
+  }
+}
