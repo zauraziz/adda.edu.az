@@ -1,12 +1,14 @@
-// K26 / F5.17 — /[locale]/ixtisaslar
+// K26 / F5.17 / F5.18c — /[locale]/ixtisaslar
 // K26-3-de menyudan bura link qoymusdum, amma siyahi sehifesi yox idi -> 404.
 //
-// F5.17 — kart toru YERİNƏ dərəcə tabları (Bakalavr/Magistr, klik ilə keçid)
-// + fakültəyə görə qruplaşdırılmış sətir siyahısı + ad üzrə axtarış.
-// Tərcümə/qruplaşdırma BURADA (server), interaktivlik ProgramDirectoryIsland-da
+// F5.17 — kart toru YERİNƏ dərəcə tabları (Bakalavr/Magistr, klik ilə keçid).
+// Tərcümə/hazırlıq BURADA (server), interaktivlik (tab keçidi) ProgramDirectoryIsland-da
 // (StaffDirectory/StaffDirectoryIsland ilə eyni iş bölgüsü, bax o fayllar).
 // `Doktorantura` proqram yoxdursa tab da yoxdur — `.filter((g) => g.items.length)`
 // K26-dan bəri dəyişməyib, sadəcə H2 bölmələri tab keçidinə çevrilib.
+// F5.18c — axtarış və fakültə qruplaşdırması SİLİNDİ, sadə düz sətir siyahısı;
+// şifr/təhsil haqqı/qəbul balı/dillər sütunları əlavə olundu (bax
+// ProgramDirectoryIsland.tsx).
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -27,7 +29,6 @@ import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/28-staff.css';
-import '../../_styles/29-directory.css';
 import '../../_styles/38-programs-list.css';
 import type { Metadata } from 'next';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
@@ -52,6 +53,27 @@ const STUDY_FORM_LABEL: Record<NonNullable<Program['studyForm']>, string> = {
   eyani: 'Əyani',
   qiyabi: 'Qiyabi',
 };
+
+// F5.18c — "Dillər" sütunu üçün sabit sıra (yaddan yazılma sırasından asılı olmasın).
+const LANG_ORDER: Program['languages'][number]['code'][] = ['az', 'ru', 'en'];
+
+function languagesLabel(languages: Program['languages']): string {
+  if (!languages.length) return '—';
+  const codes = new Set(languages.map((l) => l.code));
+  return LANG_ORDER.filter((c) => codes.has(c))
+    .map((c) => c.toUpperCase())
+    .join('+');
+}
+
+/** Ən son il (year azalan sıra, ilk element) — "82 / 74" formatında. */
+function admissionLabel(scores: Program['admissionScores']): string {
+  if (!scores.length) return '—';
+  const latest = [...scores].sort((a, b) => b.year - a.year)[0];
+  const paid = latest.minScorePaid;
+  const free = latest.minScoreFree;
+  if (paid == null && free == null) return '—';
+  return `${paid ?? '—'} / ${free ?? '—'}`;
+}
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];
@@ -89,9 +111,12 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
           (p): ProgramRow => ({
             slug: p.slug,
             title: p.title,
-            facultyName: p.faculty?.name ?? null,
+            code: p.code,
             durationYears: p.durationYears,
             studyFormLabel: p.studyForm ? tr(STUDY_FORM_LABEL[p.studyForm], locale) : null,
+            tuitionFee: p.tuitionFee,
+            admissionLabel: admissionLabel(p.admissionScores),
+            languagesLabel: languagesLabel(p.languages),
           }),
         ),
     }))
@@ -116,14 +141,14 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                 groups={groups}
                 basePath={`/${locale}/ixtisaslar`}
                 labels={{
-                  searchPlaceholder: tr('Ad üzrə axtarın', locale),
-                  found: tr('Tapıldı', locale),
-                  noResults: tr('Heç nə tapılmadı.', locale),
-                  colProgram: tr('Proqram', locale),
+                  colSpeciality: tr('İxtisas', locale),
+                  colCode: tr('Şifr', locale),
                   colDuration: tr('Müddət', locale),
                   colForm: tr('Təhsil forması', locale),
+                  colTuition: tr('Təhsil haqqı', locale),
+                  colAdmission: tr('Qəbul balı (ödənişli/ödənişsiz)', locale),
+                  colLanguages: tr('Dillər', locale),
                   years: tr('il', locale),
-                  other: tr('Digər', locale),
                 }}
               />
             ) : (

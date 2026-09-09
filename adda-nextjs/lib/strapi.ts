@@ -51,6 +51,18 @@ export interface Article {
   locale: Locale;
 }
 
+/** F5.18b — program.language komponenti (localized:false, sadə enum). */
+export interface ProgramLanguage {
+  code: 'az' | 'ru' | 'en';
+}
+
+/** F5.18b — program.admission-score komponenti (localized:false). */
+export interface ProgramAdmissionScore {
+  year: number;
+  minScorePaid: number | null;
+  minScoreFree: number | null;
+}
+
 export interface Program {
   id: number;
   documentId: string;
@@ -62,6 +74,11 @@ export interface Program {
   durationYears: number | null;
   /** F5.8a — dil DEYİL, fakt (bax ProgramDetail eyni sahə, schema.json localized:false). */
   studyForm: 'eyani' | 'qiyabi' | null;
+  code: string | null;
+  /** F5.18b — sərbəst mətn ("2500 AZN/il"), rəqəm strukturu qəsdən yoxdur. */
+  tuitionFee: string | null;
+  languages: ProgramLanguage[];
+  admissionScores: ProgramAdmissionScore[];
   locale: Locale;
 }
 
@@ -137,6 +154,11 @@ export async function getPrograms(locale: Locale = 'az'): Promise<Program[]> {
     'pagination[pageSize]': 100,
     'populate[faculty][fields][0]': 'name',
     'populate[faculty][fields][1]': 'slug',
+    // F5.18b/c — komponentlər Strapi 5-də ƏL İLƏ populate olunmalıdır,
+    // əks halda REST cavabında ümumiyyətlə yoxdurlar (bax getProgramDetail
+    // eyni qayda, `populate[courses]`).
+    'populate[languages]': true,
+    'populate[admissionScores]': true,
   });
   return json.data ?? [];
 }

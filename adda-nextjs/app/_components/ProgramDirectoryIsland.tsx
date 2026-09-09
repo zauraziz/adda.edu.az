@@ -1,12 +1,15 @@
 'use client';
 
-// F5.17 — /[locale]/ixtisaslar: dərəcə tabları (klik ilə keçid, aktiv tabın
-// altında xətt) + fakültəyə görə alt qruplaşdırılmış sətir siyahısı (HSE
-// nümunəsi, kart toru ƏVƏZİNƏ) + ad üzrə axtarış. Yeni server sorğusu YOXDUR —
-// bütün proqramlar page.tsx-də bir dəfə çəkilib, tab/axtarış client state-dir.
+// F5.17/F5.18c — /[locale]/ixtisaslar: dərəcə tabları (klik ilə keçid, aktiv
+// tabın altında xətt) + düz sətir siyahısı (fakültə qruplaşdırması və axtarış
+// F5.18c-də SİLİNDİ — sadə sıralı cədvəl). Yeni server sorğusu YOXDUR — bütün
+// proqramlar page.tsx-də bir dəfə çəkilib, tab keçidi client state-dir.
 //
 // LABEL-LƏR PROPS İLƏ GƏLİR, `tr()` BURADA ÇAĞIRILMIR — StaffDirectoryIsland
 // ilə eyni qayda (lib/i18n.ts lüğəti 55 kB-dır, client bundle-a düşməməlidir).
+// Sətir mətnləri (müddət, qəbul balı, dillər və s.) server tərəfdə (page.tsx)
+// hazırlanıb hazır string kimi gəlir — bura YALNIZ tab keçidi və "Təhsil haqqı"
+// sütununun görünürlüyünü hesablayır.
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -14,9 +17,12 @@ import Link from 'next/link';
 export interface ProgramRow {
   slug: string;
   title: string;
-  facultyName: string | null;
+  code: string | null;
   durationYears: number | null;
   studyFormLabel: string | null;
+  tuitionFee: string | null;
+  admissionLabel: string;
+  languagesLabel: string;
 }
 
 export interface ProgramDegreeGroup {
@@ -26,14 +32,14 @@ export interface ProgramDegreeGroup {
 }
 
 interface Labels {
-  searchPlaceholder: string;
-  found: string;
-  noResults: string;
-  colProgram: string;
+  colSpeciality: string;
+  colCode: string;
   colDuration: string;
   colForm: string;
+  colTuition: string;
+  colAdmission: string;
+  colLanguages: string;
   years: string;
-  other: string;
 }
 
 interface Props {
@@ -42,69 +48,23 @@ interface Props {
   labels: Labels;
 }
 
-/**
- * Axtarış üçün Azərbaycan-həssas kiçiltmə + diakritik bükmə.
- * StaffDirectoryIsland-dakı FOLD/fold ilə EYNİ — hər island öz nüsxəsini
- * saxlayır (bax lib/strapi.ts KAFEDRA_FACULTY-dəki eyni layihə-daxili
- * təkrarlama qərarı).
- */
-const FOLD: Record<string, string> = {
-  ə: 'e', Ə: 'e', ı: 'i', I: 'i', İ: 'i', i: 'i',
-  ö: 'o', Ö: 'o', ü: 'u', Ü: 'u', ç: 'c', Ç: 'c',
-  ş: 's', Ş: 's', ğ: 'g', Ğ: 'g',
-};
-function fold(s: string): string {
-  let out = '';
-  for (const ch of s) out += FOLD[ch] ?? ch;
-  return out.toLowerCase();
-}
-
-interface FacultySection {
-  name: string;
-  items: ProgramRow[];
-}
-
-/**
- * Fakültəyə görə alt qruplaşdırma (HSE-nin kateqoriya sətri nümunəsi).
- * Boş fakültə `otherLabel` ("Digər") qrupuna düşür və HƏMİŞƏ sonda gəlir.
- */
-function groupByFaculty(items: ProgramRow[], otherLabel: string): FacultySection[] {
-  const map = new Map<string, ProgramRow[]>();
-  for (const p of items) {
-    const key = p.facultyName || otherLabel;
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(p);
-  }
-  const other = map.get(otherLabel);
-  const sections: FacultySection[] = [...map.entries()]
-    .filter(([name]) => name !== otherLabel)
-    .sort((a, b) => a[0].localeCompare(b[0], 'az'))
-    .map(([name, list]) => ({ name, items: list }));
-  if (other?.length) sections.push({ name: otherLabel, items: other });
-  return sections;
-}
-
 export default function ProgramDirectoryIsland({ groups, basePath, labels }: Props) {
   const [activeDegree, setActiveDegree] = useState(groups[0]?.degree ?? '');
-  const [q, setQ] = useState('');
 
   const activeGroup = groups.find((g) => g.degree === activeDegree) ?? groups[0];
-  const qf = fold(q.trim());
+  const items = activeGroup?.items ?? [];
 
-  const filtered = useMemo(() => {
-    const items = activeGroup?.items ?? [];
-    if (!qf) return items;
-    return items.filter((p) => fold(p.title).includes(qf));
-  }, [activeGroup, qf]);
-
-  const sections = useMemo(() => groupByFaculty(filtered, labels.other), [filtered, labels.other]);
+  // F5.18c — "Təhsil haqqı" sütunu YALNIZ ən azı bir proqramda doludursa
+  // görünür (başlığı daxil) — hamısı boşdursa sütun tam yox olur, "—" ilə
+  // doldurulmur.
+  const hasTuition = useMemo(() => items.some((p) => p.tuitionFee), [items]);
 
   if (!groups.length) return null;
 
   return (
     <>
       {groups.length > 1 ? (
-        <nav className="prg-tabs" aria-label={labels.colProgram}>
+        <nav className="prg-tabs" aria-label={labels.colSpeciality}>
           {groups.map((g) => (
             <button
               key={g.degree}
@@ -119,53 +79,34 @@ export default function ProgramDirectoryIsland({ groups, basePath, labels }: Pro
         </nav>
       ) : null}
 
-      <div className="dir-search prg-search">
-        <i className="ti ti-search" aria-hidden="true" />
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={labels.searchPlaceholder}
-          aria-label={labels.searchPlaceholder}
-        />
-      </div>
-
-      <p className="np-total prg-count">
-        {labels.found}: {filtered.length}
-      </p>
-
-      {filtered.length ? (
-        <div className="prg-table" role="table">
-          <div className="prg-row prg-row--head" role="row">
-            <span className="prg-cell prg-cell--name" role="columnheader">{labels.colProgram}</span>
-            <span className="prg-cell prg-cell--duration" role="columnheader">{labels.colDuration}</span>
-            <span className="prg-cell prg-cell--form" role="columnheader">{labels.colForm}</span>
-          </div>
-          {sections.map((sec) => (
-            <div key={sec.name} className="prg-section" role="rowgroup">
-              <div className="prg-cat" role="row">
-                <span className="prg-cat-name" role="cell">{sec.name}</span>
-              </div>
-              {sec.items.map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`${basePath}/${p.slug}`}
-                  className="prg-row prg-row--item"
-                  role="row"
-                >
-                  <span className="prg-cell prg-cell--name" role="cell">{p.title}</span>
-                  <span className="prg-cell prg-cell--duration" role="cell">
-                    {p.durationYears ? `${p.durationYears} ${labels.years}` : '—'}
-                  </span>
-                  <span className="prg-cell prg-cell--form" role="cell">{p.studyFormLabel ?? '—'}</span>
-                </Link>
-              ))}
-            </div>
-          ))}
+      <div className="prg-table" role="table">
+        <div className="prg-row prg-row--head" role="row">
+          <span className="prg-cell prg-cell--code" role="columnheader">{labels.colCode}</span>
+          <span className="prg-cell prg-cell--name" role="columnheader">{labels.colSpeciality}</span>
+          <span className="prg-cell prg-cell--duration" role="columnheader">{labels.colDuration}</span>
+          <span className="prg-cell prg-cell--form" role="columnheader">{labels.colForm}</span>
+          {hasTuition ? (
+            <span className="prg-cell prg-cell--tuition" role="columnheader">{labels.colTuition}</span>
+          ) : null}
+          <span className="prg-cell prg-cell--admission" role="columnheader">{labels.colAdmission}</span>
+          <span className="prg-cell prg-cell--langs" role="columnheader">{labels.colLanguages}</span>
         </div>
-      ) : (
-        <p className="np-empty">{labels.noResults}</p>
-      )}
+        {items.map((p) => (
+          <Link key={p.slug} href={`${basePath}/${p.slug}`} className="prg-row prg-row--item" role="row">
+            <span className="prg-cell prg-cell--code" role="cell">{p.code ?? '—'}</span>
+            <span className="prg-cell prg-cell--name" role="cell">{p.title}</span>
+            <span className="prg-cell prg-cell--duration" role="cell">
+              {p.durationYears ? `${p.durationYears} ${labels.years}` : '—'}
+            </span>
+            <span className="prg-cell prg-cell--form" role="cell">{p.studyFormLabel ?? '—'}</span>
+            {hasTuition ? (
+              <span className="prg-cell prg-cell--tuition" role="cell">{p.tuitionFee ?? '—'}</span>
+            ) : null}
+            <span className="prg-cell prg-cell--admission" role="cell">{p.admissionLabel}</span>
+            <span className="prg-cell prg-cell--langs" role="cell">{p.languagesLabel}</span>
+          </Link>
+        ))}
+      </div>
     </>
   );
 }

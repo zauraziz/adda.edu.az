@@ -1,7 +1,6 @@
-/* 38-programs-list.css — /[locale]/ixtisaslar (F5.17)
-   Dərəcə tabları (aktiv tabın altında xətt) + fakültəyə görə qruplaşdırılmış
-   sətir siyahısı (kart toru ƏVƏZİNƏ). Axtarış qutusu `.dir-search`-dən
-   (29-directory.css) olduğu kimi istifadə olunur — YENİ stil yazılmayıb.
+/* 38-programs-list.css — /[locale]/ixtisaslar (F5.17/F5.18c)
+   Dərəcə tabları (aktiv tabın altında xətt) + düz sətir siyahısı (kart toru
+   ƏVƏZİNƏ). F5.18c-də axtarış qutusu və fakültə kateqoriya sətri SİLİNDİ.
    Navy #0B3D5C, qızılı #C9A961, Fraunces (başlıq) + Manrope (mətn). */
 
 /* ── Dərəcə tabları ──────────────────────────────────── */
@@ -37,31 +36,29 @@
   background: var(--gold-500);
 }
 
-/* ── Axtarış (.dir-search-dan sadəcə boşluq) ────────────── */
-.prg-search { max-width: 420px; margin: 0 0 1.25rem; }
-.prg-count { margin: 0 0 1rem; }
-
 /* ── Sətir siyahısı: cədvəl kimi başlıq, mobil flex-column ──
    Real <table> DEYİL — div-lər `role="table"` ilə, mobildə sütunlar
-   yanaşı DEYİL, aşağı-yuxarı yığılır (bax media sorğusu). */
+   yanaşı DEYİL, aşağı-yuxarı yığılır (bax media sorğusu). Çox sütun ola
+   bilər (şifr/ad/müddət/forma/haqq/bal/dil) — masaüstündə üfüqi sürüşmə. */
 .prg-table {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--gray-200);
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto;
   background: var(--white);
 }
 .prg-row {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: max-content;
   padding: 0.85rem 1.15rem;
   border-bottom: 1px solid var(--gray-200);
   text-decoration: none;
   color: inherit;
 }
-.prg-section:last-child .prg-row--item:last-child { border-bottom: none; }
+.prg-row:last-child { border-bottom: none; }
 .prg-row--head {
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -78,14 +75,23 @@
 .prg-row--item:focus-visible { outline: 3px solid var(--gold-500); outline-offset: -3px; }
 
 .prg-cell { min-width: 0; }
+.prg-cell--code {
+  flex: 0 0 auto;
+  width: 90px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
 .prg-cell--name {
   flex: 1 1 auto;
+  min-width: 220px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1rem;
   color: var(--navy-900);
 }
-.prg-row--head .prg-cell--name {
+.prg-row--head .prg-cell--name,
+.prg-row--head .prg-cell--code {
   font-family: var(--font-body);
   font-weight: 700;
   font-size: var(--text-xs);
@@ -94,26 +100,33 @@
 .prg-cell--duration,
 .prg-cell--form {
   flex: 0 0 auto;
-  width: 150px;
+  width: 130px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--gray-700);
 }
-
-/* ── Fakültə kateqoriya sətri (HSE-nin "07.00.00 Arxitektura" nümunəsi) ── */
-.prg-cat {
-  display: flex;
-  padding: 0.55rem 1.15rem;
-  background: var(--navy-50);
-  border-bottom: 1px solid var(--gray-200);
-}
-.prg-cat-name {
+.prg-cell--tuition {
+  flex: 0 0 auto;
+  width: 140px;
   font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+}
+.prg-cell--admission {
+  flex: 0 0 auto;
+  width: 180px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+}
+.prg-cell--langs {
+  flex: 0 0 auto;
+  width: 100px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
   color: var(--navy-700);
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 640px) {
@@ -122,9 +135,14 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.3rem;
+    min-width: 0;
   }
+  .prg-cell--code,
   .prg-cell--duration,
-  .prg-cell--form { width: auto; }
+  .prg-cell--form,
+  .prg-cell--tuition,
+  .prg-cell--admission,
+  .prg-cell--langs { width: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
