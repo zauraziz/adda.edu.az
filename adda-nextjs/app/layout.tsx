@@ -3,14 +3,16 @@ import { Fraunces, Manrope } from 'next/font/google';
 import '@/styles/globals.css';
 
 const fraunces = Fraunces({
-  subsets: ['latin'],
+  // F5.18a — Ə/Ş/Ğ/Ç/Ö/Ü kimi Azərbaycan hərfləri "latin" alt çoxluğunda YOXDUR,
+  // "latin-ext"dədir. Bunsuz next/font bu hərflər üçün sistem fontuna keçir.
+  subsets: ['latin', 'latin-ext'],
   variable: '--font-display',
   display: 'swap',
   axes: ['opsz'],
 });
 
 const manrope = Manrope({
-  subsets: ['latin', 'cyrillic'],
+  subsets: ['latin', 'cyrillic', 'latin-ext'],
   variable: '--font-body',
   display: 'swap',
 });
