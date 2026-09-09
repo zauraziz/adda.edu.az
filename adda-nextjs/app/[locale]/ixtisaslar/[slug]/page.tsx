@@ -41,6 +41,7 @@ import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import ProgramToc from '../../../_components/ProgramToc';
 import LeaderCard from '../../../_components/LeaderCard';
+import AdmissionScoreChart from '../../../_components/AdmissionScoreChart';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
 import { BlockTitle, AdminEditRow, EmptyBlock } from '../../../_components/AdminOnly';
 import { DocList } from '../../../_components/DocList';
@@ -293,6 +294,9 @@ export default async function ProgramPage({
   // TOXUNMA (F5.5): bu məntiq dəyişmir, sadəcə `CourseTable`-a çıxarılıb.
   const hasPrerequisite = program.courses.some((c) => c.prerequisite);
   const hasCorequisite = program.courses.some((c) => c.corequisite);
+
+  // F5.18e — tək illik "qrafik" mənasız olardı, ən azı 2 il tələb olunur.
+  const admissionChartHas = program.admissionScores.length >= 2;
 
   const blockTitleOverview = tr('Proqram haqqında', locale);
   const blockTitleOutcomes = tr('Təlim nəticələri', locale);
@@ -622,6 +626,15 @@ export default async function ProgramPage({
                   <EmptyBlock uid="api::program.program" title={blockTitlePlan} documentId={program.documentId} locale={locale} tint={tintByKey['study-plan']} />
                 </AdminOnly>
               )}
+
+              {/* F5.18e — 5 illik qəbul balı qrafiki. Ən azı 2 il yoxdursa
+                  (yəni tək nöqtəli "qrafik" mənasız olardı) blok görünmür. */}
+              {admissionChartHas ? (
+                <section className="un-block">
+                  <h2 className="un-block-title">{tr('Qəbul balı', locale)}</h2>
+                  <AdmissionScoreChart scores={program.admissionScores} locale={locale} />
+                </section>
+              ) : null}
             </div>
 
             {sideHas ? (

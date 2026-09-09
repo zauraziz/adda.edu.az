@@ -1208,6 +1208,8 @@ export interface ProgramDetail {
   /** F5.14a — `head` LeaderCard üçün (bax _components/LeaderCard.tsx). */
   unit: { slug: string; name: string; head: LeaderPerson | null } | null;
   courses: ProgramCourse[];
+  /** F5.18e — AdmissionScoreChart.tsx üçün. */
+  admissionScores: ProgramAdmissionScore[];
 }
 
 /**
@@ -1257,6 +1259,9 @@ export async function getProgramDetail(slug: string, locale: Locale = 'az'): Pro
     'populate[unit][populate][head][fields][9]': 'building',
     'populate[unit][populate][head][populate][photo][fields][0]': 'url',
     'populate[courses]': true,
+    // F5.18e — komponent, əl ilə populate olunmalıdır (bax `populate[courses]`
+    // eyni qayda, F5.18b/c-də `getPrograms()`-da da təkrarlanıb).
+    'populate[admissionScores]': true,
   });
   return json.data?.[0] ?? null;
 }

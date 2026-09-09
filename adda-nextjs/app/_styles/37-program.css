@@ -155,3 +155,45 @@
   white-space: nowrap;
 }
 
+/* ── F5.18e: 5 illik qəbul balı qrafiki (AdmissionScoreChart.tsx) ──
+   Asılılıqsız SVG — mobildə üfüqi sürüşmə, `pr-plan-scroll` ilə eyni texnika. */
+.pr-chart-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.pr-chart { display: block; min-width: 260px; }
+.pr-chart-axis { stroke: var(--gray-200); stroke-width: 1; }
+.pr-chart-bar--free { fill: var(--navy-800); }
+.pr-chart-bar--paid { fill: var(--gold-500); }
+.pr-chart-value {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--gray-700);
+  text-anchor: middle;
+}
+.pr-chart-year {
+  font-family: var(--font-body);
+  font-size: 11px;
+  fill: var(--gray-500);
+  text-anchor: middle;
+}
+.pr-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+}
+.pr-chart-legend-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+.pr-chart-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.pr-chart-swatch--free { background: var(--navy-800); }
+.pr-chart-swatch--paid { background: var(--gold-500); }
+
