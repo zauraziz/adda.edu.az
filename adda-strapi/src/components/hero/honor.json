@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_hero_honors",
+  "info": {
+    "displayName": "Təltif",
+    "description": "Qəhrəmanın aldığı fəxri ad/mükafat (F5.21a).",
+    "icon": "medal"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -14,6 +14,18 @@ export interface EventSpeaker extends Struct.ComponentSchema {
   };
 }
 
+export interface HeroHonor extends Struct.ComponentSchema {
+  collectionName: 'components_hero_honors';
+  info: {
+    description: 'Q\u0259hr\u0259man\u0131n ald\u0131\u011F\u0131 f\u0259xri ad/m\u00FCkafat (F5.21a).';
+    displayName: 'T\u0259ltif';
+    icon: 'medal';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface NavCategory extends Struct.ComponentSchema {
   collectionName: 'components_nav_categorys';
   info: {
@@ -309,6 +321,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'event.speaker': EventSpeaker;
+      'hero.honor': HeroHonor;
       'nav.category': NavCategory;
       'nav.footercol': NavFootercol;
       'nav.group': NavGroup;
