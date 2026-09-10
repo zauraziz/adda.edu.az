@@ -264,7 +264,9 @@ export default async function ProgramPage({
 
   // F5.14b — cari proqram çıxarılır, qalanı yan panel DEYİL, səhifə
   // sonunda kart cərgəsi (abituriyent ixtisasları müqayisə etsin).
-  const otherPrograms = allPrograms.filter((p) => p.slug !== program.slug);
+  // F5.20e — YALNIZ eyni dərəcə (bakalavr proqramının altında magistratura
+  // görünməsin) — əvvəl bütün proqramlar (dərəcədən asılı olmayaraq) gəlirdi.
+  const otherPrograms = allPrograms.filter((p) => p.slug !== program.slug && p.degree === program.degree);
 
   // F5.5b/F5.6 — `program.faculty` sxemdə var, amma boş ola bilər. Boşdursa
   // KAFEDRA_FACULTY sabitindən (bax lib/strapi.ts) götürülür — `unit.parent`
