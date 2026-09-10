@@ -65,14 +65,28 @@ function languagesLabel(languages: Program['languages']): string {
     .join('+');
 }
 
-/** Ən son il (year azalan sıra, ilk element) — "82 / 74" formatında. */
+/** F5.20d — onluq ayırıcı vergüllə ("239,5"), nöqtə ilə YOX. */
+function formatScore(n: number): string {
+  return String(n).replace('.', ',');
+}
+
+/**
+ * F5.20d — siyahı görünüşü YALNIZI: ən son il (year azalan sıra, ilk
+ * element), ödənişli/ödənişsiz AYRI-AYRI YOX, minimum/maksimum kimi
+ * ("239,5 / 385"). Yalnız biri mövcuddursa, o göstərilir.
+ * DİQQƏT: AdmissionScoreChart.tsx-də ödənişli/ödənişsiz ayrımı DƏQİQ
+ * qalır — bu funksiya ora TƏSİR ETMİR, TOXUNULMAYIB (F5.20d).
+ */
 function admissionLabel(scores: Program['admissionScores']): string {
   if (!scores.length) return '—';
   const latest = [...scores].sort((a, b) => b.year - a.year)[0];
   const paid = latest.minScorePaid;
   const free = latest.minScoreFree;
   if (paid == null && free == null) return '—';
-  return `${paid ?? '—'} / ${free ?? '—'}`;
+  if (paid != null && free != null) {
+    return `${formatScore(Math.min(paid, free))} / ${formatScore(Math.max(paid, free))}`;
+  }
+  return formatScore(paid ?? free!);
 }
 
 export function generateStaticParams() {
