@@ -112,8 +112,8 @@ export interface ProgramAdmissionScore extends Struct.ComponentSchema {
     icon: 'chart-bar';
   };
   attributes: {
-    minScoreFree: Schema.Attribute.Integer;
-    minScorePaid: Schema.Attribute.Integer;
+    minScoreFree: Schema.Attribute.Decimal;
+    minScorePaid: Schema.Attribute.Decimal;
     year: Schema.Attribute.Integer & Schema.Attribute.Required;
   };
 }

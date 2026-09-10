@@ -12,10 +12,10 @@
       "required": true
     },
     "minScorePaid": {
-      "type": "integer"
+      "type": "decimal"
     },
     "minScoreFree": {
-      "type": "integer"
+      "type": "decimal"
     }
   }
 }

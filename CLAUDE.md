@@ -337,6 +337,15 @@ olunur. Çevirmə kimdə?
    (`/sehife/umumi-isler-uzre-prorektor`, `check:menu` bax)
 7. Meilisearch plugini `package.json`-dan çıxarılmalıdır (boot-da xəta yazır)
 8. F2.7 RAG co-pilot — məzmun boşluqları dolandan sonra
+9. **F5.20a — qəbul balı sahələri əl ilə düzəldilməlidir.** `admission-score`
+   komponentində `minScorePaid`/`minScoreFree` `integer` → `decimal` dəyişdi,
+   AMMA mövcud korlanmış dəyərlər (onluq nöqtəsi/vergülü admin paneldə
+   itib, "370,5" → "3705" kimi yazılıb) AVTOMATIK DÜZƏLMİR. Deploy edildikdən
+   sonra Zaur müəllim admin paneldə bu 4 proqramın (21 sətir) ballarını əl
+   ilə yenidən yazmalıdır (düzgün, "239,5" kimi):
+   `deniz-naviqasiyasi-muhendisliyi` (5 il), `gemiqayirma-ve-gemi-temiri-muhendisliyi`
+   (5 il), `deniz-naviqasiyasi-muhendisliyi-en-eyani` (5 il),
+   `gemi-energetik-qurgularinin-istismari-muhendisliyi-en-eyani` (4 il).
 
 ---
 
@@ -352,7 +361,29 @@ olunur. Çevirmə kimdə?
 - Səhv olanda **etiraf et və düzəlt** — səbəbi gizlətmə.
 
 
-## Fakültə həlli
+## Mövcud kodu yoxlamadan iddia etmə
 
-`KAFEDRA_FACULTY` sabiti, `lib/strapi.ts`. Slug uyğunluğu
+Bir funksiyanın «olmadığını» yazmazdan ƏVVƏL axtar:
+  grep -rn "<açar söz>" adda-nextjs/app adda-nextjs/lib
+
+Komponentlər `app/_components/` altında yaşayır — səhifə faylında
+olmaması «yoxdur» demək DEYİL.
+
+## Komponent xəritəsi (struktur səhifəsi)
+
+  ExpandBlock.tsx     akkordeon — başlığın özü açardır (F4.8a)
+  ContentPage.tsx     sehife/ixtisaslar/fakulteler üçün ümumi gövdə
+                      + az fallback bildirişi (F3.28)
+  getUnitArticles()   lib/strapi.ts — hibrid xəbər filtri:
+                      $or[unit][slug] + $or[tags][slug] (F3.21)
+  isAdmin / adminUrl  səhifədə admin bəzəkləri (F4.9b)
+
+## Sluq uydurma
+
+Yoxlama sluqları `npm run check:units` çıxışından götürülür.
+`unit` və `department` sluqları oxşardır, amma FƏRQLİDİR:
+  unit:       muhasibat-ucotu-ve-hesabati-sobesi
+  department: muhasibat-ucotu-ve-hesabat-sobesi
+
+Fakültə həlli: `KAFEDRA_FACULTY` sabiti, `lib/strapi.ts`. Slug uyğunluğu
 (unit.slug === faculty.slug) qəsdəndir, F5.6-da sənədləşib.
