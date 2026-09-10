@@ -145,9 +145,9 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                   colCode: tr('Şifr', locale),
                   colDuration: tr('Müddət', locale),
                   colForm: tr('Təhsil forması', locale),
-                  colTuition: tr('Təhsil haqqı', locale),
-                  colAdmission: tr('Qəbul balı (ödənişli/ödənişsiz)', locale),
-                  colLanguages: tr('Dillər', locale),
+                  colTuition: tr('Təhsil haqqı (AZN)', locale),
+                  colAdmission: tr('Qəbul balı (minimum/maksimum)', locale),
+                  colLanguages: tr('Tədris dili', locale),
                   years: tr('il', locale),
                 }}
               />
