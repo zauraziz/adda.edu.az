@@ -79,7 +79,11 @@ export default function ProgramDirectoryIsland({ groups, basePath, labels }: Pro
         </nav>
       ) : null}
 
-      <div className="prg-table" role="table">
+      {/* F5.20b — geniş ekranda cədvəl (CSS grid, çevik sütunlar), dar ekranda
+          hər sətir öz kartına çevrilir: kod+ad başlıq, qalanı etiket:dəyər
+          cütü (bax 38-programs-list.css `::before` texnikası, `data-label`
+          BURADAN gəlir). Üfüqi sürüşmə default DEYİL, yalnız ehtiyat. */}
+      <div className={'prg-table' + (hasTuition ? ' prg-table--with-tuition' : '')} role="table">
         <div className="prg-row prg-row--head" role="row">
           <span className="prg-cell prg-cell--code" role="columnheader">{labels.colCode}</span>
           <span className="prg-cell prg-cell--name" role="columnheader">{labels.colSpeciality}</span>
@@ -95,15 +99,23 @@ export default function ProgramDirectoryIsland({ groups, basePath, labels }: Pro
           <Link key={p.slug} href={`${basePath}/${p.slug}`} className="prg-row prg-row--item" role="row">
             <span className="prg-cell prg-cell--code" role="cell">{p.code ?? '—'}</span>
             <span className="prg-cell prg-cell--name" role="cell">{p.title}</span>
-            <span className="prg-cell prg-cell--duration" role="cell">
+            <span className="prg-cell prg-cell--duration" role="cell" data-label={labels.colDuration}>
               {p.durationYears ? `${p.durationYears} ${labels.years}` : '—'}
             </span>
-            <span className="prg-cell prg-cell--form" role="cell">{p.studyFormLabel ?? '—'}</span>
+            <span className="prg-cell prg-cell--form" role="cell" data-label={labels.colForm}>
+              {p.studyFormLabel ?? '—'}
+            </span>
             {hasTuition ? (
-              <span className="prg-cell prg-cell--tuition" role="cell">{p.tuitionFee ?? '—'}</span>
+              <span className="prg-cell prg-cell--tuition" role="cell" data-label={labels.colTuition}>
+                {p.tuitionFee ?? '—'}
+              </span>
             ) : null}
-            <span className="prg-cell prg-cell--admission" role="cell">{p.admissionLabel}</span>
-            <span className="prg-cell prg-cell--langs" role="cell">{p.languagesLabel}</span>
+            <span className="prg-cell prg-cell--admission" role="cell" data-label={labels.colAdmission}>
+              {p.admissionLabel}
+            </span>
+            <span className="prg-cell prg-cell--langs" role="cell" data-label={labels.colLanguages}>
+              {p.languagesLabel}
+            </span>
           </Link>
         ))}
       </div>

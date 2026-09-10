@@ -36,27 +36,38 @@
   background: var(--gold-500);
 }
 
-/* ── Sətir siyahısı: cədvəl kimi başlıq, mobil flex-column ──
-   Real <table> DEYİL — div-lər `role="table"` ilə, mobildə sütunlar
-   yanaşı DEYİL, aşağı-yuxarı yığılır (bax media sorğusu). Çox sütun ola
-   bilər (şifr/ad/müddət/forma/haqq/bal/dil) — masaüstündə üfüqi sürüşmə. */
+/* ── Sətir siyahısı (F5.20b) ──
+   Real <table> DEYİL — div-lər `role="table"` ilə.
+   GENİŞ EKRAN: CSS grid, sütunlar `minmax()` ilə ÇEVİKDİR (sabit `width`
+   YOXDUR) — ad sütunu qalan yeri alır və uzun mətn qırılır (overflow-wrap).
+   DAR EKRAN (aşağıda, media sorğusu): cədvəl DEYİL — hər sətir öz kartına
+   çevrilir, kod+ad başlıq (grid-area "code name"), qalan sahələr
+   etiket:dəyər cütü kimi alt-alta (etiket `data-label`-dən `::before` ilə,
+   bax JSX-dəki `data-label` atributları). Üfüqi sürüşmə (`overflow-x`)
+   son çarə kimi qalır, layout ONA ARXALANMIR (məcburi `min-width` yoxdur). */
 .prg-table {
-  display: flex;
-  flex-direction: column;
   border: 1px solid var(--gray-200);
   border-radius: 14px;
   overflow-x: auto;
   background: var(--white);
 }
 .prg-row {
-  display: flex;
+  display: grid;
+  grid-template-columns:
+    minmax(60px, 88px) minmax(180px, 1fr) minmax(90px, 120px)
+    minmax(90px, 120px) minmax(120px, 170px) minmax(70px, 100px);
+  column-gap: 1rem;
   align-items: center;
-  gap: 1rem;
-  min-width: max-content;
   padding: 0.85rem 1.15rem;
   border-bottom: 1px solid var(--gray-200);
   text-decoration: none;
   color: inherit;
+}
+.prg-table--with-tuition .prg-row {
+  grid-template-columns:
+    minmax(60px, 88px) minmax(180px, 1fr) minmax(90px, 120px)
+    minmax(90px, 120px) minmax(100px, 140px) minmax(120px, 170px)
+    minmax(70px, 100px);
 }
 .prg-row:last-child { border-bottom: none; }
 .prg-row--head {
@@ -76,19 +87,16 @@
 
 .prg-cell { min-width: 0; }
 .prg-cell--code {
-  flex: 0 0 auto;
-  width: 90px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--gray-500);
 }
 .prg-cell--name {
-  flex: 1 1 auto;
-  min-width: 220px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1rem;
   color: var(--navy-900);
+  overflow-wrap: anywhere;
 }
 .prg-row--head .prg-cell--name,
 .prg-row--head .prg-cell--code {
@@ -98,30 +106,19 @@
   color: var(--gray-500);
 }
 .prg-cell--duration,
-.prg-cell--form {
-  flex: 0 0 auto;
-  width: 130px;
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--gray-700);
-}
+.prg-cell--form,
 .prg-cell--tuition {
-  flex: 0 0 auto;
-  width: 140px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--gray-700);
 }
 .prg-cell--admission {
-  flex: 0 0 auto;
-  width: 180px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--gray-700);
+  overflow-wrap: anywhere;
 }
 .prg-cell--langs {
-  flex: 0 0 auto;
-  width: 100px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -130,19 +127,71 @@
 }
 
 @media (max-width: 640px) {
+  .prg-table { overflow-x: visible; }
   .prg-row--head { display: none; }
   .prg-row--item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
-    min-width: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'code name'
+      'duration duration'
+      'form form'
+      'admission admission'
+      'langs langs';
+    column-gap: 0.6rem;
+    row-gap: 0.3rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    border-radius: 12px;
+    margin: 0 0 0.75rem;
   }
-  .prg-cell--code,
+  .prg-table--with-tuition .prg-row--item {
+    grid-template-areas:
+      'code name'
+      'duration duration'
+      'form form'
+      'tuition tuition'
+      'admission admission'
+      'langs langs';
+  }
+  .prg-row--item:last-child { margin-bottom: 0; }
+
+  .prg-cell--code { grid-area: code; }
+  .prg-cell--name { grid-area: name; }
+  .prg-cell--duration { grid-area: duration; }
+  .prg-cell--form { grid-area: form; }
+  .prg-cell--tuition { grid-area: tuition; }
+  .prg-cell--admission { grid-area: admission; }
+  .prg-cell--langs { grid-area: langs; }
+
+  /* Başlıq sətri gizlidir — kod/ad İSTİSNA (onlar kartın öz başlığıdır),
+     qalan xanalar öz etiketini `data-label`-dən göstərir. */
   .prg-cell--duration,
   .prg-cell--form,
   .prg-cell--tuition,
   .prg-cell--admission,
-  .prg-cell--langs { width: auto; }
+  .prg-cell--langs {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-top: 0.3rem;
+    border-top: 1px solid var(--gray-100, #f3f4f6);
+  }
+  .prg-cell--duration::before,
+  .prg-cell--form::before,
+  .prg-cell--tuition::before,
+  .prg-cell--admission::before,
+  .prg-cell--langs::before {
+    content: attr(data-label);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
