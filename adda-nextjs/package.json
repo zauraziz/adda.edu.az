@@ -13,6 +13,7 @@
     "check:gaps": "node ../tools/check-content-gaps.mjs",
     "check:program-gaps": "node ../tools/check-program-gaps.mjs",
     "check:unit-heads": "node ../tools/check-unit-heads.mjs",
+    "check:heroes": "node ../tools/check-heroes.mjs",
     "plan:heads": "node ../tools/plan-unit-heads.mjs",
     "dev": "next dev",
     "build": "next build",
