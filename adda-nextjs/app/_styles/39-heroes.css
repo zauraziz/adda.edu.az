@@ -1,0 +1,249 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F5.21b / Qəhrəmanlarımız (`hr-*`)
+   MÖVCUD NÜMUNƏ: 32-rectors.css (`rk-*`) — struktur oradan götürülüb
+   (kart şəbəkəsi + kart→detal keçidi), amma TON QƏSDƏN DƏYİŞİB: bu, Vətən
+   uğrunda şəhid olan məzunların xatirə səhifəsidir.
+     · status nişanı ("Hazırda") YOXDUR
+     · foto lövhəsi: parlaq qradient/hover YOX — nazik tünd haşiyə
+     · rəngli monoqram YOX — foto yoxdursa sadə tünd siluet
+     · hover: yalnız yüngül kölgə, hərəkət/animasiya YOX
+   Tokenlər: --navy-*, --gold-*, --ink*, --line, --radius-*, --font-display
+   (Fraunces), --font-body (Manrope) — 01-base.css/globals.css-dən.
+   BİR İSTİSNA: qərənfil qırmızısı heç bir mövcud tokendə yoxdur (naviqasiya/
+   qızılı/boz palitrada uyğun rəng yoxdur), rəsmi şəhid rəmzi üçün qəsdən
+   ƏLAVƏ OLUNUB — sakit, doymamış ton (parlaq qırmızı YOX).
+   ═══════════════════════════════════════════════════════ */
+
+.hr-wrap { padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem); }
+
+.hr-dedication {
+  margin-top: 0.85rem;
+  max-width: 52ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  line-height: 1.5;
+  color: var(--navy-100);
+  opacity: 0.88;
+}
+
+/* ═══ 1. Siyahı — kart şəbəkəsi ═══ */
+
+.hr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hr-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold-500);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: none;
+  transition: box-shadow 140ms ease;
+}
+.hr-card:hover,
+.hr-card:focus-visible { box-shadow: var(--nav-sh-sm); }
+.hr-card:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 2px; }
+
+.hr-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1.05rem 1.15rem 1.2rem;
+}
+
+.hr-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.14rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--navy-800);
+}
+
+.hr-meta {
+  margin-top: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.hr-more {
+  display: inline-block;
+  margin-top: auto;
+  padding-top: 0.95rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--navy-600);
+}
+
+/* ── Foto lövhəsi — nazik tünd haşiyə, rəngli fon/parlaq YOX ── */
+.hr-plate {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 4;
+  background: var(--gray-100, #f3f4f6);
+  border-bottom: 1px solid var(--navy-800);
+  overflow: hidden;
+}
+.hr-silhouette {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--navy-700);
+}
+.hr-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* Qərənfil — lövhənin yuxarı-sağ küncündə, kiçik və sakit. */
+.hr-carnation {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  color: var(--hr-carnation, #8f2438);
+  opacity: 0.92;
+}
+
+/* ═══ 2. Detal səhifəsi ═══ */
+
+.hr-back {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+  text-decoration: none;
+}
+.hr-back:hover { color: var(--white); }
+
+.hr-detail {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+.hr-side { position: sticky; top: 6.5rem; }
+.hr-plate--lg { aspect-ratio: 3 / 4; border-radius: var(--radius-lg); border: 1px solid var(--navy-800); border-bottom: 1px solid var(--navy-800); }
+
+.hr-facts { margin: 1.25rem 0 0; }
+.hr-fact-k {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy-600);
+}
+.hr-fact-v {
+  margin: 0.2rem 0 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.hr-fact-v:last-child { margin-bottom: 0; }
+
+.hr-honors {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1em;
+  list-style: disc;
+}
+.hr-honor-item {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.hr-honor-item::marker { color: var(--gold-500); }
+
+.hr-main { min-width: 0; }
+.hr-sec-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+  color: var(--navy-800);
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--gold-500);
+  margin: 0 0 1.4rem;
+}
+
+.hr-bio { max-width: 68ch; }
+.hr-bio p {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+.hr-bio p:last-child { margin-bottom: 0; }
+.hr-bio strong { font-weight: 700; color: var(--navy-800); }
+.hr-bio em { font-style: italic; }
+
+.hr-note {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  background: var(--navy-50);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+}
+
+/* ═══ Responsiv ═══ */
+
+@media (max-width: 900px) {
+  .hr-detail { grid-template-columns: minmax(0, 1fr); }
+  .hr-side {
+    position: static;
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .hr-facts { margin-top: 0; }
+}
+
+@media (max-width: 560px) {
+  .hr-grid { grid-template-columns: minmax(0, 1fr); }
+  .hr-side { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Hərəkətə həssaslıq üstünlüyü — kölgə keçidi də söndürülür (defolt onsuz
+   da sakitdir, bura tam ardıcıllıq üçündür). */
+@media (prefers-reduced-motion: reduce) {
+  .hr-card { transition: none; }
+}
+
+@media print {
+  .hr-plate { border: 1px solid var(--line); }
+  .hr-carnation, .hr-back { display: none; }
+}

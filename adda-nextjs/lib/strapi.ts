@@ -652,6 +652,76 @@ export async function getRectors(locale: Locale = 'az'): Promise<Rector[]> {
   }
 }
 
+/** ── Qəhrəmanlarımız (F5.21) ── */
+export interface HeroHonor {
+  label: string;
+}
+
+export interface HeroPerson {
+  documentId?: string;
+  slug: string;
+  name: string;
+  photo?: StrapiMedia | null;
+  birthDate: string | null;
+  birthPlace: string | null;
+  /** ADDA-da oxuduğu ixtisas. */
+  addaProgram: string | null;
+  /** Sərbəst mətn — "2012–2016" və ya "2013-cü ildən" kimi. */
+  studyYears: string | null;
+  martyrdomDate: string | null;
+  martyrdomPlace: string | null;
+  honors: HeroHonor[];
+  /** Markdown. */
+  biography: string | null;
+  sortOrder: number;
+  locale: Locale;
+}
+
+/** Səhifə başlığının altındakı həsr sətri — siyahı və metadata description-da eyni. */
+export const HEROES_DEDICATION =
+  'Vətən uğrunda canlarından keçən məzunlarımızın əziz xatirəsinə';
+
+/**
+ * Bütün qəhrəmanlar, `sortOrder` sırası ilə (`getLeadership`-dəki eyni
+ * sort — sortOrder ƏSAS, ad ikinci açar).
+ *
+ * Xəta halında boş massiv qaytarır — səhifə boş vəziyyət göstərir (rektorlar
+ * fərqli olaraq ehtiyat surətə malikdir, bura hələ lazım deyil).
+ */
+export async function getHeroes(locale: Locale = 'az'): Promise<HeroPerson[]> {
+  try {
+    const json = await strapiFetch<StrapiList<HeroPerson>>('/heroes', {
+      locale,
+      'sort[0]': 'sortOrder:asc',
+      'sort[1]': 'name:asc',
+      'pagination[pageSize]': 100,
+      'populate[photo]': true,
+      'populate[honors]': true,
+    });
+    return json.data ?? [];
+  } catch (err) {
+    console.error('[heroes] cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
+/** Bir qəhrəman, slug ilə (fərdi səhifə). */
+export async function getHeroBySlug(slug: string, locale: Locale = 'az'): Promise<HeroPerson | null> {
+  try {
+    const json = await strapiFetch<StrapiList<HeroPerson>>('/heroes', {
+      locale,
+      'filters[slug][$eq]': slug,
+      'pagination[pageSize]': 1,
+      'populate[photo]': true,
+      'populate[honors]': true,
+    });
+    return json.data?.[0] ?? null;
+  } catch (err) {
+    console.error('[heroes] cekilmedi: ' + (err as Error).message);
+    return null;
+  }
+}
+
 /** ── Sosial bölmə (K31) ── */
 export interface SocialBlock {
   eyebrow: string | null;
