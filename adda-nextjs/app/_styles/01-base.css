@@ -1,6 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap');
+/* F5.23a — Fraunces/Manrope @import-ları SİLİNDİ: next/font (layout.tsx)
+   hər ikisini artıq `latin-ext` alt çoxluğu ilə özü-özünə serverdən verir
+   (F5.18a) — bu klassik @import-lar TƏKRARLANIRDI, üstəlik `latin-ext`
+   olmadan, yəni Ə/Ş/Ğ/Ç kimi hərflərdə bold effekt sistemi fonta düşürdü.
+   Inter next/font-da HEÇ YÜKLƏNMİR (yalnız Fraunces+Manrope) və ~10 yerdə
+   birbaşa font-family dəyəri kimi işlənir (bax F5.18a) — TƏK BAŞINA saxlanılır. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --cyan:#00B4D8;
