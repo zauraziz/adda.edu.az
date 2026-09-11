@@ -1,0 +1,87 @@
+{
+  "pageSlug": "qehremanlarimiz",
+  "heroes": [
+    {
+      "name": "İnqilab Tofiq oğlu Qədirbəyli",
+      "birthDate": "1995-03-10",
+      "birthPlace": "Salyan",
+      "addaProgram": "Menecment",
+      "studyYears": "2012–2016",
+      "martyrdomDate": "2020-11-09",
+      "martyrdomPlace": "Şuşa ətrafı",
+      "honors": [
+        "Vətən uğrunda",
+        "İgidliyə görə",
+        "Füzulinin azad olunmasına görə",
+        "Qubadlının azad olunmasına görə",
+        "Şuşanın azad olunmasına görə"
+      ],
+      "photo": "qh1.jpg",
+      "biography": "1995-ci il martın 10-da Salyan şəhərində dünyaya göz açıb. 2012-ci ildə Salyan şəhərində Aşıq Pənah adına 1 saylı humanitar fənlər təmayüllü məktəb-liseyi bitirib. 2012–2016-cı illərdə Azərbaycan Dövlət Dəniz Akademiyasında «Menecment» ixtisasına yiyələnib. 2016–2017-ci illərdə həqiqi hərbi xidmətini Füzulidə keçib. 2020-ci ildə Vətən müharibəsi başlayanda könüllü cəbhəyə gedib. Bütün müharibə boyu döyüşlərdə olub.\n\nƏsgər yoldaşlarının dediyinə görə, Şuşa ətrafında gedən döyüşlərdə özünün də mühasirəyə düşmək təhlükəsinə baxmayaraq, 2 yaralı hərbçi yoldaşını döyüş meydanından çıxarıb.\n\nErmənistanın təslimçilik aktına qol çəkməsinə saatlar qalmış — 2020-ci il noyabrın 9-da düşmənin Şuşaya atdığı raket nəticəsində başından qəlpə yarası alaraq şəhid olub."
+    },
+    {
+      "name": "Bayrı Mirzə oğlu İmanov",
+      "birthDate": "1996-02-05",
+      "birthPlace": "Salyan rayonu, Qaraçala qəsəbəsi",
+      "addaProgram": "Elektrik mühəndisliyi",
+      "studyYears": "2013–2018",
+      "martyrdomDate": null,
+      "martyrdomPlace": "Şuşa yaxınlığı",
+      "honors": [
+        "Vətən uğrunda",
+        "Cəsur döyüşçü",
+        "Cəbrayılın azad olunmasına görə",
+        "Xocavəndin azad olunmasına görə",
+        "Şuşanın azad olunmasına görə"
+      ],
+      "photo": "qh2.jpg",
+      "biography": "1996-cı il fevralın 5-də Salyan rayonunun Qaraçala qəsəbəsində dünyaya göz açıb. 2013-cü ildə Bakı şəhərinin Şüvəlan qəsəbəsində A.S. Makarenko adına gimnaziyanı bitirib. Elə həmin il Azərbaycan Dövlət Dəniz Akademiyasına daxil olub. 2018-ci ildə ADDA-nı «Elektrik mühəndisliyi» ixtisası üzrə bitirib. Sonra müddətli həqiqi hərbi xidmət keçmək üçün ordu sıralarına çağırılıb və snayper kimi xidmət edib. Tərxis olunduqdan sonra bir müddət Bakıda işləyib. 2020-ci ildə Vətən müharibəsi başlayanda könüllü olaraq cəbhəyə yollanıb. Hadrut, Xocavənd, Füzuli istiqamətində gedən döyüşlərdə iştirak edib.\n\nMüharibənin sonuna yaxın Şuşanın bir addımlığında raket zərbəsi nəticəsində şəhidlik zirvəsinə ucalıb."
+    },
+    {
+      "name": "Mirsafa Mircəlil oğlu Rzayev",
+      "birthDate": "1995-02-19",
+      "birthPlace": "Sumqayıt",
+      "addaProgram": "Nəqliyyat servisi (su nəqliyyatı üzrə)",
+      "studyYears": "2013–2017",
+      "martyrdomDate": "2020-10-26",
+      "martyrdomPlace": "Füzuli",
+      "honors": [
+        "Vətən uğrunda",
+        "Füzulinin azad olunmasına görə"
+      ],
+      "photo": "qh3.jpg",
+      "biography": "1995-ci il fevralın 19-da Sumqayıt şəhərində dünyaya göz açıb. 2013-cü ildə Bakının Nəsimi rayonundakı Abdulla Şaiq adına 54 saylı tam orta məktəbi bitirib. 2013–2017-ci illərdə Azərbaycan Dövlət Dəniz Akademiyasında «Nəqliyyat servisi (su nəqliyyatı üzrə)» ixtisası üzrə təhsil alıb.\n\nADDA-nı bitirdikdən sonra müddətli həqiqi hərbi xidmətə çağırılıb, xidmət etdiyi müddətdə nümunəvi əsgər — mahir topçu kimi bir neçə dəfə mükafatlandırılıb. Hərbi xidmətdən sonra Bakı Beynəlxalq Dəniz Ticarət Limanında dispetçer işləyib.\n\nVətən müharibəsinin ilk günü — sentyabrın 27-si səfərbərliyə cəlb olunaraq cəbhəyə yollanıb. 2020-ci il oktyabrın 26-da Füzuli uğrunda gedən döyüşdə düşmənin raket zərbəsi nəticəsində aldığı ağır yaradan şəhadətə yüksəlib."
+    },
+    {
+      "name": "Allahverdi Bəhram oğlu Novruzov",
+      "birthDate": "1994-05-17",
+      "birthPlace": "Salyan",
+      "addaProgram": "Dəniz naviqasiyası mühəndisliyi",
+      "studyYears": "2011-ci ildən",
+      "martyrdomDate": "2020-09-29",
+      "martyrdomPlace": null,
+      "honors": [
+        "Vətən uğrunda",
+        "İgidliyə görə",
+        "Füzulinin azad olunmasına görə"
+      ],
+      "photo": "qh4.jpg",
+      "biography": "1994-cü il mayın 17-də Salyanda dünyaya göz açıb. 2011-ci ildə Salyan şəhərindəki Nizami Gəncəvi adına 2 saylı tam orta məktəbi bitirib. Həmin il Azərbaycan Dövlət Dəniz Akademiyasının «Dəniz naviqasiyası mühəndisliyi» ixtisasına daxil olub.\n\n2017-ci ildə ordu sıralarına yollanıb, müddətli həqiqi hərbi xidmət zamanı kəşfiyyatçı bacarığına yiyələnib, qüsursuz xidməti təşəkkürnaməyə layiq görülüb. 2018-ci ildə ordudan tərxis olunduqdan sonra mühafizəçi işləyib.\n\nVətən müharibəsinin ilk günündən canını Vətən uğrunda sipər edib və savaşın üçüncü günü şəhadətə ucalıb."
+    },
+    {
+      "name": "Kamil Ələddin oğlu Kərimov",
+      "birthDate": "1995-07-02",
+      "birthPlace": "Qazax rayonu, Ürkməzli kəndi",
+      "addaProgram": "Gəmiqayırma və gəmi təmiri",
+      "studyYears": "2013-cü ildən",
+      "martyrdomDate": "2020-09-27",
+      "martyrdomPlace": "Murovdağ",
+      "honors": [
+        "Vətən uğrunda",
+        "Kəlbəcərin azad olunmasına görə"
+      ],
+      "photo": "qh5.jpg",
+      "biography": "1995-ci il iyulun 2-də Qazax rayonunun Ürkməzli kəndində dünyaya göz açıb. Orta məktəbi bitirdikdən sonra 2013-cü ildə Azərbaycan Dövlət Dəniz Akademiyasının «Gəmiqayırma və gəmi təmiri» ixtisasına qəbul olub.\n\nHəqiqi hərbi xidmətdən sonra müddətdən artıq xidmət edən hərbi qulluqçu kurslarında oxuyub.\n\n2020-ci il sentyabrın 27-də Vətən müharibəsi başlayanda düşmənin hücumlarına sinəsini qalxan edən igidlərimizdən olub. Murovdağ uğrunda gedən döyüşlərdə qəhrəmancasına şəhidlik zirvəsinə ucalıb."
+    }
+  ]
+}

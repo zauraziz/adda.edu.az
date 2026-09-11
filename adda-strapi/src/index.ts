@@ -1206,6 +1206,47 @@ const REL_SYNC: Record<string, string[]> = {
 const SYNC_DEFAULT_LOCALE = 'az';
 
 
+// ── F5.21c · Qəhrəmanlarımız (hero seed) — köməkçilər ──
+// Slug BURADA hesablanır, Strapi-nin öz avtomatik uid generasiyasına
+// ETİBAR EDİLMİR — F5.8f/F5.16/F5.19-da təkrarlanan bug: Azərbaycan
+// hərfləri (ə/ş/ç/ğ/ı/ö/ü, İ/I) düzgün transliterasiya olunmur.
+// Xəritə `tools/migration/lib/slug.mjs`-dəki ilə EYNİDİR (ayrı fayldır —
+// adda-strapi TypeScript, tools/ isə ESM `.mjs`, import mümkün deyil).
+const AZ_SLUG_MAP: Record<string, string> = {
+  ə: 'e', Ə: 'e', ı: 'i', I: 'i', İ: 'i',
+  ö: 'o', Ö: 'o', ü: 'u', Ü: 'u', ç: 'c', Ç: 'c',
+  ş: 's', Ş: 's', ğ: 'g', Ğ: 'g',
+};
+const COMBINING_DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
+function azSlugify(input: string): string {
+  let out = '';
+  for (const ch of input) out += AZ_SLUG_MAP[ch] ?? ch;
+  return out
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(COMBINING_DIACRITICS, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+interface HeroSeedEntry {
+  name: string;
+  birthDate: string | null;
+  birthPlace: string | null;
+  addaProgram: string | null;
+  studyYears: string | null;
+  martyrdomDate: string | null;
+  martyrdomPlace: string | null;
+  honors: string[];
+  /** İnformativdir — foto BURADAN yüklənmir, sahə boş qalır (ayrıca yüklənəcək). */
+  photo: string;
+  biography: string;
+}
+interface HeroSeedFile {
+  pageSlug: string;
+  heroes: HeroSeedEntry[];
+}
+
 // ── K27b · Sabiq rektorlar ──
 // Redaktə admin panelindən gedir; bu blok yalnız İLK doldurmadır.
 // `slug` uyğunluq açarıdır: mövcud qeyd varsa toxunulmur.
@@ -2122,6 +2163,77 @@ export default {
       );
     } catch (err) {
       strapi.log.error('[seed] rektor xetasi: ' + (err as Error).message);
+    }
+
+    // Qəhrəmanlarımız — F5.21a sxeminin ilk doldurulması.
+    //
+    // MƏNBƏ: `tools/migration/data/heroes-seed.json` (Zaur qoyub, adları
+    // DƏYİŞMƏDƏN). `slug` `azSlugify(name)`-dan hesablanır (yuxarıda) —
+    // Strapi-nin öz avtomatik uid generasiyasına ETİBAR EDİLMİR.
+    //
+    // YALNIZ QARALAMAYA yazılır: `hero` `draftAndPublish:true`-dur,
+    // `documents().create()` `publishedAt` verilmədikdə avtomatik DRAFT
+    // saxlayır — `publish()` HEÇ ÇAĞIRILMIR. Zaur müəllim mətni öz gözü ilə
+    // yoxlayıb admin paneldən Publish edəcək.
+    //
+    // `photo` seed JSON-da İNFORMATİVDİR (qh1.jpg və s.) — BURADA
+    // İŞLƏDİLMİR, sahə boş qalır, foto ayrıca yüklənəcək.
+    //
+    // `slug` uyğunluq açarıdır — qeyd MÖVCUDDURSA toxunulmur (idempotent).
+    // Force/overwrite bayrağı YOXDUR (RECTOR_RESEED-dən fərqli olaraq bu
+    // tapşırıqda tələb olunmayıb — HERO_SEED yalnız bir dəfəlik doldurmadır).
+    if (process.env.HERO_SEED !== 'true') {
+      strapi.log.info('[seed] Qehremanlarimiz (F5.21c) oturuldu. Ucun HERO_SEED=true.');
+    } else {
+      try {
+        const uid = 'api::hero.hero';
+        const seedPath = path.join(
+          strapi.dirs.app.root, '..', 'tools', 'migration', 'data', 'heroes-seed.json',
+        );
+        const file: HeroSeedFile = JSON.parse(readFileSync(seedPath, 'utf8'));
+
+        // locale AÇIQ verilir: defolt lokal `en`-dir, `az` yazılmasa
+        // ingilis qeydlərinə baxardıq və hər dəfə təkrar yaradılardı.
+        const existing = (await strapi.documents(uid).findMany({
+          locale: 'az',
+          fields: ['slug'],
+          limit: 200,
+        })) as unknown as Array<{ slug: string }>;
+        const known = new Set(existing.map((e) => e.slug));
+
+        let created = 0;
+        let skipped = 0;
+        for (const [i, h] of file.heroes.entries()) {
+          const slug = azSlugify(h.name);
+          if (known.has(slug)) {
+            skipped++;
+            continue;
+          }
+          await strapi.documents(uid).create({
+            locale: 'az',
+            data: {
+              name: h.name,
+              slug,
+              birthDate: h.birthDate,
+              birthPlace: h.birthPlace,
+              addaProgram: h.addaProgram,
+              studyYears: h.studyYears,
+              martyrdomDate: h.martyrdomDate,
+              martyrdomPlace: h.martyrdomPlace,
+              honors: h.honors.map((label) => ({ label })),
+              biography: h.biography,
+              sortOrder: (i + 1) * 10,
+            } as never,
+          });
+          created++;
+        }
+        strapi.log.info(
+          '[seed] Qehremanlarimiz: ' + created + ' yaradildi, ' + skipped + ' movcud idi (toxunulmadi). ' +
+            'Qaralama olaraq yazildi - publish() cagirilmayib.',
+        );
+      } catch (err) {
+        strapi.log.error('[seed] qehremanlar xetasi: ' + (err as Error).message);
+      }
     }
 
     // Sosial blok — boşdursa doldur (mətn onsuz da yazılmışdı, kodda idi)

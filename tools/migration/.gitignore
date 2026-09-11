@@ -54,6 +54,9 @@ data/*
 !data/tedris-plani-en-050609.json
 !data/tedris-plani-en-050605.json
 
+# F5.21c — HERO_SEED (adda-strapi/src/index.ts) OXUYUR, 5 qəhrəman.
+!data/heroes-seed.json
+
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML
 #   data/manifest.json         — crawl checkpoint-i
