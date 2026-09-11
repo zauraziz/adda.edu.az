@@ -336,15 +336,18 @@ console.log('3. ƏSASNAMƏ BOŞLUĞU');
 console.log('='.repeat(72));
 console.log(
   '  CLAUDE.md «Əsasnamələr» cədvəlinə görə 17 bölmə əsasnamə tələb edir: 8 tək\n' +
-  '  bölmə (unit tipi) + 7 kafedra (department tipi) + 2 fakültə (faculty tipi).\n' +
+  '  bölmə + 7 kafedra (sənəd 014) + 2 fakültə (sənəd 019).\n' +
   '  (013 və 020-nin "Personal" sətirləri EYNİ bölməyə düşür — 011+012+013/020+\n' +
   '  015+016+018+020-təsərrüfat+021 = 8 unikal, cəmi 8+7+2=17.)',
 );
 console.log('');
-console.log('  document.units əlaqəsi YALNIZ `api::unit.unit`-i hədəfləyir (schema.json');
-console.log('  yoxlanıldı) — `department` (kafedra) və `faculty` (fakültə) tiplərində');
-console.log('  sənəd bağlamaq üçün HEÇ BİR sahə YOXDUR. Kafedra/fakültə əsasnamələri');
-console.log('  hazırkı sxemlə əlaqələndirilə BİLMƏZ — bu, F4.1-in tapdığı sxem boşluğudur.');
+// F5.22b — BURADA ƏVVƏL «kafedra/fakültə üçün sxem boşluğu var, əlaqələndirilə
+// BİLMƏZ» yazılırdı. BU SƏHV İDİ: kafedra və fakültələr `department`/`faculty`
+// tiplərində DEYİL, elə `api::unit.unit` qeydləridir (28 bölmənin içindədir) —
+// yəni `document.units` onları onsuz da hədəfləyir. İddia silindi, əvəzinə
+// 9 kafedra/fakültə üçün REAL linkin olub-olmadığı yoxlanılır (aşağıda).
+console.log('  Hər üç qrup `api::unit.unit` qeydidir, yəni `document.units` hamısını');
+console.log('  hədəfləyir — yoxlama REAL linkin mövcudluğudur, sxem məhdudiyyəti yoxdur.');
 
 const ESASNAME_UNIT_TARGETS = [
   { doc: '011', slug: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
@@ -369,7 +372,41 @@ for (const t of ESASNAME_UNIT_TARGETS) {
   if (ok) unitTargetsFound++;
   console.log('    ' + t.doc.padEnd(8) + u.name + '  ' + (ok ? 'VAR' : 'YOXDUR'));
 }
-console.log('\n  nəticə: ' + unitTargetsFound + '/8 unit-tipli bölmədə əsasnamə var.');
+console.log('\n  nəticə: ' + unitTargetsFound + '/8 tək bölmədə əsasnamə var.');
+
+// F5.22b — 7 kafedra (sənəd 014) + 2 fakültə (sənəd 019). Slug-lar
+// `KAFEDRA_FACULTY` (lib/strapi.ts / adda-strapi src/index.ts) ilə EYNİDİR —
+// açarlar kafedra, dəyərlər fakültədir; yeni kafedra/fakültə əlavə olunarsa
+// BURA da ƏL İLƏ əlavə edilməlidir (həmin sabitdəki qaydanın eynisi).
+const ESASNAME_KAFEDRA_FACULTY_TARGETS = [
+  { doc: '014', slug: 'tetbiqi-mexanika-kafedrasi' },
+  { doc: '014', slug: 'gemi-energetik-qurgulari-kafedrasi' },
+  { doc: '014', slug: 'gemi-elektroavtomatikasi-kafedrasi' },
+  { doc: '014', slug: 'deniz-naviqasiyasi-kafedrasi' },
+  { doc: '014', slug: 'gemiqayirma-ve-gemi-temiri-kafedrasi' },
+  { doc: '014', slug: 'ingilis-dili-kafedrasi' },
+  { doc: '014', slug: 'humanitar-fenler-kafedrasi' },
+  { doc: '019', slug: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi' },
+  { doc: '019', slug: 'gemi-suruculuyu-fakultesi' },
+];
+console.log('\n  9 kafedra/fakültə hədəfi (sənəd № → slug):');
+let kfTargetsFound = 0;
+for (const t of ESASNAME_KAFEDRA_FACULTY_TARGETS) {
+  const u = units.find((x) => x.slug === t.slug);
+  if (!u) {
+    console.log('    ' + t.doc.padEnd(8) + t.slug + '  <-- UNIT TAPILMADI (slug dəyişibmi?)');
+    continue;
+  }
+  const doc = docsByUnit.get(u.slug) ?? [];
+  const ok = doc.some((d) => d.category === 'esasname');
+  if (ok) kfTargetsFound++;
+  console.log('    ' + t.doc.padEnd(8) + u.name + '  ' + (ok ? 'VAR' : 'YOXDUR'));
+}
+console.log('\n  nəticə: ' + kfTargetsFound + '/9 kafedra/fakültədə əsasnamə var.');
+
+console.log(
+  '\n  CƏMİ: ' + (unitTargetsFound + kfTargetsFound) + '/17 hədəf bölmədə əsasnamə var.',
+);
 console.log('  bütün sistemdə cəmi ' + documents.filter((d) => d.category === 'esasname').length + ' sənəd category=esasname.');
 
 // ────────────────────────────────────────────────────────────────────────

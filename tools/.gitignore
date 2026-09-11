@@ -1,0 +1,4 @@
+# Diaqnostika skriptlərinin ÇIXIŞI — hər işləmədə yenidən yaranır, commit
+# olunmur (tools/migration/.gitignore-dakı `data/inventory.{json,csv}` qaydası
+# ilə eyni). Skriptin ÖZÜ commit olunur, nəticəsi yox.
+unit-heads.csv
