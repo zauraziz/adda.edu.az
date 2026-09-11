@@ -24,11 +24,23 @@ const nextConfig = {
     ],
   },
   async redirects() {
-    return Object.entries(DEPT_UNIT_MAP).map(([from, to]) => ({
-      source: '/:locale(az|ru|en)/struktur/' + from,
-      destination: '/:locale/struktur/' + to,
-      permanent: true,
-    }));
+    return [
+      ...Object.entries(DEPT_UNIT_MAP).map(([from, to]) => ({
+        source: '/:locale(az|ru|en)/struktur/' + from,
+        destination: '/:locale/struktur/' + to,
+        permanent: true,
+      })),
+      // F5.21d: /sehife/qehremanlarimiz -> /qehremanlarimiz (öz marşrutuna
+      // köçdü). Köhnə `sehife` qeydi Strapi-də SİLİNMİR (arxiv), sadəcə
+      // ona istinad edən keçid qalmır — köhnə URL bookmark/xarici linki
+      // qırılmasın deyə 301 saxlanılır. DEPT_UNIT_MAP-dən fərqli olaraq
+      // mənbə/hədəf eyni prefiks altında deyil, ona görə ayrıca yazılıb.
+      {
+        source: '/:locale(az|ru|en)/sehife/qehremanlarimiz',
+        destination: '/:locale/qehremanlarimiz',
+        permanent: true,
+      },
+    ];
   },
 };
 

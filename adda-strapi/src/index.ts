@@ -83,7 +83,7 @@ const SEED = {
               },
               {
                 "label": "ADDA Qəhrəmanları",
-                "url": "/sehife/qehremanlarimiz"
+                "url": "/qehremanlarimiz"
               },
               {
                 "label": "Fəxri doktorlarımız",

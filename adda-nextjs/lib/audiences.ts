@@ -148,7 +148,7 @@ export const AUDIENCES: Audience[] = [
     steps: [
       { label: 'ADDA dünən və bu gün', href: '/sehife/adda-dunen-ve-bugun', note: 'Akademiya indi necə görünür' },
       { label: 'Sabiq rektorlarımız', href: '/sabiq-rektorlar', note: 'Rəhbərlik ənənəsi 1997-ci ildən' },
-      { label: 'Qəhrəmanlarımız', href: '/sehife/qehremanlarimiz', note: 'Vətən uğrunda şəhid olan məzunlar' },
+      { label: 'Qəhrəmanlarımız', href: '/qehremanlarimiz', note: 'Vətən uğrunda şəhid olan məzunlar' },
     ],
     groups: [
       {
@@ -171,7 +171,7 @@ export const AUDIENCES: Audience[] = [
       {
         title: 'Xatirə və kimlik',
         links: [
-          { label: 'Qəhrəmanlarımız', href: '/sehife/qehremanlarimiz' },
+          { label: 'Qəhrəmanlarımız', href: '/qehremanlarimiz' },
           { label: 'Muzey', href: '/sehife/muzey' },
           { label: 'Korporativ üslub', href: '/sehife/korporativ-uslub' },
         ],
@@ -311,7 +311,7 @@ export const AUDIENCES: Audience[] = [
         links: [
           { label: 'Yataqxana', href: '/sehife/yataqxana' },
           { label: 'İdman', href: '/sehife/idman' },
-          { label: 'Qəhrəmanlarımız', href: '/sehife/qehremanlarimiz' },
+          { label: 'Qəhrəmanlarımız', href: '/qehremanlarimiz' },
         ],
       },
       {
