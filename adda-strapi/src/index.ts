@@ -1320,6 +1320,25 @@ interface ProgramUpdate2026File {
   updates: ProgramUpdate2026[];
 }
 
+interface NewProgram2026 {
+  programSlug: string;
+  title: string;
+  code: string | null;
+  degree: 'bachelor' | 'master' | 'phd' | 'subbachelor';
+  catalogTab: string;
+  studyForm: 'eyani' | 'qiyabi' | null;
+  durationYears: number | null;
+  durationNote?: string;
+  tuitionFee: string | null;
+  languages: string[];
+  unit: string | null;
+  admissionSeats2026: AdmissionSeats2026Raw | null;
+}
+interface NewProgram2026File {
+  _qeyd?: string;
+  programs: NewProgram2026[];
+}
+
 // ── K27b · Sabiq rektorlar ──
 // Redaktə admin panelindən gedir; bu blok yalnız İLK doldurmadır.
 // `slug` uyğunluq açarıdır: mövcud qeyd varsa toxunulmur.
@@ -4050,6 +4069,90 @@ export default {
       }
     } catch (err) {
       strapi.log.error('[seed] proqram yenilemeleri 2026 seed xetasi: ' + (err as Error).message);
+    }
+
+    // Yeni proqramlar — 2026/2027 qəbul, 7 proqram (F5.24c, NEW_PROGRAM_SEED).
+    //
+    // MƏNBƏ: `tools/migration/data/new-programs-2026.json` — 4 Kollec
+    // subbakalavr + 3 doktorantura. `slug` uyğunluq açarıdır: MÖVCUDDURSA
+    // YARADILMIR (bir dəfəlik doldurma). Tədris planı sənədi olmayan
+    // sahələr (courses, overview, competencies, careerPaths, outcomes,
+    // practiceNote, bəzilərində durationYears/tuitionFee) mənbədə QƏSDƏN
+    // boşdur və BURADA da UYDURULMUR — sadəcə yazılmır.
+    //
+    // YALNIZ QARALAMAYA yazılır, publish() BURADA ÇAĞIRILMIR.
+    try {
+      const uid = 'api::program.program';
+      if (process.env.NEW_PROGRAM_SEED !== 'true') {
+        strapi.log.info('[seed] Yeni proqramlar 2026 (F5.24c) oturuldu. Ucun NEW_PROGRAM_SEED=true.');
+      } else {
+        const NEW_DATA_PATH = path.join(
+          strapi.dirs.app.root, '..', 'tools', 'migration', 'data', 'new-programs-2026.json',
+        );
+        const file: NewProgram2026File = JSON.parse(readFileSync(NEW_DATA_PATH, 'utf8'));
+
+        let created = 0;
+        let skipped = 0;
+        for (const np of file.programs) {
+          try {
+            const existing = (await strapi.documents(uid).findMany({
+              locale: 'az',
+              filters: { slug: { $eq: np.programSlug } },
+              fields: ['slug'],
+              limit: 2,
+            })) as unknown as Array<{ documentId: string }>;
+
+            if (existing.length > 0) {
+              skipped++;
+              continue;
+            }
+
+            const data: Record<string, unknown> = {
+              title: np.title,
+              slug: np.programSlug,
+              degree: np.degree,
+              catalogTab: np.catalogTab,
+              studyForm: np.studyForm,
+              durationYears: np.durationYears,
+              tuitionFee: np.tuitionFee,
+            };
+            if (np.code) data.code = np.code;
+            if (np.durationNote) data.durationNote = np.durationNote;
+            if (np.languages?.length) data.languages = np.languages.map((code) => ({ code }));
+            if (np.admissionSeats2026) data.admissionSeats = mapAdmissionSeats2026(np.admissionSeats2026);
+
+            if (np.unit) {
+              const units = (await strapi.documents('api::unit.unit').findMany({
+                locale: 'az',
+                filters: { slug: { $eq: np.unit } },
+                fields: ['slug'],
+                limit: 2,
+              })) as unknown as Array<{ documentId: string }>;
+              if (units.length === 1) {
+                data.unit = units[0].documentId;
+              } else {
+                strapi.log.error('[seed] Yeni proqram XETA - unit tapilmadi (' + np.unit + '): ' + np.programSlug);
+              }
+            }
+
+            // draftAndPublish:true + publishedAt verilmir -> QARALAMA olaraq
+            // yaradilir, publish() BURADA CAGIRILMIR (F5.24 tapsiriginda telef olunub).
+            await strapi.documents(uid).create({
+              locale: 'az',
+              data: data as never,
+            });
+            created++;
+          } catch (e) {
+            strapi.log.error('[seed] Yeni proqram xetasi (' + np.programSlug + '): ' + (e as Error).message);
+          }
+        }
+        strapi.log.info(
+          '[seed] Yeni proqramlar 2026: ' + created + ' yaradildi, ' + skipped +
+            ' movcud idi (toxunulmadi). Qaralama - publish() cagirilmayib.',
+        );
+      }
+    } catch (err) {
+      strapi.log.error('[seed] yeni proqramlar 2026 seed xetasi: ' + (err as Error).message);
     }
 
   },

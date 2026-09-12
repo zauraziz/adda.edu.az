@@ -1,0 +1,152 @@
+{
+ "_qeyd": "F5.24c — 7 yeni proqram (4 Kollec subbakalavr + 3 doktorantura). Mənbə: 2026/2027 qəbul proqnozu sənədləri. Tədris planı olmayan bütün sahələr QƏSDƏN boş.",
+ "programs": [
+  {
+   "programSlug": "elektrik-techizati-su-neqliyyatinda-kollec",
+   "title": "Elektrik təchizatı (su nəqliyyatında)",
+   "code": "040515",
+   "degree": "subbachelor",
+   "catalogTab": "subbakalavr",
+   "studyForm": "eyani",
+   "durationYears": null,
+   "tuitionFee": "1200 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "unit": "azerbaycan-denizcilik-kolleci-phs",
+   "admissionSeats2026": {
+    "umumi_orta_cemi": 40,
+    "umumi_orta_dovlet": 15,
+    "umumi_orta_odenisli": 25,
+    "tam_orta_odenisli": 50
+   },
+   "_qeyd": "Azərbaycan Dənizçilik Kolleci PHŞ. Tədris planı sənədi YOXDUR — courses, overview, competencies, careerPaths, outcomes, practiceNote BOŞ qalır, sonradan əl ilə əlavə olunacaq. durationYears də boşdur (sənəddə göstərilməyib)."
+  },
+  {
+   "programSlug": "gemi-energetik-qurgularinin-istismari-kollec",
+   "title": "Gəmi energetik qurğularının istismarı",
+   "code": "040520",
+   "degree": "subbachelor",
+   "catalogTab": "subbakalavr",
+   "studyForm": "eyani",
+   "durationYears": null,
+   "tuitionFee": "1200 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "unit": "azerbaycan-denizcilik-kolleci-phs",
+   "admissionSeats2026": {
+    "umumi_orta_cemi": 40,
+    "umumi_orta_dovlet": 15,
+    "umumi_orta_odenisli": 25,
+    "tam_orta_odenisli": 50
+   },
+   "_qeyd": "Azərbaycan Dənizçilik Kolleci PHŞ. Tədris planı sənədi YOXDUR — courses, overview, competencies, careerPaths, outcomes, practiceNote BOŞ qalır, sonradan əl ilə əlavə olunacaq. durationYears də boşdur (sənəddə göstərilməyib)."
+  },
+  {
+   "programSlug": "gemi-suruculuyu-kollec",
+   "title": "Gəmi sürücülüyü",
+   "code": "040521",
+   "degree": "subbachelor",
+   "catalogTab": "subbakalavr",
+   "studyForm": "eyani",
+   "durationYears": null,
+   "tuitionFee": "1200 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "unit": "azerbaycan-denizcilik-kolleci-phs",
+   "admissionSeats2026": {
+    "umumi_orta_cemi": 40,
+    "umumi_orta_dovlet": 15,
+    "umumi_orta_odenisli": 25,
+    "tam_orta_odenisli": 50
+   },
+   "_qeyd": "Azərbaycan Dənizçilik Kolleci PHŞ. Tədris planı sənədi YOXDUR — courses, overview, competencies, careerPaths, outcomes, practiceNote BOŞ qalır, sonradan əl ilə əlavə olunacaq. durationYears də boşdur (sənəddə göstərilməyib)."
+  },
+  {
+   "programSlug": "gemilerin-temiri-kollec",
+   "title": "Gəmilərin təmiri",
+   "code": "040522",
+   "degree": "subbachelor",
+   "catalogTab": "subbakalavr",
+   "studyForm": "eyani",
+   "durationYears": null,
+   "tuitionFee": "1200 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "unit": "azerbaycan-denizcilik-kolleci-phs",
+   "admissionSeats2026": {
+    "umumi_orta_cemi": 25,
+    "umumi_orta_dovlet": 10,
+    "umumi_orta_odenisli": 15,
+    "tam_orta_odenisli": 25
+   },
+   "_qeyd": "Azərbaycan Dənizçilik Kolleci PHŞ. Tədris planı sənədi YOXDUR — courses, overview, competencies, careerPaths, outcomes, practiceNote BOŞ qalır, sonradan əl ilə əlavə olunacaq. durationYears də boşdur (sənəddə göstərilməyib)."
+  },
+  {
+   "programSlug": "gemicilik-texnikasi-doktorantura",
+   "title": "Gəmiçilik texnikası",
+   "code": "3319.01",
+   "degree": "phd",
+   "catalogTab": "doktorantura",
+   "studyForm": null,
+   "durationYears": null,
+   "durationNote": "Əyani 2 il · Qiyabi 3 il",
+   "tuitionFee": null,
+   "languages": [
+    "az"
+   ],
+   "unit": null,
+   "admissionSeats2026": {
+    "cemi": 2,
+    "eyani": 1,
+    "qiyabi": 1
+   },
+   "_qeyd": "Fəlsəfə doktoru proqramı, Texnika elmləri. Tədris planı sənədi YOXDUR — məzmun sahələri BOŞ qalır. Təhsil haqqı sənəddə «—» yazılıb (ödənişli yer nəzərdə tutulmayıb) — UYDURULMAYIB, boş saxlanılıb. studyForm tək dəyər ola bilmir (həm əyani, həm qiyabi var) — durationNote mətn sahəsi ilə göstərilir."
+  },
+  {
+   "programSlug": "gemicilik-ve-su-neqliyyatinin-istismari-doktorantura",
+   "title": "Gəmiçilik və su nəqliyyatının istismarı",
+   "code": "3319.02",
+   "degree": "phd",
+   "catalogTab": "doktorantura",
+   "studyForm": null,
+   "durationYears": null,
+   "durationNote": "Əyani 2 il · Qiyabi 3 il",
+   "tuitionFee": null,
+   "languages": [
+    "az"
+   ],
+   "unit": null,
+   "admissionSeats2026": {
+    "cemi": 2,
+    "eyani": 2,
+    "qiyabi": 0
+   },
+   "_qeyd": "Fəlsəfə doktoru proqramı, Texnika elmləri. Tədris planı sənədi YOXDUR — məzmun sahələri BOŞ qalır. Təhsil haqqı sənəddə «—» yazılıb (ödənişli yer nəzərdə tutulmayıb) — UYDURULMAYIB, boş saxlanılıb. studyForm tək dəyər ola bilmir (həm əyani, həm qiyabi var) — durationNote mətn sahəsi ilə göstərilir."
+  },
+  {
+   "programSlug": "gemiqayirma-ve-gemi-temiri-texnologiyasi-doktorantura",
+   "title": "Gəmiqayırma və gəmi təmiri texnologiyası",
+   "code": "3319.03",
+   "degree": "phd",
+   "catalogTab": "doktorantura",
+   "studyForm": null,
+   "durationYears": null,
+   "durationNote": "Əyani 2 il · Qiyabi 3 il",
+   "tuitionFee": null,
+   "languages": [
+    "az"
+   ],
+   "unit": null,
+   "admissionSeats2026": {
+    "cemi": 2,
+    "eyani": 0,
+    "qiyabi": 2
+   },
+   "_qeyd": "Fəlsəfə doktoru proqramı, Texnika elmləri. Tədris planı sənədi YOXDUR — məzmun sahələri BOŞ qalır. Təhsil haqqı sənəddə «—» yazılıb (ödənişli yer nəzərdə tutulmayıb) — UYDURULMAYIB, boş saxlanılıb. studyForm tək dəyər ola bilmir (həm əyani, həm qiyabi var) — durationNote mətn sahəsi ilə göstərilir."
+  }
+ ]
+}
