@@ -1,0 +1,176 @@
+{
+ "_qeyd": "F5.24 — 2026/2027 qəbul proqnozu sənədlərinə (17.11.2025, ASCO sədri R.G.Vəliyev təsdiqi) əsasən. DİQQƏT: Gəmiqayırma bakalavrın şifri 050610 -> 6006013 DƏYİŞİR (qəbul sənədində 050613, tədris planı təsnifatında 6006013). Magistr qəbul sənədində hər proqram üçün 2026/27-də YALNIZ BİR ixtisaslaşmaya qəbul göstərilib — tədris planındakı 2-3 ixtisaslaşma qalır, bu, qəbul planıdır.",
+ "updates": [
+  {
+   "programSlug": "deniz-naviqasiyasi-muhendisliyi",
+   "code": "6006006",
+   "catalogTab": "bakalavr",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "az",
+    "ru",
+    "en"
+   ],
+   "admissionSeats2026": {
+    "cemi": 215,
+    "az_eyani": 100,
+    "az_qiyabi": 60,
+    "ru_eyani": 15,
+    "en_eyani": 40
+   }
+  },
+  {
+   "programSlug": "elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre",
+   "code": "6006008",
+   "catalogTab": "bakalavr",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "az",
+    "en"
+   ],
+   "admissionSeats2026": {
+    "cemi": 60,
+    "az_eyani": 35,
+    "az_qiyabi": 10,
+    "ru_eyani": 0,
+    "en_eyani": 15
+   }
+  },
+  {
+   "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi",
+   "code": "6006012",
+   "catalogTab": "bakalavr",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "az",
+    "en"
+   ],
+   "admissionSeats2026": {
+    "cemi": 150,
+    "az_eyani": 75,
+    "az_qiyabi": 50,
+    "ru_eyani": 0,
+    "en_eyani": 25
+   }
+  },
+  {
+   "programSlug": "gemiqayirma-ve-gemi-temiri-muhendisliyi",
+   "code": "6006013",
+   "catalogTab": "bakalavr",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "admissionSeats2026": {
+    "cemi": 50,
+    "az_eyani": 35,
+    "az_qiyabi": 15,
+    "ru_eyani": 0,
+    "en_eyani": 0
+   }
+  },
+  {
+   "programSlug": "deniz-naviqasiyasi-muhendisliyi-magistr",
+   "code": "7006006",
+   "catalogTab": "magistr",
+   "tuitionFee": "2900 AZN/il",
+   "languages": [
+    "az",
+    "ru"
+   ],
+   "admissionSeats2026": {
+    "cemi": 27,
+    "az": 24,
+    "ru": 3,
+    "en": 0
+   }
+  },
+  {
+   "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi-magistr",
+   "code": "7006012",
+   "catalogTab": "magistr",
+   "tuitionFee": "2900 AZN/il",
+   "languages": [
+    "az",
+    "ru"
+   ],
+   "admissionSeats2026": {
+    "cemi": 12,
+    "az": 10,
+    "ru": 2,
+    "en": 0
+   }
+  },
+  {
+   "programSlug": "elektrik-ve-elektronika-muhendisliyi-magistr",
+   "code": "7006008",
+   "catalogTab": "magistr",
+   "tuitionFee": "2800 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "admissionSeats2026": {
+    "cemi": 10,
+    "az": 10,
+    "ru": 0,
+    "en": 0
+   }
+  },
+  {
+   "programSlug": "gemiqayirma-ve-gemi-temiri-muhendisliyi-magistr",
+   "code": "7006013",
+   "catalogTab": "magistr",
+   "tuitionFee": "2900 AZN/il",
+   "languages": [
+    "az",
+    "ru"
+   ],
+   "admissionSeats2026": {
+    "cemi": 12,
+    "az": 10,
+    "ru": 2,
+    "en": 0
+   }
+  },
+  {
+   "programSlug": "deniz-naviqasiyasi-muhendisliyi-az-qiyabi",
+   "code": "AZ-050605",
+   "catalogTab": "tekrar_ali",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "admissionSeats2026": null
+  },
+  {
+   "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi-az-qiyabi",
+   "code": "AZ-050609",
+   "catalogTab": "tekrar_ali",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "az"
+   ],
+   "admissionSeats2026": null
+  },
+  {
+   "programSlug": "deniz-naviqasiyasi-muhendisliyi-en-eyani",
+   "code": "EN-050605",
+   "catalogTab": "bakalavr",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "en"
+   ],
+   "admissionSeats2026": null
+  },
+  {
+   "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi-en-eyani",
+   "code": "EN-050609",
+   "catalogTab": "bakalavr",
+   "tuitionFee": "2700 AZN/il",
+   "languages": [
+    "en"
+   ],
+   "admissionSeats2026": null
+  }
+ ]
+}

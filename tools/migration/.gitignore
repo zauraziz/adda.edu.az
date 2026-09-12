@@ -47,6 +47,8 @@ data/*
 !data/program-texts-geqi-magistr.json
 !data/tedris-plani-eem-magistr.json
 !data/program-texts-eem-magistr.json
+!data/program-updates-2026.json
+!data/new-programs-2026.json
 
 # F5.19 — 4 köhnə struktur bakalavr qeydi (AZ/EN, əyani/qiyabi).
 !data/tedris-plani-az-050609.json

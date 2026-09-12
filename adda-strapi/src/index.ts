@@ -1247,6 +1247,79 @@ interface HeroSeedFile {
   heroes: HeroSeedEntry[];
 }
 
+// ── F5.24 · 2026/2027 qəbul məlumatları — köməkçilər ──
+//
+// `admissionSeats2026` mənbə sənədlərdə ÜÇ FƏRQLİ formada gəlir (dərəcə
+// növünə görə): bakalavr (az_eyani/az_qiyabi/ru_eyani/en_eyani), magistr
+// (az/ru/en — qiyabi yoxdur) və Kollec (ümumi orta/tam orta təhsil
+// bölgüsü, dövlət/ödənişli). Doktorantura `eyani`/`qiyabi` işlədir (dil
+// tək AZ olduğu üçün). Bir funksiya HAMISINI `program.admission-seats`
+// component formasına ($year/total/azFullTime/...) çevirir — hər seed
+// bloku öz mapping-ini YAZMIR.
+interface AdmissionSeats2026Raw {
+  cemi?: number | null;
+  az_eyani?: number | null;
+  az_qiyabi?: number | null;
+  ru_eyani?: number | null;
+  en_eyani?: number | null;
+  az?: number | null;
+  ru?: number | null;
+  en?: number | null;
+  eyani?: number | null;
+  qiyabi?: number | null;
+  umumi_orta_cemi?: number | null;
+  umumi_orta_dovlet?: number | null;
+  umumi_orta_odenisli?: number | null;
+  tam_orta_odenisli?: number | null;
+}
+
+function mapAdmissionSeats2026(src: AdmissionSeats2026Raw): Record<string, number> {
+  const out: Record<string, number> = { year: 2026 };
+
+  if (src.az_eyani != null) out.azFullTime = src.az_eyani;
+  else if (src.az != null) out.azFullTime = src.az;
+  else if (src.eyani != null) out.azFullTime = src.eyani; // Doktorantura: dil tək AZ-dır.
+
+  if (src.az_qiyabi != null) out.azPartTime = src.az_qiyabi;
+  else if (src.qiyabi != null) out.azPartTime = src.qiyabi; // Doktorantura.
+
+  if (src.ru_eyani != null) out.ruFullTime = src.ru_eyani;
+  else if (src.ru != null) out.ruFullTime = src.ru;
+
+  if (src.en_eyani != null) out.enFullTime = src.en_eyani;
+  else if (src.en != null) out.enFullTime = src.en;
+
+  // Kollec: ümumi orta təhsil bloku (dövlət+ödənişli) / tam orta təhsil
+  // bloku (yalnız ödənişli) — mənbə sənəddə BELƏ bölünüb.
+  if (src.umumi_orta_dovlet != null) out.stateFunded = src.umumi_orta_dovlet;
+  if (src.umumi_orta_odenisli != null || src.tam_orta_odenisli != null) {
+    out.paid = (src.umumi_orta_odenisli ?? 0) + (src.tam_orta_odenisli ?? 0);
+  }
+
+  if (src.cemi != null) {
+    out.total = src.cemi;
+  } else if (src.umumi_orta_cemi != null || src.tam_orta_odenisli != null) {
+    // Kollec sənədində ümumi "cəmi" YOXDUR — İKİ QƏBUL BLOKUNUN CƏMİ
+    // hesablanır (real ədədlərin toplamı, UYDURMA DEYİL).
+    out.total = (src.umumi_orta_cemi ?? 0) + (src.tam_orta_odenisli ?? 0);
+  }
+
+  return out;
+}
+
+interface ProgramUpdate2026 {
+  programSlug: string;
+  code: string | null;
+  catalogTab: string | null;
+  tuitionFee: string | null;
+  languages: string[];
+  admissionSeats2026: AdmissionSeats2026Raw | null;
+}
+interface ProgramUpdate2026File {
+  _qeyd?: string;
+  updates: ProgramUpdate2026[];
+}
+
 // ── K27b · Sabiq rektorlar ──
 // Redaktə admin panelindən gedir; bu blok yalnız İLK doldurmadır.
 // `slug` uyğunluq açarıdır: mövcud qeyd varsa toxunulmur.
@@ -3880,6 +3953,103 @@ export default {
       }
     } catch (err) {
       strapi.log.error('[seed] ixtisas metnleri seed xetasi: ' + (err as Error).message);
+    }
+
+    // Proqram yeniləmələri — 2026/2027 qəbul məlumatları (F5.24b, PROGRAM_UPDATE_SEED).
+    //
+    // MƏNBƏ: `tools/migration/data/program-updates-2026.json` — 12 MÖVCUD
+    // proqram üçün ayrı-ayrı yeniləmə. `code` QƏSDƏN ÜZƏRİNƏ YAZILIR (bu
+    // sahə «boşdursa yaz» qaydasından İSTİSNADIR — mənbə sənəd dəyişib,
+    // köhnə dəyər artıq SƏHVDİR, məs. Gəmiqayırma 050610 -> 6006013).
+    // `catalogTab`/`tuitionFee`/`languages`/`admissionSeats` isə YALNIZ
+    // BOŞDURSA yazılır (mövcud editor düzəlişi qorunur).
+    //
+    // YALNIZ QARALAMAYA yazılır, publish() BURADA ÇAĞIRILMIR.
+    try {
+      const uid = 'api::program.program';
+      if (process.env.PROGRAM_UPDATE_SEED !== 'true') {
+        strapi.log.info('[seed] Proqram yenilemeleri 2026 (F5.24b) oturuldu. Ucun PROGRAM_UPDATE_SEED=true.');
+      } else {
+        const UPDATE_DATA_PATH = path.join(
+          strapi.dirs.app.root, '..', 'tools', 'migration', 'data', 'program-updates-2026.json',
+        );
+        const file: ProgramUpdate2026File = JSON.parse(readFileSync(UPDATE_DATA_PATH, 'utf8'));
+
+        for (const u of file.updates) {
+          try {
+            const programs = (await strapi.documents(uid).findMany({
+              locale: 'az',
+              filters: { slug: { $eq: u.programSlug } },
+              status: 'draft',
+              fields: ['slug', 'code', 'catalogTab', 'tuitionFee'],
+              populate: ['languages', 'admissionSeats'],
+              limit: 2,
+            })) as unknown as Array<{
+              documentId: string;
+              code?: string | null;
+              catalogTab?: string | null;
+              tuitionFee?: string | null;
+              languages?: unknown[];
+              admissionSeats?: unknown | null;
+            }>;
+
+            if (programs.length !== 1) {
+              strapi.log.error('[seed] Proqram yenilemesi XETA - proqram tapilmadi: ' + u.programSlug);
+              continue;
+            }
+            const p = programs[0];
+            const data: Record<string, unknown> = {};
+
+            if (u.code && u.code !== p.code) {
+              data.code = u.code;
+              strapi.log.info(
+                '[seed] Proqram yenilemesi: code UZERINE YAZILIR (' + (p.code ?? '(bos)') + ' -> ' + u.code + '): ' + u.programSlug,
+              );
+            }
+
+            if (p.catalogTab) {
+              strapi.log.info('[seed] Proqram yenilemesi: catalogTab atlandi (doludur): ' + u.programSlug);
+            } else if (u.catalogTab) {
+              data.catalogTab = u.catalogTab;
+            }
+
+            if (p.tuitionFee) {
+              strapi.log.info('[seed] Proqram yenilemesi: tuitionFee atlandi (doludur): ' + u.programSlug);
+            } else if (u.tuitionFee) {
+              data.tuitionFee = u.tuitionFee;
+            }
+
+            if (p.languages && p.languages.length > 0) {
+              strapi.log.info('[seed] Proqram yenilemesi: languages atlandi (doludur): ' + u.programSlug);
+            } else if (u.languages?.length) {
+              data.languages = u.languages.map((code) => ({ code }));
+            }
+
+            if (p.admissionSeats) {
+              strapi.log.info('[seed] Proqram yenilemesi: admissionSeats atlandi (doludur): ' + u.programSlug);
+            } else if (u.admissionSeats2026) {
+              data.admissionSeats = mapAdmissionSeats2026(u.admissionSeats2026);
+            }
+
+            if (Object.keys(data).length === 0) {
+              strapi.log.info('[seed] Proqram yenilemesi: hec bir sahe yazilmadi: ' + u.programSlug);
+            } else {
+              await strapi.documents(uid).update({
+                documentId: p.documentId,
+                locale: 'az',
+                data: data as never,
+              });
+              strapi.log.info(
+                '[seed] Proqram yenilemesi yazildi (' + Object.keys(data).join(', ') + '): ' + u.programSlug,
+              );
+            }
+          } catch (e) {
+            strapi.log.error('[seed] Proqram yenilemesi xetasi (' + u.programSlug + '): ' + (e as Error).message);
+          }
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] proqram yenilemeleri 2026 seed xetasi: ' + (err as Error).message);
     }
 
   },
