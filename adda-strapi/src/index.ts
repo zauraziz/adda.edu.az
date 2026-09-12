@@ -125,27 +125,23 @@ const SEED = {
               {
                 "label": "Təşkilati struktur",
                 "url": "/struktur"
-              },
-              {
-                "label": "Rektor köməkçisi",
-                "url": "/sehife/rektor-komekcisi"
-              },
-              {
-                "label": "Elmi katib",
-                "url": "/sehife/elmi-katib"
               }
             ]
           },
           {
-            "title": "Hüquqi baza, etika və keyfiyyət",
+            "title": "Hüquqi baza və etika",
             "links": [
               {
-                "label": "Təhsil müəssisəsi haqqında",
-                "url": "/hazirlanir/tehsil-muessisesi-haqqinda"
+                "label": "Nizamnamə və təsis sənədləri",
+                "url": "/hazirlanir/nizamname-ve-tesis-senedleri"
               },
               {
                 "label": "Normativ-hüquqi sənədlər",
-                "url": "/sehife/h-x-esedovun-azerbaycan-dovlet-deniz-akademiyasinin-rektoru-teyin-edilmesi-haqqi"
+                "url": "/hazirlanir/normativ-huquqi-senedler"
+              },
+              {
+                "label": "Struktur bölmələrin əsasnamələri",
+                "url": "/hazirlanir/struktur-bolmelerin-esasnameleri"
               },
               {
                 "label": "Akademik dürüstlük bəyannaməsi",
@@ -156,8 +152,37 @@ const SEED = {
                 "url": "/hazirlanir/adda-etika-kodeksi"
               },
               {
-                "label": "Keyfiyyətin monitorinqi",
-                "url": "/sehife/keyfiyyetin-monitorinqi"
+                "label": "Müraciətlərə baxılma qaydası",
+                "url": "/hazirlanir/muracietlere-baxilma-qaydasi"
+              }
+            ]
+          },
+          {
+            "title": "Keyfiyyət və hesabatlılıq",
+            "links": [
+              {
+                "label": "Keyfiyyət siyasəti",
+                "url": "/hazirlanir/keyfiyyet-siyaseti"
+              },
+              {
+                "label": "Akkreditasiya və sertifikatlar",
+                "url": "/hazirlanir/akkreditasiya-ve-sertifikatlar"
+              },
+              {
+                "label": "İllik fəaliyyət hesabatları",
+                "url": "/hazirlanir/illik-fealiyyet-hesabatlari"
+              },
+              {
+                "label": "Özünüqiymətləndirmə nəticələri",
+                "url": "/hazirlanir/ozunuqiymetlendirme-neticeleri"
+              },
+              {
+                "label": "Tələbə və məzun sorğuları",
+                "url": "/hazirlanir/telebe-ve-mezun-sorgulari"
+              },
+              {
+                "label": "Məzunların məşğulluq göstəriciləri",
+                "url": "/hazirlanir/mezunlarin-messgulluq-gostericileri"
               },
               {
                 "label": "Dayanıqlı inkişaf",

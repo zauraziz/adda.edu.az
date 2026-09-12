@@ -905,6 +905,10 @@ const MENU_T: Array<[string, string, string]> = [
   ['Elmi Şura', 'Учёный совет', 'Academic Council'],
   ['Himayəçilər Şurası', 'Попечительский совет', 'Board of Trustees'],
   ['Təşkilati struktur', 'Организационная структура', 'Organizational Structure'],
+  // F5.25 — köhnə "Hüquqi baza, etika və keyfiyyət" qrupu ikiyə bölündü.
+  // Köhnə qrup adı və "Təhsil müəssisəsi haqqında"/"Keyfiyyətin monitorinqi"
+  // etiketləri MENYUDA ARTIQ İŞLƏNMİR (silinib), amma tərcümələri BURADA
+  // saxlanılır — orfan giriş zərərsizdir, silinməsi tələb olunmayıb.
   ['Hüquqi baza, etika və keyfiyyət', 'Нормативная база, этика и качество', 'Governance, Ethics & Quality'],
   ['Təhsil müəssisəsi haqqında', 'Об образовательном учреждении', 'About the Institution'],
   ['Normativ-hüquqi sənədlər', 'Нормативно-правовые документы', 'Regulations & Legal Documents'],
@@ -912,6 +916,18 @@ const MENU_T: Array<[string, string, string]> = [
   ['ADDA etika kodeksi', 'Кодекс этики АГМА', 'ASMA Code of Ethics'],
   ['Keyfiyyətin monitorinqi', 'Обеспечение качества', 'Quality Assurance'],
   ['Dayanıqlı inkişaf', 'Устойчивое развитие', 'Sustainable Development'],
+  // F5.25 — YENİ iki qrup: "Hüquqi baza və etika" + "Keyfiyyət və hesabatlılıq".
+  ['Hüquqi baza və etika', 'Нормативная база и этика', 'Governance & Ethics'],
+  ['Nizamnamə və təsis sənədləri', 'Устав и учредительные документы', 'Charter & Founding Documents'],
+  ['Struktur bölmələrin əsasnamələri', 'Положения о структурных подразделениях', 'Regulations of Structural Units'],
+  ['Müraciətlərə baxılma qaydası', 'Порядок рассмотрения обращений', 'Procedure for Handling Appeals'],
+  ['Keyfiyyət və hesabatlılıq', 'Качество и отчётность', 'Quality & Accountability'],
+  ['Keyfiyyət siyasəti', 'Политика качества', 'Quality Policy'],
+  ['Akkreditasiya və sertifikatlar', 'Аккредитация и сертификаты', 'Accreditation & Certificates'],
+  ['İllik fəaliyyət hesabatları', 'Годовые отчёты о деятельности', 'Annual Activity Reports'],
+  ['Özünüqiymətləndirmə nəticələri', 'Результаты самооценки', 'Self-Assessment Results'],
+  ['Tələbə və məzun sorğuları', 'Опросы студентов и выпускников', 'Student & Alumni Surveys'],
+  ['Məzunların məşğulluq göstəriciləri', 'Показатели трудоустройства выпускников', 'Graduate Employment Indicators'],
   ['Heyət', 'Персонал', 'People'],
   ['Professor-müəllim heyəti', 'Профессорско-преподавательский состав', 'Academic Staff'],
   ['Təlimçi-texniki heyət', 'Учебно-технический персонал', 'Training & Technical Staff'],
