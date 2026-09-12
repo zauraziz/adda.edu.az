@@ -63,6 +63,25 @@ export interface ProgramAdmissionScore {
   minScoreFree: number | null;
 }
 
+/**
+ * F5.24a — program.admission-seats komponenti (təkrarlanmayan,
+ * localized:false). `admissionScores`-dan (bal tarixçəsi, təkrarlanan)
+ * FƏRQLİDİR — bu, YALNIZ cari ilin yer sayı üçündür.
+ */
+export interface ProgramAdmissionSeats {
+  year: number | null;
+  total: number | null;
+  azFullTime: number | null;
+  azPartTime: number | null;
+  ruFullTime: number | null;
+  enFullTime: number | null;
+  stateFunded: number | null;
+  paid: number | null;
+}
+
+/** F5.24a — tab yerləşdirməsi. degree+studyForm-dan ÇIXARILMIR, açıq sahədir. */
+export type ProgramCatalogTab = 'subbakalavr' | 'bakalavr' | 'magistr' | 'tekrar_ali' | 'doktorantura';
+
 export interface Program {
   id: number;
   documentId: string;
@@ -70,8 +89,10 @@ export interface Program {
   slug: string;
   faculty?: FacultyRef | null; // F2.2: string -> relation (populate ilə gəlir)
   description: string | null;
-  degree: 'bachelor' | 'master' | 'phd';
+  degree: 'bachelor' | 'master' | 'phd' | 'subbachelor';
   durationYears: number | null;
+  /** F5.24a — durationYears kifayət etmədiyi hallar üçün ("Əyani 2 il · Qiyabi 3 il"). */
+  durationNote: string | null;
   /** F5.8a — dil DEYİL, fakt (bax ProgramDetail eyni sahə, schema.json localized:false). */
   studyForm: 'eyani' | 'qiyabi' | null;
   code: string | null;
@@ -79,6 +100,9 @@ export interface Program {
   tuitionFee: string | null;
   languages: ProgramLanguage[];
   admissionScores: ProgramAdmissionScore[];
+  /** F5.24a — cari ilin qəbul yerləri (boşdursa proqram üçün hələ elan olunmayıb). */
+  admissionSeats: ProgramAdmissionSeats | null;
+  catalogTab: ProgramCatalogTab | null;
   locale: Locale;
 }
 
@@ -154,11 +178,12 @@ export async function getPrograms(locale: Locale = 'az'): Promise<Program[]> {
     'pagination[pageSize]': 100,
     'populate[faculty][fields][0]': 'name',
     'populate[faculty][fields][1]': 'slug',
-    // F5.18b/c — komponentlər Strapi 5-də ƏL İLƏ populate olunmalıdır,
+    // F5.18b/c/F5.24a — komponentlər Strapi 5-də ƏL İLƏ populate olunmalıdır,
     // əks halda REST cavabında ümumiyyətlə yoxdurlar (bax getProgramDetail
     // eyni qayda, `populate[courses]`).
     'populate[languages]': true,
     'populate[admissionScores]': true,
+    'populate[admissionSeats]': true,
   });
   return json.data ?? [];
 }
@@ -1260,8 +1285,10 @@ export interface ProgramDetail {
   documentId: string;
   title: string;
   slug: string;
-  degree: 'bachelor' | 'master' | 'phd';
+  degree: 'bachelor' | 'master' | 'phd' | 'subbachelor';
   durationYears: number | null;
+  /** F5.24a — durationYears kifayət etmədiyi hallar üçün ("Əyani 2 il · Qiyabi 3 il"). */
+  durationNote: string | null;
   /** F5.8a — dil DEYİL, fakt: lokallaşdırılmayıb. */
   studyForm: 'eyani' | 'qiyabi' | null;
   description: string | null;

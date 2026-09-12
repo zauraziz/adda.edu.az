@@ -68,6 +68,8 @@ const DEGREE_LABEL: Record<ProgramDetail['degree'], string> = {
   bachelor: 'Bakalavriat',
   master: 'Magistratura',
   phd: 'Doktorantura',
+  // F5.24a — Kollec proqramları.
+  subbachelor: 'Subbakalavr',
 };
 
 // F5.8a — dil DEYİL, fakt (bax schema.json `studyForm`, localized:false).
@@ -83,6 +85,7 @@ const EDU_CREDENTIAL_LABEL: Record<ProgramDetail['degree'], string> = {
   bachelor: 'Bakalavr',
   master: 'Magistr',
   phd: 'Fəlsəfə doktoru',
+  subbachelor: 'Subbakalavr',
 };
 
 /**

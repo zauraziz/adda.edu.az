@@ -1,14 +1,15 @@
-// K26 / F5.17 / F5.18c — /[locale]/ixtisaslar
+// K26 / F5.17 / F5.18c / F5.24d — /[locale]/ixtisaslar
 // K26-3-de menyudan bura link qoymusdum, amma siyahi sehifesi yox idi -> 404.
 //
-// F5.17 — kart toru YERİNƏ dərəcə tabları (Bakalavr/Magistr, klik ilə keçid).
+// F5.17 — kart toru YERİNƏ tablar (klik ilə keçid).
 // Tərcümə/hazırlıq BURADA (server), interaktivlik (tab keçidi) ProgramDirectoryIsland-da
 // (StaffDirectory/StaffDirectoryIsland ilə eyni iş bölgüsü, bax o fayllar).
-// `Doktorantura` proqram yoxdursa tab da yoxdur — `.filter((g) => g.items.length)`
-// K26-dan bəri dəyişməyib, sadəcə H2 bölmələri tab keçidinə çevrilib.
+// Boş tab GÖRÜNMÜR — `.filter((g) => g.items.length)` K26-dan bəri dəyişməyib.
 // F5.18c — axtarış və fakültə qruplaşdırması SİLİNDİ, sadə düz sətir siyahısı;
 // şifr/təhsil haqqı/qəbul balı/dillər sütunları əlavə olundu (bax
 // ProgramDirectoryIsland.tsx).
+// F5.24d — tab qruplaşdırması `degree`-dən `catalogTab`-a keçdi (bax aşağı),
+// "Yer sayı (2026/27)" sütunu əlavə olundu (admissionSeats.total, şərti).
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -34,18 +35,25 @@ import type { Metadata } from 'next';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import ProgramDirectoryIsland, {
-  type ProgramDegreeGroup,
+  type ProgramCatalogGroup,
   type ProgramRow,
 } from '../../_components/ProgramDirectoryIsland';
-import { getMenu, getPrograms, type Program, type SiteMenu } from '@/lib/strapi';
+import { getMenu, getPrograms, type Program, type ProgramCatalogTab, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
 
-const DEGREE: Record<Program['degree'], string> = {
-  bachelor: 'Bakalavriat',
-  master: 'Magistratura',
-  phd: 'Doktorantura',
+// F5.24d — tab qruplaşdırması `degree`-dən DEYİL, `catalogTab`-dan gəlir
+// (qiyabi bakalavr «tekrar_ali» tabındadır — sadə degree+studyForm qaydası
+// bunu tuta bilməzdi, bax lib/strapi.ts ProgramCatalogTab). Sıra BURADA
+// TƏYİN OLUNUR (obyekt açar sırası deyil) — .filter(...) boş tabı gizlədir.
+const CATALOG_TAB_ORDER: ProgramCatalogTab[] = ['subbakalavr', 'bakalavr', 'magistr', 'tekrar_ali', 'doktorantura'];
+const CATALOG_TAB_LABEL: Record<ProgramCatalogTab, string> = {
+  subbakalavr: 'Subbakalavr',
+  bakalavr: 'Bakalavriat',
+  magistr: 'Magistratura',
+  tekrar_ali: 'Təkrar ali təhsil',
+  doktorantura: 'Doktorantura',
 };
 
 // F5.8a — dil DEYİL, fakt (bax ProgramDetail eyni sabit, [slug]/page.tsx — TOXUNULMUR).
@@ -115,12 +123,12 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
     getPrograms(locale).catch(() => [] as Program[]),
   ]);
 
-  const groups: ProgramDegreeGroup[] = (Object.keys(DEGREE) as Program['degree'][])
-    .map((d) => ({
-      degree: d,
-      label: tr(DEGREE[d], locale),
+  const groups: ProgramCatalogGroup[] = CATALOG_TAB_ORDER
+    .map((tab) => ({
+      tab,
+      label: tr(CATALOG_TAB_LABEL[tab], locale),
       items: programs
-        .filter((p) => p.degree === d)
+        .filter((p) => p.catalogTab === tab)
         .map(
           (p): ProgramRow => ({
             slug: p.slug,
@@ -131,6 +139,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             tuitionFee: p.tuitionFee,
             admissionLabel: admissionLabel(p.admissionScores),
             languagesLabel: languagesLabel(p.languages),
+            seatsTotal: p.admissionSeats?.total ?? null,
           }),
         ),
     }))
@@ -160,6 +169,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                   colDuration: tr('Müddət', locale),
                   colForm: tr('Təhsil forması', locale),
                   colTuition: tr('Təhsil haqqı (AZN)', locale),
+                  colSeats: tr('Yer sayı (2026/27)', locale),
                   colAdmission: tr('Qəbul balı (minimum/maksimum)', locale),
                   colLanguages: tr('Tədris dili', locale),
                   years: tr('il', locale),
