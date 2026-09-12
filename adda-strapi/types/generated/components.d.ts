@@ -130,6 +130,25 @@ export interface ProgramAdmissionScore extends Struct.ComponentSchema {
   };
 }
 
+export interface ProgramAdmissionSeats extends Struct.ComponentSchema {
+  collectionName: 'components_program_admission_seats';
+  info: {
+    description: 'Bir t\u0259dris ili \u00FC\u00E7\u00FCn q\u0259bul yeri say\u0131 (F5.24a). `admissionScores`-dan (bal tarix\u00E7\u0259si, t\u0259krarlanan) F\u018FRQL\u0130 m\u0259qs\u0259d \u2014 burada YALNIZ CAR\u0130 ilin yer b\u00F6lg\u00FCs\u00FC var, t\u0259krarlanm\u0131r.';
+    displayName: 'Q\u0259bul yerl\u0259ri';
+    icon: 'users';
+  };
+  attributes: {
+    azFullTime: Schema.Attribute.Integer;
+    azPartTime: Schema.Attribute.Integer;
+    enFullTime: Schema.Attribute.Integer;
+    paid: Schema.Attribute.Integer;
+    ruFullTime: Schema.Attribute.Integer;
+    stateFunded: Schema.Attribute.Integer;
+    total: Schema.Attribute.Integer;
+    year: Schema.Attribute.Integer;
+  };
+}
+
 export interface ProgramCourse extends Struct.ComponentSchema {
   collectionName: 'components_program_courses';
   info: {
@@ -330,6 +349,7 @@ declare module '@strapi/strapi' {
       'nav.portalcard': NavPortalcard;
       'nav.quicklink': NavQuicklink;
       'program.admission-score': ProgramAdmissionScore;
+      'program.admission-seats': ProgramAdmissionSeats;
       'program.course': ProgramCourse;
       'program.language': ProgramLanguage;
       'staff.education': StaffEducation;

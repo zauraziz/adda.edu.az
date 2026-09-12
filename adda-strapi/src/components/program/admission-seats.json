@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_program_admission_seats",
+  "info": {
+    "displayName": "Qəbul yerləri",
+    "description": "Bir tədris ili üçün qəbul yeri sayı (F5.24a). `admissionScores`-dan (bal tarixçəsi, təkrarlanan) FƏRQLİ məqsəd — burada YALNIZ CARİ ilin yer bölgüsü var, təkrarlanmır.",
+    "icon": "users"
+  },
+  "options": {},
+  "attributes": {
+    "year": {
+      "type": "integer"
+    },
+    "total": {
+      "type": "integer"
+    },
+    "azFullTime": {
+      "type": "integer"
+    },
+    "azPartTime": {
+      "type": "integer"
+    },
+    "ruFullTime": {
+      "type": "integer"
+    },
+    "enFullTime": {
+      "type": "integer"
+    },
+    "stateFunded": {
+      "type": "integer"
+    },
+    "paid": {
+      "type": "integer"
+    }
+  }
+}

@@ -40,7 +40,8 @@
       "enum": [
         "bachelor",
         "master",
-        "phd"
+        "phd",
+        "subbachelor"
       ],
       "default": "bachelor",
       "pluginOptions": {
@@ -198,6 +199,39 @@
       "type": "component",
       "repeatable": true,
       "component": "program.admission-score",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "catalogTab": {
+      "type": "enumeration",
+      "enum": [
+        "subbakalavr",
+        "bakalavr",
+        "magistr",
+        "tekrar_ali",
+        "doktorantura"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "durationNote": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "admissionSeats": {
+      "type": "component",
+      "repeatable": false,
+      "component": "program.admission-seats",
       "pluginOptions": {
         "i18n": {
           "localized": false

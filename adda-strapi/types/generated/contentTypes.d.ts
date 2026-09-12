@@ -1661,10 +1661,27 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
           localized: false;
         };
       }>;
+    admissionSeats: Schema.Attribute.Component<
+      'program.admission-seats',
+      false
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     careerPaths: Schema.Attribute.RichText &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+      }>;
+    catalogTab: Schema.Attribute.Enumeration<
+      ['subbakalavr', 'bakalavr', 'magistr', 'tekrar_ali', 'doktorantura']
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }>;
     code: Schema.Attribute.String &
@@ -1694,7 +1711,9 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    degree: Schema.Attribute.Enumeration<['bachelor', 'master', 'phd']> &
+    degree: Schema.Attribute.Enumeration<
+      ['bachelor', 'master', 'phd', 'subbachelor']
+    > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;
@@ -1711,6 +1730,12 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::document.document'
     >;
+    durationNote: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     durationYears: Schema.Attribute.Integer &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
