@@ -89,6 +89,31 @@
 .pr-plan-group { margin: 0 0 24px; }
 .pr-plan-group:last-child { margin-bottom: 0; }
 
+/* F5.24e — magistr ixtisaslaşmaları: semestr daxilində "İxt-" alt-qrupları.
+   `.pr-plan-subtitle` semestrin öz `.un-sub-title`-ından KİÇİKDİR (ikinci
+   iyerarxiya səviyyəsi) — qızılı, kiçik hərflə, ayırıcı YOX (cədvəllə
+   bitişik oxunur). `.pr-plan-note` seçim tələb olunduğunu bir dəfə,
+   qrupların ÜSTÜNDƏ izah edir (yalnız 2-dən çox qrup olanda göstərilir,
+   bax [slug]/page.tsx splitElectiveGroups). */
+.pr-plan-note {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--gray-500);
+}
+.pr-plan-subgroup { margin: 1rem 0 0; }
+.pr-plan-subgroup:first-of-type { margin-top: 0; }
+.pr-plan-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+  margin: 0 0 0.5rem;
+}
+
 /* F5.1c — mobildə üfüqi sürüşən cədvəl, ilk sütun (şifr+ad) sabit qalır ki,
    sağa sürüşəndə hansı fənn olduğu itməsin. */
 .pr-plan-scroll {

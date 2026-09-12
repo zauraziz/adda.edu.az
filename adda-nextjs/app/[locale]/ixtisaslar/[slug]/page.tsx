@@ -155,6 +155,43 @@ function groupBySemester(courses: ProgramCourse[]): SemesterGroup[] {
     .sort((a, b) => semesterRank(a.semester) - semesterRank(b.semester));
 }
 
+/**
+ * F5.24e — magistr ixtisaslaşmaları: `groupCode` "İxt-" prefiksi olan fənlər
+ * ALTERNATİV ixtisaslaşma yollarıdır (tələbə BİRİNİ seçir, bax F5.16/F5.19
+ * seed faylı `_qeyd`-ləri: "İKİ İXTİSASLAŞMA YOLU", "ÜÇ YOLDAN BİRİNİ seçir").
+ * Digər `groupCode`-lar (ÜF-, MF-Ortaq) və `groupCode`-suz fənlər ORTAQ
+ * fənlərdir, seçim DEYİL — "core"-a düşür.
+ *
+ * Tək İxt-* qrupu (0 və ya 1) VARSA bölmə mənasızdır — seçim yoxdursa
+ * ayrıca alt-başlıq lazım deyil, o fənlər də core-a qatılır.
+ */
+interface ElectiveGroup {
+  groupCode: string;
+  courses: ProgramCourse[];
+}
+interface CourseSplit {
+  core: ProgramCourse[];
+  electives: ElectiveGroup[];
+}
+function splitElectiveGroups(courses: ProgramCourse[]): CourseSplit {
+  const core: ProgramCourse[] = [];
+  const electiveMap = new Map<string, ProgramCourse[]>();
+  for (const c of courses) {
+    if (c.groupCode?.startsWith('İxt-')) {
+      if (!electiveMap.has(c.groupCode)) electiveMap.set(c.groupCode, []);
+      electiveMap.get(c.groupCode)!.push(c);
+    } else {
+      core.push(c);
+    }
+  }
+  if (electiveMap.size < 2) {
+    // Tək qrup — seçim yoxdur, core-a qaytarılır (sənəd sırasına görə sona əlavə olunur).
+    for (const list of electiveMap.values()) core.push(...list);
+    return { core, electives: [] };
+  }
+  return { core, electives: [...electiveMap.entries()].map(([groupCode, list]) => ({ groupCode, courses: list })) };
+}
+
 // F5.2a — BlockTitle/AdminEditRow/EmptyBlock/EmptyExpandItem/adminUrl
 // artıq _components/AdminOnly.tsx-dədir (struktur/ixtisas səhifələri
 // eyni komponentləri idxal edir, iki nüsxə saxlanılmır).
@@ -614,17 +651,44 @@ export default async function ProgramPage({
                 <section id="study-plan" className={'un-block pr-anchor' + (tintByKey['study-plan'] ? ' un-block--tint' : '')}>
                   <AdminEditRow uid="api::program.program" documentId={program.documentId} locale={locale} />
                   <ExpandBlock label={blockTitlePlan}>
-                    {semesterGroups.map((g) => (
-                      <div key={g.semester} className="pr-plan-group">
-                        <div className="un-sub-title">{tr('Semestr', locale) + ' ' + g.semester}</div>
-                        <CourseTable
-                          courses={g.courses}
-                          hasPrerequisite={hasPrerequisite}
-                          hasCorequisite={hasCorequisite}
-                          locale={locale}
-                        />
-                      </div>
-                    ))}
+                    {semesterGroups.map((g) => {
+                      // F5.24e — magistr ixtisaslaşmaları: semestr daxilində
+                      // "İxt-" qrupları (varsa) core-dan ayrı, öz alt-cədvəlində.
+                      const { core, electives } = splitElectiveGroups(g.courses);
+                      return (
+                        <div key={g.semester} className="pr-plan-group">
+                          <div className="un-sub-title">{tr('Semestr', locale) + ' ' + g.semester}</div>
+                          {core.length ? (
+                            <CourseTable
+                              courses={core}
+                              hasPrerequisite={hasPrerequisite}
+                              hasCorequisite={hasCorequisite}
+                              locale={locale}
+                            />
+                          ) : null}
+                          {electives.length ? (
+                            <>
+                              {electives.length > 2 ? (
+                                <p className="pr-plan-note">
+                                  {tr('Aşağıdakı ixtisaslaşmalardan BİRİ seçilir', locale)}
+                                </p>
+                              ) : null}
+                              {electives.map((eg) => (
+                                <div key={eg.groupCode} className="pr-plan-subgroup">
+                                  <div className="pr-plan-subtitle">{eg.groupCode}</div>
+                                  <CourseTable
+                                    courses={eg.courses}
+                                    hasPrerequisite={hasPrerequisite}
+                                    hasCorequisite={hasCorequisite}
+                                    locale={locale}
+                                  />
+                                </div>
+                              ))}
+                            </>
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </ExpandBlock>
                 </section>
               ) : (
