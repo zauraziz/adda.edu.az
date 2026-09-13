@@ -4180,5 +4180,142 @@ export default {
       strapi.log.error('[seed] yeni proqramlar 2026 seed xetasi: ' + (err as Error).message);
     }
 
+    // ── Proqram məzmunu V2 — F5.26 vahid abituriyent üslubu (PROGRAM_CONTENT_SEED) ──
+    //
+    // MƏNBƏ: `tools/migration/data/program-content-*.json` — hər fayl BİR
+    // proqramın YENİ mətnidir (`readdirSync`, PROGRAM_TEXT_SEED-dəki EYNİ
+    // çoxfaylı qayda). `PROGRAM_TEXT_SEED`-dən (F5.4) FƏRQLİ olaraq
+    // `overview`/`practiceNote`/`outcomes`/`careerPaths`/`conventions`
+    // BURADA QƏSDƏN ÜSTÜNDƏN YAZILIR — ümumi "boşdursa yaz" qaydasından
+    // İSTİSNA (PROGRAM_UPDATE_SEED-dəki `code` overwrite-i ilə EYNİ məntiq):
+    // köhnə PROGRAM_TEXT_SEED mətni (rəsmi sənəd sitatlı) F5.26-nın vahid
+    // abituriyent üslubu ilə ƏVƏZLƏNİR. `tagline`/`highlights`/`faq` İSƏ
+    // F5.26a-da əlavə olunan YENİ sahələrdir — boşdursa yazılır, doludursa
+    // (təkrar iş) atlanır (idempotentlik). `competencies` BURADA YOXDUR
+    // (F5.26b — səhifədən çıxarılıb, mövcud dəyərə TOXUNULMUR).
+    //
+    // YALNIZ `az` qaralamasına yazılır, publish() BURADA ÇAĞIRILMIR.
+    try {
+      if (process.env.PROGRAM_CONTENT_SEED !== 'true') {
+        strapi.log.info('[seed] Proqram mezmunu V2 (F5.26) oturuldu. Ucun PROGRAM_CONTENT_SEED=true.');
+      } else {
+        const CONTENT_DATA_DIR = path.join(strapi.dirs.app.root, '..', 'tools', 'migration', 'data');
+
+        const OVERWRITE_KEYS = ['overview', 'practiceNote', 'outcomes', 'careerPaths', 'conventions'] as const;
+        type OverwriteKey = (typeof OVERWRITE_KEYS)[number];
+
+        interface ProgramContentSeedFile {
+          programSlug: string;
+          fields: Partial<Record<OverwriteKey, string>> & {
+            tagline?: string;
+            highlights?: { value: string; label: string }[];
+            faq?: { question: string; answer: string }[];
+          };
+        }
+
+        let contentFiles: string[] = [];
+        try {
+          contentFiles = readdirSync(CONTENT_DATA_DIR).filter((f) => /^program-content-.*\.json$/.test(f));
+        } catch (e) {
+          strapi.log.error('[seed] Proqram mezmunu V2 XETA - data qovlugu oxuna bilmedi: ' + (e as Error).message);
+        }
+
+        for (const fileName of contentFiles) {
+          try {
+            const seed: ProgramContentSeedFile = JSON.parse(
+              readFileSync(path.join(CONTENT_DATA_DIR, fileName), 'utf8'),
+            );
+
+            const programs = (await strapi.documents('api::program.program').findMany({
+              locale: 'az',
+              filters: { slug: { $eq: seed.programSlug } },
+              status: 'draft',
+              fields: ['slug', 'tagline', ...OVERWRITE_KEYS],
+              populate: { highlights: true, faq: true },
+              limit: 2,
+            })) as unknown as Array<
+              { documentId: string; tagline?: string | null; highlights?: unknown[]; faq?: unknown[] } & Record<
+                OverwriteKey,
+                string | null
+              >
+            >;
+
+            if (programs.length !== 1) {
+              strapi.log.error(
+                '[seed] Proqram mezmunu V2 XETA (' + fileName + ') - proqram tapilmadi: ' + seed.programSlug,
+              );
+              continue;
+            }
+
+            const p = programs[0];
+            const data: Record<string, unknown> = {};
+
+            if (seed.fields.tagline) {
+              if (p.tagline) {
+                strapi.log.info('[seed] Proqram mezmunu V2: tagline atlandi (doludur): ' + seed.programSlug);
+              } else {
+                data.tagline = seed.fields.tagline;
+              }
+            }
+
+            if (seed.fields.highlights?.length) {
+              if (p.highlights && p.highlights.length > 0) {
+                strapi.log.info('[seed] Proqram mezmunu V2: highlights atlandi (doludur): ' + seed.programSlug);
+              } else {
+                data.highlights = seed.fields.highlights;
+              }
+            }
+
+            if (seed.fields.faq?.length) {
+              if (p.faq && p.faq.length > 0) {
+                strapi.log.info('[seed] Proqram mezmunu V2: faq atlandi (doludur): ' + seed.programSlug);
+              } else {
+                data.faq = seed.fields.faq;
+              }
+            }
+
+            // F5.26 — bu beş sahə QƏSDƏN ÜSTÜNDƏN YAZILIR (bax yuxarıdakı izah).
+            for (const key of OVERWRITE_KEYS) {
+              const raw = seed.fields[key];
+              if (!raw) continue;
+              const oldLen = p[key]?.length ?? 0;
+              data[key] = raw;
+              strapi.log.info(
+                '[seed] Proqram mezmunu V2: ' +
+                  key +
+                  ' USTUNDEN YAZILIR (' +
+                  oldLen +
+                  ' -> ' +
+                  raw.length +
+                  ' simvol): ' +
+                  seed.programSlug,
+              );
+            }
+
+            if (Object.keys(data).length === 0) {
+              strapi.log.info('[seed] Proqram mezmunu V2: hec bir sahe yazilmadi: ' + seed.programSlug);
+            } else {
+              await strapi.documents('api::program.program').update({
+                documentId: p.documentId,
+                locale: 'az',
+                data: data as never,
+              });
+              // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
+              strapi.log.info(
+                '[seed] Proqram mezmunu V2 yazildi (' +
+                  Object.keys(data).join(', ') +
+                  '): ' +
+                  seed.programSlug,
+              );
+            }
+          } catch (e) {
+            strapi.log.error('[seed] Proqram mezmunu V2 oxuma xetasi (' + fileName + '): ' + (e as Error).message);
+          }
+        }
+      }
+    } catch (err) {
+      strapi.log.error('[seed] proqram mezmunu V2 seed xetasi: ' + (err as Error).message);
+    }
+
   },
 };
