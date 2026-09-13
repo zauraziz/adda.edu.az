@@ -1307,6 +1307,8 @@ export interface ProgramDetail {
   courses: ProgramCourse[];
   /** F5.18e — AdmissionScoreChart.tsx üçün. */
   admissionScores: ProgramAdmissionScore[];
+  /** F5.26a/c — `unit.faq` ilə PAYLAŞILAN komponent (bax schema.json). */
+  faq: { question: string; answer: string }[];
 }
 
 /**
@@ -1359,6 +1361,7 @@ export async function getProgramDetail(slug: string, locale: Locale = 'az'): Pro
     // F5.18e — komponent, əl ilə populate olunmalıdır (bax `populate[courses]`
     // eyni qayda, F5.18b/c-də `getPrograms()`-da da təkrarlanıb).
     'populate[admissionScores]': true,
+    'populate[faq]': true,
   });
   return json.data?.[0] ?? null;
 }

@@ -1,11 +1,14 @@
-// F5.1c/F5.5c — /[locale]/ixtisaslar/[slug]: ixtisas (proqram) səhifəsi.
+// F5.1c/F5.5c/F5.26 — /[locale]/ixtisaslar/[slug]: ixtisas (proqram) səhifəsi.
 //
 // Struktur bölmə səhifəsi ilə EYNİ dizayn dili (F4.9–F4.13): iki sütun +
 // yapışqan yan panel, admin qapısı (AdminGate.tsx), boş sahə heç vaxt
-// render olunmur. F5.5c-dən sonra beş mətn bölməsi TAM AÇIQ (akkordeon
-// DEYİL) — hər biri öz `<section id>`-i, yan paneldə sticky mündəricat
-// (ProgramToc.tsx) + IntersectionObserver ilə "hardayam" vurğusu. YALNIZ
-// tədris planı (46 fənn, uzun) ExpandBlock-da qalır. Admin-bəzək
+// render olunmur. Mətn bölmələri TAM AÇIQ (akkordeon DEYİL) — hər biri öz
+// `<section id>`-i, yan paneldə sticky mündəricat (ProgramToc.tsx) +
+// IntersectionObserver ilə "hardayam" vurğusu. YALNIZ tədris planı
+// ExpandBlock-da qalır (F5.26d-dən sonra HƏR KURS öz ExpandBlock-udur).
+// F5.26c — sıra/başlıqlar vahid abituriyent üslubuna görə: bu ixtisas
+// nədir? → praktiki hazırlıq → kurs üzrə tədris planı → nə bacaracaqsan →
+// harada işləyəcəksən → beynəlxalq standartlar → FAQ. Admin-bəzək
 // köməkçiləri (BlockTitle/EmptyBlock/AdminEditRow) `_components/AdminOnly`-dən
 // (F5.2a, struktur/[slug]/page.tsx ilə paylaşılır).
 import '../../../_styles/01-base.css';
@@ -345,26 +348,32 @@ export default async function ProgramPage({
   // F5.18e — tək illik "qrafik" mənasız olardı, ən azı 2 il tələb olunur.
   const admissionChartHas = program.admissionScores.length >= 2;
 
-  const blockTitleOverview = tr('Proqram haqqında', locale);
-  const blockTitleOutcomes = tr('Təlim nəticələri', locale);
-  const blockTitleCareerPaths = tr('Karyera imkanları', locale);
-  const blockTitleConventions = tr('Konvensiya tələbləri', locale);
-  const blockTitleSwim = tr('Üzmə təcrübəsi', locale);
-  const blockTitlePlan = tr('Tədris planı', locale);
+  // F5.26c — başlıqlar abituriyent sual ardıcıllığı ilə YENİDƏN yazılıb;
+  // dəyişən adları köhnə sahə adlarında qalıb (`blockTitleSwim`/`blockTitlePlan`
+  // və s.), TEXT dəyişib. Sıra da BURADA, `fieldStatus`-da təyin olunur.
+  const blockTitleOverview = tr('Bu ixtisas nədir?', locale);
+  const blockTitleSwim = tr('Praktiki hazırlıq və təcrübə', locale);
+  const blockTitlePlan = tr('Nə öyrənəcəksən — kurs üzrə', locale);
+  const blockTitleOutcomes = tr('Məzun olanda nə bacaracaqsan?', locale);
+  const blockTitleCareerPaths = tr('Harada işləyə bilərsən?', locale);
+  const blockTitleConventions = tr('Beynəlxalq standartlar', locale);
+  const blockTitleFaq = tr('Tez-tez verilən suallar', locale);
+  const faqHas = Boolean(program.faq.length);
 
   // F5.5c — akkordeon ƏVƏZİNƏ hər bölmə öz TAM AÇIQ `<section id>`-dir
-  // (lövbər üçün) — beş mətn bölməsi abituriyent sual ardıcıllığı ilə
-  // (F5.5a), sonra üzmə təcrübəsi, sonda tədris planı (YALNIZ bu, uzun
-  // olduğu üçün, ExpandBlock-da qalır). `id` mündəricat (ProgramToc) və
-  // scroll-margin üçün eynidir.
-  type TopKey = 'overview' | 'career-paths' | 'conventions' | 'outcomes' | 'swim-practice' | 'study-plan';
+  // (lövbər üçün), YALNIZ tədris planı (uzun olduğu üçün) ExpandBlock-da
+  // qalır. `id` mündəricat (ProgramToc) və scroll-margin üçün eynidir.
+  // F5.26c — sıra: nədir? → praktiki hazırlıq → kurs üzrə tədris planı →
+  // nə bacaracaqsan → harada işləyəcəksən → beynəlxalq standartlar → FAQ.
+  type TopKey = 'overview' | 'swim-practice' | 'study-plan' | 'outcomes' | 'career-paths' | 'conventions' | 'faq';
   const fieldStatus: { id: TopKey; has: boolean; title: string }[] = [
     { id: 'overview', has: overviewHas, title: blockTitleOverview },
-    { id: 'career-paths', has: careerPathsHas, title: blockTitleCareerPaths },
-    { id: 'conventions', has: conventionsHas, title: blockTitleConventions },
-    { id: 'outcomes', has: outcomesHas, title: blockTitleOutcomes },
     { id: 'swim-practice', has: swimPracticeHas, title: blockTitleSwim },
     { id: 'study-plan', has: coursesHas, title: blockTitlePlan },
+    { id: 'outcomes', has: outcomesHas, title: blockTitleOutcomes },
+    { id: 'career-paths', has: careerPathsHas, title: blockTitleCareerPaths },
+    { id: 'conventions', has: conventionsHas, title: blockTitleConventions },
+    { id: 'faq', has: faqHas, title: blockTitleFaq },
   ];
   const openBlockCount = fieldStatus.filter((f) => f.has).length;
   const closedBlockTitles = fieldStatus.filter((f) => !f.has).map((f) => f.title);
@@ -553,13 +562,11 @@ export default async function ProgramPage({
 
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── F5.5c: beş mətn bölməsi akkordeon ƏVƏZİNƏ TAM AÇIQ —
-                  hər biri öz `<section id>`-i (lövbər/mündəricat üçün, bax
-                  ProgramToc.tsx). Sıra abituriyentin sual ardıcıllığı ilədir
-                  (F5.5a): overview/careerPaths/conventions, outcomes sonda
-                  (heç bir seed doldurmur, "boş sahə görünmür" qaydası ilə
-                  öz-özünə görünəcək). `competencies` F5.26b-dən bəri BURADA
-                  YOXDUR (bax yuxarıda izah). ── */}
+              {/* ── F5.26c: sıra abituriyentin sual ardıcıllığı ilə — bax
+                  `fieldStatus` yuxarıda. Hər bölmə öz `<section id>`-i
+                  (lövbər/mündəricat üçün, bax ProgramToc.tsx), YALNIZ
+                  tədris planı ExpandBlock-da (uzundur). `competencies`
+                  F5.26b-dən bəri BURADA YOXDUR (bax yuxarıda izah). ── */}
               {overviewHas ? (
                 <section id="overview" className={'un-block pr-anchor' + (tintByKey.overview ? ' un-block--tint' : '')}>
                   <BlockTitle uid="api::program.program" title={blockTitleOverview} documentId={program.documentId} locale={locale} />
@@ -571,40 +578,7 @@ export default async function ProgramPage({
                 </AdminOnly>
               )}
 
-              {careerPathsHas ? (
-                <section id="career-paths" className={'un-block pr-anchor' + (tintByKey['career-paths'] ? ' un-block--tint' : '')}>
-                  <BlockTitle uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} />
-                  <div className="prose" dangerouslySetInnerHTML={{ __html: careerPathsHtml }} />
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} tint={tintByKey['career-paths']} />
-                </AdminOnly>
-              )}
-
-              {conventionsHas ? (
-                <section id="conventions" className={'un-block pr-anchor' + (tintByKey.conventions ? ' un-block--tint' : '')}>
-                  <BlockTitle uid="api::program.program" title={blockTitleConventions} documentId={program.documentId} locale={locale} />
-                  <div className="prose" dangerouslySetInnerHTML={{ __html: conventionsHtml }} />
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::program.program" title={blockTitleConventions} documentId={program.documentId} locale={locale} tint={tintByKey.conventions} />
-                </AdminOnly>
-              )}
-
-              {outcomesHas ? (
-                <section id="outcomes" className={'un-block pr-anchor' + (tintByKey.outcomes ? ' un-block--tint' : '')}>
-                  <BlockTitle uid="api::program.program" title={blockTitleOutcomes} documentId={program.documentId} locale={locale} />
-                  <div className="prose" dangerouslySetInnerHTML={{ __html: outcomesHtml }} />
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::program.program" title={blockTitleOutcomes} documentId={program.documentId} locale={locale} tint={tintByKey.outcomes} />
-                </AdminOnly>
-              )}
-
-              {/* ── F5.5a/F5.5c: Üzmə təcrübəsi — TAM AÇIQ, öz bloku.
+              {/* ── F5.5a/F5.5c/F5.26c: Praktiki hazırlıq və təcrübə.
                   `practiceNote` (PROGRAM_TEXT_SEED, F5.4) + semestrsiz
                   təcrübə sətirləri (T-B01..T-B04) EYNİ cədvəldə (bax
                   CourseTable). Semestrli təcrübə (T-B05, VIII) öz semestr
@@ -630,14 +604,14 @@ export default async function ProgramPage({
                 </AdminOnly>
               )}
 
-              {/* ── F5.1c/F5.3/F5.5a/F5.5c: Tədris planı — SONDA (arayış
-                  materialı). YALNIZ bu bölmə ExpandBlock-da qalır (uzundur,
-                  46 fənn) — beş mətn bölməsindən fərqli olaraq. Saat
-                  "Cəmi/Auditoriya/Sərbəst" üç sütuna bölünüb, mobildə "Cəmi"
-                  ilk görünən sütundur, qalanı üfüqi sürüşmədədir (bax
-                  .pr-plan-scroll, 37-program.css). Prerekvizit/korekvizit
-                  ŞƏRTİ göstərilir — heç bir fənndə dəyər yoxdursa sütun
-                  ÜMUMİYYƏTLƏ yoxdur (TOXUNMA, F5.3-dən dəyişməyib). ── */}
+              {/* ── F5.1c/F5.3/F5.5a/F5.26c: Nə öyrənəcəksən — kurs üzrə.
+                  YALNIZ bu bölmə ExpandBlock-da qalır (uzundur, 46 fənn).
+                  Saat "Cəmi/Auditoriya/Sərbəst" üç sütuna bölünüb, mobildə
+                  "Cəmi" ilk görünən sütundur, qalanı üfüqi sürüşmədədir
+                  (bax .pr-plan-scroll, 37-program.css). Prerekvizit/
+                  korekvizit ŞƏRTİ göstərilir — heç bir fənndə dəyər
+                  yoxdursa sütun ÜMUMİYYƏTLƏ yoxdur (TOXUNMA, F5.3-dən
+                  dəyişməyib). ── */}
               {coursesHas ? (
                 <section id="study-plan" className={'un-block pr-anchor' + (tintByKey['study-plan'] ? ' un-block--tint' : '')}>
                   <AdminEditRow uid="api::program.program" documentId={program.documentId} locale={locale} />
@@ -688,8 +662,62 @@ export default async function ProgramPage({
                 </AdminOnly>
               )}
 
-              {/* F5.18e — 5 illik qəbul balı qrafiki. Ən azı 2 il yoxdursa
-                  (yəni tək nöqtəli "qrafik" mənasız olardı) blok görünmür. */}
+              {outcomesHas ? (
+                <section id="outcomes" className={'un-block pr-anchor' + (tintByKey.outcomes ? ' un-block--tint' : '')}>
+                  <BlockTitle uid="api::program.program" title={blockTitleOutcomes} documentId={program.documentId} locale={locale} />
+                  <div className="prose" dangerouslySetInnerHTML={{ __html: outcomesHtml }} />
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock uid="api::program.program" title={blockTitleOutcomes} documentId={program.documentId} locale={locale} tint={tintByKey.outcomes} />
+                </AdminOnly>
+              )}
+
+              {careerPathsHas ? (
+                <section id="career-paths" className={'un-block pr-anchor' + (tintByKey['career-paths'] ? ' un-block--tint' : '')}>
+                  <BlockTitle uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} />
+                  <div className="prose" dangerouslySetInnerHTML={{ __html: careerPathsHtml }} />
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} tint={tintByKey['career-paths']} />
+                </AdminOnly>
+              )}
+
+              {conventionsHas ? (
+                <section id="conventions" className={'un-block pr-anchor' + (tintByKey.conventions ? ' un-block--tint' : '')}>
+                  <BlockTitle uid="api::program.program" title={blockTitleConventions} documentId={program.documentId} locale={locale} />
+                  <div className="prose" dangerouslySetInnerHTML={{ __html: conventionsHtml }} />
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock uid="api::program.program" title={blockTitleConventions} documentId={program.documentId} locale={locale} tint={tintByKey.conventions} />
+                </AdminOnly>
+              )}
+
+              {/* ── F5.26c: FAQ — `unit.faq` ilə PAYLAŞILAN komponent (bax
+                  schema.json), struktur səhifəsindəki FAQ bloku ilə EYNİ
+                  render (ExpandBlock hər sual üçün, bax struktur/[slug]/page.tsx). ── */}
+              {faqHas ? (
+                <section id="faq" className={'un-block pr-anchor' + (tintByKey.faq ? ' un-block--tint' : '')}>
+                  <BlockTitle uid="api::program.program" title={blockTitleFaq} documentId={program.documentId} locale={locale} />
+                  <div className="un-expand-group">
+                    {program.faq.map((f, i) => (
+                      <ExpandBlock key={i} label={f.question}>
+                        <p className="prose" style={{ whiteSpace: 'pre-line' }}>{f.answer}</p>
+                      </ExpandBlock>
+                    ))}
+                  </div>
+                </section>
+              ) : (
+                <AdminOnly>
+                  <EmptyBlock uid="api::program.program" title={blockTitleFaq} documentId={program.documentId} locale={locale} tint={tintByKey.faq} />
+                </AdminOnly>
+              )}
+
+              {/* F5.18e — 5 illik qəbul balı qrafiki, arayış materialı kimi
+                  YEDDİ bölmədən SONRA. Ən azı 2 il yoxdursa (yəni tək
+                  nöqtəli "qrafik" mənasız olardı) blok görünmür. */}
               {admissionChartHas ? (
                 <section className="un-block">
                   <h2 className="un-block-title">{tr('Qəbul balı', locale)}</h2>
