@@ -46,7 +46,7 @@ import ProgramToc from '../../../_components/ProgramToc';
 import LeaderCard from '../../../_components/LeaderCard';
 import AdmissionScoreChart from '../../../_components/AdmissionScoreChart';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
-import { BlockTitle, AdminEditRow, EmptyBlock } from '../../../_components/AdminOnly';
+import { BlockTitle, EmptyBlock } from '../../../_components/AdminOnly';
 import { DocList } from '../../../_components/DocList';
 import {
   getProgramDetail,
@@ -156,6 +156,30 @@ function groupBySemester(courses: ProgramCourse[]): SemesterGroup[] {
   return [...map.entries()]
     .map(([semester, list]) => ({ semester, courses: list }))
     .sort((a, b) => semesterRank(a.semester) - semesterRank(b.semester));
+}
+
+/**
+ * F5.26d — semestr ƏVƏZİNƏ kurs (il) qruplaşması: I kurs = I–II semestr,
+ * II = III–IV, III = V–VI, IV = VII–VIII, V = IX–X (köhnə 5 illik
+ * bakalavr planları). Magistrda cəmi I–IV semestr olduğu üçün eyni
+ * düstur öz-özünə I/II kursla nəticələnir — dərəcəyə görə AYRI qayda
+ * lazım deyil.
+ */
+const KURS_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+interface KursGroup {
+  kurs: number;
+  semesters: SemesterGroup[];
+}
+function groupByKurs(groups: SemesterGroup[]): KursGroup[] {
+  const map = new Map<number, SemesterGroup[]>();
+  for (const g of groups) {
+    const kurs = Math.floor(semesterRank(g.semester) / 2) + 1;
+    if (!map.has(kurs)) map.set(kurs, []);
+    map.get(kurs)!.push(g);
+  }
+  return [...map.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([kurs, semesters]) => ({ kurs, semesters }));
 }
 
 /**
@@ -337,6 +361,8 @@ export default async function ProgramPage({
   // təcrübə (T-B01..T-B04) artıq bu blokda DEYİL, öz "Üzmə təcrübəsi"
   // blokundadır (aşağıda). Semestrli təcrübə (T-B05, VIII) öz semestrində qalır.
   const semesterGroups = coursesHas ? groupBySemester(program.courses) : [];
+  // F5.26d — kurs (il) qruplaşması, hər kurs öz ExpandBlock-unda.
+  const kursGroups = groupByKurs(semesterGroups);
   const swimPracticeCourses = program.courses.filter((c) => c.isPractice && !c.semester);
   const swimPracticeHas = Boolean(swimPracticeCourses.length || program.practiceNote);
   // F5.3 — prerekvizit/korekvizit sütunları ŞƏRTİ: heç bir fənndə dəyər
@@ -604,57 +630,62 @@ export default async function ProgramPage({
                 </AdminOnly>
               )}
 
-              {/* ── F5.1c/F5.3/F5.5a/F5.26c: Nə öyrənəcəksən — kurs üzrə.
-                  YALNIZ bu bölmə ExpandBlock-da qalır (uzundur, 46 fənn).
-                  Saat "Cəmi/Auditoriya/Sərbəst" üç sütuna bölünüb, mobildə
-                  "Cəmi" ilk görünən sütundur, qalanı üfüqi sürüşmədədir
-                  (bax .pr-plan-scroll, 37-program.css). Prerekvizit/
-                  korekvizit ŞƏRTİ göstərilir — heç bir fənndə dəyər
-                  yoxdursa sütun ÜMUMİYYƏTLƏ yoxdur (TOXUNMA, F5.3-dən
+              {/* ── F5.1c/F5.3/F5.5a/F5.26c/F5.26d: Nə öyrənəcəksən — kurs
+                  üzrə. Semestr ƏVƏZİNƏ kurs (il) qruplaşması — hər kurs öz
+                  ExpandBlock-udur (bax groupByKurs), semestr alt-başlıq
+                  kimi içəridədir. Saat "Cəmi/Auditoriya/Sərbəst" üç sütuna
+                  bölünüb, mobildə "Cəmi" ilk görünən sütundur, qalanı üfüqi
+                  sürüşmədədir (bax .pr-plan-scroll, 37-program.css).
+                  Prerekvizit/korekvizit ŞƏRTİ göstərilir — heç bir fənndə
+                  dəyər yoxdursa sütun ÜMUMİYYƏTLƏ yoxdur (TOXUNMA, F5.3-dən
                   dəyişməyib). ── */}
               {coursesHas ? (
                 <section id="study-plan" className={'un-block pr-anchor' + (tintByKey['study-plan'] ? ' un-block--tint' : '')}>
-                  <AdminEditRow uid="api::program.program" documentId={program.documentId} locale={locale} />
-                  <ExpandBlock label={blockTitlePlan}>
-                    {semesterGroups.map((g) => {
-                      // F5.24e — magistr ixtisaslaşmaları: semestr daxilində
-                      // "İxt-" qrupları (varsa) core-dan ayrı, öz alt-cədvəlində.
-                      const { core, electives } = splitElectiveGroups(g.courses);
-                      return (
-                        <div key={g.semester} className="pr-plan-group">
-                          <div className="un-sub-title">{tr('Semestr', locale) + ' ' + g.semester}</div>
-                          {core.length ? (
-                            <CourseTable
-                              courses={core}
-                              hasPrerequisite={hasPrerequisite}
-                              hasCorequisite={hasCorequisite}
-                              locale={locale}
-                            />
-                          ) : null}
-                          {electives.length ? (
-                            <>
-                              {electives.length > 2 ? (
-                                <p className="pr-plan-note">
-                                  {tr('Aşağıdakı ixtisaslaşmalardan BİRİ seçilir', locale)}
-                                </p>
+                  <BlockTitle uid="api::program.program" title={blockTitlePlan} documentId={program.documentId} locale={locale} />
+                  <div className="un-expand-group">
+                    {kursGroups.map((kg) => (
+                      <ExpandBlock key={kg.kurs} label={(KURS_ROMAN[kg.kurs - 1] ?? String(kg.kurs)) + ' ' + tr('kurs', locale)}>
+                        {kg.semesters.map((g) => {
+                          // F5.24e — magistr ixtisaslaşmaları: semestr daxilində
+                          // "İxt-" qrupları (varsa) core-dan ayrı, öz alt-cədvəlində.
+                          const { core, electives } = splitElectiveGroups(g.courses);
+                          return (
+                            <div key={g.semester} className="pr-plan-group">
+                              <div className="un-sub-title">{tr('Semestr', locale) + ' ' + g.semester}</div>
+                              {core.length ? (
+                                <CourseTable
+                                  courses={core}
+                                  hasPrerequisite={hasPrerequisite}
+                                  hasCorequisite={hasCorequisite}
+                                  locale={locale}
+                                />
                               ) : null}
-                              {electives.map((eg) => (
-                                <div key={eg.groupCode} className="pr-plan-subgroup">
-                                  <div className="pr-plan-subtitle">{eg.groupCode}</div>
-                                  <CourseTable
-                                    courses={eg.courses}
-                                    hasPrerequisite={hasPrerequisite}
-                                    hasCorequisite={hasCorequisite}
-                                    locale={locale}
-                                  />
-                                </div>
-                              ))}
-                            </>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </ExpandBlock>
+                              {electives.length ? (
+                                <>
+                                  {electives.length > 2 ? (
+                                    <p className="pr-plan-note">
+                                      {tr('Aşağıdakı ixtisaslaşmalardan BİRİ seçilir', locale)}
+                                    </p>
+                                  ) : null}
+                                  {electives.map((eg) => (
+                                    <div key={eg.groupCode} className="pr-plan-subgroup">
+                                      <div className="pr-plan-subtitle">{eg.groupCode}</div>
+                                      <CourseTable
+                                        courses={eg.courses}
+                                        hasPrerequisite={hasPrerequisite}
+                                        hasCorequisite={hasCorequisite}
+                                        locale={locale}
+                                      />
+                                    </div>
+                                  ))}
+                                </>
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                      </ExpandBlock>
+                    ))}
+                  </div>
                 </section>
               ) : (
                 <AdminOnly>
