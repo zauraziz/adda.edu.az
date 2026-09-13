@@ -91,6 +91,23 @@ const EDU_CREDENTIAL_LABEL: Record<ProgramDetail['degree'], string> = {
   subbachelor: 'Subbakalavr',
 };
 
+/** F5.26e — F5.20d ilə eyni onluq ayırıcı ("239,5"), ixtisaslar/page.tsx-dəki
+ * `formatScore`/`admissionLabel` TƏKRARLANIB (ayrı fayl, ayrı komponent). */
+function formatScore(n: number): string {
+  return String(n).replace('.', ',');
+}
+function admissionCutoffLabel(scores: ProgramDetail['admissionScores']): string | null {
+  if (!scores.length) return null;
+  const latest = [...scores].sort((a, b) => b.year - a.year)[0];
+  const paid = latest.minScorePaid;
+  const free = latest.minScoreFree;
+  if (paid == null && free == null) return null;
+  if (paid != null && free != null) {
+    return `${formatScore(Math.min(paid, free))} / ${formatScore(Math.max(paid, free))}`;
+  }
+  return formatScore(paid ?? free!);
+}
+
 /**
  * F5.5d — schema.org Course strukturlaşdırılmış məlumatı. YALNIZ MÖVCUD
  * proqram sahələrindən qurulur — boş sahə açarı JSON-LD-yə ÜMUMİYYƏTLƏ
@@ -417,18 +434,40 @@ export default async function ProgramPage({
     tintCursor++;
   }
 
+  // F5.26e — yan panelin YUXARISI, «N/N+1 qəbul»: plan yerləri, dövlət
+  // sifarişi/ödənişli, təhsil haqqı, keçid balı. Hər sətir ayrıca şərtli,
+  // hamısı boşdursa blok ÜMUMİYYƏTLƏ görünmür. Keçid balı `admissionScores`-
+  // dan (F5.20d ilə EYNİ hesablama, bax admissionCutoffLabel yuxarıda) —
+  // `admissionSeats` YALNIZ yer sayı üçündür, bal saxlamır.
+  const seatsTotal = program.admissionSeats?.total ?? null;
+  const seatsStateFunded = program.admissionSeats?.stateFunded ?? null;
+  const seatsPaid = program.admissionSeats?.paid ?? null;
+  const admissionYear = program.admissionSeats?.year ?? null;
+  const cutoffLabel = admissionCutoffLabel(program.admissionScores);
+  const admissionBlockHas = Boolean(
+    seatsTotal != null || seatsStateFunded != null || seatsPaid != null || program.tuitionFee || cutoffLabel,
+  );
+  const admissionYearLabel = admissionYear
+    ? `${admissionYear}/${admissionYear + 1} ${tr('qəbul', locale)}`
+    : tr('Qəbul', locale);
+
   // F5.3/F5.5b/F5.5c — şifr/dərəcə/müddət/kredit fakt zolağında onsuz da var
   // (aşağıda, np-hero), yan paneldə TƏKRARLANMIR — orada mündəricat, fakültə/
   // kafedra keçidi, plan ili və sənədlər qalır.
-  const sideHas = Boolean(tocItems.length || facultyDisplay || program.unit || docs.length || program.planYear);
+  const sideHas = Boolean(
+    tocItems.length || facultyDisplay || program.unit || docs.length || program.planYear || admissionBlockHas,
+  );
 
+  // F5.26e — `highlights` MÖVCUD fakt zolağına birləşir, ikinci zolaq
+  // YARADILMIR — ona görə `factsHas` da highlights-i nəzərə alır.
   const factsHas = Boolean(
     program.degree ||
       program.durationYears ||
       program.studyForm ||
       program.totalCredits ||
       program.code ||
-      facultyDisplay,
+      facultyDisplay ||
+      program.highlights.length,
   );
 
   const overviewHtml = program.overview ? await marked.parse(program.overview) : '';
@@ -495,6 +534,9 @@ export default async function ProgramPage({
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('İxtisas', locale)}</div>
             <h1 className="np-h1">{program.title}</h1>
+            {/* F5.26a/e — H1 altında qısa sətir, struktur səhifəsindəki
+                `establishedNote` ilə EYNİ vizual yer/sinif. */}
+            {program.tagline ? <p className="un-established-note">{program.tagline}</p> : null}
             <nav className="un-crumbs" aria-label={tr('İxtisas', locale)}>
               <Link href={`/${locale}/ixtisaslar`}>{tr('İxtisaslar', locale)}</Link>
               <span className="un-crumb-sep">/</span> <span className="un-crumb-cur">{program.title}</span>
@@ -548,6 +590,17 @@ export default async function ProgramPage({
                     <span className="un-fact-v">{program.code}</span>
                   </li>
                 ) : null}
+                {/* F5.26a/e — highlights MÖVCUD fakt zolağına birləşir, ikinci
+                    zolaq YARADILMIR. Sərbəst dəyər+etiket cütü olduğu üçün
+                    digər faktlardan fərqli sabit ikonu YOXDUR — Strapi
+                    komponentindəki ("star") ilə eyni `ti-star` işlədilir. */}
+                {program.highlights.map((h, i) => (
+                  <li className="un-fact" key={i}>
+                    <i className="ti ti-star" aria-hidden="true" />
+                    <span className="un-fact-k">{h.label}</span>
+                    <span className="un-fact-v">{h.value}</span>
+                  </li>
+                ))}
               </ul>
             ) : null}
           </div>
@@ -759,6 +812,44 @@ export default async function ProgramPage({
 
             {sideHas ? (
               <aside className="un-side">
+                {/* F5.26e — qəbul bloku, yan panelin ƏN YUXARISINDA (mündəricatdan
+                    da əvvəl). Hər sətir ayrıca şərtli, hamısı boşdursa blok
+                    ÜMUMİYYƏTLƏ görünmür (bax admissionBlockHas yuxarıda). */}
+                {admissionBlockHas ? (
+                  <div>
+                    <div className="un-sub-title">{admissionYearLabel}</div>
+                    {seatsTotal != null ? (
+                      <p className="un-side-text un-side-text--icon">
+                        <i className="ti ti-users" aria-hidden="true" />
+                        {tr('Plan yerləri', locale)}: {seatsTotal}
+                      </p>
+                    ) : null}
+                    {seatsStateFunded != null || seatsPaid != null ? (
+                      <p className="un-side-text un-side-text--icon">
+                        <i className="ti ti-certificate" aria-hidden="true" />
+                        {[
+                          seatsStateFunded != null ? `${tr('Dövlət sifarişi', locale)}: ${seatsStateFunded}` : null,
+                          seatsPaid != null ? `${tr('Ödənişli', locale)}: ${seatsPaid}` : null,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </p>
+                    ) : null}
+                    {program.tuitionFee ? (
+                      <p className="un-side-text un-side-text--icon">
+                        <i className="ti ti-cash" aria-hidden="true" />
+                        {tr('Təhsil haqqı', locale)}: {program.tuitionFee}
+                      </p>
+                    ) : null}
+                    {cutoffLabel ? (
+                      <p className="un-side-text un-side-text--icon">
+                        <i className="ti ti-chart-bar" aria-hidden="true" />
+                        {tr('Keçid balı', locale)}: {cutoffLabel}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 {/* F5.5c — mündəricat, masaüstü variant: yan panelin
                     YUXARISINDA, sticky (bax .un-side, 36-unit.css). Mobil
                     variant yuxarıda, başlıqdan dərhal sonra render olunub. */}

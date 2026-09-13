@@ -1309,6 +1309,14 @@ export interface ProgramDetail {
   admissionScores: ProgramAdmissionScore[];
   /** F5.26a/c — `unit.faq` ilə PAYLAŞILAN komponent (bax schema.json). */
   faq: { question: string; answer: string }[];
+  /** F5.26a/e — H1 altında qısa sətir. */
+  tagline: string | null;
+  /** F5.26a/e — mövcud fakt zolağına birləşir (ikinci zolaq YOXDUR). */
+  highlights: { value: string; label: string }[];
+  /** F5.26e — yan panel qəbul bloku üçün (F5.24a-dan bəri siyahı səhifəsində
+   * var idi, detal səhifəsində YOX idi). */
+  tuitionFee: string | null;
+  admissionSeats: ProgramAdmissionSeats | null;
 }
 
 /**
@@ -1362,6 +1370,8 @@ export async function getProgramDetail(slug: string, locale: Locale = 'az'): Pro
     // eyni qayda, F5.18b/c-də `getPrograms()`-da da təkrarlanıb).
     'populate[admissionScores]': true,
     'populate[faq]': true,
+    'populate[highlights]': true,
+    'populate[admissionSeats]': true,
   });
   return json.data?.[0] ?? null;
 }
