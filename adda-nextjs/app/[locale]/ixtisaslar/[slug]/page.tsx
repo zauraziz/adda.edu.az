@@ -319,9 +319,13 @@ export default async function ProgramPage({
           .catch(() => null)
       : null;
 
+  // F5.26b — `competencies` səhifədən ÇIXARILIB (Zaur müəllimin qərarı):
+  // rəsmi sənəd mətnidir, yan paneldəki PDF-də onsuz da var, səhifədə
+  // qalması vahid abituriyent üslubunu pozurdu. Sahə sxemdə QALIR, mövcud
+  // məlumat SİLİNMİR — sadəcə burada oxunmur/render olunmur. Bunu "unudulmuş
+  // sahə" sanıb geri qaytarma.
   const overviewHas = Boolean(program.overview);
   const outcomesHas = Boolean(program.outcomes);
-  const competenciesHas = Boolean(program.competencies);
   const careerPathsHas = Boolean(program.careerPaths);
   const conventionsHas = Boolean(program.conventions);
 
@@ -343,7 +347,6 @@ export default async function ProgramPage({
 
   const blockTitleOverview = tr('Proqram haqqında', locale);
   const blockTitleOutcomes = tr('Təlim nəticələri', locale);
-  const blockTitleCompetencies = tr('Kompetensiyalar', locale);
   const blockTitleCareerPaths = tr('Karyera imkanları', locale);
   const blockTitleConventions = tr('Konvensiya tələbləri', locale);
   const blockTitleSwim = tr('Üzmə təcrübəsi', locale);
@@ -354,11 +357,10 @@ export default async function ProgramPage({
   // (F5.5a), sonra üzmə təcrübəsi, sonda tədris planı (YALNIZ bu, uzun
   // olduğu üçün, ExpandBlock-da qalır). `id` mündəricat (ProgramToc) və
   // scroll-margin üçün eynidir.
-  type TopKey = 'overview' | 'career-paths' | 'competencies' | 'conventions' | 'outcomes' | 'swim-practice' | 'study-plan';
+  type TopKey = 'overview' | 'career-paths' | 'conventions' | 'outcomes' | 'swim-practice' | 'study-plan';
   const fieldStatus: { id: TopKey; has: boolean; title: string }[] = [
     { id: 'overview', has: overviewHas, title: blockTitleOverview },
     { id: 'career-paths', has: careerPathsHas, title: blockTitleCareerPaths },
-    { id: 'competencies', has: competenciesHas, title: blockTitleCompetencies },
     { id: 'conventions', has: conventionsHas, title: blockTitleConventions },
     { id: 'outcomes', has: outcomesHas, title: blockTitleOutcomes },
     { id: 'swim-practice', has: swimPracticeHas, title: blockTitleSwim },
@@ -396,7 +398,6 @@ export default async function ProgramPage({
 
   const overviewHtml = program.overview ? await marked.parse(program.overview) : '';
   const outcomesHtml = program.outcomes ? await marked.parse(program.outcomes) : '';
-  const competenciesHtml = program.competencies ? await marked.parse(program.competencies) : '';
   const careerPathsHtml = program.careerPaths ? await marked.parse(program.careerPaths) : '';
   const conventionsHtml = program.conventions ? await marked.parse(program.conventions) : '';
 
@@ -555,9 +556,10 @@ export default async function ProgramPage({
               {/* ── F5.5c: beş mətn bölməsi akkordeon ƏVƏZİNƏ TAM AÇIQ —
                   hər biri öz `<section id>`-i (lövbər/mündəricat üçün, bax
                   ProgramToc.tsx). Sıra abituriyentin sual ardıcıllığı ilədir
-                  (F5.5a): overview/careerPaths/competencies/conventions,
-                  outcomes sonda (heç bir seed doldurmur, "boş sahə görünmür"
-                  qaydası ilə öz-özünə görünəcək). ── */}
+                  (F5.5a): overview/careerPaths/conventions, outcomes sonda
+                  (heç bir seed doldurmur, "boş sahə görünmür" qaydası ilə
+                  öz-özünə görünəcək). `competencies` F5.26b-dən bəri BURADA
+                  YOXDUR (bax yuxarıda izah). ── */}
               {overviewHas ? (
                 <section id="overview" className={'un-block pr-anchor' + (tintByKey.overview ? ' un-block--tint' : '')}>
                   <BlockTitle uid="api::program.program" title={blockTitleOverview} documentId={program.documentId} locale={locale} />
@@ -577,17 +579,6 @@ export default async function ProgramPage({
               ) : (
                 <AdminOnly>
                   <EmptyBlock uid="api::program.program" title={blockTitleCareerPaths} documentId={program.documentId} locale={locale} tint={tintByKey['career-paths']} />
-                </AdminOnly>
-              )}
-
-              {competenciesHas ? (
-                <section id="competencies" className={'un-block pr-anchor' + (tintByKey.competencies ? ' un-block--tint' : '')}>
-                  <BlockTitle uid="api::program.program" title={blockTitleCompetencies} documentId={program.documentId} locale={locale} />
-                  <div className="prose" dangerouslySetInnerHTML={{ __html: competenciesHtml }} />
-                </section>
-              ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::program.program" title={blockTitleCompetencies} documentId={program.documentId} locale={locale} tint={tintByKey.competencies} />
                 </AdminOnly>
               )}
 
