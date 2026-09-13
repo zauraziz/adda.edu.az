@@ -1743,6 +1743,18 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
         };
       }>;
     faculty: Schema.Attribute.Relation<'manyToOne', 'api::faculty.faculty'>;
+    faq: Schema.Attribute.Component<'unit.faq', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    highlights: Schema.Attribute.Component<'program.highlight', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     languages: Schema.Attribute.Component<'program.language', true> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1790,6 +1802,12 @@ export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;
+        };
+      }>;
+    tagline: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
         };
       }>;
     title: Schema.Attribute.String &

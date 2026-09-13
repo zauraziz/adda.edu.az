@@ -172,6 +172,19 @@ export interface ProgramCourse extends Struct.ComponentSchema {
   };
 }
 
+export interface ProgramHighlight extends Struct.ComponentSchema {
+  collectionName: 'components_program_highlights';
+  info: {
+    description: '\u0130xtisas s\u0259hif\u0259sinin fakt zola\u011F\u0131na \u0259lav\u0259 olunan q\u0131sa d\u0259y\u0259r+etiket c\u00FCt\u00FC (F5.26a) \u2014 m\u0259s. value:"STCW-78", label:"Beyn\u0259lxalq standart".';
+    displayName: 'Se\u00E7ilmi\u015F fakt';
+    icon: 'star';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface ProgramLanguage extends Struct.ComponentSchema {
   collectionName: 'components_program_languages';
   info: {
@@ -351,6 +364,7 @@ declare module '@strapi/strapi' {
       'program.admission-score': ProgramAdmissionScore;
       'program.admission-seats': ProgramAdmissionSeats;
       'program.course': ProgramCourse;
+      'program.highlight': ProgramHighlight;
       'program.language': ProgramLanguage;
       'staff.education': StaffEducation;
       'staff.experience': StaffExperience;

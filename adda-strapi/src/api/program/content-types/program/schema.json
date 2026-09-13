@@ -237,6 +237,34 @@
           "localized": false
         }
       }
+    },
+    "tagline": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.highlight",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "faq": {
+      "type": "component",
+      "repeatable": true,
+      "component": "unit.faq",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     }
   }
 }

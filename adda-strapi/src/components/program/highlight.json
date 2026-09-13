@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_program_highlights",
+  "info": {
+    "displayName": "Seçilmiş fakt",
+    "description": "İxtisas səhifəsinin fakt zolağına əlavə olunan qısa dəyər+etiket cütü (F5.26a) — məs. value:\"STCW-78\", label:\"Beynəlxalq standart\".",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
