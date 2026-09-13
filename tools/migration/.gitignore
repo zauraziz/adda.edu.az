@@ -50,6 +50,10 @@ data/*
 !data/program-updates-2026.json
 !data/new-programs-2026.json
 
+# F5.26f — PROGRAM_CONTENT_SEED (adda-strapi/src/index.ts) OXUYUR (hər
+# proqram üçün ayrıca `program-content-*.json`, qovluq gəzilir).
+!data/program-content-6006006.json
+
 # F5.19 — 4 köhnə struktur bakalavr qeydi (AZ/EN, əyani/qiyabi).
 !data/tedris-plani-az-050609.json
 !data/tedris-plani-az-050605.json
