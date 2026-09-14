@@ -1,0 +1,47 @@
+{
+  "_qeyd": "F5.26 vahid üslub, MAGİSTRATURA. Rəqəmlər tədris planı 2025 + 2026/27 qəbul proqnozundan. İxtisaslaşma adları tədris planından.",
+  "programSlug": "gemiqayirma-ve-gemi-temiri-muhendisliyi-magistr",
+  "fields": {
+    "tagline": "Gəmiqayırma və gəmi təmiri texnologiyaları üzrə magistr hazırlığı",
+    "highlights": [
+      {
+        "value": "2 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "120",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "2",
+        "label": "ixtisaslaşma yolu"
+      },
+      {
+        "value": "18",
+        "label": "kredit dissertasiya"
+      }
+    ],
+    "overview": "Bu magistratura proqramı gəmi layihələndirilməsi və təmiri sahəsində dərinləşmiş mühəndislik və elmi hazırlıq verir.\n\nİki ixtisaslaşma yolundan biri seçilir:\n\n- **Gəmiqayırma** — dəniz gəmilərinin layihələndirilməsi, istehsalatın təşkili, proqram təminatı, rəngləmə texnologiyaları\n- **Gəmi təmiri** — gövdə və mexanizmlərin təmir texnologiyaları, korroziyadan mühafizə, üzməyə yararlılığın qiymətləndirilməsi\n\nHər iki yol dissertasiya ilə tamamlanır.",
+    "practiceNote": "Magistratura hazırlığının əsası elmi işdir. Tədris planına iki təcrübə daxildir — hər biri 6 kredit, 4 həftə:\n\n- **elmi-pedaqoji təcrübə** — ali məktəbdə tədris aparmaq bacarığı\n- **elmi-tədqiqat təcrübəsi** — dissertasiya üçün tədqiqatın aparılması\n\nMagistrlik dissertasiyasının hazırlanması və müdafiəsinə 18 kredit (12 həftə) ayrılıb.",
+    "outcomes": "Proqramı bitirəndə bacaracaqsan:\n\n- gəmi və dəniz texnikasının layihələndirilməsində müasir proqram təminatından istifadə etmək\n- istehsalat və təmir proseslərini elmi əsasla təşkil etmək\n- konstruksiyaların etibarlılığını və qalıq resursunu qiymətləndirmək\n- qaynaq gərginlikləri və deformasiyaları hesablamaq\n- texniki nasazlıqları diaqnostika edib həll yolu hazırlamaq\n- layihə komandasını idarə etmək və keyfiyyətə nəzarət etmək\n- müstəqil elmi tədqiqat aparmaq",
+    "careerPaths": "Magistr məzunları layihə və istehsalat rəhbərliyində çalışa bilər:\n\n- gəmiqayırma və gəmi təmiri zavodlarında baş mühəndis və sahə rəisi vəzifələrində\n- layihə-konstruktor bürolarında aparıcı mühəndis kimi\n- təsnifat cəmiyyətlərində və texniki ekspertiza şirkətlərində\n- sığorta şirkətlərində qəza səbəblərinin təhlili üzrə\n- sənaye və maşınqayırma müəssisələrində\n- ali təhsil müəssisələrində müəllim kimi\n- elmi-tədqiqat mərkəzlərində",
+    "faq": [
+      {
+        "question": "Magistratura neçə il çəkir?",
+        "answer": "2 il (4 semestr), 120 ECTS krediti."
+      },
+      {
+        "question": "İxtisaslaşmanı nə vaxt seçirəm?",
+        "answer": "İxtisaslaşma qəbul zamanı müəyyən olunur. Hər ixtisaslaşmanın öz fənn dəsti var — ümumi və məcburi fənlər isə hamı üçün eynidir."
+      },
+      {
+        "question": "Dissertasiya məcburidirmi?",
+        "answer": "Bəli. Magistratura magistrlik dissertasiyasının hazırlanması və müdafiəsi ilə tamamlanır — 18 kredit."
+      },
+      {
+        "question": "Doktoranturaya davam etmək olarmı?",
+        "answer": "Bəli. Dissertasiyanı müdafiə edən məzunlar fəlsəfə doktoru proqramı üzrə doktoranturaya müraciət edə bilər."
+      }
+    ]
+  }
+}

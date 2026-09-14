@@ -3852,27 +3852,45 @@ export default {
       'humanitar-fenler-kafedrasi': 'gemi-suruculuyu-fakultesi',
     };
 
-    // ── İxtisas mətnləri — proqramın akkordeon mətnləri (F5.4/F5.7/F5.8c, PROGRAM_TEXT_SEED) ──
+    // ── İxtisas mətnləri — proqramın akkordeon mətnləri (F5.4/F5.7/F5.8c/F5.26/F5.27, PROGRAM_TEXT_SEED) ──
     //
-    // MƏNBƏ: `tools/migration/data/program-texts-*.json` VƏ
-    // `program-outcomes-*.json` — F5.8c-dən etibarən BÜTÜN uyğun fayllar
-    // `readdirSync` ilə TAPILIR (tək proqrama hardcode olunmuş fayl yolu
-    // YOXDUR), hər faylın öz `programSlug`-ı ilə uyğun proqram tapılır.
-    // Fayllar PARSE OLUNUR, mətn koda köçürülmür — fayl mənbədir.
+    // MƏNBƏ: `tools/migration/data/program-texts-*.json` / `program-outcomes-*.json`
+    // (köhnə format, F5.4) VƏ `program-content-*.json` (YENİ format, F5.26/
+    // F5.27 — vahid abituriyent üslubu, `tagline`/`highlights`/`faq` daxil).
+    // BÜTÜN uyğun fayllar `readdirSync` ilə TAPILIR (tək proqrama hardcode
+    // olunmuş fayl yolu YOXDUR), hər faylın öz `programSlug`-ı ilə uyğun
+    // proqram tapılır. Fayllar PARSE OLUNUR, mətn koda köçürülmür.
     //
     // `fields` obyektindəki AÇARLAR GENERİKDİR (sabit siyahı deyil) — hansı
-    // sxem sahəsi mövcuddursa (overview/outcomes/competencies/careerPaths/
-    // conventions/practiceNote) o yazılır. Fayllar arasında fərq ola bilər:
-    // bəzi proqramlar (6006006) mətnləri VƏ outcomes-u AYRI fayllarda verir,
-    // bəziləri (6006012) hamısını TƏK faylda birləşdirir. Sahə BOŞ DEYİLSƏ
-    // TOXUNULMUR. YALNIZ `az` qaralamasına — `publish()` BURADA ÇAĞIRILMIR.
+    // sxem sahəsi mövcuddursa o yazılır.
     //
-    // Hər yazılan sahənin SONUNA JSON-dakı qeyd ayrıca abzas kimi əlavə
-    // olunur (`\n\n` ilə ayrılıb): `outcomes` üçün `sourceNoteOutcomes`
-    // (mövcuddursa) yoxsa `sourceNote`, qalan sahələr üçün həmişə `sourceNote`.
+    // DAVRANIŞ FAYL FORMATINA GÖRƏ FƏRQLƏNİR (`isNewFormat`, fayl adından
+    // tapılır — `program-content-*`):
+    //   - KÖHNƏ format (`program-texts-*`/`program-outcomes-*`): dəyişməyib
+    //     — `overview`/`outcomes`/`competencies`/`careerPaths`/`conventions`/
+    //     `practiceNote` YALNIZ BOŞDURSA yazılır, sonuna `sourceNote`
+    //     (`outcomes` üçün `sourceNoteOutcomes` varsa) əlavə olunur. Bu
+    //     fayllar Zaur tərəfindən admin paneldə əl ilə düzəldilmiş ola
+    //     bilər — üstündən yazmaq TƏHLÜKƏLİDİR, ona görə TOXUNULMUR.
+    //   - YENİ format (`program-content-*`): `overview`/`practiceNote`/
+    //     `outcomes`/`careerPaths`/`conventions` QƏSDƏN ÜSTÜNDƏN YAZILIR,
+    //     `sourceNote` əlavə OLUNMUR. Bu, ümumi "boşdursa yaz" qaydasından
+    //     İSTİSNADIR (PROGRAM_UPDATE_SEED-dəki `code` overwrite-i ilə EYNİ
+    //     məntiq) — məqsəd köhnə rəsmi/sitatlı mətni F5.26-nın vahid
+    //     abituriyent üslubu ilə ƏVƏZLƏMƏKDİR, bu fayllar məhz bunun üçün
+    //     yazılıb (ilk dəfə seed olunacaq proqramlarda "üstündən yazma"
+    //     əslində boş sahəni doldurmaqdan fərqlənmir).
+    // `competencies` YENİ formatda heç vaxt gəlmir (F5.26b — səhifədən
+    // çıxarılıb, mövcud dəyər TOXUNULMUR, sxemdə qalır).
+    //
+    // `tagline`/`highlights`/`faq` (F5.26a-nın yeni sahələri) HƏR İKİ
+    // formatda eyni qaydadadır: boşdursa yazılır, doludursa (təkrar iş)
+    // atlanır — yeni sahələrdir, üstündən yazma riski yoxdur.
+    //
+    // YALNIZ `az` qaralamasına yazılır, publish() BURADA ÇAĞIRILMIR.
     try {
       if (process.env.PROGRAM_TEXT_SEED !== 'true') {
-        strapi.log.info('[seed] Ixtisas metnleri (F5.4) oturuldu. Ucun PROGRAM_TEXT_SEED=true.');
+        strapi.log.info('[seed] Ixtisas metnleri (F5.4/F5.27) oturuldu. Ucun PROGRAM_TEXT_SEED=true.');
       } else {
         const TEXT_DATA_DIR = path.join(strapi.dirs.app.root, '..', 'tools', 'migration', 'data');
 
@@ -3888,15 +3906,23 @@ export default {
 
         interface ProgramTextSeedFile {
           programSlug: string;
-          sourceNote: string;
+          // F5.27 — YENİ formatda (`program-content-*`) YOXDUR, ona görə optional.
+          sourceNote?: string;
           sourceNoteOutcomes?: string;
-          fields: Partial<Record<TextKey, string>>;
+          fields: Partial<Record<TextKey, string>> & {
+            tagline?: string;
+            highlights?: { value: string; label: string }[];
+            faq?: { question: string; answer: string }[];
+          };
         }
 
         let textFiles: string[] = [];
         try {
           textFiles = readdirSync(TEXT_DATA_DIR).filter(
-            (f) => /^program-texts-.*\.json$/.test(f) || /^program-outcomes-.*\.json$/.test(f),
+            (f) =>
+              /^program-texts-.*\.json$/.test(f) ||
+              /^program-outcomes-.*\.json$/.test(f) ||
+              /^program-content-.*\.json$/.test(f),
           );
         } catch (e) {
           strapi.log.error('[seed] Ixtisas metnleri XETA - data qovlugu oxuna bilmedi: ' + (e as Error).message);
@@ -3904,21 +3930,27 @@ export default {
 
         for (const fileName of textFiles) {
           try {
+            const isNewFormat = /^program-content-.*\.json$/.test(fileName);
             const seed: ProgramTextSeedFile = JSON.parse(readFileSync(path.join(TEXT_DATA_DIR, fileName), 'utf8'));
 
             const programs = (await strapi.documents('api::program.program').findMany({
               locale: 'az',
               filters: { slug: { $eq: seed.programSlug } },
               status: 'draft',
-              fields: ['slug', ...ALL_TEXT_KEYS],
+              fields: ['slug', 'tagline', ...ALL_TEXT_KEYS],
               populate: {
                 faculty: { fields: ['slug'] },
                 unit: { fields: ['slug'] },
+                highlights: true,
+                faq: true,
               },
               limit: 2,
             })) as unknown as Array<
               {
                 documentId: string;
+                tagline?: string | null;
+                highlights?: unknown[];
+                faq?: unknown[];
                 faculty?: { documentId: string } | null;
                 unit?: { documentId: string; slug: string } | null;
               } & Record<TextKey, string | null>
@@ -3936,15 +3968,48 @@ export default {
             for (const key of ALL_TEXT_KEYS) {
               const raw = seed.fields[key];
               if (!raw) continue; // JSON-da bu sahə yoxdur - tetiklenmir.
+              if (isNewFormat) {
+                // F5.26/F5.27 — QƏSDƏN ÜSTÜNDƏN YAZILIR (bax yuxarıdakı izah), sourceNote YOXDUR.
+                const oldLen = p[key]?.length ?? 0;
+                data[key] = raw;
+                strapi.log.info(
+                  '[seed] Ixtisas metnleri: ' + key + ' USTUNDEN YAZILIR (' + oldLen + ' -> ' + raw.length + ' simvol): ' + seed.programSlug,
+                );
+                continue;
+              }
               if (p[key]) {
                 skipped++;
                 strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' atlandi (doludur).');
                 continue;
               }
               const note = key === 'outcomes' && seed.sourceNoteOutcomes ? seed.sourceNoteOutcomes : seed.sourceNote;
-              const withNote = raw + '\n\n' + note;
+              const withNote = note ? raw + '\n\n' + note : raw;
               data[key] = withNote;
               strapi.log.info('[seed] Ixtisas metnleri: ' + key + ' yazilir (' + withNote.length + ' simvol).');
+            }
+
+            // F5.26a/F5.27 — tagline/highlights/faq: YENİ sahələr, HƏR İKİ
+            // formatda eyni qayda (boşdursa yazılır, doludursa atlanır).
+            if (seed.fields.tagline) {
+              if (p.tagline) {
+                strapi.log.info('[seed] Ixtisas metnleri: tagline atlandi (doludur): ' + seed.programSlug);
+              } else {
+                data.tagline = seed.fields.tagline;
+              }
+            }
+            if (seed.fields.highlights?.length) {
+              if (p.highlights && p.highlights.length > 0) {
+                strapi.log.info('[seed] Ixtisas metnleri: highlights atlandi (doludur): ' + seed.programSlug);
+              } else {
+                data.highlights = seed.fields.highlights;
+              }
+            }
+            if (seed.fields.faq?.length) {
+              if (p.faq && p.faq.length > 0) {
+                strapi.log.info('[seed] Ixtisas metnleri: faq atlandi (doludur): ' + seed.programSlug);
+              } else {
+                data.faq = seed.fields.faq;
+              }
             }
 
             // F5.5b/F5.6 — `faculty` sxemdə var, bu proqramda boş ola bilər.
@@ -4178,143 +4243,6 @@ export default {
       }
     } catch (err) {
       strapi.log.error('[seed] yeni proqramlar 2026 seed xetasi: ' + (err as Error).message);
-    }
-
-    // ── Proqram məzmunu V2 — F5.26 vahid abituriyent üslubu (PROGRAM_CONTENT_SEED) ──
-    //
-    // MƏNBƏ: `tools/migration/data/program-content-*.json` — hər fayl BİR
-    // proqramın YENİ mətnidir (`readdirSync`, PROGRAM_TEXT_SEED-dəki EYNİ
-    // çoxfaylı qayda). `PROGRAM_TEXT_SEED`-dən (F5.4) FƏRQLİ olaraq
-    // `overview`/`practiceNote`/`outcomes`/`careerPaths`/`conventions`
-    // BURADA QƏSDƏN ÜSTÜNDƏN YAZILIR — ümumi "boşdursa yaz" qaydasından
-    // İSTİSNA (PROGRAM_UPDATE_SEED-dəki `code` overwrite-i ilə EYNİ məntiq):
-    // köhnə PROGRAM_TEXT_SEED mətni (rəsmi sənəd sitatlı) F5.26-nın vahid
-    // abituriyent üslubu ilə ƏVƏZLƏNİR. `tagline`/`highlights`/`faq` İSƏ
-    // F5.26a-da əlavə olunan YENİ sahələrdir — boşdursa yazılır, doludursa
-    // (təkrar iş) atlanır (idempotentlik). `competencies` BURADA YOXDUR
-    // (F5.26b — səhifədən çıxarılıb, mövcud dəyərə TOXUNULMUR).
-    //
-    // YALNIZ `az` qaralamasına yazılır, publish() BURADA ÇAĞIRILMIR.
-    try {
-      if (process.env.PROGRAM_CONTENT_SEED !== 'true') {
-        strapi.log.info('[seed] Proqram mezmunu V2 (F5.26) oturuldu. Ucun PROGRAM_CONTENT_SEED=true.');
-      } else {
-        const CONTENT_DATA_DIR = path.join(strapi.dirs.app.root, '..', 'tools', 'migration', 'data');
-
-        const OVERWRITE_KEYS = ['overview', 'practiceNote', 'outcomes', 'careerPaths', 'conventions'] as const;
-        type OverwriteKey = (typeof OVERWRITE_KEYS)[number];
-
-        interface ProgramContentSeedFile {
-          programSlug: string;
-          fields: Partial<Record<OverwriteKey, string>> & {
-            tagline?: string;
-            highlights?: { value: string; label: string }[];
-            faq?: { question: string; answer: string }[];
-          };
-        }
-
-        let contentFiles: string[] = [];
-        try {
-          contentFiles = readdirSync(CONTENT_DATA_DIR).filter((f) => /^program-content-.*\.json$/.test(f));
-        } catch (e) {
-          strapi.log.error('[seed] Proqram mezmunu V2 XETA - data qovlugu oxuna bilmedi: ' + (e as Error).message);
-        }
-
-        for (const fileName of contentFiles) {
-          try {
-            const seed: ProgramContentSeedFile = JSON.parse(
-              readFileSync(path.join(CONTENT_DATA_DIR, fileName), 'utf8'),
-            );
-
-            const programs = (await strapi.documents('api::program.program').findMany({
-              locale: 'az',
-              filters: { slug: { $eq: seed.programSlug } },
-              status: 'draft',
-              fields: ['slug', 'tagline', ...OVERWRITE_KEYS],
-              populate: { highlights: true, faq: true },
-              limit: 2,
-            })) as unknown as Array<
-              { documentId: string; tagline?: string | null; highlights?: unknown[]; faq?: unknown[] } & Record<
-                OverwriteKey,
-                string | null
-              >
-            >;
-
-            if (programs.length !== 1) {
-              strapi.log.error(
-                '[seed] Proqram mezmunu V2 XETA (' + fileName + ') - proqram tapilmadi: ' + seed.programSlug,
-              );
-              continue;
-            }
-
-            const p = programs[0];
-            const data: Record<string, unknown> = {};
-
-            if (seed.fields.tagline) {
-              if (p.tagline) {
-                strapi.log.info('[seed] Proqram mezmunu V2: tagline atlandi (doludur): ' + seed.programSlug);
-              } else {
-                data.tagline = seed.fields.tagline;
-              }
-            }
-
-            if (seed.fields.highlights?.length) {
-              if (p.highlights && p.highlights.length > 0) {
-                strapi.log.info('[seed] Proqram mezmunu V2: highlights atlandi (doludur): ' + seed.programSlug);
-              } else {
-                data.highlights = seed.fields.highlights;
-              }
-            }
-
-            if (seed.fields.faq?.length) {
-              if (p.faq && p.faq.length > 0) {
-                strapi.log.info('[seed] Proqram mezmunu V2: faq atlandi (doludur): ' + seed.programSlug);
-              } else {
-                data.faq = seed.fields.faq;
-              }
-            }
-
-            // F5.26 — bu beş sahə QƏSDƏN ÜSTÜNDƏN YAZILIR (bax yuxarıdakı izah).
-            for (const key of OVERWRITE_KEYS) {
-              const raw = seed.fields[key];
-              if (!raw) continue;
-              const oldLen = p[key]?.length ?? 0;
-              data[key] = raw;
-              strapi.log.info(
-                '[seed] Proqram mezmunu V2: ' +
-                  key +
-                  ' USTUNDEN YAZILIR (' +
-                  oldLen +
-                  ' -> ' +
-                  raw.length +
-                  ' simvol): ' +
-                  seed.programSlug,
-              );
-            }
-
-            if (Object.keys(data).length === 0) {
-              strapi.log.info('[seed] Proqram mezmunu V2: hec bir sahe yazilmadi: ' + seed.programSlug);
-            } else {
-              await strapi.documents('api::program.program').update({
-                documentId: p.documentId,
-                locale: 'az',
-                data: data as never,
-              });
-              // update() YALNIZ qaralamaya yazir - publish() BURADA QESDEN CAGIRILMIR.
-              strapi.log.info(
-                '[seed] Proqram mezmunu V2 yazildi (' +
-                  Object.keys(data).join(', ') +
-                  '): ' +
-                  seed.programSlug,
-              );
-            }
-          } catch (e) {
-            strapi.log.error('[seed] Proqram mezmunu V2 oxuma xetasi (' + fileName + '): ' + (e as Error).message);
-          }
-        }
-      }
-    } catch (err) {
-      strapi.log.error('[seed] proqram mezmunu V2 seed xetasi: ' + (err as Error).message);
     }
 
   },

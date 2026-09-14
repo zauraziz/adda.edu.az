@@ -1,0 +1,47 @@
+{
+  "_qeyd": "F5.26 vahid üslub, MAGİSTRATURA. Rəqəmlər tədris planı 2025 + 2026/27 qəbul proqnozundan. İxtisaslaşma adları tədris planından.",
+  "programSlug": "elektrik-ve-elektronika-muhendisliyi-magistr",
+  "fields": {
+    "tagline": "Gəmi elektrik təchizatı, avtomatika və elektronika üzrə magistr hazırlığı",
+    "highlights": [
+      {
+        "value": "2 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "120",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "3",
+        "label": "ixtisaslaşma yolu"
+      },
+      {
+        "value": "18",
+        "label": "kredit dissertasiya"
+      }
+    ],
+    "overview": "Bu magistratura proqramı gəmi elektrik və elektronika sistemləri üzrə dərinləşmiş hazırlıq verir.\n\nÜmumi və məcburi fənlərdən sonra üç ixtisaslaşma yolundan biri seçilir:\n\n- **Gəmilərin elektrik avadanlığı və avtomatikası** — elektrik intiqalları, avtomatik idarəetmə, etibarlılıq\n- **Gəmilərin elektrik təchizatı sistemləri** — mikroprosessor texnikası, mühafizə sistemləri, alternativ enerji mənbələri\n- **Gəmi elektronikası** — yarımkeçirici cihazlar, güc elektronikası, nanoelektronika\n\nHər üç yol dissertasiya ilə tamamlanır.",
+    "practiceNote": "Magistratura hazırlığının əsası elmi işdir. Tədris planına iki təcrübə daxildir — hər biri 6 kredit, 4 həftə:\n\n- **elmi-pedaqoji təcrübə** — ali məktəbdə tədris aparmaq bacarığı\n- **elmi-tədqiqat təcrübəsi** — dissertasiya üçün tədqiqatın aparılması\n\nMagistrlik dissertasiyasının hazırlanması və müdafiəsinə 18 kredit (12 həftə) ayrılıb.",
+    "outcomes": "Proqramı bitirəndə bacaracaqsan:\n\n- gəmi elektrik və elektron sistemlərini layihələndirmək\n- avtomatik idarəetmə və nəzarət sistemlərini qurmaq\n- mikroprosessor və mikrokontroller texnikasını tətbiq etmək\n- alternativ və bərpa olunan enerji mənbələrini sistemə inteqrasiya etmək\n- elektromaqnit uyğunluğu və kibertəhlükəsizlik tələblərini nəzərə almaq\n- süni intellekt əsaslı idarəetmə sistemlərini qiymətləndirmək\n- müstəqil elmi tədqiqat aparmaq",
+    "careerPaths": "Magistr məzunları mühəndis-ekspert və rəhbər vəzifələrində çalışa bilər:\n\n- gəmiçilik və gəmi təmiri müəssisələrində elektrik-texniki rəhbərlik səviyyəsində\n- energetika və elektrik təchizatı sahəsində\n- avtomatlaşdırma və idarəetmə sistemləri üzrə layihə şirkətlərində\n- elektronika və mikroprosessor texnikası istehsalında\n- layihə-konstruktor bürolarında\n- ali təhsil müəssisələrində müəllim kimi\n- elmi-tədqiqat mərkəzlərində",
+    "faq": [
+      {
+        "question": "Magistratura neçə il çəkir?",
+        "answer": "2 il (4 semestr), 120 ECTS krediti."
+      },
+      {
+        "question": "İxtisaslaşmanı nə vaxt seçirəm?",
+        "answer": "İxtisaslaşma qəbul zamanı müəyyən olunur. Hər ixtisaslaşmanın öz fənn dəsti var — ümumi və məcburi fənlər isə hamı üçün eynidir."
+      },
+      {
+        "question": "Dissertasiya məcburidirmi?",
+        "answer": "Bəli. Magistratura magistrlik dissertasiyasının hazırlanması və müdafiəsi ilə tamamlanır — 18 kredit."
+      },
+      {
+        "question": "Doktoranturaya davam etmək olarmı?",
+        "answer": "Bəli. Dissertasiyanı müdafiə edən məzunlar fəlsəfə doktoru proqramı üzrə doktoranturaya müraciət edə bilər."
+      }
+    ]
+  }
+}

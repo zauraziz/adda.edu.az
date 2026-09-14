@@ -1,0 +1,47 @@
+{
+  "_qeyd": "F5.26 vahid üslub, MAGİSTRATURA. Rəqəmlər tədris planı 2025 + 2026/27 qəbul proqnozundan. İxtisaslaşma adları tədris planından.",
+  "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi-magistr",
+  "fields": {
+    "tagline": "Gəmi energetik qurğuları və maşın sistemləri üzrə magistr hazırlığı",
+    "highlights": [
+      {
+        "value": "2 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "120",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "2",
+        "label": "ixtisaslaşma yolu"
+      },
+      {
+        "value": "18",
+        "label": "kredit dissertasiya"
+      }
+    ],
+    "overview": "Bu magistratura proqramı gəmi energetik qurğuları sahəsində dərinləşmiş texniki və elmi hazırlıq verir.\n\nİki ixtisaslaşma yolundan biri seçilir:\n\n- **Gəmi energetik qurğuları və onların istismarı** — perspektiv qurğular, alternativ yanacaqlar, avtomatlaşdırma, riyazi modelləşdirmə\n- **Gəmi maşın və mexanizmləri** — təmir texnologiyaları, etibarlılıq və diaqnostika, ətraf mühitin mühafizəsi\n\nHər iki yol dissertasiya ilə tamamlanır.",
+    "practiceNote": "Magistratura hazırlığının əsası elmi işdir. Tədris planına iki təcrübə daxildir — hər biri 6 kredit, 4 həftə:\n\n- **elmi-pedaqoji təcrübə** — ali məktəbdə tədris aparmaq bacarığı\n- **elmi-tədqiqat təcrübəsi** — dissertasiya üçün tədqiqatın aparılması\n\nMagistrlik dissertasiyasının hazırlanması və müdafiəsinə 18 kredit (12 həftə) ayrılıb.",
+    "outcomes": "Proqramı bitirəndə bacaracaqsan:\n\n- gəmi energetik qurğularının səmərəliliyini təhlil edib artırmaq\n- alternativ yanacaqların tətbiq imkanlarını qiymətləndirmək\n- mexanizmlərin etibarlılığını və texniki vəziyyətini diaqnostika etmək\n- avtomatlaşdırma və idarəetmə sistemlərini layihələndirmək\n- ekoloji tələbləri texniki qərarlarda nəzərə almaq\n- müstəqil elmi tədqiqat aparmaq və nəticələrini əsaslandırmaq\n- ali məktəbdə tədris aparmaq",
+    "careerPaths": "Magistr məzunları texniki rəhbər və ekspert vəzifələrində çalışa bilər:\n\n- gəmiçilik şirkətlərində baş mexanik və texniki menecer vəzifələrində\n- gəmi təmiri müəssisələrində texniki rəhbərlik səviyyəsində\n- energetika və maşınqayırma sənayesində\n- təsnifat cəmiyyətlərində texniki ekspert kimi\n- enerji səmərəliliyi və ekoloji uyğunluq sahəsində\n- ali təhsil müəssisələrində müəllim kimi\n- elmi-tədqiqat mərkəzlərində",
+    "faq": [
+      {
+        "question": "Magistratura neçə il çəkir?",
+        "answer": "2 il (4 semestr), 120 ECTS krediti."
+      },
+      {
+        "question": "İxtisaslaşmanı nə vaxt seçirəm?",
+        "answer": "İxtisaslaşma qəbul zamanı müəyyən olunur. Hər ixtisaslaşmanın öz fənn dəsti var — ümumi və məcburi fənlər isə hamı üçün eynidir."
+      },
+      {
+        "question": "Dissertasiya məcburidirmi?",
+        "answer": "Bəli. Magistratura magistrlik dissertasiyasının hazırlanması və müdafiəsi ilə tamamlanır — 18 kredit."
+      },
+      {
+        "question": "Doktoranturaya davam etmək olarmı?",
+        "answer": "Bəli. Dissertasiyanı müdafiə edən məzunlar fəlsəfə doktoru proqramı üzrə doktoranturaya müraciət edə bilər."
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "_qeyd": "F5.26 vahid üslub, MAGİSTRATURA. Rəqəmlər tədris planı 2025 + 2026/27 qəbul proqnozundan. İxtisaslaşma adları tədris planından.",
+  "programSlug": "deniz-naviqasiyasi-muhendisliyi-magistr",
+  "fields": {
+    "tagline": "Gəmi hərəkətinin idarə edilməsi və gəmiçilik menecmenti üzrə magistr hazırlığı",
+    "highlights": [
+      {
+        "value": "2 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "120",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "2",
+        "label": "ixtisaslaşma yolu"
+      },
+      {
+        "value": "18",
+        "label": "kredit dissertasiya"
+      }
+    ],
+    "overview": "Bu magistratura proqramı dəniz naviqasiyası sahəsində dərinləşmiş hazırlıq və elmi-tədqiqat bacarıqları verir.\n\nİki ixtisaslaşma yolundan biri seçilir:\n\n- **Gəmilərin hərəkətinin idarə edilməsi** — naviqasiya texnologiyaları, risklərin qiymətləndirilməsi, avtomatlaşdırma, heyətsiz gəmilər və süni intellekt sistemləri\n- **Gəmiçiliyin idarə edilməsi** — beynəlxalq dəniz logistikası, fraxt və liman idarəçiliyi, insan resursları, dəniz hüququ\n\nHər iki yol dissertasiya ilə tamamlanır.",
+    "practiceNote": "Magistratura hazırlığının əsası elmi işdir. Tədris planına iki təcrübə daxildir — hər biri 6 kredit, 4 həftə:\n\n- **elmi-pedaqoji təcrübə** — ali məktəbdə tədris aparmaq bacarığı\n- **elmi-tədqiqat təcrübəsi** — dissertasiya üçün tədqiqatın aparılması\n\nMagistrlik dissertasiyasının hazırlanması və müdafiəsinə 18 kredit (12 həftə) ayrılıb.",
+    "outcomes": "Proqramı bitirəndə bacaracaqsan:\n\n- dəniz nəqliyyatı sahəsində müstəqil elmi tədqiqat aparmaq\n- naviqasiya və gəmiçilik proseslərini təhlil edib optimallaşdırmaq\n- risklərin qiymətləndirilməsi və idarə olunması metodlarını tətbiq etmək\n- beynəlxalq dənizçilik hüququ və konvensiya tələblərini praktikada işlətmək\n- mürəkkəb texniki və idarəetmə məsələləri üzrə əsaslandırılmış qərar vermək\n- ali məktəbdə tədris aparmaq\n- tədqiqat nəticələrini Azərbaycan və ingilis dilində təqdim etmək",
+    "careerPaths": "Magistr məzunları rəhbər və ekspert vəzifələrində çalışa bilər:\n\n- gəmiçilik şirkətlərində orta və yuxarı idarəetmə səviyyəsində\n- liman və terminal idarəçiliyində\n- dəniz nəqliyyatı üzrə dövlət tənzimləyici qurumlarında\n- təsnifat cəmiyyətləri və sığorta şirkətlərində ekspert kimi\n- qəza araşdırması və təhlükəsizlik auditi sahəsində\n- ali təhsil müəssisələrində müəllim kimi\n- elmi-tədqiqat mərkəzlərində",
+    "conventions": "Proqram Beynəlxalq Dəniz Təşkilatının (IMO) Model Kurslarına və STCW konvensiyasına uyğun hazırlanıb.\n\nTədris planında dəniz nəqliyyatı hüququ, qəzaların hüquqi qiymətləndirilməsi və beynəlxalq təhlükəsizlik tələbləri (SOLAS, MARPOL, ISM Code, MLC) üzrə fənlər var.",
+    "faq": [
+      {
+        "question": "Magistratura neçə il çəkir?",
+        "answer": "2 il (4 semestr), 120 ECTS krediti."
+      },
+      {
+        "question": "İxtisaslaşmanı nə vaxt seçirəm?",
+        "answer": "İxtisaslaşma qəbul zamanı müəyyən olunur. Hər ixtisaslaşmanın öz fənn dəsti var — ümumi və məcburi fənlər isə hamı üçün eynidir."
+      },
+      {
+        "question": "Dissertasiya məcburidirmi?",
+        "answer": "Bəli. Magistratura magistrlik dissertasiyasının hazırlanması və müdafiəsi ilə tamamlanır — 18 kredit."
+      },
+      {
+        "question": "Doktoranturaya davam etmək olarmı?",
+        "answer": "Bəli. Dissertasiyanı müdafiə edən məzunlar fəlsəfə doktoru proqramı üzrə doktoranturaya müraciət edə bilər."
+      }
+    ]
+  }
+}

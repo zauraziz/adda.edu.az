@@ -1,0 +1,36 @@
+{
+  "_qeyd": "F5.26 vahid üslub. DOKTORANTURA (fəlsəfə doktoru). TƏDRİS PLANI SƏNƏDİ YOXDUR — əksər sahələr QƏSDƏN BOŞ. Yazılanlar 2026/27 qəbul planından: yer sayı, əyani 2 il / qiyabi 3 il, elm sahəsi «Texnika elmləri».",
+  "programSlug": "gemicilik-texnikasi-doktorantura",
+  "fields": {
+    "tagline": "Gəmiçilik texnikası üzrə fəlsəfə doktoru proqramı",
+    "highlights": [
+      {
+        "value": "2 il",
+        "label": "əyani forma"
+      },
+      {
+        "value": "3 il",
+        "label": "qiyabi forma"
+      },
+      {
+        "value": "Texnika",
+        "label": "elm sahəsi"
+      }
+    ],
+    "overview": "Gəmiçilik texnikası üzrə elmi tədqiqat və fəlsəfə doktoru (PhD) hazırlığı. Elm sahəsi — texnika elmləri, şifr 3319.01.\n\nProqram elmi rəhbərlik altında müstəqil tədqiqat aparmağı və dissertasiya hazırlamağı nəzərdə tutur.",
+    "faq": [
+      {
+        "question": "Doktorantura neçə il çəkir?",
+        "answer": "Əyani forma 2 il, qiyabi forma 3 ildir."
+      },
+      {
+        "question": "Hansı elm sahəsi üzrədir?",
+        "answer": "Texnika elmləri. Fəlsəfə doktoru (PhD) proqramıdır."
+      },
+      {
+        "question": "Kim müraciət edə bilər?",
+        "answer": "Magistratura səviyyəsini bitirmiş və magistrlik dissertasiyasını müdafiə etmiş şəxslər."
+      }
+    ]
+  }
+}

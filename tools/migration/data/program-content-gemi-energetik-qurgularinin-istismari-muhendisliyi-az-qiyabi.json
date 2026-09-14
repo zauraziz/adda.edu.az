@@ -1,0 +1,47 @@
+{
+  "_qeyd": "F5.26 vahid üslub. KÖHNƏ STRUKTUR (050605/050609 şifri), 5 il / 10 semestr, QİYABİ. Yalnız dənizçilik üzrə orta ixtisas təhsili olanlar üçün — «Təkrar ali təhsil» tabında. Rəqəmlər tədris planından.",
+  "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi-az-qiyabi",
+  "fields": {
+    "tagline": "Dənizçilik üzrə orta ixtisas təhsili olanlar üçün qiyabi bakalavr hazırlığı",
+    "highlights": [
+      {
+        "value": "5 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "240",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "Qiyabi",
+        "label": "təhsil forması"
+      },
+      {
+        "value": "10",
+        "label": "semestr"
+      }
+    ],
+    "overview": "Bu proqram dənizçilik sahəsində orta ixtisas təhsili olan şəxslərin bakalavr səviyyəsinə keçidi üçün nəzərdə tutulub.\n\nTədris qiyabi formada, 10 semestrə yayılıb — işləyərək təhsil almaq imkanı verir. Kredit həcmi əyani forma ilə eynidir: 240 ECTS. Proqram gəmi energetik qurğularının istismarı üzrə tam kursu əhatə edir — daxili yanma mühərrikləri, köməkçi mexanizmlər, qazan və soyuducu qurğular, avtomatlaşdırma.",
+    "practiceNote": "Tədris planına üzmə-tədris təcrübəsi və diplomqabağı istehsalat təcrübəsi daxildir.\n\nQiyabi formada nəzəri hazırlığın böyük hissəsi müstəqil işlə aparılır, laboratoriya və praktiki məşğələlər sessiya dövründə keçilir.",
+    "outcomes": "Təhsili başa vuranda bacaracaqsan:\n\n- maşın şöbəsində təhlükəsiz növbə çəkmək\n- baş mühərriki və köməkçi mexanizmləri istismar etmək\n- yanacaq, yağlama və nasos sistemlərini idarə etmək\n- mexanizmlərin nasazlığını diaqnostika etmək və aradan qaldırmaq\n- gəmi energetik qurğularının avtomatlaşdırma sistemləri ilə işləmək\n- beynəlxalq konvensiya tələblərini praktikada tətbiq etmək",
+    "careerPaths": "Məzunlar gəmi mexaniki kimi və sahildə texniki sahələrdə çalışa bilər:\n\n- gəmilərdə mexanik heyəti üzvü kimi\n- gəmiçilik şirkətlərində texniki istismar üzrə\n- gəmi təmiri zavodlarında\n- limanlarda texniki avadanlığın istismarı sahəsində\n- energetika və maşınqayırma müəssisələrində",
+    "faq": [
+      {
+        "question": "Bu proqrama kim müraciət edə bilər?",
+        "answer": "Yalnız müvafiq dənizçilik ixtisası üzrə orta ixtisas təhsili olan şəxslər. Bu, artıq sahədə təhsili və ya təcrübəsi olanlar üçün nəzərdə tutulub."
+      },
+      {
+        "question": "Nə üçün 5 il, 4 il deyil?",
+        "answer": "Qiyabi forma tədrisi 10 semestrə yayır — işləyərək oxumaq imkanı verir. Kredit həcmi əyani forma ilə eynidir: 240 ECTS."
+      },
+      {
+        "question": "Diplom əyani formadan fərqlənirmi?",
+        "answer": "Xeyr. Kredit həcmi və ixtisas eynidir — təhsil forması qiyabi kimi göstərilir."
+      },
+      {
+        "question": "Üzmə təcrübəsi tələb olunurmu?",
+        "answer": "Bəli. Tədris planına üzmə-tədris təcrübəsi və diplomqabağı təcrübə daxildir."
+      }
+    ]
+  }
+}

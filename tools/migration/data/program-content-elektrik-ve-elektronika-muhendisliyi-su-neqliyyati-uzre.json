@@ -1,0 +1,47 @@
+{
+  "_qeyd": "F5.26 vahid üslub: abituriyent dili, «sən» müraciəti, emoji YOX, rəsmi sənəd sitatı YOX. Rəqəmlər tədris planı 2026 + 2026/27 qəbul proqnozundan.",
+  "programSlug": "elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre",
+  "fields": {
+    "tagline": "Gəmi elektrik sistemləri, avtomatika və elektronika qurğuları üzrə mühəndis hazırlığı",
+    "highlights": [
+      {
+        "value": "4 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "240",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "43",
+        "label": "fənn"
+      },
+      {
+        "value": "2 dil",
+        "label": "Azərbaycan · ingilis"
+      }
+    ],
+    "overview": "Elektrik və elektronika mühəndisliyi gəmi elektrik sistemləri, avtomatik idarəetmə və elektron avadanlıq üzrə mütəxəssis hazırlayır.\n\nTəhsil müddətində elektrik dövrələrini analiz etməyi, gəmi elektroenergetik sistemlərini istismar etməyi, avtomatika və mikroprosessor qurğuları ilə işləməyi, elektrik sxemlərini oxumağı və nasazlıqları diaqnostika etməyi öyrənəcəksən. Müasir gəmidə demək olar hər sistem elektrik və elektronika ilə idarə olunur — bu ixtisas həmin qatı əhatə edir.",
+    "practiceNote": "Tədris planında laboratoriya işləri və praktiki fənlər geniş yer tutur: gəmi elektronikası, elektrik avadanlığı və onların istismarı, avtomatlaşdırma sistemləri.\n\nTəcrübə gəmiçilik şirkətlərində, gəmi təmiri müəssisələrində və tədqiqat laboratoriyalarında keçilir.",
+    "outcomes": "Təhsili başa vuranda bacaracaqsan:\n\n- elektrik və elektron sxemləri oxumaq və təhlil etmək\n- gəmi elektroenergetik sistemlərini istismar etmək\n- avtomatik idarəetmə sistemləri ilə işləmək\n- elektrik avadanlığının diaqnostikasını aparmaq və nasazlığı aradan qaldırmaq\n- sabit və dəyişən cərəyan dövrələrini modelləşdirmək\n- elektrotexniki qurğuların sadə layihələrini hazırlamaq\n- mikroprosessor və nəzarət texnikasından istifadə etmək\n- texniki təhlükəsizlik və normativ tələblərə əməl etmək",
+    "careerPaths": "Məzunlar həm dəniz, həm quru sahələrində çalışa bilər:\n\n- gəmilərdə elektrik-mexanik heyəti üzvü kimi\n- gəmiçilik şirkətlərində elektrik avadanlığının istismarı üzrə\n- gəmi təmiri zavodlarında elektrik və avtomatika sahəsində\n- limanlarda elektrik təchizatı və avadanlıq xidmətində\n- energetika, sənaye və maşınqayırma müəssisələrində\n- layihə-konstruktor bürolarında\n- elmi-tədqiqat və təhsil müəssisələrində\n\nBu ixtisas dəniz sahəsi ilə məhdudlaşmır — elektrik mühəndisliyi bacarıqları quru sənayesində də tələb olunur.",
+    "faq": [
+      {
+        "question": "Bu ixtisas yalnız gəmilər üçündür?",
+        "answer": "Xeyr. Hazırlıq su nəqliyyatı üzrə ixtisaslaşıb, amma elektrik və elektronika mühəndisliyi bacarıqları energetika, sənaye və maşınqayırma sahələrində də tətbiq olunur."
+      },
+      {
+        "question": "Bu ixtisas STCW sertifikatı verirmi?",
+        "answer": "Bu proqram sertifikatlaşdırılmış dənizçi hazırlığından fərqlidir — mühəndislik hazırlığıdır. Gəmidə elektrik-mexanik vəzifəsi üçün əlavə sertifikatlaşdırma tələb oluna bilər, bunu Təlim Tədris Mərkəzindən öyrənə bilərsən."
+      },
+      {
+        "question": "Tədris hansı dillərdə aparılır?",
+        "answer": "Azərbaycan və ingilis bölmələri var."
+      },
+      {
+        "question": "Təhsil neçə kreditdir?",
+        "answer": "240 ECTS krediti, 4 il (8 semestr), 43 fənn."
+      }
+    ]
+  }
+}

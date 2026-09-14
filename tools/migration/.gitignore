@@ -50,9 +50,10 @@ data/*
 !data/program-updates-2026.json
 !data/new-programs-2026.json
 
-# F5.26f — PROGRAM_CONTENT_SEED (adda-strapi/src/index.ts) OXUYUR (hər
-# proqram üçün ayrıca `program-content-*.json`, qovluq gəzilir).
-!data/program-content-6006006.json
+# F5.26f/F5.27 — PROGRAM_TEXT_SEED (adda-strapi/src/index.ts) `program-content-*.json`
+# fayllarını da OXUYUR (köhnə `program-texts-*` formatından fərqli, F5.26
+# vahid üslubu ilə). Qəlib bir sətirdə — tək-tək fayl sadalamaq lazım deyil.
+!data/program-content-*.json
 
 # F5.19 — 4 köhnə struktur bakalavr qeydi (AZ/EN, əyani/qiyabi).
 !data/tedris-plani-az-050609.json

@@ -1,0 +1,47 @@
+{
+  "_qeyd": "F5.26 vahid üslub. KÖHNƏ STRUKTUR (050605/050609 şifri), 5 il / 10 semestr, QİYABİ. Yalnız dənizçilik üzrə orta ixtisas təhsili olanlar üçün — «Təkrar ali təhsil» tabında. Rəqəmlər tədris planından.",
+  "programSlug": "deniz-naviqasiyasi-muhendisliyi-az-qiyabi",
+  "fields": {
+    "tagline": "Dənizçilik üzrə orta ixtisas təhsili olanlar üçün qiyabi bakalavr hazırlığı",
+    "highlights": [
+      {
+        "value": "5 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "240",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "Qiyabi",
+        "label": "təhsil forması"
+      },
+      {
+        "value": "10",
+        "label": "semestr"
+      }
+    ],
+    "overview": "Bu proqram dənizçilik sahəsində orta ixtisas təhsili olan şəxslərin bakalavr səviyyəsinə keçidi üçün nəzərdə tutulub.\n\nTədris qiyabi formada, 10 semestrə yayılıb — bu, işləyərək təhsil almaq imkanı verir. Kredit həcmi əyani forma ilə eynidir: 240 ECTS. Proqramın məzmunu dəniz naviqasiyası mühəndisliyinin tam kursunu əhatə edir — naviqasiya, gəminin idarə edilməsi, radar və elektron xəritə sistemləri, beynəlxalq konvensiyalar.",
+    "practiceNote": "Tədris planına üzmə-tədris təcrübəsi və diplomqabağı təcrübə daxildir.\n\nQiyabi formada nəzəri hazırlığın böyük hissəsi müstəqil işlə aparılır, praktiki fənlər və trenajor məşğələləri isə sessiya dövründə keçilir.",
+    "outcomes": "Təhsili başa vuranda bacaracaqsan:\n\n- gəminin mövqeyini təyin etmək və səfər marşrutunu planlaşdırmaq\n- gəmini təhlükəsiz idarə etmək və manevr etdirmək\n- radar, elektron xəritə və naviqasiya avadanlıqlarından istifadə etmək\n- naviqasiya növbətçiliyini müstəqil aparmaq\n- qəza vəziyyətlərində beynəlxalq qaydalara uyğun hərəkət etmək\n- beynəlxalq konvensiya tələblərini praktikada tətbiq etmək",
+    "careerPaths": "Məzunlar dəniz nəqliyyatı və gəmiçilik sahəsində çalışa bilər:\n\n- ticarət və yük gəmilərində naviqasiya heyəti üzvü kimi\n- gəmiçilik şirkətlərində gəmi istismarı üzrə\n- limanlarda və dəniz terminallarında\n- texniki donanma və xüsusi təyinatlı gəmilərdə\n- dəniz nəqliyyatı müəssisələrində",
+    "faq": [
+      {
+        "question": "Bu proqrama kim müraciət edə bilər?",
+        "answer": "Yalnız müvafiq dənizçilik ixtisası üzrə orta ixtisas təhsili olan şəxslər. Bu, artıq sahədə təhsili və ya təcrübəsi olanlar üçün nəzərdə tutulub."
+      },
+      {
+        "question": "Nə üçün 5 il, 4 il deyil?",
+        "answer": "Qiyabi forma tədrisi 10 semestrə yayır — işləyərək oxumaq imkanı verir. Kredit həcmi əyani forma ilə eynidir: 240 ECTS."
+      },
+      {
+        "question": "Diplom əyani formadan fərqlənirmi?",
+        "answer": "Xeyr. Kredit həcmi və ixtisas eynidir — təhsil forması qiyabi kimi göstərilir."
+      },
+      {
+        "question": "Üzmə təcrübəsi tələb olunurmu?",
+        "answer": "Bəli. Tədris planına üzmə-tədris təcrübəsi və diplomqabağı təcrübə daxildir."
+      }
+    ]
+  }
+}

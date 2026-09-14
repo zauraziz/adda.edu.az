@@ -1,0 +1,48 @@
+{
+  "_qeyd": "F5.26 vahid üslub. İNGİLİS DİLİNDƏ TƏDRİS, 4 il əyani. ÜF blokunda 27-30 kreditlik intensiv ingilis hazırlığı var — AZ versiyasından fərqli kredit strukturu.",
+  "programSlug": "gemi-energetik-qurgularinin-istismari-muhendisliyi-en-eyani",
+  "fields": {
+    "tagline": "İngilis dilində tədris — gəmi energetik qurğuları üzrə bakalavr hazırlığı",
+    "highlights": [
+      {
+        "value": "4 il",
+        "label": "təhsil müddəti"
+      },
+      {
+        "value": "240",
+        "label": "ECTS krediti"
+      },
+      {
+        "value": "İngilis",
+        "label": "tədris dili"
+      },
+      {
+        "value": "27",
+        "label": "kredit dil hazırlığı"
+      }
+    ],
+    "overview": "Bu proqram gəmi energetik qurğularının istismarı mühəndisliyini tam ingilis dilində tədris edir.\n\nGəmi avadanlığının texniki sənədləri, təlimatları və beynəlxalq heyətlə ünsiyyət ingilis dilindədir. Bu bölmədə ilk semestrlərdən intensiv dil hazırlığı nəzərdə tutulub — cəmi 27 kredit.\n\nİxtisas məzmunu Azərbaycan bölməsi ilə eynidir: daxili yanma mühərrikləri, köməkçi mexanizmlər, qazan və soyuducu qurğular, avtomatlaşdırma və diaqnostika.",
+    "practiceNote": "Tədris planına motorçu hazırlığı, laboratoriya işləri və üzmə təcrübəsi daxildir.\n\nTəcrübə gəmiçilik şirkətlərində və tədris gəmisində keçilir.",
+    "outcomes": "Təhsili başa vuranda bacaracaqsan:\n\n- maşın şöbəsində təhlükəsiz növbə çəkmək\n- baş mühərriki və köməkçi mexanizmləri istismar etmək\n- yanacaq, yağlama və nasos sistemlərini idarə etmək\n- nasazlıqları diaqnostika etmək və aradan qaldırmaq\n- avtomatlaşdırma sistemləri ilə işləmək\n- texniki sənədləşməni sərbəst ingilis dilində aparmaq",
+    "careerPaths": "İngilis dilində hazırlıq beynəlxalq əmək bazarında əlavə üstünlükdür:\n\n- xarici bayraq altında üzən gəmilərdə mexanik heyəti üzvü kimi\n- beynəlxalq gəmiçilik şirkətlərində texniki vəzifələrdə\n- çoxmillətli heyətlərdə\n- beynəlxalq gəmi təmiri müəssisələrində\n- offshore platformalarda",
+    "conventions": "Proqram Beynəlxalq Dəniz Təşkilatının (IMO) standartlarına uyğun hazırlanıb.\n\nNəzərə alınan əsas sənədlər: **STCW** (dənizçilərin hazırlanması, mühərrik heyəti), **SOLAS** (dənizdə təhlükəsizlik), **MARPOL** (dəniz mühitinin qorunması).",
+    "faq": [
+      {
+        "question": "Tədris tam ingilis dilindədirmi?",
+        "answer": "Bəli. Bu bölmədə fənlər ingilis dilində tədris olunur. Tədris planına 27–30 kreditlik intensiv ingilis dili hazırlığı daxildir — ilk semestrlərdə dil bazası möhkəmləndirilir."
+      },
+      {
+        "question": "Giriş üçün ingilis dili səviyyəsi tələb olunurmu?",
+        "answer": "Qəbul şərtləri üçün Qəbul bölməsinə bax. Proqramın özündə ilk illər intensiv dil hazırlığı nəzərdə tutulub."
+      },
+      {
+        "question": "Diplom Azərbaycan bölməsindən fərqlənirmi?",
+        "answer": "Xeyr. Eyni ixtisas, eyni kredit həcmi — 240 ECTS. Fərq tədris dilində və dil hazırlığına ayrılan kreditdədir."
+      },
+      {
+        "question": "Üzmə təcrübəsi məcburidirmi?",
+        "answer": "Bəli. Beynəlxalq STCW tələbidir və tədris planına daxildir."
+      }
+    ]
+  }
+}
