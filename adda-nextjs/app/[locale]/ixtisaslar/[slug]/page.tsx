@@ -394,7 +394,7 @@ export default async function ProgramPage({
   // F5.26c — başlıqlar abituriyent sual ardıcıllığı ilə YENİDƏN yazılıb;
   // dəyişən adları köhnə sahə adlarında qalıb (`blockTitleSwim`/`blockTitlePlan`
   // və s.), TEXT dəyişib. Sıra da BURADA, `fieldStatus`-da təyin olunur.
-  const blockTitleOverview = tr('Bu ixtisas nədir?', locale);
+  const blockTitleOverview = tr('İxtisas haqqında', locale);
   const blockTitleSwim = tr('Praktiki hazırlıq və təcrübə', locale);
   const blockTitlePlan = tr('Nə öyrənəcəksən — kurs üzrə', locale);
   const blockTitleOutcomes = tr('Məzun olanda nə bacaracaqsan?', locale);
