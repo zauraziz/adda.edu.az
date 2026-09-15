@@ -106,6 +106,9 @@ const RULES: Rule[] = [
   { method: 'POST', path: '/api/push/unsubscribe', ip: [intEnv('RL_PUSH_UNSUB_IP', 12), 60 * MIN] },
   { method: 'POST', path: '/api/rsvps', ip: [intEnv('RL_RSVPS_IP', 10), 60 * MIN] },
   { method: 'POST', path: '/api/corrections', ip: [intEnv('RL_CORRECTIONS_IP', 10), 60 * MIN] },
+  // F5.31d — saytın İLK açıq (kimliksiz) yaz formu, ona görə digərlərindən
+  // sıx: eyni IP-dən saatda maksimum 5 müraciət (tapşırıqda AÇIQ verilib).
+  { method: 'POST', path: '/api/appeals', ip: [intEnv('RL_APPEALS_IP', 5), 60 * MIN] },
 ];
 
 /* ── Sayğac anbarı (tək instans — Redis-ə köçürmək asandır) ───────────── */
