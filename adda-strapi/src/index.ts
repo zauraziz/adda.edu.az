@@ -59,6 +59,12 @@ const PUBLIC_CREATE_UIDS = [
 const IDENTITY_GATED_UIDS = ['api::rsvp.rsvp', 'api::correction.correction'];
 const IDENTITY_ENFORCE = process.env.IDENTITY_ENFORCE === 'true';
 
+// F5.30c — "Kommunikasiya" qrupundakı "Əlaqə"/"Vətəndaşların müraciəti"
+// (esasMenyu), ustMenyu-dəki müstəqil "Əlaqə" kateqoriyası VƏ
+// suretliKecidler-dəki "Əlaqə" sürətli keçidi köhnə `/sehife/elaqe` və
+// `/hazirlanir/vetendaslarin-muracieti` ƏVƏZİNƏ yeni `/elaqe`/
+// `/vetendaslarin-muracieti` marşrutlarına yönəldilib (üç yer, hamısı
+// dəyişdirilib — bax MENU_RESEED qeydi aşağıda).
 const SEED = {
     "esasMenyu": [
       {
@@ -249,11 +255,11 @@ const SEED = {
             "links": [
               {
                 "label": "Vətəndaşların müraciəti",
-                "url": "/hazirlanir/vetendaslarin-muracieti"
+                "url": "/vetendaslarin-muracieti"
               },
               {
                 "label": "Əlaqə",
-                "url": "/sehife/elaqe"
+                "url": "/elaqe"
               },
               {
                 "label": "Korporativ üslub",
@@ -999,7 +1005,7 @@ const SEED = {
       {
         "label": "Əlaqə",
         "order": 5,
-        "url": "/sehife/elaqe",
+        "url": "/elaqe",
         "groups": []
       }
     ],
@@ -1105,7 +1111,7 @@ const SEED = {
       },
       {
         "label": "Əlaqə",
-        "url": "/sehife/elaqe",
+        "url": "/elaqe",
         "icon": "mail"
       }
     ],
