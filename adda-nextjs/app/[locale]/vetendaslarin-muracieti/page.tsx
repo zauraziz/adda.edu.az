@@ -28,11 +28,14 @@ import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/36-unit.css';
+import '../../_styles/23-correction.css';
+import '../../_styles/40-appeal.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import { getMenu, type SiteMenu } from '@/lib/strapi';
+import AppealIsland from '../../_components/AppealIsland';
+import { getMenu, getUnits, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
@@ -56,7 +59,48 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function CitizenAppealsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const menu = await getMenu(locale).catch(() => null as SiteMenu | null);
+  const [menu, units] = await Promise.all([
+    getMenu(locale).catch(() => null as SiteMenu | null),
+    getUnits(locale).catch(() => []),
+  ]);
+
+  // F5.31c — CorrectionIsland ilə EYNİ qayda: tərcümə klient bundle-ına
+  // (55 kB-lıq tam T lüğəti) düşməsin deyə hazır string-lər PROP kimi ötürülür.
+  const appealLabels: Record<string, string> = {
+    title: tr('Müraciət et', locale),
+    subtitle: tr('Sual, təklif, ərizə və ya şikayətinizi bura yazın.', locale),
+    typeLabel: tr('Müraciət növü', locale),
+    type_sual: tr('Sual', locale),
+    type_teklif: tr('Təklif', locale),
+    type_erize: tr('Ərizə', locale),
+    type_sikayet: tr('Şikayət', locale),
+    informalNote: tr(
+      'Bu, rəsmi müraciət deyil. Rəsmi cavab üçün Təklif/Ərizə/Şikayət seçin.',
+      locale,
+    ),
+    deadlineNote: tr(
+      'Bu, rəsmi müraciətdir. Baxılma müddətləri yuxarıdakı bölmədə göstərilib.',
+      locale,
+    ),
+    firstNameLabel: tr('Ad', locale),
+    lastNameLabel: tr('Soyad', locale),
+    patronymicLabel: tr('Ata adı', locale),
+    emailLabel: tr('E-poçt', locale),
+    phoneLabel: tr('Telefon', locale),
+    addressLabel: tr('Ünvan (istəyə bağlı)', locale),
+    unitLabel: tr('Aidiyyəti bölmə (istəyə bağlı)', locale),
+    unitPlaceholder: tr('Seçilməyib', locale),
+    subjectLabel: tr('Mövzu', locale),
+    messageLabel: tr('Mətn', locale),
+    submit: tr('Göndər', locale),
+    sending: tr('Göndərilir', locale),
+    successMsg: tr('Müraciətiniz qəbul edildi.', locale),
+    successSub: tr('Cavab yuxarıda göstərdiyiniz e-poçt ünvanına göndəriləcək.', locale),
+    trackingLabel: tr('İzləmə kodu', locale),
+    requiredErr: tr('Zəhmət olmasa məcburi sahələri doldurun.', locale),
+    tooMany: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
+    error: tr('Müraciət göndərilə bilmədi. Bir az sonra yenidən cəhd edin.', locale),
+  };
 
   return (
     <>
@@ -126,7 +170,7 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
             </div>
           </section>
 
-          <section className="un-block">
+          <section className="un-block" id="baxilma-muddetleri">
             <h2 className="un-block-title">{tr('Baxılma müddətləri', locale)}</h2>
             {/* F5.30b — QƏSDƏN BOŞ ŞABLON. Rəqəm YAZILMAYIB (bax fayl başındakı izah). */}
             <p className="pr-plan-note">
@@ -168,6 +212,13 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
                 )}
               </p>
             </div>
+          </section>
+
+          <section className="un-block">
+            <AppealIsland
+              units={units.map((u) => ({ documentId: u.documentId, name: u.name }))}
+              labels={appealLabels}
+            />
           </section>
 
           <section className="un-block" style={{ paddingBottom: '48px' }}>
