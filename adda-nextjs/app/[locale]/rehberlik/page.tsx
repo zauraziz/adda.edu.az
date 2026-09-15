@@ -36,6 +36,7 @@ import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/35-leadership.css';
 import type { Metadata } from 'next';
+import { Fragment } from 'react';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
@@ -94,14 +95,18 @@ function isAcademicPost(position: string | null | undefined): boolean {
 }
 
 /**
- * Əlifba sırası ÜÇÜN `name` («Soyad Ad Ata») işlənir, `displayName` yox —
- * kataloq da soyada görə sıralanır, iki səhifə bir-birindən fərqlənməsin.
+ * F5.29 — GÖRÜNƏN ADA görə sıralanır: `personName()` (aşağıda) kartda
+ * göstərilən EYNİ mənbədir (`displayName` varsa o, yoxsa `name`). Əvvəlki
+ * versiya `head.name`-ə («Soyad Ad Ata») görə sıralayırdı, kart isə
+ * `displayName`-i («Ad Ata Soyad») göstərirdi — siyahı düzülürdü, amma
+ * EKRANDA GÖRÜNƏN ADA görə YOX. `/heyet` kataloqu (StaffDirectory.tsx)
+ * artıq `displayName || name` ilə sıralayır — indi iki səhifə uyğundur.
  *
  * `localeCompare(..., 'az')` MƏCBURİDİR: standart müqayisədə «Ə» hərfi «Z»-dən
  * sonra düşür və Əliyev, Əsgərov siyahının sonuna atılır.
  */
 const byName = (a: LeadershipUnit, b: LeadershipUnit) =>
-  (a.head?.name ?? '').localeCompare(b.head?.name ?? '', 'az');
+  personName(a).localeCompare(personName(b), 'az');
 
 /** Vəzifə növünə görə blok daxilində sıra. Kiçik rəqəm yuxarıda. */
 function postRank(position: string | null | undefined, order: RegExp[]): number {
@@ -110,10 +115,8 @@ function postRank(position: string | null | undefined, order: RegExp[]): number 
   return order.length;
 }
 
-/** Rəhbərlik bloku: prorektor -> elmi katib -> müşavir. */
-const LEAD_ORDER = [/prorektor/, /elmi katib/, /müşavir/];
-/** Tədris bloku: əvvəlcə dekanlar, sonra kafedra müdirləri. */
-const ACADEMIC_ORDER = [/dekan/, /kafedra müdiri/];
+/** Rəhbərlik bloku: prorektor -> müşavir -> elmi katib. */
+const LEAD_ORDER = [/prorektor/, /müşavir/, /elmi katib/];
 
 /** Əvvəl vəzifə növü, sonra əlifba. */
 const byRankThenName = (order: RegExp[]) => (a: LeadershipUnit, b: LeadershipUnit) =>
@@ -139,6 +142,26 @@ export async function generateMetadata({
 /** Ad göstərilməsi: `displayName` («Ad Ata Soyad») varsa o, yoxsa `name`. */
 function personName(u: LeadershipUnit): string {
   return u.head?.displayName?.trim() || u.head?.name?.trim() || '';
+}
+
+/**
+ * F5.29/F4.9d — `overflow-wrap: anywhere` (bax 35-leadership.css) e-poçtu
+ * SÖZ ORTASINDAN qırırdı. `<wbr>` YALNIZ `@`-dan və hər `.`-dan sonra
+ * qırılma nöqtəsi əlavə edir, CSS-dəki `overflow-wrap: normal` ilə
+ * birlikdə qırılma YALNIZ bu nöqtələrdə baş verir.
+ */
+function EmailWrap({ email }: { email: string }) {
+  const parts = email.split(/([@.])/);
+  return (
+    <>
+      {parts.map((part, i) => (
+        <Fragment key={i}>
+          {part}
+          {part === '@' || part === '.' ? <wbr /> : null}
+        </Fragment>
+      ))}
+    </>
+  );
 }
 
 /** Fotosuz kartlar üçün monoqram. */
@@ -194,7 +217,7 @@ function LeaderCard({
             <>
               <dt>{tr('E-poçt', locale)}</dt>
               <dd>
-                <a href={`mailto:${head.email}`}>{head.email}</a>
+                <a href={`mailto:${head.email}`}><EmailWrap email={head.email} /></a>
               </dd>
             </>
           ) : null}
@@ -289,9 +312,16 @@ export default async function LeadershipPage({
 
   // Tədris / inzibati ayrımı VƏZİFƏYƏ görədir, ağaca görə yox: təsərrüfat
   // şöbəsi ağacda prorektorluq altındadır, amma tədris bölməsi deyil.
-  const academic = [...rest.filter((u) => isAcademicPost(u.head?.position))].sort(
-    byRankThenName(ACADEMIC_ORDER),
-  );
+  //
+  // F5.29 — tək «Tədris bölmələri» bloku İKİYƏ bölünüb: fakültə rəhbərləri
+  // (dekan) və kafedra müdirləri, AYRI-AYRI bloklarda. Bloklar artıq
+  // vəzifəyə görə AYRILDIĞI üçün `ACADEMIC_ORDER`/rütbə sıralaması lazım
+  // deyil — hər blok daxilində sadəcə əlifba sırası (`byName`).
+  const academicAll = rest.filter((u) => isAcademicPost(u.head?.position));
+  const faculties = [...academicAll.filter((u) => /dekan/.test(azLower(u.head?.position ?? '')))].sort(byName);
+  const departments = [
+    ...academicAll.filter((u) => /kafedra müdiri/.test(azLower(u.head?.position ?? ''))),
+  ].sort(byName);
   const administrative = [...rest.filter((u) => !isAcademicPost(u.head?.position))].sort(byName);
 
   return (
@@ -322,7 +352,9 @@ export default async function LeadershipPage({
 
         <Group title={tr('Rəhbərlik', locale)} units={leadership} locale={locale} />
 
-        <Group title={tr('Tədris bölmələri', locale)} units={academic} locale={locale} />
+        <Group title={tr('Fakültə rəhbərləri', locale)} units={faculties} locale={locale} />
+
+        <Group title={tr('Kafedra müdirləri', locale)} units={departments} locale={locale} />
 
         <Group
           title={tr('İnzibati və dəstək bölmələri', locale)}

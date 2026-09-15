@@ -129,16 +129,21 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 3px 12px;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
 }
 .ld-contact dt {
   color: #7b8794;
   white-space: nowrap;
 }
+/* F5.29/F4.9d — `overflow-wrap: anywhere` sözü İXTİYARİ yerdən qırırdı
+   («zaur.aziz@add / a.edu.az»). Qırılma İNDİ YALNIZ JSX-də əlavə olunan
+   `<wbr>` nöqtələrində (`@`-dan və hər `.`-dan sonra, bax EmailWrap
+   aşağıda) baş verir — CSS `overflow-wrap: normal` bunu təmin edir. */
 .ld-contact dd {
   margin: 0;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
   color: #33424f;
 }
 .ld-contact a {
@@ -148,6 +153,15 @@
 .ld-contact a:hover {
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+/* F5.29 — mobildə telefon/e-poçt keçidləri ən azı 44px toxunma sahəsi
+   (WCAG target size). Mətn özü kiçik qalır, sadəcə tıklana bilən sahə böyüyür. */
+@media (max-width: 560px) {
+  .ld-contact dd a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }
 
 .ld-more {
@@ -207,5 +221,25 @@
   }
   .ld-contact dt {
     margin-top: 6px;
+  }
+}
+
+/* F5.29 — çox dar ekranda foto+mətn yanaşı sığmır, kart tək sütuna keçir
+   (foto üstdə, mətn altda). Sonra gəldiyi üçün 560px qaydasını 480px-dən
+   aşağıda ÜSTƏLƏYİR (eyni pəncərədə hər ikisi uyğun gəlir). */
+@media (max-width: 480px) {
+  .ld-card,
+  .ld-card--lead {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ld-plate,
+  .ld-card--lead .ld-plate {
+    width: 84px;
+    height: 104px;
+  }
+  /* Kiçik ekranda `<wbr>` nöqtələri arası hələ dar ola bilər — şrift
+     bir az da kiçilir (F5.29), söz YENƏ DƏ ortadan qırılmır. */
+  .ld-contact {
+    font-size: 0.78rem;
   }
 }

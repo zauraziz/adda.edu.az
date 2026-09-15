@@ -1156,7 +1156,9 @@ const MENU_T: Array<[string, string, string]> = [
   ['Vəzifə hazırda vakantdır', 'Должность в настоящее время вакантна', 'This position is currently vacant'],
   ['Bölmə haqqında', 'О подразделении', 'About the unit'],
   ['Yerləşmə', 'Расположение', 'Location'],
-  ['Tədris bölmələri', 'Учебные подразделения', 'Academic Units'],
+  // F5.29 — "Tədris bölmələri" iki bloka bölündü (rehberlik/page.tsx).
+  ['Fakültə rəhbərləri', 'Деканы факультетов', 'Faculty Deans'],
+  ['Kafedra müdirləri', 'Заведующие кафедрами', 'Department Heads'],
   ['İnzibati və dəstək bölmələri', 'Административные и вспомогательные подразделения', 'Administrative and Support Units'],
   ['E-poçt', 'Эл. почта', 'Email'],
   ['Telefon', 'Телефон', 'Phone'],
