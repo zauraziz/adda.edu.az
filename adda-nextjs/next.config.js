@@ -40,6 +40,13 @@ const nextConfig = {
         destination: '/:locale/qehremanlarimiz',
         permanent: true,
       },
+      // F5.30a: /sehife/elaqe -> /elaqe (öz marşrutuna köçdü), eyni səbəb/
+      // qayda ilə (qehremanlarimiz nümunəsi).
+      {
+        source: '/:locale(az|ru|en)/sehife/elaqe',
+        destination: '/:locale/elaqe',
+        permanent: true,
+      },
     ];
   },
 };
