@@ -187,7 +187,7 @@ type MailApi = {
   body: (m: OutMail) => unknown;
 };
 
-interface OutMail {
+export interface OutMail {
   to: string;
   subject: string;
   text: string;
@@ -279,7 +279,13 @@ export function linkSafeMailer(): { ok: boolean; via: string; reason?: string } 
  * Xəta mətni QAYTARILIR, udulmur — çağıran tərəf istifadəçiyə nə deyəcəyini
  * bilməlidir və diaqnostika endpointi əsl səbəbi göstərməlidir.
  */
-async function deliver(m: OutMail): Promise<{ status: 'sent' | 'unconfigured' | 'failed'; via: string; error?: string }> {
+/**
+ * F5.31e — appeal-mail.ts (bax ../../appeal) bu funksiyanı İDXAL EDİR ki,
+ * göndərmə məntiqi (Resend -> Brevo -> SMTP -> dev rejimi) TƏKRAR
+ * yazılmasın. Generik, identity-ə xas heç nə yoxdur — sadəcə tarixən
+ * bura yazılıb (magic-link ilk istifadəçisi olub).
+ */
+export async function deliver(m: OutMail): Promise<{ status: 'sent' | 'unconfigured' | 'failed'; via: string; error?: string }> {
   const apiCfg = pickMailApi();
 
   if (apiCfg) {

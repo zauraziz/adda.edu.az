@@ -19,6 +19,7 @@
  * (universitet həcmi) bu, kifayət qədər etibarlıdır — "sadə" tələbinə uyğun.
  */
 import { factories } from '@strapi/strapi';
+import { notifyAppeal } from '../../../utils/appeal-mail';
 
 type Row = Record<string, unknown>;
 
@@ -32,6 +33,9 @@ interface StrapiLike {
   documents(uid: string): {
     create(args: Row): Promise<Row>;
     findMany(args: Row): Promise<Row[]>;
+    // notifyAppeal (utils/appeal-mail.ts) targetUnit-in e-poçtunu tapmaq
+    // üçün işlədir — bura strukturca uyğun gəlsin deyə əlavə olunub.
+    findOne(args: Row): Promise<Row | null>;
   };
   log: { info(m: string): void; warn(m: string): void; error(m: string): void };
 }
@@ -118,8 +122,11 @@ export default factories.createCoreController(UID, ({ strapi }: { strapi: Strapi
       return;
     }
 
-    // F5.31e-də bildiriş e-poçtu BURAYA əlavə olunacaq (müraciət artıq
-    // qeydə alınıb, e-poçt bunun davamıdır — ayrıca commit).
+    // F5.31e — bildiriş e-poçtları. Müraciət ARTIQ QEYDƏ ALINIB — e-poçt
+    // uğursuz olsa belə istifadəçiyə xəta göstərilmir, yalnız log yazılır.
+    notifyAppeal(strapi, created).catch((err: Error) => {
+      strapi.log.error('[appeal] bildiris xetasi: ' + err.message);
+    });
 
     ctx.status = 200;
     ctx.body = { ok: true, trackingCode: created.trackingCode };
