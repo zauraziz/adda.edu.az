@@ -41,6 +41,11 @@ const PUBLIC_CREATE_UIDS = [
   'api::rsvp.rsvp',
   'api::reaction.reaction',
   'api::correction.correction',
+  // F5.31a — vətəndaş müraciəti (appeal). DİQQƏT (bax CLAUDE.md/tapşırıq):
+  // hero tipində Public OXU icazəsi unudulub səhifə boş qalmışdı — bu
+  // YAZ icazəsini UNUTMAMAQ üçün deploy siyahısına açıq salınıb. YALNIZ
+  // `create` — find/findOne BURADA verilmir (müraciətlər şəxsi məlumatdır).
+  'api::appeal.appeal',
 ];
 
 // --- F2.6e: SERT KIMLIK REJIMI ---

@@ -1,0 +1,89 @@
+{
+  "kind": "collectionType",
+  "collectionName": "appeals",
+  "info": {
+    "singularName": "appeal",
+    "pluralName": "appeals",
+    "displayName": "4. Müraciət — Vətəndaş müraciəti",
+    "description": "Rəsmi/qeyri-rəsmi vətəndaş müraciətləri (F5.31) — yalnız Public `create`, oxu admin-də"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "trackingCode": {
+      "type": "string",
+      "unique": true
+    },
+    "appealType": {
+      "type": "enumeration",
+      "enum": [
+        "sual",
+        "teklif",
+        "erize",
+        "sikayet"
+      ],
+      "required": true
+    },
+    "firstName": {
+      "type": "string",
+      "required": true
+    },
+    "lastName": {
+      "type": "string",
+      "required": true
+    },
+    "patronymic": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string",
+      "required": true
+    },
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "targetUnit": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::unit.unit"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "yeni",
+        "baxilir",
+        "cavablandi",
+        "bagli"
+      ],
+      "default": "yeni"
+    },
+    "isFormal": {
+      "type": "boolean",
+      "default": false
+    },
+    "submittedAt": {
+      "type": "datetime"
+    },
+    "respondedAt": {
+      "type": "datetime"
+    }
+  }
+}

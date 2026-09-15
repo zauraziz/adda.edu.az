@@ -573,6 +573,60 @@ export interface ApiAnnouncementAnnouncement
   };
 }
 
+export interface ApiAppealAppeal extends Struct.CollectionTypeSchema {
+  collectionName: 'appeals';
+  info: {
+    description: 'R\u0259smi/qeyri-r\u0259smi v\u0259t\u0259nda\u015F m\u00FCraci\u0259tl\u0259ri (F5.31) \u2014 yaln\u0131z Public `create`, oxu admin-d\u0259';
+    displayName: '4. M\u00FCraci\u0259t \u2014 V\u0259t\u0259nda\u015F m\u00FCraci\u0259ti';
+    pluralName: 'appeals';
+    singularName: 'appeal';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    address: Schema.Attribute.String;
+    appealType: Schema.Attribute.Enumeration<
+      ['sual', 'teklif', 'erize', 'sikayet']
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    firstName: Schema.Attribute.String & Schema.Attribute.Required;
+    isFormal: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lastName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::appeal.appeal'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text & Schema.Attribute.Required;
+    patronymic: Schema.Attribute.String;
+    phone: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    respondedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['yeni', 'baxilir', 'cavablandi', 'bagli']
+    > &
+      Schema.Attribute.DefaultTo<'yeni'>;
+    subject: Schema.Attribute.String & Schema.Attribute.Required;
+    submittedAt: Schema.Attribute.DateTime;
+    targetUnit: Schema.Attribute.Relation<'manyToOne', 'api::unit.unit'>;
+    trackingCode: Schema.Attribute.String & Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   collectionName: 'articles';
   info: {
@@ -3211,6 +3265,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
+      'api::appeal.appeal': ApiAppealAppeal;
       'api::article.article': ApiArticleArticle;
       'api::correction.correction': ApiCorrectionCorrection;
       'api::department.department': ApiDepartmentDepartment;
