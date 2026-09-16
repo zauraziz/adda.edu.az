@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     ...(str(body.targetUnit, 40) ? { targetUnit: str(body.targetUnit, 40) } : {}),
   };
 
-  if (!payload.firstName || !payload.lastName || !payload.email || !payload.phone || !payload.subject || !payload.message) {
+  if (!payload.firstName || !payload.lastName || !payload.patronymic || !payload.email || !payload.phone || !payload.subject || !payload.message) {
     return NextResponse.json({ ok: false, error: 'missing_fields' }, { status: 400 });
   }
 

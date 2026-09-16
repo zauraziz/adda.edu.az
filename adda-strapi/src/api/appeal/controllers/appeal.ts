@@ -93,7 +93,7 @@ export default factories.createCoreController(UID, ({ strapi }: { strapi: Strapi
       subject: str(b.subject, 300),
       message: str(b.message, 5000),
     };
-    if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.subject || !data.message) {
+    if (!data.firstName || !data.lastName || !data.patronymic || !data.email || !data.phone || !data.subject || !data.message) {
       ctx.status = 400;
       ctx.body = { ok: false, error: 'missing_fields' };
       return;

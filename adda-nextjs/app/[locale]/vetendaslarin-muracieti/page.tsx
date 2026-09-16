@@ -97,6 +97,11 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
     unitPlaceholder: tr('Seçilməyib', locale),
     subjectLabel: tr('Mövzu', locale),
     messageLabel: tr('Mətn', locale),
+    consentLabel: tr(
+      'Fərdi məlumatlarımın müraciətimin cavablandırılması məqsədilə işlənməsinə razılıq verirəm',
+      locale,
+    ),
+    consentErr: tr('Davam etmək üçün razılıq qutusunu işarələyin.', locale),
     submit: tr('Göndər', locale),
     sending: tr('Göndərilir', locale),
     successMsg: tr('Müraciətiniz qəbul edildi.', locale),

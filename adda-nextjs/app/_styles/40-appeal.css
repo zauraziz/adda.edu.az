@@ -1,10 +1,63 @@
-/* 40-appeal.css — /[locale]/vetendaslarin-muracieti (F5.31c)
+/* 40-appeal.css — /[locale]/vetendaslarin-muracieti (F5.31c/F5.32b)
    AppealIsland.tsx bazası 23-correction.css-dəki .cx-* siniflərdir (eyni
    panel/sahə/düymə dili) — bura YALNIZ o fayl əhatə etməyən hissəni verir:
-   qeyri-rəsmi/qanuni müddət qeydi, izləmə kodu, honeypot. */
+   qeyri-rəsmi/qanuni müddət qeydi, izləmə kodu, honeypot, 2-sütunlu grid,
+   razılıq qutusu. Tailwind/lucide İŞLƏDİLMİR — Tabler ikon dəsti + layihə
+   CSS dəyişənləri (:root). */
 
-.ap {
+/* F5.32b — kart: ağ fon/kölgə `.cx`-dən gəlir (23-correction.css),
+   bura YALNIZ üstdəki qızılı nazik xətti əlavə edir. */
+.ap.cx {
+  border-top: 3px solid var(--gold-500);
   margin-top: 2rem;
+}
+
+/* F5.32b — sahələr iki sütunlu grid, mobildə tək sütun. Mövzu/bölmə/mətn
+   kimi "tam sətir" sahələr üçün `.ap-grid-full`. */
+.ap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+}
+.ap-grid-full {
+  grid-column: 1 / -1;
+}
+@media (max-width: 560px) {
+  .ap-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* F5.32b — sahə etiketi + ikon (mövcud Tabler dəsti: ti-user/ti-mail/
+   ti-phone/ti-file-text/ti-message), 18px, currentColor. */
+.ap-label-ic {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ap-label-ic i {
+  font-size: 18px;
+  color: currentColor;
+}
+
+/* F5.32b — razılıq qutusu (məcburi). */
+.ap-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0.3rem 0 1.3rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+  cursor: pointer;
+  line-height: 1.5;
+}
+.ap-consent input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.1rem;
+  accent-color: var(--navy-800);
 }
 
 /* F5.31c — "Sual" qeyri-rəsmi qeydi / rəsmi növün qanuni müddət qeydi. */

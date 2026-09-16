@@ -1040,6 +1040,11 @@ const MENU_T: Array<[string, string, string]> = [
   ['Müraciət göndərilə bilmədi. Bir az sonra yenidən cəhd edin.',
    'Не удалось отправить обращение. Повторите попытку чуть позже.',
    'Could not submit the appeal. Please try again shortly.'],
+  // --- F5.32b: AppealIsland razılıq qutusu (az, ru, en) ---
+  ['Fərdi məlumatlarımın müraciətimin cavablandırılması məqsədilə işlənməsinə razılıq verirəm',
+   'Я согласен(-на) на обработку моих персональных данных в целях рассмотрения моего обращения',
+   'I consent to my personal data being processed for the purpose of responding to my appeal'],
+  ['Davam etmək üçün razılıq qutusunu işarələyin.', 'Отметьте флажок согласия, чтобы продолжить.', 'Check the consent box to continue.'],
   ['Akademik səviyyələr üzrə qəbul', 'Приём по уровням образования', 'Admissions by Academic Level'],
   ['Bakalavriat', 'Бакалавриат', 'Bachelor\'s Degree'],
   ['Subbakalavr', 'Степень младшего специалиста', 'Associate Degree'],

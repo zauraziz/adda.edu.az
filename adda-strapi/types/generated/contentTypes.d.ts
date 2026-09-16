@@ -609,7 +609,7 @@ export interface ApiAppealAppeal extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     message: Schema.Attribute.Text & Schema.Attribute.Required;
-    patronymic: Schema.Attribute.String;
+    patronymic: Schema.Attribute.String & Schema.Attribute.Required;
     phone: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     respondedAt: Schema.Attribute.DateTime;
