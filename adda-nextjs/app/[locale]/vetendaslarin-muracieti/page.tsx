@@ -1,6 +1,10 @@
-// F5.30b — /[locale]/vetendaslarin-muracieti: vətəndaşların müraciətinə
-// baxılması qaydası. HÜQUQİ SƏHİFƏDİR — mətn tapşırıqda verilən bəndlərə
-// SÖZBƏSÖZ uyğun tutulub, ƏLAVƏ hüquqi iddia YAZILMAYIB.
+// F5.30b/F5.32a — /[locale]/vetendaslarin-muracieti: vətəndaşların
+// müraciətinə baxılması qaydası + elektron müraciət forması.
+//
+// F5.32a — səhifə sırası TƏRSİNƏ çevrilib: FORMA əsas məzmundur (hero-dan
+// dərhal sonra), hüquqi mətn (8 bölmə) FORMADAN SONRA, ExpandBlock
+// akkordeonunda (MÖVCUD komponent, bax _components/ExpandBlock.tsx),
+// HAMISI BAĞLI vəziyyətdə. Mətnin özü DƏYİŞMƏYİB — yalnız yeri/formatı.
 //
 // Məzmun STATİKDİR (CMS-dən çəkilmir), ona görə admin redaktə qapısı yoxdur.
 //
@@ -35,6 +39,7 @@ import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import AppealIsland from '../../_components/AppealIsland';
+import ExpandBlock from '../../_components/ExpandBlock';
 import { getMenu, getUnits, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -79,7 +84,7 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
       locale,
     ),
     deadlineNote: tr(
-      'Bu, rəsmi müraciətdir. Baxılma müddətləri yuxarıdakı bölmədə göstərilib.',
+      'Bu, rəsmi müraciətdir. Baxılma müddətləri aşağıdakı «Müraciət haqqında bilməli olduqlarınız» bölməsində göstərilib.',
       locale,
     ),
     firstNameLabel: tr('Ad', locale),
@@ -110,115 +115,119 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('Kommunikasiya', locale)}</div>
             <h1 className="np-h1">{tr('Vətəndaşların müraciəti', locale)}</h1>
-            <p className="np-lead">{tr('Vətəndaşların müraciətinə baxılması qaydası', locale)}</p>
+            <p className="np-lead">
+              {tr('Sual, təklif, ərizə və ya şikayətinizi bu səhifədən göndərə bilərsiniz.', locale)}
+            </p>
           </div>
         </section>
 
         <div className="container">
+          {/* F5.32a — FORMA əsas məzmundur, hero-dan dərhal sonra. */}
           <section className="un-block" style={{ borderTop: 'none' }}>
-            <h2 className="un-block-title">{tr('Hüquqi əsas', locale)}</h2>
-            <div className="prose">
-              <p>
-                {tr(
-                  'Bu qayda Azərbaycan Respublikası Konstitusiyasının 57-ci maddəsinə və «Vətəndaşların müraciətlərinə baxılması qaydası haqqında» Azərbaycan Respublikasının Qanununa əsaslanır.',
-                  locale,
-                )}
-              </p>
-            </div>
-          </section>
-
-          <section className="un-block">
-            <h2 className="un-block-title">{tr('Müraciət növləri', locale)}</h2>
-            <div className="prose">
-              <p>
-                {tr(
-                  'Qanunun 3-cü maddəsinə əsasən müraciətlər üç növə bölünür: təklif, ərizə və şikayət.',
-                  locale,
-                )}
-              </p>
-            </div>
-          </section>
-
-          <section className="un-block">
-            <h2 className="un-block-title">{tr('Müraciət yolları', locale)}</h2>
-            <div className="prose">
-              <ul>
-                <li>{tr('Yazılı', locale)}</li>
-                <li>{tr('Elektron', locale)}</li>
-                <li>{tr('Şəxsən', locale)}</li>
-                <li>{tr('Telefonla', locale)}</li>
-              </ul>
-            </div>
-          </section>
-
-          <section className="un-block">
-            <h2 className="un-block-title">{tr('Müraciətdə nə göstərilməlidir', locale)}</h2>
-            <div className="prose">
-              <p>
-                {tr('Müraciətdə aşağıdakılar göstərilməlidir:', locale)}
-              </p>
-              <ul>
-                <li>{tr('Ad', locale)}</li>
-                <li>{tr('Ata adı', locale)}</li>
-                <li>{tr('Soyad', locale)}</li>
-                <li>{tr('Ünvan və ya iş yeri', locale)}</li>
-                <li>{tr('İmza', locale)}</li>
-              </ul>
-              <p>
-                {tr('Bunlar göstərilmədikdə müraciət anonim sayılır.', locale)}
-              </p>
-            </div>
-          </section>
-
-          <section className="un-block" id="baxilma-muddetleri">
-            <h2 className="un-block-title">{tr('Baxılma müddətləri', locale)}</h2>
-            {/* F5.30b — QƏSDƏN BOŞ ŞABLON. Rəqəm YAZILMAYIB (bax fayl başındakı izah). */}
-            <p className="pr-plan-note">
-              {tr('Bu bənd ADDA-nın hüquq məsləhətçisi tərəfindən dəqiqləşdirilənədək boş saxlanılır.', locale)}
-            </p>
-          </section>
-
-          <section className="un-block">
-            <h2 className="un-block-title">{tr('Cavab', locale)}</h2>
-            <div className="prose">
-              <p>
-                {tr(
-                  'Müraciətə yazılı cavab verilir. Müraciət təmin edilmədikdə səbəb göstərilir və şikayət vermək qaydası izah olunur.',
-                  locale,
-                )}
-              </p>
-            </div>
-          </section>
-
-          <section className="un-block">
-            <h2 className="un-block-title">{tr('Təkrar müraciətlər', locale)}</h2>
-            <div className="prose">
-              <p>
-                {tr(
-                  'Eyni məsələ üzrə bir il ərzində 3 dəfə əsaslandırılmış cavab verilibsə və yeni məlumat yoxdursa, növbəti müraciət baxılmamış saxlanıla bilər. Bu barədə müraciət edənə 5 iş günü ərzində məlumat verilir.',
-                  locale,
-                )}
-              </p>
-            </div>
-          </section>
-
-          <section className="un-block" style={{ paddingBottom: '48px' }}>
-            <h2 className="un-block-title">{tr('Korrupsiya ilə bağlı müraciətlər', locale)}</h2>
-            <div className="prose">
-              <p>
-                {tr(
-                  'Korrupsiya ilə bağlı müraciətlərə 20 iş günü ərzində baxılır. Əlavə məlumat tələb olunduqda müddət daha 10 iş günü uzadıla bilər.',
-                  locale,
-                )}
-              </p>
-            </div>
-          </section>
-
-          <section className="un-block">
             <AppealIsland
               units={units.map((u) => ({ documentId: u.documentId, name: u.name }))}
               labels={appealLabels}
             />
+          </section>
+
+          {/* F5.32a — hüquqi mətn (8 bölmə) FORMADAN SONRA, akkordeonda,
+              HAMISI BAĞLI. Mətn F5.30b-dən DƏYİŞMƏYİB. */}
+          <section className="un-block">
+            <h2 className="un-block-title">{tr('Müraciət haqqında bilməli olduqlarınız', locale)}</h2>
+            <div className="un-expand-group">
+              <ExpandBlock label={tr('Hüquqi əsas', locale)}>
+                <div className="prose">
+                  <p>
+                    {tr(
+                      'Bu qayda Azərbaycan Respublikası Konstitusiyasının 57-ci maddəsinə və «Vətəndaşların müraciətlərinə baxılması qaydası haqqında» Azərbaycan Respublikasının Qanununa əsaslanır.',
+                      locale,
+                    )}
+                  </p>
+                </div>
+              </ExpandBlock>
+
+              <ExpandBlock label={tr('Müraciət növləri', locale)}>
+                <div className="prose">
+                  <p>
+                    {tr(
+                      'Qanunun 3-cü maddəsinə əsasən müraciətlər üç növə bölünür: təklif, ərizə və şikayət.',
+                      locale,
+                    )}
+                  </p>
+                </div>
+              </ExpandBlock>
+
+              <ExpandBlock label={tr('Müraciət yolları', locale)}>
+                <div className="prose">
+                  <ul>
+                    <li>{tr('Yazılı', locale)}</li>
+                    <li>{tr('Elektron', locale)}</li>
+                    <li>{tr('Şəxsən', locale)}</li>
+                    <li>{tr('Telefonla', locale)}</li>
+                  </ul>
+                </div>
+              </ExpandBlock>
+
+              <ExpandBlock label={tr('Müraciətdə nə göstərilməlidir', locale)}>
+                <div className="prose">
+                  <p>
+                    {tr('Müraciətdə aşağıdakılar göstərilməlidir:', locale)}
+                  </p>
+                  <ul>
+                    <li>{tr('Ad', locale)}</li>
+                    <li>{tr('Ata adı', locale)}</li>
+                    <li>{tr('Soyad', locale)}</li>
+                    <li>{tr('Ünvan və ya iş yeri', locale)}</li>
+                    <li>{tr('İmza', locale)}</li>
+                  </ul>
+                  <p>
+                    {tr('Bunlar göstərilmədikdə müraciət anonim sayılır.', locale)}
+                  </p>
+                </div>
+              </ExpandBlock>
+
+              <div id="baxilma-muddetleri">
+                <ExpandBlock label={tr('Baxılma müddətləri', locale)}>
+                  {/* F5.30b — QƏSDƏN BOŞ ŞABLON. Rəqəm YAZILMAYIB (bax fayl başındakı izah). */}
+                  <p className="pr-plan-note">
+                    {tr('Bu bənd ADDA-nın hüquq məsləhətçisi tərəfindən dəqiqləşdirilənədək boş saxlanılır.', locale)}
+                  </p>
+                </ExpandBlock>
+              </div>
+
+              <ExpandBlock label={tr('Cavab', locale)}>
+                <div className="prose">
+                  <p>
+                    {tr(
+                      'Müraciətə yazılı cavab verilir. Müraciət təmin edilmədikdə səbəb göstərilir və şikayət vermək qaydası izah olunur.',
+                      locale,
+                    )}
+                  </p>
+                </div>
+              </ExpandBlock>
+
+              <ExpandBlock label={tr('Təkrar müraciətlər', locale)}>
+                <div className="prose">
+                  <p>
+                    {tr(
+                      'Eyni məsələ üzrə bir il ərzində 3 dəfə əsaslandırılmış cavab verilibsə və yeni məlumat yoxdursa, növbəti müraciət baxılmamış saxlanıla bilər. Bu barədə müraciət edənə 5 iş günü ərzində məlumat verilir.',
+                      locale,
+                    )}
+                  </p>
+                </div>
+              </ExpandBlock>
+
+              <ExpandBlock label={tr('Korrupsiya ilə bağlı müraciətlər', locale)}>
+                <div className="prose">
+                  <p>
+                    {tr(
+                      'Korrupsiya ilə bağlı müraciətlərə 20 iş günü ərzində baxılır. Əlavə məlumat tələb olunduqda müddət daha 10 iş günü uzadıla bilər.',
+                      locale,
+                    )}
+                  </p>
+                </div>
+              </ExpandBlock>
+            </div>
           </section>
 
           <section className="un-block" style={{ paddingBottom: '48px' }}>
