@@ -1045,6 +1045,10 @@ const MENU_T: Array<[string, string, string]> = [
    'Я согласен(-на) на обработку моих персональных данных в целях рассмотрения моего обращения',
    'I consent to my personal data being processed for the purpose of responding to my appeal'],
   ['Davam etmək üçün razılıq qutusunu işarələyin.', 'Отметьте флажок согласия, чтобы продолжить.', 'Check the consent box to continue.'],
+  // --- F5.32c: AppealIsland tesdiq ekrani (az, ru, en) ---
+  ['Bu, rəsmi müraciətdir', 'Это официальное обращение', 'This is a formal appeal'],
+  ['Bu, qeyri-rəsmi sorğudur', 'Это неофициальный запрос', 'This is an informal request'],
+  ['Yeni müraciət göndər', 'Отправить новое обращение', 'Submit a New Appeal'],
   ['Akademik səviyyələr üzrə qəbul', 'Приём по уровням образования', 'Admissions by Academic Level'],
   ['Bakalavriat', 'Бакалавриат', 'Bachelor\'s Degree'],
   ['Subbakalavr', 'Степень младшего специалиста', 'Associate Degree'],

@@ -127,10 +127,29 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
           {trackingCode ? (
             <p className="ap-code">
               <span className="ap-code-label">{L("trackingLabel")}</span>
-              <span className="ap-code-value">{trackingCode}</span>
+              {/* F5.32c — böyük, seçilə bilən (mətn kimi, düymə DEYİL). */}
+              <span className="ap-code-value" role="textbox" aria-readonly="true" tabIndex={0}>
+                {trackingCode}
+              </span>
+            </p>
+          ) : null}
+          <p className="ap-status">
+            <span className={"ap-status-tag" + (isFormal ? " ap-status-tag--formal" : "")}>
+              {isFormal ? L("formalStatus") : L("informalStatus")}
+            </span>
+            <span className="ap-status-type">{L("type_" + appealType)}</span>
+          </p>
+          {isFormal ? (
+            <p className="ap-note ap-note--done">
+              <i className="ti ti-clock" aria-hidden="true" />
+              {L("deadlineNote")}
             </p>
           ) : null}
           <p className="cx-done-sub">{L("successSub")}</p>
+          <button type="button" className="cx-close" onClick={reset}>
+            <i className="ti ti-plus" aria-hidden="true" />
+            {L("newAppeal")}
+          </button>
         </div>
       </section>
     );
