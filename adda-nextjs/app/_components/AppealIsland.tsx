@@ -1,9 +1,15 @@
 "use client";
 
-// F5.31c/F5.32b — vətəndaş müraciəti forması. CorrectionIsland.tsx
-// nümunəsi (panel, `labels` prop-u, phase axını), AMMA IdentityGate
-// YOXDUR — bu, saytın İLK açıq (kimliksiz) formasıdır (bax F5.31d).
-// Ad/e-poçt s. müştəridən BİRBAŞA gəlir (identity-dən götürülmür).
+// F5.31c/F5.32/F5.33 — vətəndaş müraciəti forması. IdentityGate YOXDUR —
+// bu, saytın İLK açıq (kimliksiz) formasıdır (bax F5.31d). Ad/e-poçt s.
+// müştəridən BİRBAŞA gəlir (identity-dən götürülmür).
+//
+// F5.33 — TAM SƏHİFƏ formasıdır, `CorrectionIsland`-ın `.cx-*` (kiçik
+// vidcet qabığı, 23-correction.css) SİNİFLƏRİNDƏN TAM AYRIDIR — öz
+// `.ap-*` qabığını işlədir (40-appeal.css), enə TOXUNMUR (səhifənin
+// `.container`-i idarə edir, bax CLAUDE.md DİZAYN QAYDALARI: "bir səhifə,
+// bir en"). Başlıqda rəngli blok/ikon YOX — sadə Fraunces başlıq + bir
+// sətir izah, üstdə kartın öz qızılı xətti kifayətdir.
 //
 // F5.32b — bütün sahələr HƏMİŞƏ göstərilir (əvvəlki versiyada "sual"
 // seçiləndə ata adı/ünvan/bölmə gizlənirdi — F5.32-də ata adı MƏCBURİ
@@ -25,6 +31,7 @@ interface AppealIslandProps {
 }
 
 const TYPES: AppealType[] = ["sual", "teklif", "erize", "sikayet"];
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
 
 export default function AppealIsland({ units, labels }: AppealIslandProps) {
   const [appealType, setAppealType] = useState<AppealType>("sual");
@@ -51,7 +58,9 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
   const [err, setErr] = useState("");
   const [trackingCode, setTrackingCode] = useState("");
 
-  const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+  const L = (k: string): string => labels[k] ?? k;
+  const isFormal = appealType !== "sual";
+
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setAttachmentErr("");
@@ -74,9 +83,6 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
     reader.readAsDataURL(file);
     setAttachmentName(file.name);
   };
-
-  const L = (k: string): string => labels[k] ?? k;
-  const isFormal = appealType !== "sual";
 
   const reset = () => {
     setFirstName("");
@@ -163,12 +169,12 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
 
   if (phase === "done") {
     return (
-      <section className="cx ap" aria-label={L("title")}>
-        <div className="cx-done">
-          <span className="cx-done-ic">
+      <section className="ap-shell" aria-label={L("title")}>
+        <div className="ap-done">
+          <span className="ap-done-ic">
             <i className="ti ti-check" aria-hidden="true" />
           </span>
-          <p className="cx-done-msg">{L("successMsg")}</p>
+          <p className="ap-done-msg">{L("successMsg")}</p>
           {trackingCode ? (
             <p className="ap-code">
               <span className="ap-code-label">{L("trackingLabel")}</span>
@@ -190,8 +196,8 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
               {L("deadlineNote")}
             </p>
           ) : null}
-          <p className="cx-done-sub">{L("successSub")}</p>
-          <button type="button" className="cx-close" onClick={reset}>
+          <p className="ap-done-sub">{L("successSub")}</p>
+          <button type="button" className="ap-reset" onClick={reset}>
             <i className="ti ti-plus" aria-hidden="true" />
             {L("newAppeal")}
           </button>
@@ -201,26 +207,21 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
   }
 
   return (
-    <section className="cx ap" aria-label={L("title")}>
-      <header className="cx-head">
-        <span className="cx-head-ic">
-          <i className="ti ti-send" aria-hidden="true" />
-        </span>
-        <div>
-          <h3 className="cx-title">{L("title")}</h3>
-          <p className="cx-sub">{L("subtitle")}</p>
-        </div>
+    <section className="ap-shell" aria-label={L("title")}>
+      <header className="ap-header">
+        <h3 className="ap-h2">{L("title")}</h3>
+        <p className="ap-lead">{L("subtitle")}</p>
       </header>
 
-      <div className="cx-body">
-        <div className="cx-field">
-          <span className="cx-label">{L("typeLabel")}</span>
-          <div className="cx-seg" role="group">
+      <div className="ap-body">
+        <div className="ap-field">
+          <span className="ap-label">{L("typeLabel")}</span>
+          <div className="ap-seg" role="group">
             {TYPES.map((t) => (
               <button
                 key={t}
                 type="button"
-                className={`cx-seg-btn${appealType === t ? " is-active" : ""}`}
+                className={`ap-seg-btn${appealType === t ? " is-active" : ""}`}
                 onClick={() => setAppealType(t)}
               >
                 {L("type_" + t)}
@@ -242,38 +243,38 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
         )}
 
         <div className="ap-grid">
-          <div className="cx-field">
-            <label className="cx-label ap-label-ic" htmlFor="ap-first"><i className="ti ti-user" aria-hidden="true" />{L("firstNameLabel")}</label>
-            <input id="ap-first" className="cx-in" value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={100} required />
+          <div className="ap-field">
+            <label className="ap-label ap-label-ic" htmlFor="ap-first"><i className="ti ti-user" aria-hidden="true" />{L("firstNameLabel")}</label>
+            <input id="ap-first" className="ap-in" value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={100} required />
           </div>
-          <div className="cx-field">
-            <label className="cx-label ap-label-ic" htmlFor="ap-last"><i className="ti ti-user" aria-hidden="true" />{L("lastNameLabel")}</label>
-            <input id="ap-last" className="cx-in" value={lastName} onChange={(e) => setLastName(e.target.value)} maxLength={100} required />
+          <div className="ap-field">
+            <label className="ap-label ap-label-ic" htmlFor="ap-last"><i className="ti ti-user" aria-hidden="true" />{L("lastNameLabel")}</label>
+            <input id="ap-last" className="ap-in" value={lastName} onChange={(e) => setLastName(e.target.value)} maxLength={100} required />
           </div>
-          <div className="cx-field">
-            <label className="cx-label ap-label-ic" htmlFor="ap-patronymic"><i className="ti ti-user" aria-hidden="true" />{L("patronymicLabel")}</label>
-            <input id="ap-patronymic" className="cx-in" value={patronymic} onChange={(e) => setPatronymic(e.target.value)} maxLength={100} required />
+          <div className="ap-field">
+            <label className="ap-label ap-label-ic" htmlFor="ap-patronymic"><i className="ti ti-user" aria-hidden="true" />{L("patronymicLabel")}</label>
+            <input id="ap-patronymic" className="ap-in" value={patronymic} onChange={(e) => setPatronymic(e.target.value)} maxLength={100} required />
           </div>
-          <div className="cx-field">
-            <label className="cx-label ap-label-ic" htmlFor="ap-email"><i className="ti ti-mail" aria-hidden="true" />{L("emailLabel")}</label>
-            <input id="ap-email" type="email" className="cx-in" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} required />
+          <div className="ap-field">
+            <label className="ap-label ap-label-ic" htmlFor="ap-email"><i className="ti ti-mail" aria-hidden="true" />{L("emailLabel")}</label>
+            <input id="ap-email" type="email" className="ap-in" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} required />
           </div>
-          <div className="cx-field">
-            <label className="cx-label ap-label-ic" htmlFor="ap-phone"><i className="ti ti-phone" aria-hidden="true" />{L("phoneLabel")}</label>
-            <input id="ap-phone" type="tel" className="cx-in" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} required />
+          <div className="ap-field">
+            <label className="ap-label ap-label-ic" htmlFor="ap-phone"><i className="ti ti-phone" aria-hidden="true" />{L("phoneLabel")}</label>
+            <input id="ap-phone" type="tel" className="ap-in" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} required />
           </div>
-          <div className="cx-field">
-            <label className="cx-label" htmlFor="ap-address">{L("addressLabel")}</label>
-            <input id="ap-address" className="cx-in" value={address} onChange={(e) => setAddress(e.target.value)} maxLength={300} />
+          <div className="ap-field">
+            <label className="ap-label" htmlFor="ap-address">{L("addressLabel")}</label>
+            <input id="ap-address" className="ap-in" value={address} onChange={(e) => setAddress(e.target.value)} maxLength={300} />
           </div>
-          <div className="cx-field ap-grid-full">
-            <label className="cx-label ap-label-ic" htmlFor="ap-subject"><i className="ti ti-file-text" aria-hidden="true" />{L("subjectLabel")}</label>
-            <input id="ap-subject" className="cx-in" value={subject} onChange={(e) => setSubject(e.target.value)} maxLength={300} required />
+          <div className="ap-field ap-grid-full">
+            <label className="ap-label ap-label-ic" htmlFor="ap-subject"><i className="ti ti-file-text" aria-hidden="true" />{L("subjectLabel")}</label>
+            <input id="ap-subject" className="ap-in" value={subject} onChange={(e) => setSubject(e.target.value)} maxLength={300} required />
           </div>
           {units.length ? (
-            <div className="cx-field ap-grid-full">
-              <label className="cx-label" htmlFor="ap-unit">{L("unitLabel")}</label>
-              <select id="ap-unit" className="cx-in" value={targetUnit} onChange={(e) => setTargetUnit(e.target.value)}>
+            <div className="ap-field ap-grid-full">
+              <label className="ap-label" htmlFor="ap-unit">{L("unitLabel")}</label>
+              <select id="ap-unit" className="ap-in" value={targetUnit} onChange={(e) => setTargetUnit(e.target.value)}>
                 <option value="">{L("unitPlaceholder")}</option>
                 {units.map((u) => (
                   <option key={u.documentId} value={u.documentId}>{u.name}</option>
@@ -281,16 +282,16 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
               </select>
             </div>
           ) : null}
-          <div className="cx-field ap-grid-full">
-            <label className="cx-label ap-label-ic" htmlFor="ap-message"><i className="ti ti-message" aria-hidden="true" />{L("messageLabel")}</label>
-            <textarea id="ap-message" className="cx-ta" value={message} onChange={(e) => setMessage(e.target.value)} maxLength={5000} required />
+          <div className="ap-field ap-grid-full">
+            <label className="ap-label ap-label-ic" htmlFor="ap-message"><i className="ti ti-message" aria-hidden="true" />{L("messageLabel")}</label>
+            <textarea id="ap-message" className="ap-ta" value={message} onChange={(e) => setMessage(e.target.value)} maxLength={5000} required />
           </div>
-          <div className="cx-field ap-grid-full">
-            <label className="cx-label" htmlFor="ap-attachment">{L("attachmentLabel")}</label>
+          <div className="ap-field ap-grid-full">
+            <label className="ap-label" htmlFor="ap-attachment">{L("attachmentLabel")}</label>
             <input
               id="ap-attachment"
               type="file"
-              className="cx-in ap-file"
+              className="ap-in ap-file"
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
               onChange={onFileChange}
             />
@@ -318,13 +319,13 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
           <span>{L("consentLabel")}</span>
         </label>
 
-        <div className="cx-actions">
-          <button type="button" className="cx-submit" onClick={submit} disabled={phase === "sending"}>
+        <div className="ap-actions">
+          <button type="button" className="ap-submit" onClick={submit} disabled={phase === "sending"}>
             <i className="ti ti-send" aria-hidden="true" />
             {phase === "sending" ? L("sending") : L("submit")}
           </button>
         </div>
-        {phase === "error" && err ? <p className="cx-err">{err}</p> : null}
+        {phase === "error" && err ? <p className="ap-err">{err}</p> : null}
       </div>
     </section>
   );

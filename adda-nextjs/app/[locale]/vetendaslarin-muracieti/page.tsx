@@ -32,7 +32,6 @@ import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
 import '../../_styles/36-unit.css';
-import '../../_styles/23-correction.css';
 import '../../_styles/40-appeal.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';

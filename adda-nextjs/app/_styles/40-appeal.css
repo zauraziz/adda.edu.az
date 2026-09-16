@@ -1,15 +1,126 @@
-/* 40-appeal.css — /[locale]/vetendaslarin-muracieti (F5.31c/F5.32b)
-   AppealIsland.tsx bazası 23-correction.css-dəki .cx-* siniflərdir (eyni
-   panel/sahə/düymə dili) — bura YALNIZ o fayl əhatə etməyən hissəni verir:
-   qeyri-rəsmi/qanuni müddət qeydi, izləmə kodu, honeypot, 2-sütunlu grid,
-   razılıq qutusu. Tailwind/lucide İŞLƏDİLMİR — Tabler ikon dəsti + layihə
-   CSS dəyişənləri (:root). */
+/* 40-appeal.css — /[locale]/vetendaslarin-muracieti (F5.31c/F5.32/F5.33)
+   AppealIsland TAM SƏHİFƏ formasıdır, `23-correction.css`-dəki `.cx-*`
+   (kiçik vidcet qabığı) İLƏ PAYLAŞILMIR — F5.33-dən bəri tam ayrıdır
+   (bax CLAUDE.md, DİZAYN QAYDALARI: "vidcet qabığı ≠ səhifə qabığı").
+   `.ap-shell` max-width GƏTİRMİR — səhifənin `.container`-i (1240px)
+   idarə edir, "bir səhifə, bir en" qaydası. Tailwind/lucide İŞLƏDİLMİR —
+   Tabler ikon dəsti + layihə CSS dəyişənləri (:root). */
 
-/* F5.32b — kart: ağ fon/kölgə `.cx`-dən gəlir (23-correction.css),
-   bura YALNIZ üstdəki qızılı nazik xətti əlavə edir. */
-.ap.cx {
-  border-top: 3px solid var(--gold-500);
+/* F5.33 — qabıq: ağ fon, yumşaq kölgə, üstdə qızılı nazik xətt. Enə
+   TOXUNMUR (valideyn `.un-block`/`.container` idarə edir). */
+.ap-shell {
   margin-top: 2rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-top: 3px solid var(--gold-500);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px -16px rgba(11, 61, 92, 0.18);
+}
+
+/* F5.33 — sadə başlıq: rəngli blok/ikon YOX, Fraunces başlıq + bir
+   sətir izah (Manrope). */
+.ap-header {
+  padding: 1.4rem 1.6rem 1.1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+.ap-h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-900);
+}
+.ap-lead {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+.ap-body {
+  padding: 1.3rem 1.6rem 1.5rem;
+}
+
+.ap-field {
+  margin-bottom: 1.05rem;
+}
+.ap-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+/* F5.32b — sahə etiketi + ikon (mövcud Tabler dəsti: ti-user/ti-mail/
+   ti-phone/ti-file-text/ti-message), 18px, currentColor. */
+.ap-label-ic {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ap-label-ic i {
+  font-size: 18px;
+  color: currentColor;
+}
+
+.ap-in,
+.ap-ta {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.85rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--gray-50);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--gray-900);
+  transition: border-color var(--nav-dur) var(--nav-ease), background var(--nav-dur) var(--nav-ease),
+    box-shadow var(--nav-dur) var(--nav-ease);
+}
+.ap-ta {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.ap-in:focus,
+.ap-ta:focus {
+  outline: none;
+  border-color: var(--navy-600);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(18, 96, 143, 0.12);
+}
+
+/* F5.32a — «Müraciətin növü» seçimi. */
+.ap-seg {
+  display: inline-flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.ap-seg-btn {
+  padding: 0.45rem 0.95rem;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--gray-700);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--nav-dur) var(--nav-ease), background var(--nav-dur) var(--nav-ease),
+    color var(--nav-dur) var(--nav-ease);
+}
+.ap-seg-btn:hover {
+  border-color: var(--navy-600);
+  color: var(--navy-700);
+}
+.ap-seg-btn.is-active {
+  border-color: var(--navy-800);
+  background: var(--navy-800);
+  color: var(--white);
 }
 
 /* F5.32b — sahələr iki sütunlu grid, mobildə tək sütun. Mövzu/bölmə/mətn
@@ -26,18 +137,6 @@
   .ap-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* F5.32b — sahə etiketi + ikon (mövcud Tabler dəsti: ti-user/ti-mail/
-   ti-phone/ti-file-text/ti-message), 18px, currentColor. */
-.ap-label-ic {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.ap-label-ic i {
-  font-size: 18px;
-  color: currentColor;
 }
 
 /* F5.32b — razılıq qutusu (məcburi). */
@@ -60,7 +159,7 @@
   accent-color: var(--navy-800);
 }
 
-/* F5.32e — fayl əlavəsi. `.cx-in` ilə eyni çərçivə (input[type=file]-a
+/* F5.32e — fayl əlavəsi. `.ap-in` ilə eyni çərçivə (input[type=file]-a
    tətbiq olunanda brauzer öz "Fayl seç" düyməsini içəridə çəkir). */
 .ap-file {
   padding: 0.55rem 0.85rem;
@@ -82,12 +181,15 @@
   font-size: var(--text-sm);
   color: var(--navy-800);
 }
+/* F5.33 — DİZAYN QAYDALARI: qırmızı/başqa palitra YOX, xəta qalın
+   navy mətnlə fərqləndirilir. */
 .ap-file-err {
   display: block;
   margin-top: 0.4rem;
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--error);
+  font-weight: 700;
+  color: var(--navy-900);
 }
 
 /* F5.31c — "Sual" qeyri-rəsmi qeydi / rəsmi növün qanuni müddət qeydi. */
@@ -109,6 +211,96 @@
   flex-shrink: 0;
   margin-top: 0.15rem;
   color: var(--gold-600);
+}
+
+.ap-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+}
+.ap-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--gold-500);
+  color: var(--navy-900);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--nav-dur) var(--nav-ease), transform var(--nav-dur) var(--nav-ease);
+}
+.ap-submit i {
+  font-size: 1.05rem;
+}
+.ap-submit:hover:not(:disabled) {
+  background: var(--gold-600);
+  transform: translateY(-1px);
+}
+.ap-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+/* F5.33 — DİZAYN QAYDALARI: qırmızı/başqa palitra YOX, xəta qalın
+   navy mətnlə fərqləndirilir. */
+.ap-err {
+  margin: 0.85rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+/* F5.32c/F5.33 — göndərildikdən sonra, EYNİ `.ap-shell` qabığında/endə. */
+.ap-done {
+  padding: 2.4rem 1.6rem;
+  text-align: center;
+}
+/* F5.33 — DİZAYN QAYDALARI: yalnız navy/qızılı (yaşıl "uğur" rəngi
+   YOXDUR, 23-correction.css-dəki köhnə nümunədən qəsdən UZAQLAŞILIB). */
+.ap-done-ic {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--navy-800);
+  color: var(--gold-500);
+  font-size: 1.9rem;
+}
+.ap-done-msg {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--navy-900);
+}
+.ap-done-sub {
+  margin: 0 0 1.3rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+.ap-reset {
+  padding: 0.7rem 1.5rem;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--navy-800);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--nav-dur) var(--nav-ease);
+}
+.ap-reset:hover {
+  border-color: var(--navy-800);
 }
 
 /* F5.31c — göndərildikdən sonra izləmə kodu. */
@@ -196,4 +388,24 @@
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+@media (max-width: 560px) {
+  .ap-header {
+    padding: 1.1rem 1.2rem 0.9rem;
+  }
+  .ap-body {
+    padding: 1.1rem 1.2rem 1.3rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ap-seg-btn,
+  .ap-in,
+  .ap-ta,
+  .ap-submit {
+    transition: none;
+  }
+  .ap-submit:hover:not(:disabled) {
+    transform: none;
+  }
 }
