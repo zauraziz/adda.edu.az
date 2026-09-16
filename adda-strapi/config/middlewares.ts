@@ -40,7 +40,12 @@ const config: Core.Config.Middlewares = [
     name: 'strapi::body',
     config: {
       formLimit: '100mb',   // multipart (fayl yükləmə)
-      jsonLimit: '10mb',
+      // F5.32e — appeal.attachment (max 10 MB) JSON gövdəsində base64 kimi
+      // gəlir (identity.ts uploadPhoto-dakı EYNİ üsul — magic-bayt
+      // yoxlaması üçün fayl onsuz da yaddaşa oxunmalıdır, multipart əlavə
+      // addım olardı). Base64 xam ölçünün ~1.37 qatıdır — 10 MB fayl
+      // ~13.7 MB JSON gövdəsi deməkdir, ona görə 10mb-dan 16mb-a qaldırılıb.
+      jsonLimit: '16mb',
       textLimit: '10mb',
       formidable: { maxFileSize: 100 * 1024 * 1024 },
     },

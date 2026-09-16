@@ -1049,6 +1049,13 @@ const MENU_T: Array<[string, string, string]> = [
   ['Bu, rəsmi müraciətdir', 'Это официальное обращение', 'This is a formal appeal'],
   ['Bu, qeyri-rəsmi sorğudur', 'Это неофициальный запрос', 'This is an informal request'],
   ['Yeni müraciət göndər', 'Отправить новое обращение', 'Submit a New Appeal'],
+  // --- F5.32e: AppealIsland fayl əlavəsi (az, ru, en) ---
+  ['Fayl əlavəsi (istəyə bağlı)', 'Вложение файла (необязательно)', 'File Attachment (optional)'],
+  ['PDF, DOC, DOCX, JPG, PNG — maksimum 10 MB', 'PDF, DOC, DOCX, JPG, PNG — максимум 10 МБ', 'PDF, DOC, DOCX, JPG, PNG — max 10 MB'],
+  ['Fayl 10 MB-dan böyükdür.', 'Файл превышает 10 МБ.', 'The file exceeds 10 MB.'],
+  ['Bu fayl növünə icazə verilmir. PDF, DOC, DOCX, JPG və ya PNG seçin.',
+   'Этот тип файла не поддерживается. Выберите PDF, DOC, DOCX, JPG или PNG.',
+   'This file type is not allowed. Choose PDF, DOC, DOCX, JPG, or PNG.'],
   ['Akademik səviyyələr üzrə qəbul', 'Приём по уровням образования', 'Admissions by Academic Level'],
   ['Bakalavriat', 'Бакалавриат', 'Bachelor\'s Degree'],
   ['Subbakalavr', 'Степень младшего специалиста', 'Associate Degree'],

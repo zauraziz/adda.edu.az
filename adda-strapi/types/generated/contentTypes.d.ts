@@ -595,6 +595,7 @@ export interface ApiAppealAppeal extends Struct.CollectionTypeSchema {
       ['sual', 'teklif', 'erize', 'sikayet']
     > &
       Schema.Attribute.Required;
+    attachment: Schema.Attribute.Media<'images' | 'files'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

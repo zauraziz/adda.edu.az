@@ -60,6 +60,36 @@
   accent-color: var(--navy-800);
 }
 
+/* F5.32e — fayl əlavəsi. `.cx-in` ilə eyni çərçivə (input[type=file]-a
+   tətbiq olunanda brauzer öz "Fayl seç" düyməsini içəridə çəkir). */
+.ap-file {
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+}
+.ap-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+.ap-file-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-800);
+}
+.ap-file-err {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--error);
+}
+
 /* F5.31c — "Sual" qeyri-rəsmi qeydi / rəsmi növün qanuni müddət qeydi. */
 .ap-note {
   display: flex;

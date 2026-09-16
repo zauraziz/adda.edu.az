@@ -38,12 +38,42 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [consent, setConsent] = useState(false);
+  // F5.32e — fayl base64 data-url kimi saxlanılır (serverə EYNİ formatda
+  // göndərilir). Client tərəfdəki tip/ölçü yoxlaması YALNIZ UX üçündür —
+  // əsl yoxlama serverdədir (bax appeal/controllers/appeal.ts sniffFile).
+  const [attachmentName, setAttachmentName] = useState("");
+  const [attachmentData, setAttachmentData] = useState("");
+  const [attachmentErr, setAttachmentErr] = useState("");
   // F5.31d — honeypot: real istifadəçiyə görünmür (CSS-lə ekrandan kənara
   // çıxarılıb), botlar adətən HƏR sahəni doldurur. Dolu gələrsə server rədd edir.
   const [hpField, setHpField] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [err, setErr] = useState("");
   const [trackingCode, setTrackingCode] = useState("");
+
+  const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setAttachmentErr("");
+    if (!file) {
+      setAttachmentName("");
+      setAttachmentData("");
+      return;
+    }
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      setAttachmentErr(L("attachmentTooLarge"));
+      e.target.value = "";
+      setAttachmentName("");
+      setAttachmentData("");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAttachmentData(typeof reader.result === "string" ? reader.result : "");
+    };
+    reader.readAsDataURL(file);
+    setAttachmentName(file.name);
+  };
 
   const L = (k: string): string => labels[k] ?? k;
   const isFormal = appealType !== "sual";
@@ -59,6 +89,9 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
     setSubject("");
     setMessage("");
     setConsent(false);
+    setAttachmentName("");
+    setAttachmentData("");
+    setAttachmentErr("");
     setHpField("");
     setTrackingCode("");
     setErr("");
@@ -98,12 +131,24 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
           targetUnit: targetUnit || undefined,
           subject,
           message,
+          attachment: attachmentData || undefined,
           website: hpField,
         }),
       });
       const data = (await res.json()) as { ok?: boolean; error?: string; trackingCode?: string };
       if (res.status === 429) {
         setErr(L("tooMany"));
+        setPhase("error");
+        return;
+      }
+      // F5.32e — əlavə tip/ölçü serverdə rədd edilibsə spesifik mesaj.
+      if (data.error === "bad_attachment_type" || data.error === "bad_attachment_encoding") {
+        setErr(L("attachmentBadType"));
+        setPhase("error");
+        return;
+      }
+      if (data.error === "attachment_too_large") {
+        setErr(L("attachmentTooLarge"));
         setPhase("error");
         return;
       }
@@ -239,6 +284,19 @@ export default function AppealIsland({ units, labels }: AppealIslandProps) {
           <div className="cx-field ap-grid-full">
             <label className="cx-label ap-label-ic" htmlFor="ap-message"><i className="ti ti-message" aria-hidden="true" />{L("messageLabel")}</label>
             <textarea id="ap-message" className="cx-ta" value={message} onChange={(e) => setMessage(e.target.value)} maxLength={5000} required />
+          </div>
+          <div className="cx-field ap-grid-full">
+            <label className="cx-label" htmlFor="ap-attachment">{L("attachmentLabel")}</label>
+            <input
+              id="ap-attachment"
+              type="file"
+              className="cx-in ap-file"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              onChange={onFileChange}
+            />
+            <span className="ap-hint">{L("attachmentHint")}</span>
+            {attachmentName ? <span className="ap-file-name"><i className="ti ti-paperclip" aria-hidden="true" />{attachmentName}</span> : null}
+            {attachmentErr ? <span className="ap-file-err">{attachmentErr}</span> : null}
           </div>
         </div>
 

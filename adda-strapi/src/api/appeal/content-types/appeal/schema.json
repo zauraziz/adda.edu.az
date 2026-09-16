@@ -85,6 +85,14 @@
     },
     "respondedAt": {
       "type": "datetime"
+    },
+    "attachment": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     }
   }
 }
