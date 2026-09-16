@@ -20,6 +20,12 @@
  *    ehtimalını DB səviyyəsində bağlayır.
  *  - `respondedAt` YARADILARKƏN həmişə boşdur — yalnız admin panelində
  *    cavab veriləndə doldurulur.
+ *  - F5.32f — `internalNote`/`assignedTo` YARADILARKƏN həmişə silinir:
+ *    bunlar ADMİN AXINI sahələridir (daxili qeyd/təyin edilmiş şəxs),
+ *    müraciət EDƏN tərəfindən DEYİL, YALNIZ admin panelində sonradan
+ *    doldurulur. Kontroller (F5.31d) onsuz da bunları müştəridən oxumur —
+ *    bura İKİNCİ müdafiə qatıdır (məs. gələcəkdə `update` icazəsi
+ *    səhvən açılarsa belə).
  *
  * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
  */
@@ -70,10 +76,15 @@ function sanitize(data: Data | undefined, isCreate: boolean): void {
     delete data.trackingCode;
   }
 
+  if (data.internalNote !== undefined) data.internalNote = clean(data.internalNote, 5000);
+
   if (isCreate) {
     data.status = 'yeni';
     data.submittedAt = new Date().toISOString();
     data.respondedAt = null;
+    // F5.32f — admin axını sahələri, müraciət edən DOLDURMUR.
+    delete data.internalNote;
+    delete data.assignedTo;
   } else {
     // Yenilənmədə submittedAt DƏYİŞDİRİLMİR — yalnız yaradılış anını göstərir.
     delete data.submittedAt;

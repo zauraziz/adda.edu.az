@@ -576,7 +576,7 @@ export interface ApiAnnouncementAnnouncement
 export interface ApiAppealAppeal extends Struct.CollectionTypeSchema {
   collectionName: 'appeals';
   info: {
-    description: 'R\u0259smi/qeyri-r\u0259smi v\u0259t\u0259nda\u015F m\u00FCraci\u0259tl\u0259ri (F5.31) \u2014 yaln\u0131z Public `create`, oxu admin-d\u0259';
+    description: 'R\u0259smi/qeyri-r\u0259smi v\u0259t\u0259nda\u015F m\u00FCraci\u0259tl\u0259ri (F5.31/F5.32) \u2014 yaln\u0131z Public `create`, oxu/status ax\u0131n\u0131 admin-d\u0259';
     displayName: '4. M\u00FCraci\u0259t \u2014 V\u0259t\u0259nda\u015F m\u00FCraci\u0259ti';
     pluralName: 'appeals';
     singularName: 'appeal';
@@ -595,12 +595,14 @@ export interface ApiAppealAppeal extends Struct.CollectionTypeSchema {
       ['sual', 'teklif', 'erize', 'sikayet']
     > &
       Schema.Attribute.Required;
+    assignedTo: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
     attachment: Schema.Attribute.Media<'images' | 'files'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
     firstName: Schema.Attribute.String & Schema.Attribute.Required;
+    internalNote: Schema.Attribute.Text;
     isFormal: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     lastName: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;

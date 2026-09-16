@@ -5,7 +5,7 @@
     "singularName": "appeal",
     "pluralName": "appeals",
     "displayName": "4. Müraciət — Vətəndaş müraciəti",
-    "description": "Rəsmi/qeyri-rəsmi vətəndaş müraciətləri (F5.31) — yalnız Public `create`, oxu admin-də"
+    "description": "Rəsmi/qeyri-rəsmi vətəndaş müraciətləri (F5.31/F5.32) — yalnız Public `create`, oxu/status axını admin-də"
   },
   "options": {
     "draftAndPublish": false
@@ -93,6 +93,14 @@
         "images",
         "files"
       ]
+    },
+    "internalNote": {
+      "type": "text"
+    },
+    "assignedTo": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::person.person"
     }
   }
 }
