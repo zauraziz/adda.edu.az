@@ -25,6 +25,35 @@ Mühit: Windows, PowerShell 5.1, `E:\web-projects\adda.edu.az`.
 
 ---
 
+## DİZAYN QAYDALARI — hər tapşırıqda təkrar yazılmır, DAİMİDİR
+
+### Bir səhifə, bir en
+Bir səhifədə yalnız BİR konteyner eni işlənir (`.container`, 1240px).
+Bölmələrin fərqli enlərdə olması QADAĞANDIR. Komponent öz `max-width`
+gətirirsə, səhifə kontekstində LƏĞV EDİLİR.
+
+### Vidcet qabığı ≠ səhifə qabığı
+`.cx` (23-correction.css) KİÇİK VİDCET üçündür — kənarda, məzmunun
+yanında. Tam səhifə forması üçün İŞLƏDİLMİR. Səhifə forması öz
+qabığını qurur.
+
+### Kilidli dizayn sistemi
+- Şrift: Fraunces (başlıq) + Manrope (mətn). Başqa şrift YOX.
+- Rəng: navy #0B3D5C, qızılı #C9A961. Başqa palitra YOX.
+- İkon: Tabler şrifti (`ti ti-*`). lucide, Font Awesome, YENİ PAKET YOX.
+- Emoji QADAĞANDIR — bütün səhifələrdə.
+- Tailwind YOXDUR. Yalnız `_styles/*.css`.
+- Boşluq şkalası: 4/8/12/16/24/32/48px (F4.9e).
+
+### Boş məzmun
+Boş sahə/blok render OLUNMUR. «—» və ya boş xana ilə doldurulmur.
+
+### Yeni asılılıq
+Yeni npm paketi ƏLAVƏ EDİLMİR. Mövcud vasitə kifayət etmirsə,
+əvvəlcə soruşulur.
+
+---
+
 ## İş qaydaları
 
 ### Commit
