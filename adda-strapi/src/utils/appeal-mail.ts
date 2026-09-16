@@ -1,5 +1,5 @@
 /**
- * F5.31e — Müraciət bildirişləri (yeni appeal yaradılandan sonra).
+ * F5.31e/F5.32d — Müraciət bildirişləri (yeni appeal yaradılandan sonra).
  *
  * İKİ e-poçt:
  *  1. AİDİYYƏTİ ÜNVANA — `targetUnit` seçilibsə VƏ o bölmənin `email`-i
@@ -7,9 +7,13 @@
  *     `info@adda.edu.az`, bax _components/Footer.tsx SITE_PHONE-un yanındakı
  *     eyni qərar — bir mənbə, iki səhifədə TƏKRARLANMASIN deyə burada da
  *     həmin ünvan HARDCODE olunub, Strapi-də ayrıca "əlaqə ünvanı" sahəsi yoxdur).
- *  2. MÜRACİƏT EDƏNƏ (təsdiq) — izləmə kodu + növ + qanuni müddət qeydi.
- *     Qeyd BURADA DA rəqəm YAZMIR (F5.31b/c-dəki eyni qayda) — YALNIZ
- *     səhifəyə keçid verir.
+ *  2. MÜRACİƏT EDƏNƏ (təsdiq) — F5.32d-də YOXLANILIB/GENİŞLƏNDİRİLİB:
+ *     izləmə kodu, növ, MÖVZU, GÖNDƏRİLMƏ TARİXİ (hamısı artıq var idi
+ *     ya da BURADA əlavə olundu), + hüquqi məlumatlandırma bloku (müddət/
+ *     cavab qaydası/şikayət hüququ — YALNIZ RƏSMİ növlərdə, "sual" üçün
+ *     mənasızdır) + ADDA əlaqə məlumatı (F5.30a-dakı EYNİ təsdiqlənmiş
+ *     ünvan/telefon/e-poçt). Müddət qeydi BURADA DA rəqəm yazmır (F5.31b/
+ *     c-dəki eyni qayda) — YALNIZ səhifəyə keçid verir.
  *
  * `deliver()` identity xidmətindən İDXAL OLUNUR (Resend/Brevo/SMTP seçimi
  * TƏKRAR yazılmasın, bax ../api/identity/services/identity.ts). Xəta
@@ -41,6 +45,11 @@ const TYPE_LABEL: Record<string, string> = {
 
 const SITE_URL = (process.env.SITE_URL || 'https://demo.adda.edu.az').replace(/\/+$/, '');
 
+// F5.32d — F5.30a-da təsdiqlənmiş, canlıda olan əlaqə məlumatı (bax
+// _components/Footer.tsx SITE_PHONE-un yanındakı eyni qərar/izah).
+const ADDA_ADDRESS = 'AZ1000, Bakı, Zərifə Əliyeva küçəsi 18';
+const ADDA_PHONE = '+994 12 404 33 40';
+
 interface AppealRow {
   documentId: unknown;
   trackingCode: unknown;
@@ -54,6 +63,7 @@ interface AppealRow {
   subject: unknown;
   message: unknown;
   targetUnit: unknown;
+  submittedAt: unknown;
 }
 
 /** `targetUnit` seçilmiş bölmənin e-poçtu, yoxdursa ümumi ünvan. */
@@ -78,6 +88,15 @@ function fullName(appeal: AppealRow): string {
   return [appeal.firstName, appeal.patronymic, appeal.lastName]
     .filter((v) => typeof v === 'string' && v)
     .join(' ');
+}
+
+/** F5.32d — göndərilmə tarixi, gg.aa.iiii formatında (az.). */
+function formatDate(raw: unknown): string {
+  const d = typeof raw === 'string' ? new Date(raw) : null;
+  if (!d || Number.isNaN(d.getTime())) return '';
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return dd + '.' + mm + '.' + d.getFullYear();
 }
 
 export async function notifyAppeal(strapi: StrapiLike, appealIn: unknown): Promise<void> {
@@ -112,16 +131,40 @@ export async function notifyAppeal(strapi: StrapiLike, appealIn: unknown): Promi
     strapi.log.warn('[appeal-mail] adiyyeti unvana getmedi (' + staffResult.status + '/' + staffResult.via + '): ' + trackingCode);
   }
 
+  // F5.32d — YALNIZ RƏSMİ növlərdə hüquqi bənd: "sual" məcburi rəsmi
+  // qaydalara tabe deyil (bax page.tsx/AppealIsland.tsx eyni qayda).
+  const isFormal = String(appeal.appealType) !== 'sual';
+  const legalBlock = isFormal
+    ? [
+        'Hüquqi məlumatlandırma:',
+        '- Baxılma müddəti hüquqi əsasda müəyyən olunur — ətraflı: ' + appealsUrl,
+        '- Cavab yazılı verilir; müraciətiniz təmin edilmədikdə səbəb göstərilir və şikayət vermək qaydası izah olunur.',
+        '- Nəticədən razı qalmasanız, qanunla müəyyən edilmiş qaydada şikayət etmək hüququnuz var.',
+        '',
+      ]
+    : [];
+
+  const submittedDate = formatDate(appeal.submittedAt);
   const submitterText = [
     'Hörmətli ' + name + ',',
     '',
-    'Müraciətiniz qəbul edildi. İzləmə kodunuz: ' + trackingCode,
-    'Növ: ' + typeLabel,
+    'Müraciətiniz qəbul edildi.',
     '',
-    'Baxılma müddəti hüquqi əsasda müəyyən olunur — ətraflı: ' + appealsUrl,
+    'İzləmə kodu: ' + trackingCode,
+    'Növ: ' + typeLabel,
+    'Mövzu: ' + String(appeal.subject ?? ''),
+    submittedDate ? 'Göndərilmə tarixi: ' + submittedDate : '',
+    '',
+    ...legalBlock,
+    'ADDA əlaqə:',
+    '- Ünvan: ' + ADDA_ADDRESS,
+    '- Telefon: ' + ADDA_PHONE,
+    '- E-poçt: ' + FALLBACK_EMAIL,
     '',
     'Azərbaycan Dövlət Dəniz Akademiyası',
-  ].join('\n');
+  ]
+    .filter((line, i, arr) => line !== '' || arr[i - 1] !== '')
+    .join('\n');
 
   const submitterEmail = typeof appeal.email === 'string' ? appeal.email : '';
   if (submitterEmail) {
