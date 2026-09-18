@@ -20,6 +20,7 @@ const PUBLIC_READ_UIDS = [
   'api::department.department',
   'api::document.document',
   'api::event.event',
+  'api::facility.facility',
   'api::faculty.faculty',
   'api::menu.menu',
   'api::milestone.milestone',

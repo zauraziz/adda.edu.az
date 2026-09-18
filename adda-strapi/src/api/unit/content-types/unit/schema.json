@@ -227,6 +227,12 @@
       "relation": "manyToMany",
       "target": "api::document.document",
       "mappedBy": "units"
+    },
+    "facilities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::facility.facility",
+      "mappedBy": "unit"
     }
   }
 }

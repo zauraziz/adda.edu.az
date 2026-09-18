@@ -1093,6 +1093,80 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
+  collectionName: 'facilities';
+  info: {
+    description: 'Simulyator/trenajor/laboratoriya/auditoriya siyah\u0131s\u0131 (F5.34)';
+    displayName: '2. Akademiya \u2014 Auditoriya v\u0259 laboratoriya';
+    pluralName: 'facilities';
+    singularName: 'facility';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    facilityType: Schema.Attribute.Enumeration<
+      ['simulyator', 'trenajor', 'laboratoriya', 'auditoriya']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::facility.facility'
+    >;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    relatedProgram: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    roomNumber: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    sortOrder: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<100>;
+    unit: Schema.Attribute.Relation<'manyToOne', 'api::unit.unit'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFacultyFaculty extends Struct.CollectionTypeSchema {
   collectionName: 'faculties';
   info: {
@@ -2639,6 +2713,10 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    facilities: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::facility.facility'
+    >;
     faq: Schema.Attribute.Component<'unit.faq', true> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -3274,6 +3352,7 @@ declare module '@strapi/strapi' {
       'api::department.department': ApiDepartmentDepartment;
       'api::document.document': ApiDocumentDocument;
       'api::event.event': ApiEventEvent;
+      'api::facility.facility': ApiFacilityFacility;
       'api::faculty.faculty': ApiFacultyFaculty;
       'api::hero.hero': ApiHeroHero;
       'api::identity.identity': ApiIdentityIdentity;
