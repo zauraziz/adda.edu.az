@@ -937,6 +937,32 @@ export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
   });
 }
 
+export type FacilityType = 'simulyator' | 'trenajor' | 'laboratoriya' | 'auditoriya';
+/** Sxemdəki enum sırası — sayğac nişanları və qruplaşma bu ardıcıllıqla göstərilir (F5.34d/e). */
+export const FACILITY_TYPES: FacilityType[] = ['simulyator', 'trenajor', 'laboratoriya', 'auditoriya'];
+
+export interface Facility {
+  id: number;
+  documentId: string;
+  name: string;
+  roomNumber: string | null;
+  facilityType: FacilityType;
+  description: string | null;
+  relatedProgram: string | null;
+  unit: { slug: string } | null;
+  sortOrder: number;
+  locale: Locale;
+}
+
+/** Auditoriya/laboratoriya/simulyator/trenajor siyahısı (F5.34d/e). */
+export async function getFacilities(locale: Locale = 'az'): Promise<Facility[]> {
+  return fetchAllPages<Facility>('/facilities', {
+    locale,
+    'sort[0]': 'sortOrder:asc',
+    'populate[unit][fields][0]': 'slug',
+  });
+}
+
 /**
  * Bütün heyət (vəzifələri ilə).
  *

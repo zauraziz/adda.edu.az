@@ -20,6 +20,8 @@ export interface OrgNode {
   head: { name: string; href: string } | null;
   staffCount: number;
   vacancies: string[];
+  /** Tip üzrə obyekt sayğacları (F5.34d) — sıfır olan tiplər daxil deyil. */
+  facilityCounts: { type: string; label: string; count: number }[];
   children: OrgNode[];
 }
 export interface OrgLabels {
@@ -146,6 +148,13 @@ export default function OrgTree({
                 </span>
               </Link>
             </div>
+
+            {unitType(n.name)?.nom === 'Kafedra' && n.facilityCounts.length ? (
+              <Link href={`${n.href}#auditoriyalar`} className="org-facility-link">
+                <i className="ti ti-building-warehouse" aria-hidden="true" />
+                {n.facilityCounts.map((fc) => `${fc.count} ${fc.label}`).join(' · ')}
+              </Link>
+            ) : null}
 
             {hasKids && open ? renderNodes(n.children, level + 1) : null}
           </li>

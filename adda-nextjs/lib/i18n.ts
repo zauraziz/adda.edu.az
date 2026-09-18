@@ -782,6 +782,11 @@ const T: Array<[string, string, string]> = [
   ['kafedra', 'кафедра', 'department'],
   ['fakültə', 'факультет', 'faculty'],
   ['vakant', 'вакансия', 'vacant'],
+  // --- F5.34d/e — `facility` tip adları (auditoriya/laboratoriya) ---
+  ['simulyator', 'симулятор', 'simulator'],
+  ['trenajor', 'тренажёр', 'trainer'],
+  ['laboratoriya', 'лаборатория', 'laboratory'],
+  ['auditoriya', 'аудитория', 'classroom'],
   ['Struktur məlumatı hazırda əlçatan deyil.', 'Данные о структуре сейчас недоступны.', 'Structure data is currently unavailable.'],
   ['Azərbaycan Dövlət Dəniz Akademiyasının təşkilati strukturu.', 'Организационная структура Азербайджанской Государственной Морской Академии.', 'The organisational structure of the Azerbaijan State Marine Academy.'],
   // --- K36 struktur ağacı (az, ru, en) ---

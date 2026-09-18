@@ -30,7 +30,18 @@ import type { Metadata } from 'next';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import OrgTree, { type OrgNode } from '../../_components/OrgTree';
-import { getMenu, getUnits, getStaff, type OrgUnit, type Person, type SiteMenu } from '@/lib/strapi';
+import {
+  getMenu,
+  getUnits,
+  getStaff,
+  getFacilities,
+  FACILITY_TYPES,
+  type OrgUnit,
+  type Person,
+  type SiteMenu,
+  type Facility,
+  type FacilityType,
+} from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
@@ -54,7 +65,7 @@ export async function generateMetadata({
 
 // Ağac serverdə qurulur və SERİALİZASİYA OLUNAN formada klientə verilir.
 // `tr()` burada tətbiq olunur — i18n lüğəti klient bundle-ına düşmür.
-function buildTree(units: OrgUnit[], staff: Person[], locale: Locale): OrgNode[] {
+function buildTree(units: OrgUnit[], staff: Person[], facilities: Facility[], locale: Locale): OrgNode[] {
   const counts = new Map<string, number>();
   for (const p of staff) {
     for (const r of p.roles ?? []) {
@@ -62,8 +73,21 @@ function buildTree(units: OrgUnit[], staff: Person[], locale: Locale): OrgNode[]
     }
   }
 
+  // F5.34d — bölmə slug-ı üzrə obyekt tipi sayğacları.
+  const facilityCounts = new Map<string, Map<FacilityType, number>>();
+  for (const f of facilities) {
+    if (!f.unit) continue;
+    let byType = facilityCounts.get(f.unit.slug);
+    if (!byType) {
+      byType = new Map();
+      facilityCounts.set(f.unit.slug, byType);
+    }
+    byType.set(f.facilityType, (byType.get(f.facilityType) ?? 0) + 1);
+  }
+
   const nodes = new Map<string, OrgNode & { _parent: string | null }>();
   for (const u of units) {
+    const byType = facilityCounts.get(u.slug);
     nodes.set(u.slug, {
       slug: u.slug,
       name: tr(u.name, locale),
@@ -73,6 +97,13 @@ function buildTree(units: OrgUnit[], staff: Person[], locale: Locale): OrgNode[]
         : null,
       staffCount: counts.get(u.name) ?? 0,
       vacancies: (u.vacancies ?? []).map((v) => tr(v.position, locale)),
+      facilityCounts: byType
+        ? FACILITY_TYPES.filter((t) => byType.get(t)).map((t) => ({
+            type: t,
+            label: tr(t, locale),
+            count: byType.get(t) as number,
+          }))
+        : [],
       children: [],
       _parent: u.parent?.slug ?? null,
     });
@@ -91,13 +122,14 @@ export default async function StructurePage({ params }: { params: Promise<{ loca
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
 
-  const [menu, units, staff] = await Promise.all([
+  const [menu, units, staff, facilities] = await Promise.all([
     getMenu(locale).catch(() => null as SiteMenu | null),
     getUnits(locale).catch(() => [] as OrgUnit[]),
     getStaff(locale).catch(() => [] as Person[]),
+    getFacilities(locale).catch(() => [] as Facility[]),
   ]);
 
-  const roots = buildTree(units, staff, locale);
+  const roots = buildTree(units, staff, facilities, locale);
 
   return (
     <>
