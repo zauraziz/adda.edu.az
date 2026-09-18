@@ -10,6 +10,7 @@
 // (i18n lüğəti bundle-a düşmür).
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { unitType } from '@/lib/unit-type';
 
 export interface OrgNode {
   slug: string;
@@ -28,8 +29,22 @@ export interface OrgLabels {
   collapseAll: string;
   staff: string;
   units: string;
+  /** Alt düyünlərin hamısı kafedradırsa istifadə olunur (F5.34c). */
+  departments: string;
+  /** Alt düyünlərin hamısı fakültədirsə istifadə olunur (F5.34c). */
+  faculties: string;
   vacant: string;
   nothing: string;
+}
+
+/** Alt düyünlərin tipinə görə sayğac sözü seçir: hamısı kafedradırsa
+ * «kafedra», hamısı fakültədirsə «fakültə», qarışıq/digərdirsə mövcud
+ * «bölmə» (F5.34c). */
+function childrenWord(children: OrgNode[], labels: OrgLabels): string {
+  const types = children.map((c) => unitType(c.name)?.nom ?? null);
+  if (types.every((t) => t === 'Kafedra')) return labels.departments;
+  if (types.every((t) => t === 'Fakültə')) return labels.faculties;
+  return labels.units;
 }
 
 /** Axtarış üçün: Azərbaycan hərflərini qorumaqla kiçildir. */
@@ -120,7 +135,7 @@ export default function OrgTree({
                   ) : null}
                   {hasKids ? (
                     <span className="org-chip">
-                      {n.children.length} {labels.units}
+                      {n.children.length} {childrenWord(n.children, labels)}
                     </span>
                   ) : null}
                   {n.vacancies.map((v) => (

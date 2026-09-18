@@ -779,6 +779,8 @@ const T: Array<[string, string, string]> = [
   // --- K36 struktur: əvvəldən çatışmayan açarlar (ru/en-də az mətn qalırdı) ---
   ['işçi', 'сотрудников', 'staff'],
   ['bölmə', 'подразделений', 'units'],
+  ['kafedra', 'кафедра', 'department'],
+  ['fakültə', 'факультет', 'faculty'],
   ['vakant', 'вакансия', 'vacant'],
   ['Struktur məlumatı hazırda əlçatan deyil.', 'Данные о структуре сейчас недоступны.', 'Structure data is currently unavailable.'],
   ['Azərbaycan Dövlət Dəniz Akademiyasının təşkilati strukturu.', 'Организационная структура Азербайджанской Государственной Морской Академии.', 'The organisational structure of the Azerbaijan State Marine Academy.'],

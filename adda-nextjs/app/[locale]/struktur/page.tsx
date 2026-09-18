@@ -128,6 +128,8 @@ export default async function StructurePage({ params }: { params: Promise<{ loca
                   collapseAll: tr('Hamısını yığ', locale),
                   staff: tr('işçi', locale),
                   units: tr('bölmə', locale),
+                  departments: tr('kafedra', locale),
+                  faculties: tr('fakültə', locale),
                   vacant: tr('vakant', locale),
                   nothing: tr('Uyğun bölmə tapılmadı.', locale),
                 }}
