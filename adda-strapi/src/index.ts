@@ -4257,5 +4257,97 @@ export default {
       strapi.log.error('[seed] yeni proqramlar 2026 seed xetasi: ' + (err as Error).message);
     }
 
+    // Auditoriya və laboratoriyalar (F5.34b, FACILITY_SEED).
+    //
+    // MƏNBƏ: `tools/migration/data/facilities.json` — crawl edilmiş
+    // mətndə (content#39, content#29/TTM) TAPILAN 8 real obyekt. Otaq
+    // nömrəsi HEÇ BİRİNDƏ YOXDUR (mənbədə qeyd olunmayıb) — uydurulmur,
+    // boş saxlanılır. Qalan auditoriya/laboratoriya qeydləri admin
+    // paneldən əl ilə əlavə ediləcək.
+    //
+    // İDEMPOTENTLİK AÇARI: unitSlug + roomNumber + name üçlüyü. Bu üçlük
+    // artıq mövcuddursa qeyd YARADILMIR (təkrar deploy-da ikiləşməsin).
+    //
+    // YALNIZ QARALAMAYA yazılır, publish() BURADA ÇAĞIRILMIR.
+    try {
+      const uid = 'api::facility.facility';
+      if (process.env.FACILITY_SEED !== 'true') {
+        strapi.log.info('[seed] Auditoriya ve laboratoriyalar (F5.34b) oturuldu. Ucun FACILITY_SEED=true.');
+      } else {
+        const FACILITY_DATA_PATH = path.join(
+          strapi.dirs.app.root, '..', 'tools', 'migration', 'data', 'facilities.json',
+        );
+        interface FacilitySeedItem {
+          unitSlug?: string;
+          roomNumber: string;
+          name: string;
+          facilityType: 'simulyator' | 'trenajor' | 'laboratoriya' | 'auditoriya';
+          description?: string;
+          relatedProgram?: string;
+          sortOrder: number;
+        }
+        const file: { facilities: FacilitySeedItem[] } = JSON.parse(readFileSync(FACILITY_DATA_PATH, 'utf8'));
+
+        const existing = (await strapi.documents(uid).findMany({
+          locale: 'az',
+          fields: ['roomNumber', 'name'],
+          populate: { unit: { fields: ['slug'] } },
+          limit: 500,
+        })) as unknown as Array<{ roomNumber: string | null; name: string; unit: { slug: string } | null }>;
+        const known = new Set(
+          existing.map((e) => (e.unit?.slug ?? '') + '|' + (e.roomNumber ?? '') + '|' + e.name),
+        );
+
+        let created = 0;
+        let skipped = 0;
+        for (const f of file.facilities) {
+          try {
+            const key = (f.unitSlug ?? '') + '|' + f.roomNumber + '|' + f.name;
+            if (known.has(key)) {
+              skipped++;
+              continue;
+            }
+
+            const data: Record<string, unknown> = {
+              name: f.name,
+              facilityType: f.facilityType,
+              sortOrder: f.sortOrder,
+            };
+            if (f.roomNumber) data.roomNumber = f.roomNumber;
+            if (f.description) data.description = f.description;
+            if (f.relatedProgram) data.relatedProgram = f.relatedProgram;
+
+            if (f.unitSlug) {
+              const units = (await strapi.documents('api::unit.unit').findMany({
+                locale: 'az',
+                filters: { slug: { $eq: f.unitSlug } },
+                fields: ['slug'],
+                limit: 2,
+              })) as unknown as Array<{ documentId: string }>;
+              if (units.length === 1) {
+                data.unit = units[0].documentId;
+              } else {
+                strapi.log.error('[seed] Facility XETA - unit tapilmadi (' + f.unitSlug + '): ' + f.name);
+              }
+            }
+
+            await strapi.documents(uid).create({
+              locale: 'az',
+              data: data as never,
+            });
+            created++;
+          } catch (e) {
+            strapi.log.error('[seed] Facility xetasi (' + f.name + '): ' + (e as Error).message);
+          }
+        }
+        strapi.log.info(
+          '[seed] Auditoriya ve laboratoriyalar: ' + created + ' yaradildi, ' + skipped +
+            ' movcud idi (toxunulmadi). Qaralama - publish() cagirilmayib.',
+        );
+      }
+    } catch (err) {
+      strapi.log.error('[seed] facility seed xetasi: ' + (err as Error).message);
+    }
+
   },
 };

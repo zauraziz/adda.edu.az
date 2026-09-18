@@ -64,6 +64,9 @@ data/*
 # F5.21c — HERO_SEED (adda-strapi/src/index.ts) OXUYUR, 5 qəhrəman.
 !data/heroes-seed.json
 
+# F5.34b — FACILITY_SEED (adda-strapi/src/index.ts) OXUYUR, auditoriya/laboratoriya.
+!data/facilities.json
+
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML
 #   data/manifest.json         — crawl checkpoint-i

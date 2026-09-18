@@ -1,0 +1,76 @@
+{
+  "facilities": [
+    {
+      "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+      "roomNumber": "",
+      "name": "Gəmiqayırma və gəmi təmiri laboratoriyası",
+      "facilityType": "laboratoriya",
+      "description": "Laboratoriyada aparılan elmi-tədqiqat işləri gəmi daxiliyanma mühərriklərinin detallarının bərpa texnologiyasının işlənməsinə həsr olunmuşdur.",
+      "relatedProgram": "",
+      "sortOrder": 10
+    },
+    {
+      "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
+      "roomNumber": "",
+      "name": "Gəmi elektrik avadanlığı laboratoriyası",
+      "facilityType": "laboratoriya",
+      "description": "Laboratoriyada \"Gəmi val-generator qurğularının tədqiqi\" mövzusunda elmi-tədqiqat işi yerinə yetirilib.",
+      "relatedProgram": "",
+      "sortOrder": 20
+    },
+    {
+      "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+      "roomNumber": "",
+      "name": "Gəmi energetik qurğuları laboratoriyası",
+      "facilityType": "laboratoriya",
+      "description": "Elmi-tədqiqat laboratoriyasında \"İstismar zamanı gəmi energetik qurğularının effektivliyinin yüksəldilməsi və onların ətraf mühitə vurduğu zərərli təsirin azaldılması\" və \"Nəqliyyat gəmilərində energetik qurğuların istismar effektivliyinin artırılması\" mövzuları üzrə elmi-tədqiqat işləri aparılır.",
+      "relatedProgram": "",
+      "sortOrder": 30
+    },
+    {
+      "unitSlug": "telim-tedris-merkezi",
+      "roomNumber": "",
+      "name": "Dinamik Mövqe Saxlama Simulyatoru",
+      "facilityType": "simulyator",
+      "description": "Gəmi mövqeyini və gəminin istiqamətini saxlamaq üçün kompüter nəzarət sistemi. \"DP Induction\", \"DP Simulator\", \"DP Revalidation and DP Refresher and Competency Assessment\" və \"DP Vessel Maintainer\" təlimlərinin keçirilməsinə imkan verir (The Nautical Institute sertifikatlı).",
+      "relatedProgram": "",
+      "sortOrder": 40
+    },
+    {
+      "unitSlug": "telim-tedris-merkezi",
+      "roomNumber": "",
+      "name": "Qlobal Dəniz Fəlakət və Əmniyyətli Rabitə Sistemi (QDFƏRS) trenajoru",
+      "facilityType": "trenajor",
+      "description": "POSEİDON və TRANSAS firmasının istehsalı olan trenajor.",
+      "relatedProgram": "",
+      "sortOrder": 50
+    },
+    {
+      "unitSlug": "telim-tedris-merkezi",
+      "roomNumber": "",
+      "name": "Radar müşahidəsi və təsviri, avtomatik radar müşahidəsi vasitələrinin istismarı trenajoru",
+      "facilityType": "trenajor",
+      "description": "POSEİDON firmasının istehsalı olan trenajor.",
+      "relatedProgram": "",
+      "sortOrder": 60
+    },
+    {
+      "unitSlug": "telim-tedris-merkezi",
+      "roomNumber": "",
+      "name": "Elektron Xəritə Displeyinin və İnformasiya Sistemlərinin İstismar Qaydaları trenajoru",
+      "facilityType": "trenajor",
+      "description": "",
+      "relatedProgram": "",
+      "sortOrder": 70
+    },
+    {
+      "unitSlug": "telim-tedris-merkezi",
+      "roomNumber": "",
+      "name": "Sürətli xilasetmə qayıq mütəxəssisi hazırlığı trenajoru",
+      "facilityType": "trenajor",
+      "description": "TRANSAS firmasının istehsalı olan trenajor.",
+      "relatedProgram": "",
+      "sortOrder": 80
+    }
+  ]
+}
