@@ -57,9 +57,11 @@ import {
   getUnitStaff,
   getUnitArticles,
   getUnitAnnouncements,
+  getUnitFacilities,
   getUnits,
   mediaUrl,
   docText,
+  FACILITY_TYPES,
   type SiteMenu,
   type UnitDetail,
   type UnitDocumentItem,
@@ -71,6 +73,7 @@ import {
   type Announcement,
   type Department,
   type OrgUnit,
+  type Facility,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
@@ -351,12 +354,13 @@ export default async function UnitPage({
   }
 
   // ── `unit` — beş blok ──
-  const [allUnits, docs, staff, articles, announcements] = await Promise.all([
+  const [allUnits, docs, staff, articles, announcements, facilities] = await Promise.all([
     getUnits(locale).catch(() => [] as OrgUnit[]),
     getUnitDocuments(unit.slug).catch(() => [] as UnitDocumentItem[]),
     getUnitStaff(unit.slug, unit.name).catch(() => [] as (Person & { photo: StrapiMedia | null })[]),
     getUnitArticles(unit.slug, locale, 6),
     getUnitAnnouncements(unit.slug, locale, 6),
+    getUnitFacilities(unit.slug, locale).catch(() => [] as Facility[]),
   ]);
 
   const crumbs = buildCrumbs(unit, allUnits);
@@ -412,6 +416,14 @@ export default async function UnitPage({
   // F4.11e/F4.13 — «Vakansiyalar» qısa siyahısı və akkordeon qrupundan AYRI FAQ bloku.
   const vacanciesHas = Boolean(unit.vacancies.length);
   const faqHas = Boolean(unit.faq.length);
+  // F5.34e — auditoriya/laboratoriya, tipə görə qruplaşdırılıb (sxem sırası,
+  // FACILITY_TYPES). Boş qrup (bu bölmədə həmin tipdən yoxdur) atlanır.
+  const facilitiesByType = FACILITY_TYPES.map((t) => ({
+    type: t,
+    label: tr(t, locale),
+    items: facilities.filter((f) => f.facilityType === t),
+  })).filter((g) => g.items.length);
+  const facilitiesHas = Boolean(facilities.length);
   // F4.10/F4.11d — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər
   // və nəticələr»/«Strateji hədəflər üzrə öhdəliklər» VAHİD akkordeon
   // qrupudur (bax .un-expand-group aşağıda); qrup ictimai görünürsə bu 5
@@ -441,6 +453,7 @@ export default async function UnitPage({
   // F4.13 — «Açıq vəzifələr» -> «Vakansiyalar» (yalnız başlıq, davranış eyni).
   const blockTitleVacancies = tr('Vakansiyalar', locale);
   const blockTitleFaq = tr('Tez-tez verilən suallar', locale);
+  const blockTitleFacilities = tr('Auditoriya və laboratoriyalar', locale);
   // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
   // F4.10/F4.11d/F4.11e — admin diaqnostikası indi 9 AYRI sahə sayır (əvvəl
   // 5 birləşdirilmiş blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) —
@@ -455,6 +468,7 @@ export default async function UnitPage({
     { has: block4Has, title: blockTitle4 },
     { has: vacanciesHas, title: blockTitleVacancies },
     { has: faqHas, title: blockTitleFaq },
+    { has: facilitiesHas, title: blockTitleFacilities },
     { has: block6Has, title: blockTitle6 },
   ];
   const openBlockCount = fieldStatus.filter((f) => f.has).length;
@@ -468,13 +482,14 @@ export default async function UnitPage({
   // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
   // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
   // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
-  type TopKey = 'mission' | 'group' | 'links' | 'vacancies' | 'faq' | 'news';
+  type TopKey = 'mission' | 'group' | 'links' | 'vacancies' | 'faq' | 'facilities' | 'news';
   const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
     { key: 'mission', has: missionHas, tintable: true },
     { key: 'group', has: groupHas, tintable: false },
     { key: 'links', has: block4Has, tintable: true },
     { key: 'vacancies', has: vacanciesHas, tintable: true },
     { key: 'faq', has: faqHas, tintable: true },
+    { key: 'facilities', has: facilitiesHas, tintable: true },
     { key: 'news', has: block6Has, tintable: true },
   ];
   let tintCursor = 0;
@@ -789,6 +804,31 @@ export default async function UnitPage({
                   <EmptyBlock uid="api::unit.unit" title={blockTitleFaq} documentId={unit.documentId} locale={locale} tint={tintByKey.faq} />
                 </AdminOnly>
               )}
+
+              {/* ── F5.34e: Auditoriya və laboratoriyalar — tipə görə qruplaşdırılıb.
+                  Ankor id (#auditoriyalar) /struktur səhifəsindəki kafedra
+                  sayğac nişanından gəlir (bax OrgTree.tsx, F5.34d). ── */}
+              {facilitiesHas ? (
+                <section id="auditoriyalar" className={blockClass('facilities')}>
+                  <h2 className="un-block-title">{blockTitleFacilities}</h2>
+                  {facilitiesByType.map((g) => (
+                    <div key={g.type}>
+                      <div className="un-sub-title">{g.label}</div>
+                      <ul className="un-vacancy-list">
+                        {g.items.map((f) => (
+                          <li key={f.documentId} className="un-vacancy-row">
+                            <div className="un-vacancy-position">
+                              {f.roomNumber ? `${f.roomNumber} · ` : ''}
+                              {f.name}
+                            </div>
+                            {f.description ? <div className="un-vacancy-note">{f.description}</div> : null}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+              ) : null}
 
               {/* ── Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
                   varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz

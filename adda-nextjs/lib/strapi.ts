@@ -963,6 +963,15 @@ export async function getFacilities(locale: Locale = 'az'): Promise<Facility[]> 
   });
 }
 
+/** Bir bölmənin auditoriya/laboratoriyaları (F5.34e, `/struktur/[slug]` bloku). */
+export async function getUnitFacilities(unitSlug: string, locale: Locale = 'az'): Promise<Facility[]> {
+  return fetchAllPages<Facility>('/facilities', {
+    locale,
+    'filters[unit][slug][$eq]': unitSlug,
+    'sort[0]': 'sortOrder:asc',
+  });
+}
+
 /**
  * Bütün heyət (vəzifələri ilə).
  *
