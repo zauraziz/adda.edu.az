@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run check:*)",
+      "PowerShell(npm run check:*)",
+      "Bash(npm run plan:*)",
+      "PowerShell(npm run plan:*)",
+      "Bash(npm run lint)",
+      "PowerShell(npm run lint)",
+      "Bash(npx tsc --noEmit*)",
+      "PowerShell(npx tsc --noEmit*)",
+      "Bash(node ../tools/*)",
+      "PowerShell(node ../tools/*)",
+      "Bash(node tools/*)",
+      "PowerShell(node tools/*)",
+      "Bash(git add *)",
+      "PowerShell(git add *)",
+      "Bash(git commit *)",
+      "PowerShell(git commit *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "WebFetch(domain:adda-edu-az.onrender.com)",
+      "WebFetch(domain:demo.adda.edu.az)",
+      "WebFetch(domain:adda.edu.az)"
+    ],
+    "ask": [
+      "Bash(npm install *)",
+      "PowerShell(npm install *)",
+      "Bash(npm uninstall *)",
+      "PowerShell(npm uninstall *)",
+      "Bash(git reset --hard *)",
+      "PowerShell(git reset --hard *)",
+      "Bash(git clean *)",
+      "PowerShell(git clean *)",
+      "Bash(npm run develop *)",
+      "PowerShell(npm run develop *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "PowerShell(git push *)",
+      "Bash(git push-all *)",
+      "Read(./**/.env)",
+      "Read(./**/.env.local)",
+      "Read(./adda-strapi/.env)",
+      "Read(./adda-nextjs/.env.local)",
+      "Read(./tools/migration/.env)",
+      "Edit(./**/.env)",
+      "Edit(./**/.env.local)"
+    ]
+  }
+}
