@@ -4268,6 +4268,8 @@ export default {
     // İDEMPOTENTLİK AÇARI: unitSlug + roomNumber + name üçlüyü. Bu üçlük
     // artıq mövcuddursa qeyd YARADILMIR (təkrar deploy-da ikiləşməsin).
     //
+    // SLUG (F5.35e): seed özü yaradır, mövcud qeydlərdə boşdursa doldurur.
+    //
     // YALNIZ QARALAMAYA yazılır, publish() BURADA ÇAĞIRILMIR.
     try {
       const uid = 'api::facility.facility';
@@ -4291,22 +4293,83 @@ export default {
         }
         const file: { facilities: FacilitySeedItem[] } = JSON.parse(readFileSync(FACILITY_DATA_PATH, 'utf8'));
 
+        // F5.35e — slug-ı seed ÖZÜ yaradır (Strapi-nin uid generatoru Azərbaycan
+        // hərflərini səhv çevirir): azLower + diakritik xəritəsi, sonra
+        // [a-z0-9] xaricindəkilər «-». Otaq nömrəsi varsa «<otaq>-<addan-slug>»
+        // (məs. «312-radar-simulyatoru»), yoxdursa yalnız addan.
+        const AZ_FOLD: Record<string, string> = { ə: 'e', ı: 'i', ö: 'o', ü: 'u', ş: 's', ç: 'c', ğ: 'g' };
+        const slugPart = (v: string): string =>
+          v
+            .replace(/İ/g, 'i')
+            .replace(/I/g, 'ı')
+            .toLowerCase()
+            .replace(/[əıöüşçğ]/g, (c) => AZ_FOLD[c] ?? c)
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        const facilitySlug = (room: string | null | undefined, name: string): string => {
+          const r = room ? slugPart(room) : '';
+          const n = slugPart(name);
+          return (r && n ? r + '-' + n : r || n) || 'obyekt';
+        };
+
+        // status: 'draft' MƏCBURİDİR — Strapi 5 findMany defolt olaraq YALNIZ nəşr
+        // olunmuşları qaytarır, seed isə yalnız qaralama yazır: onsuz `existing`
+        // həmişə boş olur və hər işləmədə bütün qeydlər təkrar yaranırdı.
         const existing = (await strapi.documents(uid).findMany({
           locale: 'az',
-          fields: ['roomNumber', 'name'],
+          status: 'draft',
+          fields: ['roomNumber', 'name', 'slug'],
           populate: { unit: { fields: ['slug'] } },
           limit: 500,
-        })) as unknown as Array<{ roomNumber: string | null; name: string; unit: { slug: string } | null }>;
-        const known = new Set(
-          existing.map((e) => (e.unit?.slug ?? '') + '|' + (e.roomNumber ?? '') + '|' + e.name),
-        );
+        })) as unknown as Array<{
+          documentId: string;
+          roomNumber: string | null;
+          name: string;
+          slug: string | null;
+          unit: { slug: string } | null;
+        }>;
+        // Açar: otaq + ad; bölmə slug-ı uyğun gəlməlidir, AMMA əvvəlki işləmədə
+        // bölmə tapılmadığı üçün əlaqəsiz (unit boş) yaranmış qeyd də «mövcud»
+        // sayılır — əks halda hər işləmədə təkrar yaranardı.
+        const knownUnits = new Map<string, Set<string>>();
+        for (const e of existing) {
+          const k = (e.roomNumber ?? '') + '|' + e.name;
+          const set = knownUnits.get(k) ?? new Set<string>();
+          set.add(e.unit?.slug ?? '');
+          knownUnits.set(k, set);
+        }
+        // Toqquşmada «-2», «-3» əlavə olunur (otaqsız qeydlərdə ad təkrarı ola bilər).
+        const usedSlugs = new Set<string>(existing.map((e) => e.slug).filter((v): v is string => Boolean(v)));
+        const uniqueSlug = (base: string): string => {
+          let cand = base;
+          for (let i = 2; usedSlugs.has(cand); i++) cand = base + '-' + i;
+          usedSlugs.add(cand);
+          return cand;
+        };
+
+        // Mövcud qeydlərdə slug boşdursa doldurulur (idempotent: doludursa toxunulmur).
+        // update() YALNIZ qaralamaya yazır — publish() çağırılmır.
+        let backfilled = 0;
+        for (const e of existing) {
+          if (e.slug) continue;
+          try {
+            await strapi.documents(uid).update({
+              documentId: e.documentId,
+              locale: 'az',
+              data: { slug: uniqueSlug(facilitySlug(e.roomNumber, e.name)) } as never,
+            });
+            backfilled++;
+          } catch (err) {
+            strapi.log.error('[seed] Facility slug doldurulmadi (' + e.name + '): ' + (err as Error).message);
+          }
+        }
 
         let created = 0;
         let skipped = 0;
         for (const [idx, f] of file.facilities.entries()) {
           try {
-            const key = (f.unitSlug ?? '') + '|' + (f.roomNumber ?? '') + '|' + f.name;
-            if (known.has(key)) {
+            const seen = knownUnits.get((f.roomNumber ?? '') + '|' + f.name);
+            if (seen && (seen.has(f.unitSlug ?? '') || seen.has(''))) {
               skipped++;
               continue;
             }
@@ -4320,6 +4383,7 @@ export default {
             if (f.roomNumber) data.roomNumber = f.roomNumber;
             if (f.description) data.description = f.description;
             if (f.relatedProgram) data.relatedProgram = f.relatedProgram;
+            data.slug = uniqueSlug(facilitySlug(f.roomNumber, f.name));
             if (f.software) data.software = f.software;
             if (f.condition) data.condition = f.condition;
             if (f.inventory?.length) {
@@ -4356,7 +4420,7 @@ export default {
         }
         strapi.log.info(
           '[seed] Auditoriya ve laboratoriyalar: ' + created + ' yaradildi, ' + skipped +
-            ' movcud idi (toxunulmadi). Qaralama - publish() cagirilmayib.',
+            ' movcud idi (toxunulmadi), ' + backfilled + ' qeydde bos slug dolduruldu. Qaralama - publish() cagirilmayib.',
         );
       }
     } catch (err) {
