@@ -75,6 +75,12 @@
       "relation": "manyToMany",
       "target": "api::program.program",
       "inversedBy": "documents"
+    },
+    "facilities": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::facility.facility",
+      "mappedBy": "documents"
     }
   }
 }

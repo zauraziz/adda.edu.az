@@ -920,6 +920,10 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
       }>;
+    facilities: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::facility.facility'
+    >;
     file: Schema.Attribute.Media & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1110,6 +1114,12 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    accreditation: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     capacity: Schema.Attribute.Integer &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1131,6 +1141,10 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    documents: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::document.document'
+    >;
     facilityType: Schema.Attribute.Enumeration<
       ['simulyator', 'trenajor', 'laboratoriya', 'auditoriya']
     > &
@@ -1179,6 +1193,13 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;
+        };
+      }>;
+    slug: Schema.Attribute.UID<'name'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
         };
       }>;
     software: Schema.Attribute.String &

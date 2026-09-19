@@ -25,6 +25,16 @@
         }
       }
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "roomNumber": {
       "type": "string",
       "pluginOptions": {
@@ -113,6 +123,20 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::person.person"
+    },
+    "accreditation": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "documents": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::document.document",
+      "inversedBy": "facilities"
     },
     "photos": {
       "type": "media",
