@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_facility_inventories",
+  "info": {
+    "displayName": "Inventar",
+    "description": "Auditoriya/laboratoriyanın avadanlıq siyahısında bir sətir (F5.34).",
+    "icon": "archive"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

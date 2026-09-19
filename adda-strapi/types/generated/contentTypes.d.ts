@@ -1110,6 +1110,18 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    capacity: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    condition: Schema.Attribute.Enumeration<['islek', 'qismen', 'yararsiz']> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1128,6 +1140,12 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
           localized: false;
         };
       }>;
+    inventory: Schema.Attribute.Component<'facility.inventory', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1140,6 +1158,12 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    photos: Schema.Attribute.Media<'images', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     publishedAt: Schema.Attribute.DateTime;
     relatedProgram: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
@@ -1147,7 +1171,17 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    responsiblePerson: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::person.person'
+    >;
     roomNumber: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    software: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;

@@ -14,6 +14,20 @@ export interface EventSpeaker extends Struct.ComponentSchema {
   };
 }
 
+export interface FacilityInventory extends Struct.ComponentSchema {
+  collectionName: 'components_facility_inventories';
+  info: {
+    description: 'Auditoriya/laboratoriyan\u0131n avadanl\u0131q siyah\u0131s\u0131nda bir s\u0259tir (F5.34).';
+    displayName: 'Inventar';
+    icon: 'archive';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    note: Schema.Attribute.String;
+    quantity: Schema.Attribute.Integer;
+  };
+}
+
 export interface HeroHonor extends Struct.ComponentSchema {
   collectionName: 'components_hero_honors';
   info: {
@@ -353,6 +367,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'event.speaker': EventSpeaker;
+      'facility.inventory': FacilityInventory;
       'hero.honor': HeroHonor;
       'nav.category': NavCategory;
       'nav.footercol': NavFootercol;
