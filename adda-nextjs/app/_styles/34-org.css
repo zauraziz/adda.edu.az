@@ -197,26 +197,6 @@
   letter-spacing: 0.05em;
 }
 
-/* F5.34d — kafedra kartının altında obyekt tipi sayğacları. */
-.org-facility-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin: 4px 0 0 36px;
-  padding: 0.1rem 0.5rem;
-  border-radius: var(--radius-full);
-  background: var(--navy-50);
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--navy-600);
-  text-decoration: none;
-  transition: background var(--nav-dur) var(--nav-ease), color var(--nav-dur) var(--nav-ease);
-}
-.org-facility-link:hover { background: var(--gold-100); color: var(--gold-600); }
-.org-facility-link:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 2px; }
-.org-facility-link i { font-size: 12px; }
-
 /* ── Səviyyə fərqi: yuxarı səviyyə ağır, aşağı yüngül ── */
 .org-item--l1 > .org-row > .org-card { padding: 0.95rem 1.15rem; }
 .org-item--l1 > .org-row > .org-card .org-name { font-size: 1.08rem; }

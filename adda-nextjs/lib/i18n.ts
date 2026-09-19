@@ -778,6 +778,7 @@ const T: Array<[string, string, string]> = [
    'International Admissions'],
   // --- K36 struktur: əvvəldən çatışmayan açarlar (ru/en-də az mətn qalırdı) ---
   ['işçi', 'сотрудников', 'staff'],
+  ['heyət', 'сотрудников', 'staff'],
   ['bölmə', 'подразделений', 'units'],
   ['kafedra', 'кафедра', 'department'],
   ['fakültə', 'факультет', 'faculty'],

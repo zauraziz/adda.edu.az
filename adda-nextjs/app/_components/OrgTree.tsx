@@ -135,6 +135,15 @@ export default function OrgTree({
                       {n.staffCount} {labels.staff}
                     </span>
                   ) : null}
+                  {/* F5.35b — obyekt nişanları KEÇİD DEYİL: kartın özü <Link>-dir, içinə
+                      ikinci <Link> etibarsız HTML olardı. Kart bölmə səhifəsinə aparır. */}
+                  {unitType(n.name)?.nom === 'Kafedra'
+                    ? n.facilityCounts.map((fc) => (
+                        <span className="org-chip" key={fc.type}>
+                          {fc.count} {fc.label}
+                        </span>
+                      ))
+                    : null}
                   {hasKids ? (
                     <span className="org-chip">
                       {n.children.length} {childrenWord(n.children, labels)}
@@ -148,13 +157,6 @@ export default function OrgTree({
                 </span>
               </Link>
             </div>
-
-            {unitType(n.name)?.nom === 'Kafedra' && n.facilityCounts.length ? (
-              <Link href={`${n.href}#auditoriyalar`} className="org-facility-link">
-                <i className="ti ti-building-warehouse" aria-hidden="true" />
-                {n.facilityCounts.map((fc) => `${fc.count} ${fc.label}`).join(' · ')}
-              </Link>
-            ) : null}
 
             {hasKids && open ? renderNodes(n.children, level + 1) : null}
           </li>
