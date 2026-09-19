@@ -1,76 +1,415 @@
 {
-  "facilities": [
+ "_qeyd": "Mənbə: ADDA_laboratoriya_siyahısı.xlsx. RƏSMİ «Təyinatı» sütunu təsnifatı müəyyən edir, ad içindəki söz DEYİL — məs. 316 «Elektron xəritə simulyatoru» adlanır, lakin Təyinatı = İxtisaslaşdırılmış auditoriya. inventory/software/condition yalnız mənbədə AÇIQ göstərilən hallarda doldurulub; qalanı boşdur, əl ilə tamamlanacaq.",
+ "facilities": [
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "305",
+   "name": "\"Qlobal Dəniz Qəza və Təhlükəsizlik Sistemi\" simulyatoru",
+   "facilityType": "simulyator",
+   "description": "6 dəst tələbə və 2 dəst müəllim kompüteri, həmçinin Nafteks, Kospas Sarsat və digər qəza cihazları mövcuddur.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
     {
-      "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
-      "roomNumber": "",
-      "name": "Gəmiqayırma və gəmi təmiri laboratoriyası",
-      "facilityType": "laboratoriya",
-      "description": "Laboratoriyada aparılan elmi-tədqiqat işləri gəmi daxiliyanma mühərriklərinin detallarının bərpa texnologiyasının işlənməsinə həsr olunmuşdur.",
-      "relatedProgram": "",
-      "sortOrder": 10
+     "name": "Tələbə kompüteri",
+     "quantity": 6
     },
     {
-      "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
-      "roomNumber": "",
-      "name": "Gəmi elektrik avadanlığı laboratoriyası",
-      "facilityType": "laboratoriya",
-      "description": "Laboratoriyada \"Gəmi val-generator qurğularının tədqiqi\" mövzusunda elmi-tədqiqat işi yerinə yetirilib.",
-      "relatedProgram": "",
-      "sortOrder": 20
+     "name": "Müəllim kompüteri",
+     "quantity": 2
     },
     {
-      "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
-      "roomNumber": "",
-      "name": "Gəmi energetik qurğuları laboratoriyası",
-      "facilityType": "laboratoriya",
-      "description": "Elmi-tədqiqat laboratoriyasında \"İstismar zamanı gəmi energetik qurğularının effektivliyinin yüksəldilməsi və onların ətraf mühitə vurduğu zərərli təsirin azaldılması\" və \"Nəqliyyat gəmilərində energetik qurğuların istismar effektivliyinin artırılması\" mövzuları üzrə elmi-tədqiqat işləri aparılır.",
-      "relatedProgram": "",
-      "sortOrder": 30
-    },
-    {
-      "unitSlug": "telim-tedris-merkezi",
-      "roomNumber": "",
-      "name": "Dinamik Mövqe Saxlama Simulyatoru",
-      "facilityType": "simulyator",
-      "description": "Gəmi mövqeyini və gəminin istiqamətini saxlamaq üçün kompüter nəzarət sistemi. \"DP Induction\", \"DP Simulator\", \"DP Revalidation and DP Refresher and Competency Assessment\" və \"DP Vessel Maintainer\" təlimlərinin keçirilməsinə imkan verir (The Nautical Institute sertifikatlı).",
-      "relatedProgram": "",
-      "sortOrder": 40
-    },
-    {
-      "unitSlug": "telim-tedris-merkezi",
-      "roomNumber": "",
-      "name": "Qlobal Dəniz Fəlakət və Əmniyyətli Rabitə Sistemi (QDFƏRS) trenajoru",
-      "facilityType": "trenajor",
-      "description": "POSEİDON və TRANSAS firmasının istehsalı olan trenajor.",
-      "relatedProgram": "",
-      "sortOrder": 50
-    },
-    {
-      "unitSlug": "telim-tedris-merkezi",
-      "roomNumber": "",
-      "name": "Radar müşahidəsi və təsviri, avtomatik radar müşahidəsi vasitələrinin istismarı trenajoru",
-      "facilityType": "trenajor",
-      "description": "POSEİDON firmasının istehsalı olan trenajor.",
-      "relatedProgram": "",
-      "sortOrder": 60
-    },
-    {
-      "unitSlug": "telim-tedris-merkezi",
-      "roomNumber": "",
-      "name": "Elektron Xəritə Displeyinin və İnformasiya Sistemlərinin İstismar Qaydaları trenajoru",
-      "facilityType": "trenajor",
-      "description": "",
-      "relatedProgram": "",
-      "sortOrder": 70
-    },
-    {
-      "unitSlug": "telim-tedris-merkezi",
-      "roomNumber": "",
-      "name": "Sürətli xilasetmə qayıq mütəxəssisi hazırlığı trenajoru",
-      "facilityType": "trenajor",
-      "description": "TRANSAS firmasının istehsalı olan trenajor.",
-      "relatedProgram": "",
-      "sortOrder": 80
+     "name": "Nafteks, Kospas Sarsat və digər qəza cihazları",
+     "quantity": null
     }
-  ]
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "310",
+   "name": "İxtisaslaşdırılmış aduditoriya",
+   "facilityType": "auditoriya",
+   "description": "15 dəst tələbə və 1 dəst müəllim kompüteri mövcuddur; tələbələrin İMO model kurslar barədə biliklərini qiymətləndirmək üçün yaradılıb.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
+    {
+     "name": "Tələbə kompüteri",
+     "quantity": 15
+    },
+    {
+     "name": "Müəllim kompüteri",
+     "quantity": 1
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "311",
+   "name": "\"Dəniz astronomiyası və naviqasiya çəkilişi\" ixtisaslaşdırılmış aduditoriya",
+   "facilityType": "auditoriya",
+   "description": "Məşğələ-trenajor dərsləri üçün uyğun olan 21 dəst kompüter avadanlığı (20 tələbə, 1 müəllim) var.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
+    {
+     "name": "Tələbə kompüteri",
+     "quantity": 20
+    },
+    {
+     "name": "Müəllim kompüteri",
+     "quantity": 1
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "312",
+   "name": "\"Radar simulyatoru\" ixtisaslaşdırılmış aduditoriya",
+   "facilityType": "simulyator",
+   "description": "Auditoriyada 4 komplekt radar simulatoru və monitorlar mövcuddur.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
+    {
+     "name": "Radar simulyatoru komplekti",
+     "quantity": 4
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "314-315",
+   "name": "\"Kapitan körpüsü simulyatoru\" ixtisaslaşdırılmış aduditoriyaları",
+   "facilityType": "simulyator",
+   "description": "Bir-biri ilə sinxronlaşdırılmış, ümumilikdə 2 ədəd kapitan körpüsü simulatorundan ibarətdir.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
+    {
+     "name": "Kapitan körpüsü simulyatoru",
+     "quantity": 2
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "316",
+   "name": "\"Elektron xəritə similyatoru\" ixtisaslaşdırılmış aduditoriya",
+   "facilityType": "auditoriya",
+   "description": "Auditoriyada 13 ədəd kompüter dəsti (10 tələbə, 3 müəllim) mövcuddur.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
+    {
+     "name": "Tələbə kompüteri",
+     "quantity": 10
+    },
+    {
+     "name": "Müəllim kompüteri",
+     "quantity": 3
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "319",
+   "name": "\"Elektron naviqasiya cihazları laboratoriyası\" ixtisaslaşdırılmış aduditoriya",
+   "facilityType": "laboratoriya",
+   "description": "Müxtəlif tipli girokompaslar, dopler laqı və naviqasiya exolotu kimi avadanlıqlar maket kimi istifadə edilir.",
+   "relatedProgram": "\"Dəniz naviqasiyası mühəndisliyi\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "320",
+   "name": "\"Yük və ballast simulyatoru\" ixtisaslaşdırılmış aduditoriya",
+   "facilityType": "simulyator",
+   "description": "Simulator məqsədilə 7 dəst kompüterlə komplektləşdirilmişdir.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [
+    {
+     "name": "Kompüter dəsti",
+     "quantity": 7
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "deniz-naviqasiyasi-kafedrasi",
+   "roomNumber": "412",
+   "name": "\"Dəniz astronomiyası\" ixtisaslaşdırılmış aduditoriya",
+   "facilityType": "auditoriya",
+   "description": "Kiçik planetari otağıdır, lakin cihazlar istifadəyə yararsız vəziyyətdədir.",
+   "relatedProgram": "\"Dəniz naviqasiyası\"",
+   "inventory": [],
+   "software": null,
+   "condition": "yararsiz"
+  },
+  {
+   "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+   "roomNumber": "117",
+   "name": "Elmi-tədris laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "Dizel-generatorunda, nasoslarda, kompressorlarda və müxtəlif gəmi mexanizmlərində laboratoriya işləri aparılır.",
+   "relatedProgram": "\"Gəmi energetik qurğuları və onların istismarı\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+   "roomNumber": "115",
+   "name": "Gəmi soyuducu qurğuları və HKS / Hidravlika və hidromexanika laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "AM-2B markalı soyuducu qurğuda və hidromexanika fənlərindən laboratoriya işləri həyata keçirilir.",
+   "relatedProgram": "\"Gəmi energetik qurğuları və onların istismarı\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+   "roomNumber": "303",
+   "name": "\"Gəmi köməkçi mexanizmləri\" ixtisaslaşdırılmış auditoriya",
+   "facilityType": "auditoriya",
+   "description": null,
+   "relatedProgram": "\"Gəmi energetik qurğuları və onların istismarı\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+   "roomNumber": "304",
+   "name": "\"Gəmi daxili yanma mühərrikləri\" ixtisaslaşdırılmış auditoriya",
+   "facilityType": "auditoriya",
+   "description": null,
+   "relatedProgram": "\"Gəmi energetik qurğuları və onların istismarı\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+   "roomNumber": "109",
+   "name": "\"Gəmi daxili yanma mühərrikləri\" ixtisaslaşdırılmış auditoriya",
+   "facilityType": "auditoriya",
+   "description": null,
+   "relatedProgram": "\"Gəmi energetik qurğuları və onların istismarı\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-energetik-qurgulari-kafedrasi",
+   "roomNumber": "308",
+   "name": "\"MER--3D\" trenajoru",
+   "facilityType": "trenajor",
+   "description": "Gəmi energetik qurğularında növbəçəkmə fənlərindən məşğələlər yerinə yetirilir.",
+   "relatedProgram": "\"Gəmi energetik qurğuları və onların istismarı\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
+   "roomNumber": "204",
+   "name": "\"ERS-4000\" trenajor modulu",
+   "facilityType": "trenajor",
+   "description": "Tələbələr gəmi elektrik şəbəkəsi, dizel-generator və idarəetmə panelləri ilə tanış olurlar.",
+   "relatedProgram": "\"Elektrik və elektronika mühəndisliyi\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
+   "roomNumber": "314",
+   "name": "\"Gəmi elektronikası və elektrik avadanlığı\" ixtisaslaşdırılmış auditoriyası",
+   "facilityType": "auditoriya",
+   "description": "Yarımkeçirici diod, tranzistor və mühərrik intiqallarının idarə aparatlarını tədqiq etmək mümkündür.",
+   "relatedProgram": "\"Elektrik və elektronika mühəndisliyi\"",
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
+   "roomNumber": "301",
+   "name": "\"Analoq və rəqəmsal elektronika\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "\"ELECTRONICS WORKBENCH\" proqramı əsasında sxemlərin modelləşdirilməsi və tədqiqi aparılır.",
+   "relatedProgram": "\"Elektrik və elektronika mühəndisliyi\"",
+   "inventory": [],
+   "software": "ELECTRONICS WORKBENCH",
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
+   "roomNumber": "312",
+   "name": "\"Proqramlaşdırılan məntiq kontrollerləri (PLC)\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "PLC-lər vasitəsilə obyektlərin idarə olunması və proqramların müxtəlif dillərdə işlənməsi öyrənilir.",
+   "relatedProgram": "\"Elektrik və elektronika mühəndisliyi\"",
+   "inventory": [
+    {
+     "name": "Radar simulyatoru komplekti",
+     "quantity": 4
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemi-elektroavtomatikasi-kafedrasi",
+   "roomNumber": "311",
+   "name": "\"Gəmi avtomatikasının idarəetmə aparatları\" ixtisaslaşdırılmış auditoriyası",
+   "facilityType": "auditoriya",
+   "description": "Kontaktor, elektroistilik relesi və yarımkeçirici elementlərlə əyani tanışlıq həyata keçirilir.",
+   "relatedProgram": "\"Elektrik və elektronika mühəndisliyi\"",
+   "inventory": [
+    {
+     "name": "Tələbə kompüteri",
+     "quantity": 20
+    },
+    {
+     "name": "Müəllim kompüteri",
+     "quantity": 1
+    }
+   ],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+   "roomNumber": "103",
+   "name": "Tədris emalatxanası laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "Maşınqayırma texnologiyası və metalkəsən dəzgahlar fənninin tədrisində, həmçinin elmi tədqiqat işlərində istifadə edilir.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+   "roomNumber": "213",
+   "name": "İxtisaslaşdırılmış auditoriya",
+   "facilityType": "auditoriya",
+   "description": "Gəmi quruluşu və sistemləri tədris olunur; tədrisdə maket və modellərdən istifadə edilir.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+   "roomNumber": "211",
+   "name": "\"CADMATİC\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "3D modelləşdirmə və CAD proqramları lisenziyalı təminatla tədris olunur.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": "CADMATIC",
+   "condition": null
+  },
+  {
+   "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+   "roomNumber": null,
+   "name": "\"Materialşünaslıq və materiallar texnologiyası\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "Materialşünaslıq fənlərinin tədrisində və elmi tədqiqat işlərində istifadə edilir.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "gemiqayirma-ve-gemi-temiri-kafedrasi",
+   "roomNumber": null,
+   "name": "\"Qaynaq texnologiyası və avadanlığı\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "Qaynaq prosesləri fənlərinin tədrisində və laboratoriya işlərində istifadə edilir.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "tetbiqi-mexanika-kafedrasi",
+   "roomNumber": "410",
+   "name": "\"Tərsimi həndəsə və mühəndis qrafikası\" ixtisaslaşdırılmış auditoriyası",
+   "facilityType": "auditoriya",
+   "description": "Mühəndis kompyuter qrafikası və informatika fənləri üzrə məşğələlər keçirilir.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "tetbiqi-mexanika-kafedrasi",
+   "roomNumber": "102 və 103",
+   "name": "\"Fizika\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "Fizika fənnindən laboratoriya işləri aparılır.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "tetbiqi-mexanika-kafedrasi",
+   "roomNumber": "107",
+   "name": "\"Kimya\" laboratoriyası",
+   "facilityType": "laboratoriya",
+   "description": "Kimya fənnindən laboratoriya işləri və məşğələlər həyata keçirilir.",
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "tetbiqi-mexanika-kafedrasi",
+   "roomNumber": "411",
+   "name": "\"Metrologiya standartlaşdırma laboratoriyası\"",
+   "facilityType": "laboratoriya",
+   "description": null,
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "tetbiqi-mexanika-kafedrasi",
+   "roomNumber": "109",
+   "name": "\"Texniki mexanika laboratoriyası – 1 və 2\"",
+   "facilityType": "laboratoriya",
+   "description": null,
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  },
+  {
+   "unitSlug": "humanitar-fenler-kafedrasi",
+   "roomNumber": "304 (II korpus)",
+   "name": "Debat - interaktiv tədris auditoriyası",
+   "facilityType": "auditoriya",
+   "description": null,
+   "relatedProgram": null,
+   "inventory": [],
+   "software": null,
+   "condition": null
+  }
+ ]
 }

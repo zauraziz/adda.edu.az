@@ -4259,11 +4259,11 @@ export default {
 
     // Auditoriya və laboratoriyalar (F5.34b, FACILITY_SEED).
     //
-    // MƏNBƏ: `tools/migration/data/facilities.json` — crawl edilmiş
-    // mətndə (content#39, content#29/TTM) TAPILAN 8 real obyekt. Otaq
-    // nömrəsi HEÇ BİRİNDƏ YOXDUR (mənbədə qeyd olunmayıb) — uydurulmur,
-    // boş saxlanılır. Qalan auditoriya/laboratoriya qeydləri admin
-    // paneldən əl ilə əlavə ediləcək.
+    // MƏNBƏ: `tools/migration/data/facilities.json` — ADDA_laboratoriya_siyahısı
+    // cədvəlindən çıxarılmış obyektlər. Otaq nömrəsi, inventar, proqram təminatı
+    // və vəziyyət YALNIZ mənbədə AÇIQ göstərilibsə doldurulur — uydurulmur, boş
+    // qalır və admin paneldən əl ilə tamamlanır. `capacity`, `responsiblePerson`
+    // və `photos` seed-də YOXDUR (mənbədə yoxdur), yalnız admin paneldən.
     //
     // İDEMPOTENTLİK AÇARI: unitSlug + roomNumber + name üçlüyü. Bu üçlük
     // artıq mövcuddursa qeyd YARADILMIR (təkrar deploy-da ikiləşməsin).
@@ -4279,12 +4279,15 @@ export default {
         );
         interface FacilitySeedItem {
           unitSlug?: string;
-          roomNumber: string;
+          roomNumber?: string | null;
           name: string;
           facilityType: 'simulyator' | 'trenajor' | 'laboratoriya' | 'auditoriya';
-          description?: string;
-          relatedProgram?: string;
-          sortOrder: number;
+          description?: string | null;
+          relatedProgram?: string | null;
+          inventory?: Array<{ name: string; quantity?: number | null; note?: string | null }>;
+          software?: string | null;
+          condition?: 'islek' | 'qismen' | 'yararsiz' | null;
+          sortOrder?: number;
         }
         const file: { facilities: FacilitySeedItem[] } = JSON.parse(readFileSync(FACILITY_DATA_PATH, 'utf8'));
 
@@ -4300,9 +4303,9 @@ export default {
 
         let created = 0;
         let skipped = 0;
-        for (const f of file.facilities) {
+        for (const [idx, f] of file.facilities.entries()) {
           try {
-            const key = (f.unitSlug ?? '') + '|' + f.roomNumber + '|' + f.name;
+            const key = (f.unitSlug ?? '') + '|' + (f.roomNumber ?? '') + '|' + f.name;
             if (known.has(key)) {
               skipped++;
               continue;
@@ -4311,11 +4314,22 @@ export default {
             const data: Record<string, unknown> = {
               name: f.name,
               facilityType: f.facilityType,
-              sortOrder: f.sortOrder,
+              // Faylda sıra yoxdursa massiv ardıcıllığı saxlanılır (10-luq addım).
+              sortOrder: f.sortOrder ?? (idx + 1) * 10,
             };
             if (f.roomNumber) data.roomNumber = f.roomNumber;
             if (f.description) data.description = f.description;
             if (f.relatedProgram) data.relatedProgram = f.relatedProgram;
+            if (f.software) data.software = f.software;
+            if (f.condition) data.condition = f.condition;
+            if (f.inventory?.length) {
+              data.inventory = f.inventory.map((r) => {
+                const row: Record<string, unknown> = { name: r.name };
+                if (typeof r.quantity === 'number') row.quantity = r.quantity;
+                if (r.note) row.note = r.note;
+                return row;
+              });
+            }
 
             if (f.unitSlug) {
               const units = (await strapi.documents('api::unit.unit').findMany({
