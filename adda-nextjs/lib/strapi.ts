@@ -940,6 +940,13 @@ export async function getUnits(locale: Locale = 'az'): Promise<OrgUnit[]> {
 export type FacilityType = 'simulyator' | 'trenajor' | 'laboratoriya' | 'auditoriya';
 /** Sxemdəki enum sırası — sayğac nişanları və qruplaşma bu ardıcıllıqla göstərilir (F5.34d/e). */
 export const FACILITY_TYPES: FacilityType[] = ['simulyator', 'trenajor', 'laboratoriya', 'auditoriya'];
+/** Qrup başlıqları (az, cəm) — `tr()` ilə tərcümə olunur (F5.35c/d). */
+export const FACILITY_PLURAL_AZ: Record<FacilityType, string> = {
+  simulyator: 'Simulyatorlar',
+  trenajor: 'Trenajorlar',
+  laboratoriya: 'Laboratoriyalar',
+  auditoriya: 'İxtisaslaşdırılmış auditoriyalar',
+};
 
 export type FacilityCondition = 'islek' | 'qismen' | 'yararsiz';
 
@@ -955,6 +962,7 @@ export interface Facility {
   id: number;
   documentId: string;
   name: string;
+  slug: string;
   roomNumber: string | null;
   facilityType: FacilityType;
   description: string | null;
@@ -965,8 +973,10 @@ export interface Facility {
   condition?: FacilityCondition | null;
   capacity?: number | null;
   responsiblePerson?: { documentId: string; name: string; displayName: string | null; slug: string } | null;
+  accreditation?: string | null;
+  documents?: UnitDocumentItem[] | null;
   photos?: StrapiMedia[] | null;
-  unit: { slug: string } | null;
+  unit: { slug: string; name?: string } | null;
   sortOrder: number;
   locale: Locale;
 }
@@ -993,6 +1003,51 @@ export async function getUnitFacilities(unitSlug: string, locale: Locale = 'az')
     'populate[responsiblePerson][fields][1]': 'displayName',
     'populate[responsiblePerson][fields][2]': 'slug',
   });
+}
+
+/**
+ * F5.35c — `facility` lokallaşdırılıb, amma ru/en qeydləri yoxdur: yeni
+ * /auditoriyalar səhifələri cari dildə nəticə tapmasa `az` qeydlərinə düşür
+ * (F3.28 fallback-i ilə eyni fikir; tip adları/etiketlər cari dildə qalır).
+ */
+async function facilitiesWithFallback(
+  locale: Locale,
+  query: Record<string, string | number | boolean>,
+): Promise<Facility[]> {
+  const rows = await fetchAllPages<Facility>('/facilities', { locale, ...query });
+  if (rows.length || locale === 'az') return rows;
+  return fetchAllPages<Facility>('/facilities', { locale: 'az', ...query });
+}
+
+/** /auditoriyalar kataloqu — bölmə adı ilə (kafedraya görə süzgəc + keçid). */
+export async function getFacilityCatalog(locale: Locale = 'az'): Promise<Facility[]> {
+  return facilitiesWithFallback(locale, {
+    'sort[0]': 'sortOrder:asc',
+    'populate[unit][fields][0]': 'slug',
+    'populate[unit][fields][1]': 'name',
+  });
+}
+
+/** /auditoriyalar/[slug] — tək obyekt, bütün populate-lərlə. */
+export async function getFacilityBySlug(slug: string, locale: Locale = 'az'): Promise<Facility | null> {
+  const rows = await facilitiesWithFallback(locale, {
+    'filters[slug][$eq]': slug,
+    'populate[inventory]': true,
+    'populate[photos]': true,
+    'populate[documents][populate][file]': true,
+    'populate[responsiblePerson][fields][0]': 'name',
+    'populate[responsiblePerson][fields][1]': 'displayName',
+    'populate[responsiblePerson][fields][2]': 'slug',
+    'populate[unit][fields][0]': 'slug',
+    'populate[unit][fields][1]': 'name',
+  });
+  return rows[0] ?? null;
+}
+
+/** `generateStaticParams` üçün. */
+export async function getFacilitySlugs(locale: Locale): Promise<string[]> {
+  const rows = await fetchAllPages<Facility>('/facilities', { locale, 'fields[0]': 'slug' });
+  return rows.map((r) => r.slug).filter(Boolean);
 }
 
 /**

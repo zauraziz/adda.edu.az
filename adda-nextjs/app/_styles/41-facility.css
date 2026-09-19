@@ -1,0 +1,82 @@
+/* ── F5.35c: /auditoriyalar kataloqu və obyekt səhifəsi.
+   Detal səhifəsi 36-unit.css-in .un-layout/.un-side/.un-block/.un-fac-*
+   siniflərini yenidən işlədir; bu fayl yalnız kataloq və nişan üçündür.
+   Boşluq şkalası 4/8/12/16/24/32/48px, rəng/şrift yeni deyil. ── */
+.fc-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 32px;
+}
+.fc-bar label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--navy-800);
+}
+.fc-select {
+  min-width: 240px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-800);
+}
+.fc-select:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 2px; }
+.fc-group { margin: 0 0 48px; }
+.fc-group:last-child { margin-bottom: 0; }
+.fc-group-title {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: var(--navy-800);
+}
+.fc-count {
+  margin-left: 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--gray-500);
+}
+.fc-list { list-style: none; margin: 0; padding: 0; }
+.fc-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-200);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+}
+.fc-row:last-child { border-bottom: none; }
+.fc-room { min-width: 48px; font-weight: 700; color: var(--navy-800); }
+.fc-name { flex: 1 1 240px; min-width: 0; }
+.fc-name a,
+.fc-unit a { color: var(--navy-800); text-decoration: none; }
+.fc-name a { font-weight: 600; }
+.fc-name a:hover,
+.fc-unit a:hover { color: var(--gold-600); text-decoration: underline; text-decoration-color: var(--gold-400); }
+.fc-unit { margin-left: auto; font-size: var(--text-sm); color: var(--gray-500); }
+.fc-empty { font-family: var(--font-body); color: var(--gray-500); }
+@media (max-width: 720px) {
+  .fc-unit { margin-left: 0; flex-basis: 100%; }
+}
+
+/* Tip nişanı (obyekt səhifəsinin başlığında). */
+.fc-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+.fc-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--navy-50);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--navy-600);
+}
+.fc-badge--room { background: var(--gold-100); color: var(--gold-600); }
