@@ -852,3 +852,73 @@ a.un-fact-v:hover { text-decoration: underline; text-underline-offset: 2px; }
   .un-side { position: static; order: -1; }
   .un-main { order: 0; }
 }
+
+/* ── F5.34e: Auditoriya və laboratoriyalar — hər obyekt .un-expand akkordeonu.
+   Boşluq şkalası 4/8/12/16/24/32/48px. Yeni rəng/şrift YOXDUR. ── */
+.un-main .un-fac-group { text-transform: capitalize; }
+.un-block .un-expand-group + .un-sub-title { margin-top: 24px; }
+/* Gövdəsi olmayan obyekt: eyni qabıq, açılmır. */
+.un-fac-plain { cursor: default; }
+.un-expand-toggle.un-fac-plain:hover { color: var(--navy-800); }
+.un-fac-desc {
+  margin: 0 0 16px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--gray-700, var(--navy-800));
+}
+.un-fac-block { margin: 0 0 16px; }
+.un-fac-label {
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+.un-fac-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.un-fac-table th,
+.un-fac-table td {
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gray-200);
+}
+.un-fac-table th {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--gray-500);
+  background: var(--white);
+}
+.un-fac-table tr:last-child td { border-bottom: none; }
+.un-fac-facts { margin: 0 0 16px; display: grid; gap: 8px; }
+.un-fac-fact {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) 1fr;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.un-fac-fact dt { font-weight: 700; color: var(--gray-500); }
+.un-fac-fact dd { margin: 0; color: var(--navy-800); }
+.un-fac-fact dd a { color: var(--navy-800); text-decoration: underline; text-decoration-color: var(--gold-400); }
+.un-fac-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.un-fac-photos img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+@media (max-width: 560px) {
+  .un-fac-fact { grid-template-columns: 1fr; gap: 4px; }
+}

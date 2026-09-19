@@ -941,6 +941,16 @@ export type FacilityType = 'simulyator' | 'trenajor' | 'laboratoriya' | 'auditor
 /** Sxemdəki enum sırası — sayğac nişanları və qruplaşma bu ardıcıllıqla göstərilir (F5.34d/e). */
 export const FACILITY_TYPES: FacilityType[] = ['simulyator', 'trenajor', 'laboratoriya', 'auditoriya'];
 
+export type FacilityCondition = 'islek' | 'qismen' | 'yararsiz';
+
+/** `facility.inventory` komponentinin bir sətri (F5.34). */
+export interface FacilityInventoryRow {
+  id: number;
+  name: string;
+  quantity: number | null;
+  note: string | null;
+}
+
 export interface Facility {
   id: number;
   documentId: string;
@@ -949,6 +959,13 @@ export interface Facility {
   facilityType: FacilityType;
   description: string | null;
   relatedProgram: string | null;
+  /** Yalnız `getUnitFacilities` populate edir (F5.34e); `getFacilities`-də yoxdur. */
+  inventory?: FacilityInventoryRow[] | null;
+  software?: string | null;
+  condition?: FacilityCondition | null;
+  capacity?: number | null;
+  responsiblePerson?: { documentId: string; name: string; displayName: string | null; slug: string } | null;
+  photos?: StrapiMedia[] | null;
   unit: { slug: string } | null;
   sortOrder: number;
   locale: Locale;
@@ -969,6 +986,12 @@ export async function getUnitFacilities(unitSlug: string, locale: Locale = 'az')
     locale,
     'filters[unit][slug][$eq]': unitSlug,
     'sort[0]': 'sortOrder:asc',
+    // Strapi populate edilməyən komponent/əlaqə/mediyanı ümumiyyətlə qaytarmır.
+    'populate[inventory]': true,
+    'populate[photos]': true,
+    'populate[responsiblePerson][fields][0]': 'name',
+    'populate[responsiblePerson][fields][1]': 'displayName',
+    'populate[responsiblePerson][fields][2]': 'slug',
   });
 }
 

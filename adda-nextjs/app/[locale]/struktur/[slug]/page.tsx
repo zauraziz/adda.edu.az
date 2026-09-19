@@ -74,6 +74,7 @@ import {
   type Department,
   type OrgUnit,
   type Facility,
+  type FacilityCondition,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
@@ -252,6 +253,93 @@ function FnCardGrid({ cards }: { cards: FnCard[] }) {
 }
 
 /** F4.9a — yan panelin kompakt heyət sətri: monoqram/foto (28px) + ad + vəzifə. */
+// F5.34e — bir auditoriya/laboratoriya: ExpandBlock akkordeonu. Başlıq =
+// otaq nömrəsi + ad; içində təsvir · inventar cədvəli · proqram təminatı ·
+// tutum · vəziyyət · məsul şəxs · fotolar. BOŞ SAHƏ GÖSTƏRİLMİR: gövdədə
+// göstəriləsi heç nə yoxdursa (yalnız ad/otaq/tip doludur) akkordeon
+// açılmır, başlıq eyni qabıqda sadə sətir kimi qalır.
+const FACILITY_CONDITION_LABEL: Record<FacilityCondition, string> = {
+  islek: 'İşlək',
+  qismen: 'Qismən işlək',
+  yararsiz: 'İstifadəyə yararsız',
+};
+
+function FacilityItem({ f, locale }: { f: Facility; locale: Locale }) {
+  const title = f.roomNumber ? `${f.roomNumber} · ${f.name}` : f.name;
+  const inventory = (f.inventory ?? []).filter((r) => r.name);
+  const hasQty = inventory.some((r) => r.quantity != null);
+  const hasNote = inventory.some((r) => r.note);
+  const photos = (f.photos ?? []).map((m) => ({ src: mediaUrl(m), alt: m.alternativeText || '' })).filter((m) => m.src);
+  const person = f.responsiblePerson;
+  const facts: { label: string; value: React.ReactNode }[] = [];
+  if (f.software) facts.push({ label: tr('Proqram təminatı', locale), value: f.software });
+  if (f.capacity != null) facts.push({ label: tr('Tutum', locale), value: f.capacity });
+  if (f.condition) facts.push({ label: tr('Vəziyyət', locale), value: tr(FACILITY_CONDITION_LABEL[f.condition], locale) });
+  if (person) {
+    facts.push({
+      label: tr('Məsul şəxs', locale),
+      value: (
+        <Link href={`/${locale}/emekdas/${person.slug}`}>{person.displayName || person.name}</Link>
+      ),
+    });
+  }
+  const hasBody = Boolean(f.description) || inventory.length > 0 || facts.length > 0 || photos.length > 0;
+  if (!hasBody) {
+    return (
+      <div className="un-expand">
+        <h2 className="un-expand-head">
+          <span className="un-expand-toggle un-fac-plain">{title}</span>
+        </h2>
+      </div>
+    );
+  }
+  return (
+    <ExpandBlock label={title}>
+      {f.description ? <p className="un-fac-desc">{f.description}</p> : null}
+      {inventory.length ? (
+        <div className="un-fac-block">
+          <div className="un-fac-label">{tr('Avadanlıq', locale)}</div>
+          <table className="un-fac-table">
+            <thead>
+              <tr>
+                <th>{tr('Ad', locale)}</th>
+                {hasQty ? <th>{tr('Say', locale)}</th> : null}
+                {hasNote ? <th>{tr('Qeyd', locale)}</th> : null}
+              </tr>
+            </thead>
+            <tbody>
+              {inventory.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.name}</td>
+                  {hasQty ? <td>{r.quantity ?? ''}</td> : null}
+                  {hasNote ? <td>{r.note ?? ''}</td> : null}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+      {facts.length ? (
+        <dl className="un-fac-facts">
+          {facts.map((x) => (
+            <div key={x.label} className="un-fac-fact">
+              <dt>{x.label}</dt>
+              <dd>{x.value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      {photos.length ? (
+        <div className="un-fac-photos">
+          {photos.map((m, i) => (
+            <img key={i} src={m.src as string} alt={m.alt} loading="lazy" />
+          ))}
+        </div>
+      ) : null}
+    </ExpandBlock>
+  );
+}
+
 function StaffMiniRow({
   p,
   unitName,
@@ -813,18 +901,12 @@ export default async function UnitPage({
                   <h2 className="un-block-title">{blockTitleFacilities}</h2>
                   {facilitiesByType.map((g) => (
                     <div key={g.type}>
-                      <div className="un-sub-title">{g.label}</div>
-                      <ul className="un-vacancy-list">
+                      <div className="un-sub-title un-fac-group">{g.label}</div>
+                      <div className="un-expand-group">
                         {g.items.map((f) => (
-                          <li key={f.documentId} className="un-vacancy-row">
-                            <div className="un-vacancy-position">
-                              {f.roomNumber ? `${f.roomNumber} · ` : ''}
-                              {f.name}
-                            </div>
-                            {f.description ? <div className="un-vacancy-note">{f.description}</div> : null}
-                          </li>
+                          <FacilityItem key={f.documentId} f={f} locale={locale} />
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   ))}
                 </section>
