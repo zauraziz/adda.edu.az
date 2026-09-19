@@ -62,6 +62,7 @@ import {
   mediaUrl,
   docText,
   FACILITY_TYPES,
+  FACILITY_PLURAL_AZ,
   type SiteMenu,
   type UnitDetail,
   type UnitDocumentItem,
@@ -266,6 +267,8 @@ const FACILITY_CONDITION_LABEL: Record<FacilityCondition, string> = {
 
 function FacilityItem({ f, locale }: { f: Facility; locale: Locale }) {
   const title = f.roomNumber ? `${f.roomNumber} · ${f.name}` : f.name;
+  // F5.35d — ad /auditoriyalar/<slug> səhifəsinə keçiddir.
+  const href = `/${locale}/auditoriyalar/${f.slug}`;
   const inventory = (f.inventory ?? []).filter((r) => r.name);
   const hasQty = inventory.some((r) => r.quantity != null);
   const hasNote = inventory.some((r) => r.note);
@@ -288,13 +291,15 @@ function FacilityItem({ f, locale }: { f: Facility; locale: Locale }) {
     return (
       <div className="un-expand">
         <h2 className="un-expand-head">
-          <span className="un-expand-toggle un-fac-plain">{title}</span>
+          <Link href={href} className="un-expand-toggle">
+            {title}
+          </Link>
         </h2>
       </div>
     );
   }
   return (
-    <ExpandBlock label={title}>
+    <ExpandBlock label={title} href={href}>
       {f.description ? <p className="un-fac-desc">{f.description}</p> : null}
       {inventory.length ? (
         <div className="un-fac-block">
@@ -597,6 +602,7 @@ export default async function UnitPage({
   const sideHas = Boolean(
     unit.head ||
       staffList.length ||
+      facilities.length ||
       contactHas ||
       receptionRows.length ||
       unit.receptionHours ||
@@ -991,6 +997,31 @@ export default async function UnitPage({
                         </ul>
                       </StaffReveal>
                     ) : null}
+                  </div>
+                ) : null}
+
+                {/* F5.35d — auditoriya/laboratoriya siyahısı: tipə görə açılan
+                    başlıqlar, içində obyekt adları (/auditoriyalar/<slug>).
+                    Sıfır olan tip görünmür, heç biri yoxdursa bölmə də yoxdur. */}
+                {facilitiesByType.length ? (
+                  <div>
+                    <div className="un-sub-title">{blockTitleFacilities}</div>
+                    <div className="un-expand-group">
+                      {facilitiesByType.map((g) => (
+                        <ExpandBlock key={g.type} label={`${tr(FACILITY_PLURAL_AZ[g.type], locale)} (${g.items.length})`}>
+                          <ul className="un-fac-side-list">
+                            {g.items.map((f) => (
+                              <li key={f.documentId}>
+                                <Link href={`/${locale}/auditoriyalar/${f.slug}`}>
+                                  {f.roomNumber ? `${f.roomNumber} · ` : ''}
+                                  {f.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </ExpandBlock>
+                      ))}
+                    </div>
                   </div>
                 ) : null}
 

@@ -12,22 +12,50 @@
 // F4.10 — gövdə `html` string YOX, `children` qəbul edir: struktur
 // səhifəsindəki akkordeon qrupu prose HTML-i, kart torunu (FnCardGrid) və
 // hesabat sənəd siyahısını EYNİ qabıqda göstərir (bax struktur/[slug]/page.tsx).
+// F5.35d — `href` verilərsə başlıq KEÇİDDİR, aç/bağla isə yanındakı AYRI
+// düymədir (link <button> içinə qoyula bilməz — etibarsız HTML).
 import { useState } from 'react';
+import Link from 'next/link';
 
-export default function ExpandBlock({ label, children }: { label: string; children: React.ReactNode }) {
+export default function ExpandBlock({
+  label,
+  children,
+  href,
+}: {
+  label: string;
+  children: React.ReactNode;
+  href?: string;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <div className="un-expand">
       <h2 className="un-expand-head">
-        <button
-          type="button"
-          className="un-expand-toggle"
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-        >
-          {label}
-          <span className="un-expand-arrow" aria-hidden="true" />
-        </button>
+        {href ? (
+          <div className="un-expand-toggle un-expand-toggle--split">
+            <Link href={href} className="un-expand-link">
+              {label}
+            </Link>
+            <button
+              type="button"
+              className="un-expand-btn"
+              aria-expanded={open}
+              aria-label={label}
+              onClick={() => setOpen((o) => !o)}
+            >
+              <span className="un-expand-arrow" aria-hidden="true" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="un-expand-toggle"
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {label}
+            <span className="un-expand-arrow" aria-hidden="true" />
+          </button>
+        )}
       </h2>
       <div className="un-expand-body" hidden={!open}>
         {children}

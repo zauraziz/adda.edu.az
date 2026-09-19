@@ -857,9 +857,34 @@ a.un-fact-v:hover { text-decoration: underline; text-underline-offset: 2px; }
    Boşluq şkalası 4/8/12/16/24/32/48px. Yeni rəng/şrift YOXDUR. ── */
 .un-main .un-fac-group { text-transform: capitalize; }
 .un-block .un-expand-group + .un-sub-title { margin-top: 24px; }
-/* Gövdəsi olmayan obyekt: eyni qabıq, açılmır. */
-.un-fac-plain { cursor: default; }
-.un-expand-toggle.un-fac-plain:hover { color: var(--navy-800); }
+/* Gövdəsi olmayan obyekt: başlıq keçiddir, açılmır. */
+.un-expand-head a.un-expand-toggle { text-decoration: none; }
+/* F5.35d — başlıq keçid + ayrı aç/bağla düyməsi (ExpandBlock `href`). */
+.un-expand-toggle--split { cursor: default; }
+.un-expand-link { flex: 1; min-width: 0; color: inherit; text-decoration: none; }
+.un-expand-link:hover { text-decoration: underline; text-decoration-color: var(--gold-400); }
+.un-expand-link:focus-visible,
+.un-expand-btn:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; border-radius: 12px; }
+.un-expand-btn { flex-shrink: 0; padding: 0; background: none; border: none; cursor: pointer; }
+.un-expand-btn:hover .un-expand-arrow { border-color: var(--gold-400); }
+.un-expand-btn[aria-expanded="true"] .un-expand-arrow {
+  transform: rotate(180deg);
+  background: var(--gold-100);
+  border-color: var(--gold-300);
+}
+/* F5.35d — yan paneldə akkordeon kompakt: 1.5rem başlıq 320px sütuna sığmır. */
+.un-side .un-expand { border-radius: 12px; }
+.un-side .un-expand-toggle { padding: 12px; gap: 8px; font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; }
+.un-side .un-expand-arrow { width: 24px; height: 24px; }
+.un-side .un-expand-body { padding: 0 12px 12px; }
+.un-fac-side-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.un-fac-side-list a {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--navy-800);
+  text-decoration: none;
+}
+.un-fac-side-list a:hover { color: var(--gold-600); text-decoration: underline; text-decoration-color: var(--gold-400); }
 .un-fac-desc {
   margin: 0 0 16px;
   font-family: var(--font-body);
