@@ -14,7 +14,9 @@
 type Data = Record<string, unknown>;
 type Event = { params: { data?: Data } };
 
-const TARGETS = ['article', 'announcement', 'event', 'milestone', 'page', 'general'];
+// F5.38 — `person` sxemdə və identity nəzarətçisində (CORRECTION_TARGETS) var idi,
+// burada yox idi: əməkdaş səhifəsindən gələn düzəliş «general»a çevrilirdi.
+const TARGETS = ['article', 'announcement', 'event', 'milestone', 'person', 'page', 'general'];
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,198}[a-z0-9])?$/;
 
 function clean(raw: unknown, max: number): string {
