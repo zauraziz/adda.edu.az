@@ -1,108 +1,283 @@
-/* 40-appeal.css — /[locale]/vetendaslarin-muracieti (F5.31c/F5.32/F5.33)
+/* 40-appeal.css — /[locale]/vetendaslarin-muracieti (F5.31c/F5.32/F5.33/F5.36)
    AppealIsland TAM SƏHİFƏ formasıdır, `23-correction.css`-dəki `.cx-*`
-   (kiçik vidcet qabığı) İLƏ PAYLAŞILMIR — F5.33-dən bəri tam ayrıdır
-   (bax CLAUDE.md, DİZAYN QAYDALARI: "vidcet qabığı ≠ səhifə qabığı").
-   `.ap-shell` max-width GƏTİRMİR — səhifənin `.container`-i (1240px)
-   idarə edir, "bir səhifə, bir en" qaydası. Tailwind/lucide İŞLƏDİLMİR —
-   Tabler ikon dəsti + layihə CSS dəyişənləri (:root). */
+   (kiçik vidcet qabığı) İLƏ PAYLAŞILMIR (bax CLAUDE.md, DİZAYN QAYDALARI:
+   "vidcet qabığı ≠ səhifə qabığı"). Heç bir sinif max-width GƏTİRMİR —
+   səhifənin `.container`-i (1240px) idarə edir, "bir səhifə, bir en".
+   Tailwind/lucide İŞLƏDİLMİR — Tabler ikon dəsti + :root dəyişənləri.
 
-/* F5.33 — qabıq: ağ fon, yumşaq kölgə, üstdə qızılı nazik xətt. Enə
-   TOXUNMUR (valideyn `.un-block`/`.container` idarə edir). */
-.ap-shell {
-  margin-top: 2rem;
-  background: var(--white);
+   F5.36 — portal.adda.edu.az «Onlayn qeydiyyat forması» üslubu:
+   mərkəzləşdirilmiş bölmə başlığı · solda qayda siyahısı (şaquli xətt +
+   nöqtələr, portalın «Mərhələ» siyahısı kimi) · sağda ağ kart, nömrələnmiş
+   bölmələr · göy (navy) göndər düyməsi. Portalın rəngləri saytın KİLİDLİ
+   palitrasına köçürülüb (navy/qızılı + boz tonlar), yeni rəng YOXDUR.
+   Boşluqlar F4.9e şkalası ilə: 4/8/12/16/24/32/48px. */
+
+/* ── Səhifə qabığı ─────────────────────────────────────────────────────── */
+.ap-page {
+  padding: 48px 0;
+}
+
+/* F5.36 — portal «section-head»: eyebrow həb + Fraunces başlıq + izah. */
+.ap-head {
+  max-width: 780px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+.ap-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 8px 16px;
   border: 1px solid var(--gray-200);
-  border-top: 3px solid var(--gold-500);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 12px 32px -16px rgba(11, 61, 92, 0.18);
-}
-
-/* F5.33 — sadə başlıq: rəngli blok/ikon YOX, Fraunces başlıq + bir
-   sətir izah (Manrope). */
-.ap-header {
-  padding: 1.4rem 1.6rem 1.1rem;
-  border-bottom: 1px solid var(--gray-100);
-}
-.ap-h2 {
-  margin: 0;
-  font-family: var(--font-display);
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: 0 1px 2px rgba(11, 61, 92, 0.04), 0 1px 3px rgba(11, 61, 92, 0.06);
+  font-family: var(--font-body);
+  font-size: 12.5px;
   font-weight: 600;
-  font-size: var(--text-lg);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.ap-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-500);
+  box-shadow: 0 0 0 4px var(--gold-100);
+}
+.ap-title {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   color: var(--navy-900);
 }
-.ap-lead {
-  margin: 0.3rem 0 0;
+.ap-intro {
+  margin: 0;
   font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--gray-500);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-soft);
 }
 
-.ap-body {
-  padding: 1.3rem 1.6rem 1.5rem;
-}
-
-.ap-field {
-  margin-bottom: 1.05rem;
-}
-.ap-label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
+/* F5.36 — məcburi sahə nişanı. DİZAYN QAYDALARI: qırmızı YOX — qızılı. */
+.ap-req {
+  margin-left: 4px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  color: var(--gold-600);
+}
+
+/* F5.36 — iki sütun: solda qayda, sağda forma. Mobildə TƏK sütun, forma
+   ƏVVƏL (əsas iş), qayda sonra. */
+.ap-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.ap-back {
+  margin-top: 48px;
+}
+
+/* ── Sol blok: qayda (əvvəlki 8 akkordeon) ──────────────────────────────── */
+.ap-aside-title {
+  margin: 4px 0 24px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  color: var(--navy-900);
+}
+.ap-facts {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Şaquli xətt — nöqtələrin mərkəzindən keçir (nöqtə 12px, xətt 2px). */
+.ap-facts::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 5px;
+  width: 2px;
+  background: var(--gray-200);
+}
+.ap-facts > li {
+  position: relative;
+  padding: 0 0 24px 24px;
+}
+.ap-facts > li:last-child {
+  padding-bottom: 0;
+}
+.ap-facts > li::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border: 2px solid var(--navy-800);
+  border-radius: 50%;
+  background: var(--white);
+}
+.ap-facts small {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gray-500);
 }
-/* F5.32b — sahə etiketi + ikon (mövcud Tabler dəsti: ti-user/ti-mail/
-   ti-phone/ti-file-text/ti-message), 18px, currentColor. */
-.ap-label-ic {
+.ap-facts p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.ap-facts p + p,
+.ap-fact-tags + p {
+  margin-top: 4px;
+}
+/* Qısa siyahı (müraciət yolları, məcburi rekvizitlər): ayırıcı nöqtə
+   ƏVVƏLKİ elementə yapışır — sətir «·» ilə başlamır. */
+.ap-fact-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--navy-800);
+}
+.ap-fact-tags li {
+  white-space: nowrap;
+}
+.ap-fact-tags li:not(:last-child)::after {
+  content: '·';
+  margin-left: 8px;
+  color: var(--gold-600);
+}
+
+/* ── Forma kartı ────────────────────────────────────────────────────────── */
+.ap-card {
+  min-width: 0;
+  padding: 32px;
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: 0 1px 2px rgba(11, 61, 92, 0.04), 0 1px 3px rgba(11, 61, 92, 0.06);
+}
+
+/* F5.36 — nömrələnmiş bölmə (portal «form-section»). */
+.ap-sec + .ap-sec {
+  margin-top: 32px;
+}
+.ap-sec-head {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-100);
 }
-.ap-label-ic i {
-  font-size: 18px;
-  color: currentColor;
+.ap-sec-num {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--navy-800);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+}
+.ap-sec-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  color: var(--navy-900);
+}
+.ap-sec-sub {
+  margin: 4px 0 0;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--gray-500);
+}
+
+.ap-field {
+  min-width: 0;
+  margin-bottom: 16px;
+}
+.ap-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy-900);
 }
 
 .ap-in,
 .ap-ta {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.7rem 0.85rem;
-  border: 1.5px solid var(--gray-200);
+  padding: 12px 16px;
+  border: 1px solid var(--gray-300);
   border-radius: 10px;
-  background: var(--gray-50);
+  background: var(--white);
   font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--gray-900);
-  transition: border-color var(--nav-dur) var(--nav-ease), background var(--nav-dur) var(--nav-ease),
-    box-shadow var(--nav-dur) var(--nav-ease);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--navy-900);
+  transition: border-color var(--nav-dur) var(--nav-ease), box-shadow var(--nav-dur) var(--nav-ease);
+}
+.ap-in::placeholder,
+.ap-ta::placeholder {
+  font-weight: 400;
+  color: var(--gray-500);
 }
 .ap-ta {
-  min-height: 92px;
+  min-height: 140px;
   resize: vertical;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .ap-in:focus,
 .ap-ta:focus {
   outline: none;
   border-color: var(--navy-600);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(18, 96, 143, 0.12);
+  box-shadow: 0 0 0 3px rgba(18, 96, 143, 0.14);
 }
 
-/* F5.32a — «Müraciətin növü» seçimi. */
+/* F5.32a — «Müraciət növü» seçimi. */
 .ap-seg {
-  display: inline-flex;
-  gap: 0.4rem;
+  display: flex;
   flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 .ap-seg-btn {
-  padding: 0.45rem 0.95rem;
-  border: 1.5px solid var(--gray-300);
+  padding: 8px 16px;
+  border: 1px solid var(--gray-300);
   border-radius: 999px;
   background: var(--white);
   color: var(--gray-700);
@@ -122,52 +297,118 @@
   background: var(--navy-800);
   color: var(--white);
 }
+.ap-seg-btn:focus-visible {
+  outline: 2px solid var(--navy-600);
+  outline-offset: 2px;
+}
 
-/* F5.32b — sahələr iki sütunlu grid, mobildə tək sütun. Mövzu/bölmə/mətn
-   kimi "tam sətir" sahələr üçün `.ap-grid-full`. */
+/* F5.32b — sahələr iki sütunlu grid, mobildə tək sütun. */
 .ap-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 1rem;
-}
-.ap-grid-full {
-  grid-column: 1 / -1;
-}
-@media (max-width: 560px) {
-  .ap-grid {
-    grid-template-columns: 1fr;
-  }
+  gap: 0 16px;
 }
 
-/* F5.32b — razılıq qutusu (məcburi). */
-.ap-consent {
+/* F5.36b — «Aidiyyəti bölmə»: 4 istiqamət kartı (portal «course-radio»).
+   Semantika radio-dur (TƏK seçim), görünüş işarələnən qutu. Giriş elementi
+   görünməzdir, AMMA fokuslana bilir (display:none YOX) — klaviatura ilə
+   seçim işləyir, fokus halqası kartda görünür. */
+.ap-dirs {
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+.ap-dirs > legend {
+  padding: 0;
+}
+.ap-dir-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ap-dir {
+  position: relative;
+}
+.ap-dir input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.ap-dir label {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  margin: 0.3rem 0 1.3rem;
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--gray-700);
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 16px 48px 16px 16px;
+  border: 1px solid var(--gray-300);
+  border-radius: 10px;
+  background: var(--white);
   cursor: pointer;
-  line-height: 1.5;
+  transition: border-color var(--nav-dur) var(--nav-ease), background var(--nav-dur) var(--nav-ease),
+    box-shadow var(--nav-dur) var(--nav-ease);
 }
-.ap-consent input {
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  margin-top: 0.1rem;
-  accent-color: var(--navy-800);
+.ap-dir label:hover {
+  border-color: var(--navy-600);
+}
+.ap-dir-name {
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--navy-900);
+}
+.ap-dir-hint {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--gray-500);
+}
+.ap-dir-box {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 6px;
+  background: var(--white);
+  color: transparent;
+  font-size: 14px;
+  transition: background var(--nav-dur) var(--nav-ease), border-color var(--nav-dur) var(--nav-ease),
+    color var(--nav-dur) var(--nav-ease);
+}
+.ap-dir input:checked + label {
+  border-color: var(--navy-800);
+  background: var(--navy-50);
+  box-shadow: inset 0 0 0 1px var(--navy-800);
+}
+.ap-dir input:checked + label .ap-dir-box {
+  border-color: var(--navy-800);
+  background: var(--navy-800);
+  color: var(--white);
+}
+.ap-dir input:focus-visible + label {
+  outline: 2px solid var(--navy-600);
+  outline-offset: 2px;
 }
 
-/* F5.32e — fayl əlavəsi. `.ap-in` ilə eyni çərçivə (input[type=file]-a
-   tətbiq olunanda brauzer öz "Fayl seç" düyməsini içəridə çəkir). */
+/* F5.32e — fayl əlavəsi. `.ap-in` ilə eyni çərçivə. */
 .ap-file {
-  padding: 0.55rem 0.85rem;
+  padding: 8px 12px;
   cursor: pointer;
 }
 .ap-hint {
   display: block;
-  margin-top: 0.35rem;
+  margin-top: 8px;
   font-family: var(--font-body);
   font-size: var(--text-xs);
   color: var(--gray-500);
@@ -175,8 +416,8 @@
 .ap-file-name {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
+  gap: 4px;
+  margin-top: 8px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--navy-800);
@@ -185,62 +426,90 @@
    navy mətnlə fərqləndirilir. */
 .ap-file-err {
   display: block;
-  margin-top: 0.4rem;
+  margin-top: 8px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 700;
   color: var(--navy-900);
 }
 
-/* F5.31c — "Sual" qeyri-rəsmi qeydi / rəsmi növün qanuni müddət qeydi. */
+/* F5.31c — "Sual" qeyri-rəsmi qeydi / rəsmi müraciət qeydi. */
 .ap-note {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
-  margin: 0 0 1.05rem;
-  padding: 0.75rem 1rem;
-  background: var(--navy-50);
+  gap: 8px;
+  margin: 0;
+  padding: 12px 16px;
   border-left: 3px solid var(--gold-500);
   border-radius: 0 10px 10px 0;
+  background: var(--navy-50);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--navy-800);
   line-height: 1.5;
+  color: var(--navy-800);
 }
 .ap-note i {
   flex-shrink: 0;
-  margin-top: 0.15rem;
+  margin-top: 2px;
   color: var(--gold-600);
+}
+
+/* F5.32b/F5.36 — razılıq qutusu (məcburi), portal «consent» kimi fonlu blok. */
+.ap-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 16px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--gold-100) 55%, var(--white));
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.ap-consent input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--navy-800);
 }
 
 .ap-actions {
   display: flex;
-  align-items: center;
-  gap: 0.8rem;
   flex-wrap: wrap;
-  margin-top: 0.3rem;
+  align-items: center;
+  gap: 12px;
 }
+/* F5.36 — göndər düyməsi QIZILI DEYİL, göy (navy) — portal kimi. */
 .ap-submit {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.6rem;
+  gap: 8px;
+  padding: 12px 24px;
   border: none;
   border-radius: 10px;
-  background: var(--gold-500);
-  color: var(--navy-900);
+  background: var(--navy-800);
+  color: var(--white);
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 6px 16px -6px rgba(11, 61, 92, 0.45);
   transition: background var(--nav-dur) var(--nav-ease), transform var(--nav-dur) var(--nav-ease);
 }
 .ap-submit i {
   font-size: 1.05rem;
 }
 .ap-submit:hover:not(:disabled) {
-  background: var(--gold-600);
+  background: var(--navy-700);
   transform: translateY(-1px);
+}
+.ap-submit:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
 }
 .ap-submit:disabled {
   opacity: 0.6;
@@ -249,47 +518,49 @@
 /* F5.33 — DİZAYN QAYDALARI: qırmızı/başqa palitra YOX, xəta qalın
    navy mətnlə fərqləndirilir. */
 .ap-err {
-  margin: 0.85rem 0 0;
+  margin: 16px 0 0;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 700;
   color: var(--navy-900);
 }
 
-/* F5.32c/F5.33 — göndərildikdən sonra, EYNİ `.ap-shell` qabığında/endə. */
+/* ── Göndərildikdən sonra (F5.32c/F5.33), EYNİ `.ap-card` qabığında ────── */
 .ap-done {
-  padding: 2.4rem 1.6rem;
+  padding: 16px 0;
   text-align: center;
 }
-/* F5.33 — DİZAYN QAYDALARI: yalnız navy/qızılı (yaşıl "uğur" rəngi
-   YOXDUR, 23-correction.css-dəki köhnə nümunədən qəsdən UZAQLAŞILIB). */
+/* F5.33 — DİZAYN QAYDALARI: yalnız navy/qızılı (yaşıl "uğur" rəngi YOXDUR). */
 .ap-done-ic {
   display: grid;
   place-items: center;
   width: 60px;
   height: 60px;
-  margin: 0 auto 1rem;
+  margin: 0 auto 16px;
   border-radius: 50%;
   background: var(--navy-800);
   color: var(--gold-500);
   font-size: 1.9rem;
 }
 .ap-done-msg {
-  margin: 0 0 0.4rem;
+  margin: 0 0 8px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-lg);
   color: var(--navy-900);
 }
 .ap-done-sub {
-  margin: 0 0 1.3rem;
+  margin: 0 0 24px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--gray-500);
 }
 .ap-reset {
-  padding: 0.7rem 1.5rem;
-  border: 1.5px solid var(--gray-300);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: 1px solid var(--gray-300);
   border-radius: 10px;
   background: var(--white);
   color: var(--navy-800);
@@ -307,12 +578,12 @@
 .ap-code {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  margin: 0 0 1.3rem;
-  padding: 0.6rem 1.1rem;
-  background: var(--gray-50);
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 12px 16px;
   border: 1px dashed var(--gray-300);
   border-radius: 10px;
+  background: var(--gray-50);
 }
 .ap-code-label {
   font-family: var(--font-body);
@@ -324,12 +595,11 @@
 }
 .ap-code-value {
   font-family: var(--font-body);
-  /* F5.32c — "böyük, seçilə bilən": text-lg-dən (izləmə etiketi) bir
-     addım da böyüdülüb, `user-select: all` tək kliklə tam kodu seçir. */
+  /* F5.32c — "böyük, seçilə bilən": `user-select: all` tək kliklə tam kodu seçir. */
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--navy-900);
   letter-spacing: 0.02em;
+  color: var(--navy-900);
   user-select: all;
   cursor: text;
 }
@@ -339,20 +609,19 @@
   border-radius: 4px;
 }
 
-/* F5.32c — göndərildikdən sonra: növ + hüquqi status ("Bu, rəsmi
-   müraciətdir" / "Bu, qeyri-rəsmi sorğudur"). */
+/* F5.32c — növ + hüquqi status ("Bu, rəsmi müraciətdir" / "qeyri-rəsmi"). */
 .ap-status {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin: 0 0 1rem;
+  gap: 8px;
+  margin: 0 0 16px;
 }
 .ap-status-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.7rem;
+  padding: 4px 12px;
   border-radius: 999px;
   background: var(--gray-100);
   color: var(--gray-700);
@@ -371,37 +640,58 @@
   font-size: var(--text-sm);
   color: var(--gray-500);
 }
-/* F5.32c — təsdiq ekranındakı qanuni müddət qeydi, mərkəzləşdirilir. */
 .ap-note--done {
-  text-align: left;
   max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 16px;
+  text-align: left;
 }
 
 /* F5.31d — honeypot: ekrandan kənara çıxarılır (display:none YOX — bəzi
    botlar onu aşkarlayıb keçir), aria-hidden isə ekran oxuyucularını qoruyur. */
 .ap-hp {
   position: absolute;
-  left: -9999px;
   top: auto;
+  left: -9999px;
   width: 1px;
   height: 1px;
   overflow: hidden;
 }
 
-@media (max-width: 560px) {
-  .ap-header {
-    padding: 1.1rem 1.2rem 0.9rem;
+/* ── Responsiv ──────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .ap-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
   }
-  .ap-body {
-    padding: 1.1rem 1.2rem 1.3rem;
+  .ap-aside {
+    order: 2;
+  }
+}
+@media (max-width: 560px) {
+  .ap-page {
+    padding: 32px 0;
+  }
+  .ap-head {
+    margin-bottom: 32px;
+  }
+  .ap-intro {
+    font-size: 15px;
+  }
+  .ap-card {
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+  .ap-grid,
+  .ap-dir-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .ap-seg-btn,
   .ap-in,
   .ap-ta,
+  .ap-dir label,
+  .ap-dir-box,
   .ap-submit {
     transition: none;
   }

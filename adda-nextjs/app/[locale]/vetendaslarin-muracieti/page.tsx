@@ -1,17 +1,23 @@
-// F5.30b/F5.32a — /[locale]/vetendaslarin-muracieti: vətəndaşların
+// F5.30b/F5.32a/F5.36 — /[locale]/vetendaslarin-muracieti: vətəndaşların
 // müraciətinə baxılması qaydası + elektron müraciət forması.
 //
-// F5.32a — səhifə sırası TƏRSİNƏ çevrilib: FORMA əsas məzmundur (hero-dan
-// dərhal sonra), hüquqi mətn (8 bölmə) FORMADAN SONRA, ExpandBlock
-// akkordeonunda (MÖVCUD komponent, bax _components/ExpandBlock.tsx),
-// HAMISI BAĞLI vəziyyətdə. Mətnin özü DƏYİŞMƏYİB — yalnız yeri/formatı.
+// F5.36 — portal.adda.edu.az «Onlayn qeydiyyat forması» üslubu:
+//   - hero-dan sonra mərkəzləşdirilmiş bölmə başlığı (eyebrow + Fraunces
+//     başlıq + izah), ağ fonda — köhnə forma başlığı (`<header class=
+//     "ap-header">`) 02-header.css-in QLOBAL `header{}` seçicisindən navy
+//     gradient alırdı, üstündə tünd və boz mətn oxunmurdu;
+//   - iki sütun: SOLDA qayda (əvvəlki 8 akkordeonun mətni, sözbəsöz,
+//     tərcümələri ilə birgə), SAĞDA forma kartı. Akkordeonlar ÇIXARILIB.
 //
 // Məzmun STATİKDİR (CMS-dən çəkilmir), ona görə admin redaktə qapısı yoxdur.
 //
-// DİQQƏT — «Baxılma müddətləri» bölməsi QƏSDƏN boş şablondur: ümumi
-// baxılma müddəti (15/30 gün) TƏSDİQLƏNMƏYİB. Rəqəm YAZILMAYIB, ADDA-nın
-// hüquq məsləhətçisi dəqiqləşdirənədək. Digər bəndlərdəki konkret müddətlər
-// (5/20/10 iş günü) tapşırıqda AÇIQ verilib, ona görə yazılıb.
+// DİQQƏT — «Baxılma müddətləri» bəndi GÖSTƏRİLMİR: ümumi baxılma müddəti
+// (15/30 gün) TƏSDİQLƏNMƏYİB, ADDA-nın hüquq məsləhətçisi dəqiqləşdirənədək
+// rəqəm yazılmır. Əvvəl «boş saxlanılır» qeydi ilə görünürdü; DİZAYN
+// QAYDALARI («boş sahə render olunmur») ilə F5.36-da çıxarılıb. Təsdiq
+// gələndə APPEAL_FACTS siyahısına bir sətir kimi əlavə olunur.
+// Digər bəndlərdəki konkret müddətlər (5/20/10 iş günü) tapşırıqda AÇIQ
+// verilib, ona görə yazılıb.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -37,12 +43,85 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import AppealIsland from '../../_components/AppealIsland';
-import ExpandBlock from '../../_components/ExpandBlock';
+import AppealIsland, { type AppealDirection } from '../../_components/AppealIsland';
 import { getMenu, getUnits, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
+
+/**
+ * F5.36b — «Aidiyyəti bölmə»: 28 bölməlik açılan siyahı əvəzinə 4 əsas
+ * müraciət istiqaməti. Hər istiqamət MÖVCUD bir struktur bölməsinə bağlanır:
+ * müraciətin bildirişi həmin bölmənin e-poçtuna gedir (adda-strapi
+ * utils/appeal-mail.ts; bölmədə e-poçt yoxdursa ümumi ünvana).
+ *
+ * TƏK SEÇİM: `appeal.targetUnit` manyToOne əlaqədir — müraciət bir bölməyə
+ * ünvanlanır. Çoxlu seçim sxem dəyişikliyi (manyToMany) tələb edər.
+ *
+ * `key` footer-dəki «Rektorla əlaqə» keçidinin `?istiqamet=` parametridir
+ * (Footer.tsx) — dəyişdiriləndə orada da dəyişdirilməlidir.
+ *
+ * «Qəbul» üçün ayrıca struktur bölməsi YOXDUR (bax /elaqe, ROUTING_TABLE) —
+ * tədrisin təşkili üzrə prorektorluğa bağlanıb. Zaur müəllim dəqiqləşdirə
+ * bilər: yalnız `unitSlug` dəyişir.
+ */
+const APPEAL_DIRECTIONS: { key: string; unitSlug: string; label: string; hint: string }[] = [
+  { key: 'rektor', unitSlug: 'rektor', label: 'Rektora müraciət', hint: 'Rəhbərliyə ünvanlanan məsələlər' },
+  {
+    key: 'qebul',
+    unitSlug: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq',
+    label: 'Qəbul məsələləri',
+    hint: 'Abituriyentlər və qəbul qaydaları',
+  },
+  {
+    key: 'tedris',
+    unitSlug: 'tedris-proseslerinin-teskili-sobesi',
+    label: 'Tədris prosesi və sənədlər',
+    hint: 'Dərslər, imtahanlar, arayışlar',
+  },
+  { key: 'telim', unitSlug: 'telim-tedris-merkezi', label: 'Dənizçi sertifikatları və kurslar', hint: 'STCW təlimləri və sertifikatlar' },
+];
+
+/**
+ * F5.36a — sol blok: əvvəlki 8 akkordeonun mətni (F5.30b), SÖZBƏSÖZ.
+ * Başlıqlar və mətnlər i18n.ts-də artıq tərcümə olunub (F5.30b bölməsi).
+ * `parts` — bir bəndin bir neçə cümləsi/siyahısı (ayrı sətirlər).
+ */
+const APPEAL_FACTS: { label: string; parts: (string | string[])[] }[] = [
+  {
+    label: 'Hüquqi əsas',
+    parts: [
+      'Bu qayda Azərbaycan Respublikası Konstitusiyasının 57-ci maddəsinə və «Vətəndaşların müraciətlərinə baxılması qaydası haqqında» Azərbaycan Respublikasının Qanununa əsaslanır.',
+    ],
+  },
+  {
+    label: 'Müraciət növləri',
+    parts: ['Qanunun 3-cü maddəsinə əsasən müraciətlər üç növə bölünür: təklif, ərizə və şikayət.'],
+  },
+  { label: 'Müraciət yolları', parts: [['Yazılı', 'Elektron', 'Şəxsən', 'Telefonla']] },
+  {
+    label: 'Müraciətdə nə göstərilməlidir',
+    parts: [['Ad', 'Ata adı', 'Soyad', 'Ünvan və ya iş yeri', 'İmza'], 'Bunlar göstərilmədikdə müraciət anonim sayılır.'],
+  },
+  {
+    label: 'Cavab',
+    parts: [
+      'Müraciətə yazılı cavab verilir. Müraciət təmin edilmədikdə səbəb göstərilir və şikayət vermək qaydası izah olunur.',
+    ],
+  },
+  {
+    label: 'Təkrar müraciətlər',
+    parts: [
+      'Eyni məsələ üzrə bir il ərzində 3 dəfə əsaslandırılmış cavab verilibsə və yeni məlumat yoxdursa, növbəti müraciət baxılmamış saxlanıla bilər. Bu barədə müraciət edənə 5 iş günü ərzində məlumat verilir.',
+    ],
+  },
+  {
+    label: 'Korrupsiya ilə bağlı müraciətlər',
+    parts: [
+      'Korrupsiya ilə bağlı müraciətlərə 20 iş günü ərzində baxılır. Əlavə məlumat tələb olunduqda müddət daha 10 iş günü uzadıla bilər.',
+    ],
+  },
+];
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];
@@ -63,17 +142,32 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function CitizenAppealsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  // F5.36b — istiqamət → bölmə documentId. documentId dildən asılı deyil,
+  // ona görə həmişə defolt (`az`) siyahıdan həll olunur.
   const [menu, units] = await Promise.all([
     getMenu(locale).catch(() => null as SiteMenu | null),
-    getUnits(locale).catch(() => []),
+    getUnits('az').catch(() => []),
   ]);
+  const unitIdBySlug = new Map(units.map((u) => [u.slug, u.documentId]));
+  // Bölməsi tapılmayan istiqamət GÖSTƏRİLMİR (seçim itməsin deyə) — köhnə
+  // açılan siyahı da bölmələr yüklənməyəndə tam gizlənirdi.
+  const directions: AppealDirection[] = APPEAL_DIRECTIONS.flatMap((d) => {
+    const documentId = unitIdBySlug.get(d.unitSlug);
+    return documentId ? [{ key: d.key, documentId, label: tr(d.label, locale), hint: tr(d.hint, locale) }] : [];
+  });
 
   // F5.31c — CorrectionIsland ilə EYNİ qayda: tərcümə klient bundle-ına
   // (55 kB-lıq tam T lüğəti) düşməsin deyə hazır string-lər PROP kimi ötürülür.
   const appealLabels: Record<string, string> = {
-    title: tr('Müraciət et', locale),
-    subtitle: tr('Sual, təklif, ərizə və ya şikayətinizi bura yazın.', locale),
-    typeLabel: tr('Müraciət növü', locale),
+    title: tr('Onlayn müraciət forması', locale),
+    sec1Title: tr('Müraciət növü', locale),
+    sec1Sub: tr('Müraciətinizin məqsədinə uyğun növü seçin.', locale),
+    sec2Title: tr('Şəxsi məlumatlar', locale),
+    sec2Sub: tr('Cavab bu məlumatlar əsasında göndəriləcək.', locale),
+    sec3Title: tr('Müraciətin məzmunu', locale),
+    sec3Sub: tr('Müraciətinizi aydın və ətraflı yazın.', locale),
+    sec4Title: tr('Təsdiq və göndərmə', locale),
+    sec4Sub: tr('Məlumatları yoxlayın və müraciəti göndərin.', locale),
     type_sual: tr('Sual', locale),
     type_teklif: tr('Təklif', locale),
     type_erize: tr('Ərizə', locale),
@@ -83,7 +177,7 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
       locale,
     ),
     deadlineNote: tr(
-      'Bu, rəsmi müraciətdir. Baxılma müddətləri aşağıdakı «Müraciət haqqında bilməli olduqlarınız» bölməsində göstərilib.',
+      'Bu, rəsmi müraciətdir. Müraciətə qanunvericiliyə uyğun olaraq yazılı cavab verilir.',
       locale,
     ),
     firstNameLabel: tr('Ad', locale),
@@ -93,7 +187,7 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
     phoneLabel: tr('Telefon', locale),
     addressLabel: tr('Ünvan (istəyə bağlı)', locale),
     unitLabel: tr('Aidiyyəti bölmə (istəyə bağlı)', locale),
-    unitPlaceholder: tr('Seçilməyib', locale),
+    unitHint: tr('Birini seçin və ya boş buraxın — müraciət ümumi ünvana göndəriləcək.', locale),
     subjectLabel: tr('Mövzu', locale),
     messageLabel: tr('Mətn', locale),
     consentLabel: tr(
@@ -105,6 +199,7 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
     attachmentHint: tr('PDF, DOC, DOCX, JPG, PNG — maksimum 10 MB', locale),
     attachmentTooLarge: tr('Fayl 10 MB-dan böyükdür.', locale),
     attachmentBadType: tr('Bu fayl növünə icazə verilmir. PDF, DOC, DOCX, JPG və ya PNG seçin.', locale),
+    requiredMark: tr('məcburi sahə', locale),
     submit: tr('Göndər', locale),
     sending: tr('Göndərilir', locale),
     successMsg: tr('Müraciətiniz qəbul edildi.', locale),
@@ -132,124 +227,60 @@ export default async function CitizenAppealsPage({ params }: { params: Promise<{
           </div>
         </section>
 
-        <div className="container">
-          {/* F5.32a — FORMA əsas məzmundur, hero-dan dərhal sonra. */}
-          <section className="un-block" style={{ borderTop: 'none' }}>
-            <AppealIsland
-              units={units.map((u) => ({ documentId: u.documentId, name: u.name }))}
-              labels={appealLabels}
-            />
-          </section>
-
-          {/* F5.32a — hüquqi mətn (8 bölmə) FORMADAN SONRA, akkordeonda,
-              HAMISI BAĞLI. Mətn F5.30b-dən DƏYİŞMƏYİB. */}
-          <section className="un-block">
-            <h2 className="un-block-title">{tr('Müraciət haqqında bilməli olduqlarınız', locale)}</h2>
-            <div className="un-expand-group">
-              <ExpandBlock label={tr('Hüquqi əsas', locale)}>
-                <div className="prose">
-                  <p>
-                    {tr(
-                      'Bu qayda Azərbaycan Respublikası Konstitusiyasının 57-ci maddəsinə və «Vətəndaşların müraciətlərinə baxılması qaydası haqqında» Azərbaycan Respublikasının Qanununa əsaslanır.',
-                      locale,
-                    )}
-                  </p>
-                </div>
-              </ExpandBlock>
-
-              <ExpandBlock label={tr('Müraciət növləri', locale)}>
-                <div className="prose">
-                  <p>
-                    {tr(
-                      'Qanunun 3-cü maddəsinə əsasən müraciətlər üç növə bölünür: təklif, ərizə və şikayət.',
-                      locale,
-                    )}
-                  </p>
-                </div>
-              </ExpandBlock>
-
-              <ExpandBlock label={tr('Müraciət yolları', locale)}>
-                <div className="prose">
-                  <ul>
-                    <li>{tr('Yazılı', locale)}</li>
-                    <li>{tr('Elektron', locale)}</li>
-                    <li>{tr('Şəxsən', locale)}</li>
-                    <li>{tr('Telefonla', locale)}</li>
-                  </ul>
-                </div>
-              </ExpandBlock>
-
-              <ExpandBlock label={tr('Müraciətdə nə göstərilməlidir', locale)}>
-                <div className="prose">
-                  <p>
-                    {tr('Müraciətdə aşağıdakılar göstərilməlidir:', locale)}
-                  </p>
-                  <ul>
-                    <li>{tr('Ad', locale)}</li>
-                    <li>{tr('Ata adı', locale)}</li>
-                    <li>{tr('Soyad', locale)}</li>
-                    <li>{tr('Ünvan və ya iş yeri', locale)}</li>
-                    <li>{tr('İmza', locale)}</li>
-                  </ul>
-                  <p>
-                    {tr('Bunlar göstərilmədikdə müraciət anonim sayılır.', locale)}
-                  </p>
-                </div>
-              </ExpandBlock>
-
-              <div id="baxilma-muddetleri">
-                <ExpandBlock label={tr('Baxılma müddətləri', locale)}>
-                  {/* F5.30b — QƏSDƏN BOŞ ŞABLON. Rəqəm YAZILMAYIB (bax fayl başındakı izah). */}
-                  <p className="pr-plan-note">
-                    {tr('Bu bənd ADDA-nın hüquq məsləhətçisi tərəfindən dəqiqləşdirilənədək boş saxlanılır.', locale)}
-                  </p>
-                </ExpandBlock>
-              </div>
-
-              <ExpandBlock label={tr('Cavab', locale)}>
-                <div className="prose">
-                  <p>
-                    {tr(
-                      'Müraciətə yazılı cavab verilir. Müraciət təmin edilmədikdə səbəb göstərilir və şikayət vermək qaydası izah olunur.',
-                      locale,
-                    )}
-                  </p>
-                </div>
-              </ExpandBlock>
-
-              <ExpandBlock label={tr('Təkrar müraciətlər', locale)}>
-                <div className="prose">
-                  <p>
-                    {tr(
-                      'Eyni məsələ üzrə bir il ərzində 3 dəfə əsaslandırılmış cavab verilibsə və yeni məlumat yoxdursa, növbəti müraciət baxılmamış saxlanıla bilər. Bu barədə müraciət edənə 5 iş günü ərzində məlumat verilir.',
-                      locale,
-                    )}
-                  </p>
-                </div>
-              </ExpandBlock>
-
-              <ExpandBlock label={tr('Korrupsiya ilə bağlı müraciətlər', locale)}>
-                <div className="prose">
-                  <p>
-                    {tr(
-                      'Korrupsiya ilə bağlı müraciətlərə 20 iş günü ərzində baxılır. Əlavə məlumat tələb olunduqda müddət daha 10 iş günü uzadıla bilər.',
-                      locale,
-                    )}
-                  </p>
-                </div>
-              </ExpandBlock>
+        <section className="ap-page">
+          <div className="container">
+            {/* F5.36 — portal «section-head»: ağ fonda, mərkəzdə. */}
+            <div className="ap-head">
+              <span className="ap-eyebrow">
+                <span className="ap-eyebrow-dot" aria-hidden="true" />
+                {tr('Elektron müraciət', locale)}
+              </span>
+              <h2 className="ap-title">{tr('Onlayn müraciət forması', locale)}</h2>
+              <p className="ap-intro">
+                {tr('Formanı doldurub göndərin — müraciətiniz qeydə alınacaq və sizə izləmə kodu veriləcək.', locale)}{' '}
+                <span className="ap-req" aria-hidden="true">*</span>{' '}
+                {tr('ilə işarələnmiş sahələr məcburidir.', locale)}
+              </p>
             </div>
-          </section>
 
-          <section className="un-block" style={{ paddingBottom: '48px' }}>
-            <div className="un-links">
+            <div className="ap-layout">
+              {/* F5.36a — SOL blok: qayda (əvvəlki akkordeonlar). Mobildə
+                  formadan SONRA gəlir (bax 40-appeal.css, `order`). */}
+              <aside className="ap-aside" aria-labelledby="ap-aside-title">
+                <h3 className="ap-aside-title" id="ap-aside-title">
+                  {tr('Müraciət haqqında bilməli olduqlarınız', locale)}
+                </h3>
+                <ol className="ap-facts">
+                  {APPEAL_FACTS.map((f) => (
+                    <li key={f.label}>
+                      <small>{tr(f.label, locale)}</small>
+                      {f.parts.map((p, i) =>
+                        Array.isArray(p) ? (
+                          <ul key={i} className="ap-fact-tags">
+                            {p.map((w) => (
+                              <li key={w}>{tr(w, locale)}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p key={i}>{tr(p, locale)}</p>
+                        ),
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </aside>
+
+              <AppealIsland directions={directions} labels={appealLabels} />
+            </div>
+
+            <div className="un-links ap-back">
               <Link href={`/${locale}/elaqe`} className="un-link-btn">
                 <i className="ti ti-arrow-left" aria-hidden="true" />
                 {tr('Əlaqə', locale)}
               </Link>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
       <Footer menu={menu} locale={locale} />
     </>
