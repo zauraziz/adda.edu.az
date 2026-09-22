@@ -12,6 +12,9 @@ const config: Core.Config.Middlewares = [
           'connect-src': ["'self'", 'https:'],
           'img-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com'],
           'media-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com'],
+          // F5.38 — admin «Bildirişlər»: müraciətə əlavə olunan PDF admin daxilində
+          // (iframe) göstərilir. Olmasa CSP `default-src 'self'`-ə düşür və bloklayır.
+          'frame-src': ["'self'", 'res.cloudinary.com'],
           upgradeInsecureRequests: null,
         },
       },
