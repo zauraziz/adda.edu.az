@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { readFileSync, readdirSync } from 'node:fs';
 import type { Core } from '@strapi/strapi';
+// F5.38 — admin «Bildirişlər» API-si (bax src/utils/admin-inbox.ts).
+import { applyInboxLayouts, registerAdminInbox } from './utils/admin-inbox';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1864,6 +1866,8 @@ const UNIT_TREE: UnitSeed[] = [
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
+    // F5.38 — /adda-inbox/* admin marşrutları (bildirişlər, oxu görünüşü, status).
+    registerAdminInbox(strapi);
     const inFlight = new Set<string>();
     (strapi.documents as unknown as { use: (m: unknown) => void }).use(
       async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
@@ -1951,6 +1955,8 @@ export default {
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    // F5.38 — CM görünüşü (müraciət/düzəliş/qeydiyyat), BİR DƏFƏ; portu bloklamır.
+    applyInboxLayouts(strapi).catch((e: Error) => strapi.log.error('[adda-inbox] CM görünüşü: ' + e.message));
     // Lokallar (az/ru/en)
     try {
       const svc = strapi.plugin('i18n').service('locales') as {
