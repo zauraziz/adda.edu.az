@@ -75,7 +75,6 @@ import {
   type Department,
   type OrgUnit,
   type Facility,
-  type FacilityCondition,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
@@ -254,97 +253,6 @@ function FnCardGrid({ cards }: { cards: FnCard[] }) {
 }
 
 /** F4.9a — yan panelin kompakt heyət sətri: monoqram/foto (28px) + ad + vəzifə. */
-// F5.34e — bir auditoriya/laboratoriya: ExpandBlock akkordeonu. Başlıq =
-// otaq nömrəsi + ad; içində təsvir · inventar cədvəli · proqram təminatı ·
-// tutum · vəziyyət · məsul şəxs · fotolar. BOŞ SAHƏ GÖSTƏRİLMİR: gövdədə
-// göstəriləsi heç nə yoxdursa (yalnız ad/otaq/tip doludur) akkordeon
-// açılmır, başlıq eyni qabıqda sadə sətir kimi qalır.
-const FACILITY_CONDITION_LABEL: Record<FacilityCondition, string> = {
-  islek: 'İşlək',
-  qismen: 'Qismən işlək',
-  yararsiz: 'İstifadəyə yararsız',
-};
-
-function FacilityItem({ f, locale }: { f: Facility; locale: Locale }) {
-  const title = f.roomNumber ? `${f.roomNumber} · ${f.name}` : f.name;
-  // F5.35d — ad /auditoriyalar/<slug> səhifəsinə keçiddir.
-  const href = `/${locale}/auditoriyalar/${f.slug}`;
-  const inventory = (f.inventory ?? []).filter((r) => r.name);
-  const hasQty = inventory.some((r) => r.quantity != null);
-  const hasNote = inventory.some((r) => r.note);
-  const photos = (f.photos ?? []).map((m) => ({ src: mediaUrl(m), alt: m.alternativeText || '' })).filter((m) => m.src);
-  const person = f.responsiblePerson;
-  const facts: { label: string; value: React.ReactNode }[] = [];
-  if (f.software) facts.push({ label: tr('Proqram təminatı', locale), value: f.software });
-  if (f.capacity != null) facts.push({ label: tr('Tutum', locale), value: f.capacity });
-  if (f.condition) facts.push({ label: tr('Vəziyyət', locale), value: tr(FACILITY_CONDITION_LABEL[f.condition], locale) });
-  if (person) {
-    facts.push({
-      label: tr('Məsul şəxs', locale),
-      value: (
-        <Link href={`/${locale}/emekdas/${person.slug}`}>{person.displayName || person.name}</Link>
-      ),
-    });
-  }
-  const hasBody = Boolean(f.description) || inventory.length > 0 || facts.length > 0 || photos.length > 0;
-  if (!hasBody) {
-    return (
-      <div className="un-expand">
-        <h2 className="un-expand-head">
-          <Link href={href} className="un-expand-toggle">
-            {title}
-          </Link>
-        </h2>
-      </div>
-    );
-  }
-  return (
-    <ExpandBlock label={title} href={href}>
-      {f.description ? <p className="un-fac-desc">{f.description}</p> : null}
-      {inventory.length ? (
-        <div className="un-fac-block">
-          <div className="un-fac-label">{tr('Avadanlıq', locale)}</div>
-          <table className="un-fac-table">
-            <thead>
-              <tr>
-                <th>{tr('Ad', locale)}</th>
-                {hasQty ? <th>{tr('Say', locale)}</th> : null}
-                {hasNote ? <th>{tr('Qeyd', locale)}</th> : null}
-              </tr>
-            </thead>
-            <tbody>
-              {inventory.map((r) => (
-                <tr key={r.id}>
-                  <td>{r.name}</td>
-                  {hasQty ? <td>{r.quantity ?? ''}</td> : null}
-                  {hasNote ? <td>{r.note ?? ''}</td> : null}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-      {facts.length ? (
-        <dl className="un-fac-facts">
-          {facts.map((x) => (
-            <div key={x.label} className="un-fac-fact">
-              <dt>{x.label}</dt>
-              <dd>{x.value}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-      {photos.length ? (
-        <div className="un-fac-photos">
-          {photos.map((m, i) => (
-            <img key={i} src={m.src as string} alt={m.alt} loading="lazy" />
-          ))}
-        </div>
-      ) : null}
-    </ExpandBlock>
-  );
-}
-
 function StaffMiniRow({
   p,
   unitName,
@@ -516,7 +424,6 @@ export default async function UnitPage({
     label: tr(t, locale),
     items: facilities.filter((f) => f.facilityType === t),
   })).filter((g) => g.items.length);
-  const facilitiesHas = Boolean(facilities.length);
   // F4.10/F4.11d — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər
   // və nəticələr»/«Strateji hədəflər üzrə öhdəliklər» VAHİD akkordeon
   // qrupudur (bax .un-expand-group aşağıda); qrup ictimai görünürsə bu 5
@@ -561,7 +468,6 @@ export default async function UnitPage({
     { has: block4Has, title: blockTitle4 },
     { has: vacanciesHas, title: blockTitleVacancies },
     { has: faqHas, title: blockTitleFaq },
-    { has: facilitiesHas, title: blockTitleFacilities },
     { has: block6Has, title: blockTitle6 },
   ];
   const openBlockCount = fieldStatus.filter((f) => f.has).length;
@@ -575,14 +481,13 @@ export default async function UnitPage({
   // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
   // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
   // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
-  type TopKey = 'mission' | 'group' | 'links' | 'vacancies' | 'faq' | 'facilities' | 'news';
+  type TopKey = 'mission' | 'group' | 'links' | 'vacancies' | 'faq' | 'news';
   const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
     { key: 'mission', has: missionHas, tintable: true },
     { key: 'group', has: groupHas, tintable: false },
     { key: 'links', has: block4Has, tintable: true },
     { key: 'vacancies', has: vacanciesHas, tintable: true },
     { key: 'faq', has: faqHas, tintable: true },
-    { key: 'facilities', has: facilitiesHas, tintable: true },
     { key: 'news', has: block6Has, tintable: true },
   ];
   let tintCursor = 0;
@@ -899,24 +804,6 @@ export default async function UnitPage({
                 </AdminOnly>
               )}
 
-              {/* ── F5.34e: Auditoriya və laboratoriyalar — tipə görə qruplaşdırılıb.
-                  Ankor id (#auditoriyalar) /struktur səhifəsindəki kafedra
-                  sayğac nişanından gəlir (bax OrgTree.tsx, F5.34d). ── */}
-              {facilitiesHas ? (
-                <section id="auditoriyalar" className={blockClass('facilities')}>
-                  <h2 className="un-block-title">{blockTitleFacilities}</h2>
-                  {facilitiesByType.map((g) => (
-                    <div key={g.type}>
-                      <div className="un-sub-title un-fac-group">{g.label}</div>
-                      <div className="un-expand-group">
-                        {g.items.map((f) => (
-                          <FacilityItem key={f.documentId} f={f} locale={locale} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </section>
-              ) : null}
 
               {/* ── Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
                   varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz
@@ -1002,9 +889,12 @@ export default async function UnitPage({
 
                 {/* F5.35d — auditoriya/laboratoriya siyahısı: tipə görə açılan
                     başlıqlar, içində obyekt adları (/auditoriyalar/<slug>).
-                    Sıfır olan tip görünmür, heç biri yoxdursa bölmə də yoxdur. */}
+                    Sıfır olan tip görünmür, heç biri yoxdursa bölmə də yoxdur.
+                    F5.36a — bu, bölmənin YEGANƏ auditoriya siyahısıdır: əsas
+                    sütundakı təkrar blok (F5.34e) çıxarılıb, #auditoriyalar
+                    ankoru bura köçüb (köhnə keçidlər boşa düşməsin). */}
                 {facilitiesByType.length ? (
-                  <div>
+                  <div id="auditoriyalar">
                     <div className="un-sub-title">{blockTitleFacilities}</div>
                     <div className="un-expand-group">
                       {facilitiesByType.map((g) => (
