@@ -71,6 +71,9 @@ Yeni npm paketi ƏLAVƏ EDİLMİR. Mövcud vasitə kifayət etmirsə,
 cd adda-strapi && npx tsc --noEmit -p tsconfig.json
 # sxem (schema.json) dəyişibsə ƏLAVƏ olaraq:
 npm run build
+# admin paneli (src/admin/) dəyişibsə ƏLAVƏ olaraq — server tsconfig-i
+# src/admin/-i İSTİSNA edir, yuxarıdakı qapı onu YOXLAMIR:
+npx tsc --noEmit -p src/admin/tsconfig.json && npm run build
 
 # Next.js
 cd adda-nextjs && npx tsc --noEmit
@@ -138,6 +141,12 @@ const azLower = (s) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
 - Single type üçün «boşdursa yenilə», «yoxdursa yarat» yox — Strapi boş qeydi
   özü yaradır.
 - `@strapi/design-system` **2.2.3-ə kilidlidir** (`@codemirror/state` toqquşması).
+- **`status` adlı sahə Strapi 5-də AYRILMIŞ addır** (qaralama/nəşr vəziyyəti).
+  `appeal`/`correction`/`rsvp`-dəki `status` Content Manager-də İŞLƏMİR:
+  siyahıda «published» görünür, redaktə formasında yoxdur, `PUT` isə
+  400 «Invalid status» qaytarır. Document Service-də normal işləyir. Bu
+  statuslar admin «Bildirişlər» səhifəsindən idarə olunur (F5.38,
+  `src/utils/admin-inbox.ts` + `src/admin/inbox/`). Yeni tipdə bu adı İŞLƏTMƏ.
 - Upload servisi `originalFilename` (kiçik `n`) və `refId` üçün rəqəm ID istəyir.
 - **`plugins.ts` əl ilə redaktə olunmamalıdır.**
 

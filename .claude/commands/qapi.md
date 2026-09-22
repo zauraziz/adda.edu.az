@@ -26,6 +26,14 @@ cd adda-nextjs && npx tsc --noEmit
 cd adda-strapi && npx tsc --noEmit -p tsconfig.json
 ```
 
+**Strapi admin paneli** (dəyişiklik `adda-strapi/src/admin/` altındadırsa —
+server tsconfig-i bu qovluğu İSTİSNA edir, yuxarıdakı qapı onu yoxlamır):
+
+```
+cd adda-strapi && npx tsc --noEmit -p src/admin/tsconfig.json
+cd adda-strapi && npm run build
+```
+
 ## 3. Sxem dəyişibsə ƏLAVƏ olaraq
 
 `adda-strapi/src/api/**/schema.json` dəyişibsə:
