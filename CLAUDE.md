@@ -61,7 +61,8 @@ Yeni npm paketi ƏLAVƏ EDİLMİR. Mövcud vasitə kifayət etmirsə,
 - **Yalnız lokal commit. Push HƏMİŞƏ Zaurdadır.** Heç vaxt `git push` etmə.
 - Commit mesajı **yalnız ASCII**, ingilis dilində, `F3.x: ...` formatında.
 - `git add` üçün **`--literal-pathspecs` məcburidir** — `[locale]` qovluq adı joker
-  simvol kimi oxunur və fayl əlavə olunmur.
+  simvol kimi oxunur və fayl əlavə olunmur. Bu, `git`-in ÖZ seçimidir:
+  `git --literal-pathspecs add <yol>`. `git add --literal-pathspecs` XƏTA verir.
 
 ### Qapılar — dəyişiklikdən sonra MÜTLƏQ
 
@@ -187,6 +188,10 @@ bilinmir.
 - `STRAPI_URL` defoltu **produksiya Render URL-i** olmalıdır, `localhost` yox.
 - CSS: `@import` URL-lərində nöqtəli vergül var — sadəlövh parser sındırır.
   Ölü CSS statik analizlə silinməməlidir (runtime siniflər görünmür).
+- **Məzmun komponentində `<header>` elementi işlətmə — `<div>` işlət.**
+  `02-header.css`-dəki qlobal `header{}` seçicisi (saytın öz başlığı üçün) HƏR
+  `<header>`-ə navy gradient, kölgə və `z-index: 90` verir. Öz fonu olmayan
+  başlıq göy fonda tünd/boz mətnlə qalır (F5.36: müraciət forması).
 
 ### Render / Neon
 

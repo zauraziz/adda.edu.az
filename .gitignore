@@ -24,3 +24,6 @@ yarn-error.log*
 
 # catdirma skriptleri (repo koku) - commit olunmamalidir
 /*.ps1
+
+# Claude Code -- sexsi sazlamalar (her komputerde ayrica)
+.claude/settings.local.json

@@ -1,7 +1,7 @@
 ---
 description: Lokal commit — ASCII mesaj, F-seriyalı format, --literal-pathspecs məcburi, push QADAĞAN
 argument-hint: [F5.35: qisa ingilis mesaj]
-allowed-tools: Bash(git status *) Bash(git diff *) Bash(git add *) Bash(git commit *) Bash(git log *) PowerShell(git add *) PowerShell(git commit *)
+allowed-tools: Bash(git status *) Bash(git diff *) Bash(git --literal-pathspecs add *) Bash(git commit *) Bash(git log *) PowerShell(git --literal-pathspecs add *) PowerShell(git commit *)
 ---
 
 # Lokal commit
@@ -17,11 +17,13 @@ Kod dəyişibsə `/qapi` addımları keçməlidir. Keçməyibsə commit etmə.
 ## 2. Stage
 
 ```
-git add --literal-pathspecs <yollar>
+git --literal-pathspecs add <yollar>
 ```
 
-**`--literal-pathspecs` MƏCBURİDİR.** `[locale]` qovluq adı joker simvol
-kimi oxunur və fayl səssizcə əlavə olunmur.
+**`--literal-pathspecs` MƏCBURİDİR** və `git`-in ÖZ seçimidir — `add`-dan
+ƏVVƏL yazılır. `git add --literal-pathspecs` isə «unknown option» xətası
+verir. Seçim olmasa `[locale]` qovluq adı joker simvol kimi oxunur və fayl
+səssizcə əlavə olunmur.
 
 `tools/migration/data/` altında yeni JSON varsa: əvvəlcə
 `tools/migration/.gitignore` faylında `!data/<ad>.json` istisnası olduğunu
