@@ -1087,8 +1087,12 @@ const MENU_T: Array<[string, string, string]> = [
   ['Yeni müraciət göndər', 'Отправить новое обращение', 'Submit a New Appeal'],
   // --- F5.32e: AppealIsland fayl əlavəsi (az, ru, en) ---
   ['Fayl əlavəsi (istəyə bağlı)', 'Вложение файла (необязательно)', 'File Attachment (optional)'],
-  ['PDF, DOC, DOCX, JPG, PNG — maksimum 10 MB', 'PDF, DOC, DOCX, JPG, PNG — максимум 10 МБ', 'PDF, DOC, DOCX, JPG, PNG — max 10 MB'],
-  ['Fayl 10 MB-dan böyükdür.', 'Файл превышает 10 МБ.', 'The file exceeds 10 MB.'],
+  // F5.37 — limit 10 MB -> 4 MB (Vercel funksiyasının 4.5 MB bədən limiti).
+  ['PDF, DOC, DOCX, JPG, PNG — maksimum 4 MB', 'PDF, DOC, DOCX, JPG, PNG — максимум 4 МБ', 'PDF, DOC, DOCX, JPG, PNG — max 4 MB'],
+  ['Fayl 4 MB-dan böyükdür.', 'Файл превышает 4 МБ.', 'The file exceeds 4 MB.'],
+  ['Fayl yüklənmədi. Müraciəti faylsız göndərin və ya bir az sonra yenidən cəhd edin.',
+   'Файл не загрузился. Отправьте обращение без файла или повторите попытку чуть позже.',
+   'The file could not be uploaded. Submit the appeal without the file or try again shortly.'],
   ['Bu fayl növünə icazə verilmir. PDF, DOC, DOCX, JPG və ya PNG seçin.',
    'Этот тип файла не поддерживается. Выберите PDF, DOC, DOCX, JPG или PNG.',
    'This file type is not allowed. Choose PDF, DOC, DOCX, JPG, or PNG.'],

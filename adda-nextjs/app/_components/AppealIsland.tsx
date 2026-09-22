@@ -15,6 +15,10 @@
 // kölgə və z-index verir. F5.33-ün `<header class="ap-header">`-i məhz buna
 // görə göy fonda tünd/boz mətnlə görünürdü.
 //
+// F5.37 — fayl əlavəsi multipart/form-data ilə göndərilir (əvvəl base64 JSON
+// idi): Vercel funksiyasının sorğu bədəni 4.5 MB ilə məhduddur, base64 ×1.37
+// şişirdi və ~3.2 MB-dan böyük fayl 413 alırdı. Limit 4 MB (route.ts ilə eyni).
+//
 // `.cx-*` (CorrectionIsland, kiçik vidcet qabığı) sinifləri ilə PAYLAŞILMIR —
 // öz `.ap-*` qabığı (40-appeal.css), enə TOXUNMUR (səhifənin `.container`-i
 // idarə edir, CLAUDE.md DİZAYN QAYDALARI: "bir səhifə, bir en").
@@ -40,7 +44,9 @@ interface AppealIslandProps {
 }
 
 const TYPES: AppealType[] = ["sual", "teklif", "erize", "sikayet"];
-const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+// F5.37 — api/submit/appeal/route.ts ilə EYNİ. Vercel-in 4.5 MB bədən
+// limitinə mətn sahələri ilə birlikdə sığır.
+const MAX_ATTACHMENT_BYTES = 4 * 1024 * 1024;
 
 export default function AppealIsland({ directions, labels }: AppealIslandProps) {
   const [appealType, setAppealType] = useState<AppealType>("sual");
@@ -55,11 +61,10 @@ export default function AppealIsland({ directions, labels }: AppealIslandProps) 
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [consent, setConsent] = useState(false);
-  // F5.32e — fayl base64 data-url kimi saxlanılır (serverə EYNİ formatda
-  // göndərilir). Client tərəfdəki tip/ölçü yoxlaması YALNIZ UX üçündür —
-  // əsl yoxlama serverdədir (bax appeal/controllers/appeal.ts sniffFile).
-  const [attachmentName, setAttachmentName] = useState("");
-  const [attachmentData, setAttachmentData] = useState("");
+  // F5.37 — fayl `File` kimi saxlanılır və multipart ilə göndərilir (base64
+  // YOX). Klient tərəfdəki ölçü yoxlaması YALNIZ UX üçündür — əsl yoxlama
+  // serverdədir: ölçü route.ts-də, tip (ilk baytlar) Strapi-də (sniffFile).
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [attachmentErr, setAttachmentErr] = useState("");
   // F5.31d — honeypot: real istifadəçiyə görünmür (CSS-lə ekrandan kənara
   // çıxarılıb), botlar adətən HƏR sahəni doldurur. Dolu gələrsə server rədd edir.
@@ -79,26 +84,15 @@ export default function AppealIsland({ directions, labels }: AppealIslandProps) 
   }, [directions]);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0] ?? null;
     setAttachmentErr("");
-    if (!file) {
-      setAttachmentName("");
-      setAttachmentData("");
-      return;
-    }
-    if (file.size > MAX_ATTACHMENT_BYTES) {
+    if (file && file.size > MAX_ATTACHMENT_BYTES) {
       setAttachmentErr(L("attachmentTooLarge"));
       e.target.value = "";
-      setAttachmentName("");
-      setAttachmentData("");
+      setAttachment(null);
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setAttachmentData(typeof reader.result === "string" ? reader.result : "");
-    };
-    reader.readAsDataURL(file);
-    setAttachmentName(file.name);
+    setAttachment(file);
   };
 
   const reset = () => {
@@ -112,8 +106,7 @@ export default function AppealIsland({ directions, labels }: AppealIslandProps) 
     setSubject("");
     setMessage("");
     setConsent(false);
-    setAttachmentName("");
-    setAttachmentData("");
+    setAttachment(null);
     setAttachmentErr("");
     setHpField("");
     setTrackingCode("");
@@ -141,25 +134,35 @@ export default function AppealIsland({ directions, labels }: AppealIslandProps) 
     setPhase("sending");
     setErr("");
     try {
-      const res = await fetch("/api/submit/appeal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          appealType,
-          firstName,
-          lastName,
-          patronymic,
-          email,
-          phone,
-          address,
-          targetUnit: targetUnit || undefined,
-          subject,
-          message,
-          attachment: attachmentData || undefined,
-          website: hpField,
-        }),
-      });
-      const data = (await res.json()) as { ok?: boolean; error?: string; trackingCode?: string };
+      // F5.37 — multipart: brauzer `Content-Type`-ı (boundary ilə) özü qoyur.
+      const fd = new FormData();
+      fd.append("appealType", appealType);
+      fd.append("firstName", firstName);
+      fd.append("lastName", lastName);
+      fd.append("patronymic", patronymic);
+      fd.append("email", email);
+      fd.append("phone", phone);
+      fd.append("address", address);
+      if (targetUnit) fd.append("targetUnit", targetUnit);
+      fd.append("subject", subject);
+      fd.append("message", message);
+      if (attachment) fd.append("attachment", attachment, attachment.name);
+      fd.append("website", hpField);
+      const res = await fetch("/api/submit/appeal", { method: "POST", body: fd });
+      // F5.37 — 413 Vercel-in ÖZÜNDƏN gəlir (funksiya işə düşmür), cavab JSON
+      // deyil. Əvvəl res.json() burada partlayır və «bir az sonra yenidən
+      // cəhd edin» görünürdü — təkrar cəhd kömək etmir, fayl böyükdür.
+      if (res.status === 413) {
+        setErr(L("attachmentTooLarge"));
+        setPhase("error");
+        return;
+      }
+      let data: { ok?: boolean; error?: string; trackingCode?: string } = {};
+      try {
+        data = (await res.json()) as typeof data;
+      } catch {
+        data = {};
+      }
       if (res.status === 429) {
         setErr(L("tooMany"));
         setPhase("error");
@@ -173,6 +176,13 @@ export default function AppealIsland({ directions, labels }: AppealIslandProps) 
       }
       if (data.error === "attachment_too_large") {
         setErr(L("attachmentTooLarge"));
+        setPhase("error");
+        return;
+      }
+      // F5.37 — Strapi faylı Cloudinary-yə yükləyə bilmədi; müraciət YARADILMAYIB
+      // (fail-fast, bax Strapi controller). Faylsız göndərmək yolu açıq qalır.
+      if (data.error === "attachment_upload_failed") {
+        setErr(L("attachmentUploadFailed"));
         setPhase("error");
         return;
       }
@@ -361,7 +371,7 @@ export default function AppealIsland({ directions, labels }: AppealIslandProps) 
             onChange={onFileChange}
           />
           <span className="ap-hint">{L("attachmentHint")}</span>
-          {attachmentName ? <span className="ap-file-name"><i className="ti ti-paperclip" aria-hidden="true" />{attachmentName}</span> : null}
+          {attachment ? <span className="ap-file-name"><i className="ti ti-paperclip" aria-hidden="true" />{attachment.name}</span> : null}
           {attachmentErr ? <span className="ap-file-err">{attachmentErr}</span> : null}
         </div>
       </div>

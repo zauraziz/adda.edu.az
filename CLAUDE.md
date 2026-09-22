@@ -188,6 +188,10 @@ bilinmir.
 - `STRAPI_URL` defoltu **produksiya Render URL-i** olmalıdır, `localhost` yox.
 - CSS: `@import` URL-lərində nöqtəli vergül var — sadəlövh parser sındırır.
   Ölü CSS statik analizlə silinməməlidir (runtime siniflər görünmür).
+- **Vercel funksiyasına gələn sorğu bədəni ≤ 4.5 MB.** Aşanda funksiya işə
+  düşmür, Vercel özü `413 FUNCTION_PAYLOAD_TOO_LARGE` qaytarır (cavab JSON
+  deyil). Faylı base64 JSON-da göndərmə (×1.37 şişir) — `multipart/form-data`
+  göndər, limiti hər iki tərəfdə yoxla (F5.37: müraciət əlavəsi, 4 MB).
 - **Məzmun komponentində `<header>` elementi işlətmə — `<div>` işlət.**
   `02-header.css`-dəki qlobal `header{}` seçicisi (saytın öz başlığı üçün) HƏR
   `<header>`-ə navy gradient, kölgə və `z-index: 90` verir. Öz fonu olmayan
