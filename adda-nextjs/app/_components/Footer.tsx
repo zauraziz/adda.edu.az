@@ -33,13 +33,16 @@ const ORGS: { href: string; mark: string; l1: string; l2: string }[] = [
   { href: 'https://asco.az', mark: 'ASCO', l1: 'Azərbaycan Xəzər Dəniz', l2: 'Gəmiçiliyi QSC' },
 ];
 
-// F5.30c — "Rektorla əlaqə" ölü `#` keçidi idi, /rehberlik-ə bağlanır (qəbul
-// saatları/əlaqə orada). Qalan üçü hələ də Faza 2 yer tutucusudur, TOXUNULMUR.
+// F5.30c — "Rektorla əlaqə" ölü `#` keçidi idi, /rehberlik-ə bağlanmışdı.
+// F5.36c — vətəndaş müraciəti formasına yönəlir, «Rektora müraciət»
+// istiqaməti əvvəlcədən seçili (`?istiqamet=rektor`, bax
+// vetendaslarin-muracieti/page.tsx APPEAL_DIRECTIONS). Qalan üçü hələ də
+// Faza 2 yer tutucusudur, TOXUNULMUR.
 const LEGAL: { label: string; href?: string }[] = [
   { label: 'Məxfilik siyasəti' },
   { label: 'İstifadə şərtləri' },
   { label: 'Korporativ stil' },
-  { label: 'Rektorla əlaqə', href: '/rehberlik' },
+  { label: 'Rektorla əlaqə', href: '/vetendaslarin-muracieti?istiqamet=rektor' },
 ];
 
 /**
