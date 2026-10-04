@@ -343,6 +343,9 @@
 .prf-main { min-width: 0; }
 .prf-tabs { position: sticky; top: 0; z-index: 2; padding: 0.6rem 0; background: var(--paper, #fafdfe); }
 .prf-sec { margin: 0 0 clamp(2rem, 4vw, 2.75rem); scroll-margin-top: 5rem; }
+/* F5.39 — .na-body xəbər səhifəsi üçündür (720px + auto mərkəzləmə). Profil
+   sütununda öz enini gətirməməlidir: mətn başlıqla eyni xətdən başlayır. */
+.prf-sec .na-body { max-width: none; margin: 0; }
 .prf-sec:last-of-type { margin-bottom: 1.5rem; }
 .prf-sub {
   font-family: var(--font-display);

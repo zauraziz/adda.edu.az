@@ -97,6 +97,9 @@ const T: Array<[string, string, string]> = [
   ['Başlıq', 'Заголовок', 'Title'],
   ['Mətn', 'Текст', 'Text'],
   ['Digər', 'Другое', 'Other'],
+  // F5.39 — əməkdaş profilində düzəliş vidcetinin sahə seçimi.
+  ['Ad, vəzifə', 'Имя, должность', 'Name, position'],
+  ['Profil məlumatı', 'Данные профиля', 'Profile details'],
   // F5.39 — səhifənin məsul redaktoru (Footer-dən əvvəl).
   ['Bu səhifənin məzmununa məsul', 'Ответственный за содержание страницы', 'Page content managed by'],
   ['Cari mətn', 'Текущий текст', 'Current text'],

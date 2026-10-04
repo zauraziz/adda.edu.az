@@ -180,7 +180,9 @@ export default function ProfileEditorIsland({ locale, labels, gateLabels, redire
       });
       const data = (await res.json()) as { ok?: boolean; url?: string | null; error?: string };
       if (!res.ok || !data.ok) {
-        setPhotoErr(L('photoErr_' + (data.error ?? 'unknown')) || L('photoFailed'));
+        // L() tapılmayan açarı özü qaytarır — `||` fallback-i heç vaxt işləmirdi
+        // və istifadəçi «photoErr_upstream_unreachable» kimi xam açar görürdü.
+        setPhotoErr(labels['photoErr_' + (data.error ?? '')] ?? L('photoFailed'));
         return;
       }
       setP((cur) => (cur ? { ...cur, photo: data.url ?? null } : cur));

@@ -771,7 +771,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     if (!changed.length) {
       // Dəyişiklik yoxdursa yazma. Boş revizyonlar tarixçəni doldurur və
       // `profileUpdatedAt` damğasını yalançı şəkildə təzələyir.
-      ctx.body = { ok: true, changed: 0 };
+      ctx.body = { ok: true, changed: 0, updatedAt: person.profileUpdatedAt ?? null };
       return;
     }
 
@@ -801,7 +801,9 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
     await recordRevision(strapi, person, identity.email, changed, previous, headerOf(ctx, 'x-adda-client-ip'));
     strapi.log.info(`[identity] profil yenilendi: ${String(person.slug)} (${changed.join(',')})`);
     void svc.touch(identity.id);
-    ctx.body = { ok: true };
+    // F5.39 — redaktor «Son yeniləmə» damğasını dərhal göstərsin (əvvəl
+    // cavabda yox idi, saxlamadan sonra «Hələ yenilənməyib» qalırdı).
+    ctx.body = { ok: true, updatedAt: data.profileUpdatedAt };
   },
 
 /**
