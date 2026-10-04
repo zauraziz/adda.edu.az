@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "page_owners",
+  "info": {
+    "singularName": "page-owner",
+    "pluralName": "page-owners",
+    "displayName": "5. Sistem — Məsul redaktor",
+    "description": "F5.39 — saytın səhifələrinin məzmununa məsul admin istifadəçiləri. Açar səhifə ünvanından hesablanır (page:<slug>, unit:<slug>, path:/xeberler ...). Admin «Məsul redaktorlar» səhifəsindən idarə olunur, Content Manager-də görünmür; öz routes faylı YOXDUR — REST endpoint-i yaranmır."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    },
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "key": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 300
+    },
+    "path": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "label": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "editorId": {
+      "type": "integer"
+    },
+    "assignedById": {
+      "type": "integer"
+    },
+    "assignedAt": {
+      "type": "datetime"
+    },
+    "notifiedAt": {
+      "type": "datetime"
+    }
+  }
+}

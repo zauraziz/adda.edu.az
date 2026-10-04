@@ -1291,7 +1291,7 @@ export interface ApiHeroHero extends Struct.CollectionTypeSchema {
   collectionName: 'heroes';
   info: {
     description: 'V\u0259t\u0259n u\u011Frunda \u015F\u0259hid olan ADDA m\u0259zunlar\u0131.';
-    displayName: 'Q\u0259hr\u0259manlar\u0131m\u0131z';
+    displayName: '2. Akademiya \u2014 Q\u0259hr\u0259man';
     pluralName: 'heroes';
     singularName: 'hero';
   };
@@ -1601,6 +1601,64 @@ export interface ApiMilestoneMilestone extends Struct.CollectionTypeSchema {
           localized: false;
         };
       }>;
+  };
+}
+
+export interface ApiPageOwnerPageOwner extends Struct.CollectionTypeSchema {
+  collectionName: 'page_owners';
+  info: {
+    description: 'F5.39 \u2014 sayt\u0131n s\u0259hif\u0259l\u0259rinin m\u0259zmununa m\u0259sul admin istifad\u0259\u00E7il\u0259ri. A\u00E7ar s\u0259hif\u0259 \u00FCnvan\u0131ndan hesablan\u0131r (page:<slug>, unit:<slug>, path:/xeberler ...). Admin \u00ABM\u0259sul redaktorlar\u00BB s\u0259hif\u0259sind\u0259n idar\u0259 olunur, Content Manager-d\u0259 g\u00F6r\u00FCnm\u00FCr; \u00F6z routes fayl\u0131 YOXDUR \u2014 REST endpoint-i yaranm\u0131r.';
+    displayName: '5. Sistem \u2014 M\u0259sul redaktor';
+    pluralName: 'page-owners';
+    singularName: 'page-owner';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    assignedAt: Schema.Attribute.DateTime;
+    assignedById: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    editorId: Schema.Attribute.Integer;
+    key: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::page-owner.page-owner'
+    > &
+      Schema.Attribute.Private;
+    notifiedAt: Schema.Attribute.DateTime;
+    path: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -3414,6 +3472,7 @@ declare module '@strapi/strapi' {
       'api::identity.identity-token': ApiIdentityIdentityToken;
       'api::menu.menu': ApiMenuMenu;
       'api::milestone.milestone': ApiMilestoneMilestone;
+      'api::page-owner.page-owner': ApiPageOwnerPageOwner;
       'api::page.page': ApiPagePage;
       'api::person.person': ApiPersonPerson;
       'api::person.profile-revision': ApiPersonProfileRevision;

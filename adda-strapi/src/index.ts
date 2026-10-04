@@ -4,6 +4,10 @@ import { readFileSync, readdirSync } from 'node:fs';
 import type { Core } from '@strapi/strapi';
 // F5.38 — admin «Bildirişlər» API-si (bax src/utils/admin-inbox.ts).
 import { applyInboxLayouts, registerAdminInbox } from './utils/admin-inbox';
+// F5.39 — CM sahə adları və doldurma qaydaları (bax src/utils/cm-az.ts).
+import { applyAzFieldLabels } from './utils/cm-az';
+// F5.39 — məsul redaktorlar (bax src/utils/page-owners.ts).
+import { ensureEditorRole, registerOwnerCondition, registerPageOwners, scheduleWeeklyDigest } from './utils/page-owners';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1868,6 +1872,8 @@ export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     // F5.38 — /adda-inbox/* admin marşrutları (bildirişlər, oxu görünüşü, status).
     registerAdminInbox(strapi);
+    // F5.39 — /adda-owners/* admin marşrutları + ictimai /api/adda-owners/public.
+    registerPageOwners(strapi);
     const inFlight = new Set<string>();
     (strapi.documents as unknown as { use: (m: unknown) => void }).use(
       async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
@@ -1956,7 +1962,16 @@ export default {
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     // F5.38 — CM görünüşü (müraciət/düzəliş/qeydiyyat), BİR DƏFƏ; portu bloklamır.
-    applyInboxLayouts(strapi).catch((e: Error) => strapi.log.error('[adda-inbox] CM görünüşü: ' + e.message));
+    // F5.39 — «Məsul olduğu səhifələr» şərti. Strapi şərt qeydiyyatına YALNIZ
+    // bootstrap zamanı icazə verir — ona görə gözlənilir (sürətlidir, DB yoxdur).
+    await registerOwnerCondition(strapi).catch((e: Error) => strapi.log.error('[adda-owners] şərt: ' + e.message));
+    ensureEditorRole(strapi).catch((e: Error) => strapi.log.error('[adda-owners] rol: ' + e.message));
+    scheduleWeeklyDigest(strapi);
+    // F5.39 — ardıcıl: hər ikisi eyni CM konfiqurasiyasını yazır (müraciət/düzəliş/qeydiyyat).
+    applyInboxLayouts(strapi)
+      .catch((e: Error) => strapi.log.error('[adda-inbox] CM görünüşü: ' + e.message))
+      .then(() => applyAzFieldLabels(strapi))
+      .catch((e: Error) => strapi.log.error('[adda-admin] Az sahə adları: ' + e.message));
     // Lokallar (az/ru/en)
     try {
       const svc = strapi.plugin('i18n').service('locales') as {
