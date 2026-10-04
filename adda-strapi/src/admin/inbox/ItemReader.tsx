@@ -482,7 +482,7 @@ export function ItemReader({
       <Flex justifyContent="space-between" alignItems="flex-start" gap={4} wrap="wrap">
         <StatusBar item={item} statuses={state.statuses} canUpdate={state.canUpdate} busy={busy} onChange={changeStatus} />
         <LinkButton size="S" variant="tertiary" startIcon={<Pencil />} tag={Link} to={editPath(kind, documentId)}>
-          Content Manager-də aç
+          Redaktə formasında aç
         </LinkButton>
       </Flex>
       <Box paddingTop={6}>
