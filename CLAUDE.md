@@ -149,6 +149,28 @@ const azLower = (s) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
   `src/utils/admin-inbox.ts` + `src/admin/inbox/`). Yeni tipdə bu adı İŞLƏTMƏ.
 - Upload servisi `originalFilename` (kiçik `n`) və `refId` üçün rəqəm ID istəyir.
 - **`plugins.ts` əl ilə redaktə olunmamalıdır.**
+- **Admin interfeysi Azərbaycancadır, amma dili `en`-dir (F5.39).** `az`
+  Strapi-nin `languageNativeNames` siyahısında yoxdur → mətnlər
+  `config.translations.en` ÜZƏRİNƏ yazılır (`src/admin/translations/az.ts`,
+  ~1960 açar). Strapi yenilənəndə yeni açarlar ingiliscə çıxır: həm
+  `translations/en.json`-u, həm kodda olan `id: '…', defaultMessage: '…'`
+  açarlarını yoxla. Plagin açarı prefikslidir və hərf həssasdır
+  (`cloud.Plugin.name`, `content-type-builder.*`). Nisbi vaxt («3 saat əvvəl»)
+  `app.tsx → azRelativeTime()`, `<html lang="az">` isə `keepHtmlLangAz()` ilə.
+- **Content Manager sahə adları və qaydaları `src/utils/cm-az.ts`-dədir** (28
+  tip + 25 komponent). BİR DƏFƏ yazılır (store `adda-admin` → `cmAz:v1`),
+  yalnız defolt adı (sahə adının özü) və boş təsviri əvəz edir — admində
+  «Görünüşü tənzimlə»-dən dəyişilən üstündən yazılmır. Yeni sahə əlavə edəndə
+  lüğətə də yaz və markeri `cmAz:v2`-yə qaldır.
+- **Xüsusi RBAC şərti yalnız `bootstrap()`-da qeydiyyatdan keçir**
+  (`conditionProvider.register`, F5.39 `api::adda-page-owner`). Handler
+  istifadəçi + `permission` alır, `true` / `false` / filtr (`{slug: {$in}}`)
+  qaytarır. Admin interfeysi şərtli icazəni qiymətləndirə bilmir — redaktə
+  forması açıq görünür, server isə yadda saxlamağı 403 ilə rədd edir. Ona
+  görə yan panel `canEdit`-i serverdə CM `permission-checker` ilə yoxlayır.
+- **«Məsul redaktor» rolu BİR DƏFƏ yaradılır** (store `editorRole:v1`).
+  Sonra Ayarlar → Rollar-dan dəyişilir; `page-owners.ts`-dəki
+  `EDITABLE`/`LISTS` siyahısını dəyişmək mövcud rolu YENİLƏMİR.
 
 ### Seed blokları
 
@@ -390,10 +412,25 @@ olunur. Çevirmə kimdə?
    AMMA mövcud korlanmış dəyərlər (onluq nöqtəsi/vergülü admin paneldə
    itib, "370,5" → "3705" kimi yazılıb) AVTOMATIK DÜZƏLMİR. Deploy edildikdən
    sonra Zaur müəllim admin paneldə bu 4 proqramın (21 sətir) ballarını əl
-   ilə yenidən yazmalıdır (düzgün, "239,5" kimi):
+   ilə yenidən yazmalıdır. **Admində NÖQTƏ ilə yazılır: `239.5`.** Admin
+   interfeysi `en` dil rejimindədir (F5.39-da da belə qalır — Azərbaycan
+   mətnləri `en` üzərinə yazılır) və rəqəm sahəsində vergül MİNLİK ayırıcısı
+   sayılır: `239,5` → `2395` (`@internationalized/number`, yoxlanılıb) —
+   3705 korlanmasının səbəbi məhz budur. Proqramlar:
    `deniz-naviqasiyasi-muhendisliyi` (5 il), `gemiqayirma-ve-gemi-temiri-muhendisliyi`
    (5 il), `deniz-naviqasiyasi-muhendisliyi-en-eyani` (5 il),
    `gemi-energetik-qurgularinin-istismari-muhendisliyi-en-eyani` (4 il).
+10. **F5.39 — Məsul redaktorlar** (`src/utils/page-owners.ts`,
+   `src/admin/owners/`, cədvəl `page_owners`). Baş admin admin panelində
+   istifadəçi yaradır (rol «Məsul redaktor»), sonra «Məsul redaktorlar»
+   səhifəsində menyudakı səhifələrə təyin edir. Açar səhifə ünvanından
+   hesablanır (`page:<slug>`, `unit:<slug>`, `path:/xeberler`); Next-də EYNİ
+   funksiya var (`lib/page-owner-key.ts`) — biri dəyişəndə o biri də.
+   Məktublar Resend ilə gedir (`RESEND_API_KEY` yoxdursa yalnız loga yazılır);
+   keçidlər üçün Render env: `ADMIN_PUBLIC_URL` (defolt
+   `https://adda-edu-az.onrender.com`), `SITE_URL` (defolt
+   `https://demo.adda.edu.az`). Həftəlik xatırlatma: bazar ertəsi 09:00 (Bakı).
+   Saytda ad 5 dəqiqəyə qədər gecikmə ilə görünür (keş: Strapi 60 s + Next 300 s).
 
 ---
 
