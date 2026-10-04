@@ -31,9 +31,9 @@ import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import ContentPage from '../../../_components/ContentPage';
-import { getMenu, type SiteMenu, type MenuCategory, type MenuLink } from '@/lib/strapi';
+import { getMenu, getPageBySlug, type SiteMenu, type MenuCategory, type MenuLink } from '@/lib/strapi';
 import { menuHref, isPlaceholderHref } from '@/lib/menu-href';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -93,6 +93,11 @@ export default async function Page({
 }) {
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+
+  // F5.39 — məsul redaktor «Məzmun əlavə et» ilə eyni slug-lı səhifə yaradıb
+  // dərc edibsə, hazırlanır bəndi əsl səhifəyə yönəlir (menyu dəyişmədən).
+  const ready = await getPageBySlug(slug, 'az').catch(() => null);
+  if (ready && typeof ready.body === 'string' && ready.body.trim()) redirect(`/${locale}/sehife/${slug}`);
 
   const menu = await getMenu(locale).catch(() => null as SiteMenu | null);
   const found = findInMenu(menu, `/hazirlanir/${slug}`);

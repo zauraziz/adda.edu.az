@@ -15,6 +15,7 @@ import { menuHref } from '@/lib/menu-href';
 import type { SiteMenu } from '@/lib/strapi';
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
 import NewsletterIsland, { type NewsletterMsgs } from './NewsletterIsland';
+import PageOwnerNote from './PageOwnerNote';
 
 const SOCIALS: { name: string; icon: string }[] = [
   { name: 'Facebook', icon: 'ti-brand-facebook' },
@@ -67,6 +68,9 @@ export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale
   };
 
   return (
+    <>
+    {/* F5.39 — səhifənin məsul redaktoru (təyin olunubsa). Footer hər səhifədədir. */}
+    <PageOwnerNote locale={locale} label={tr('Bu səhifənin məzmununa məsul', locale)} />
     <footer>
       <div className="container">
         <div className="ftx-news">
@@ -158,5 +162,6 @@ export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale
 
       <NewsletterIsland msgs={msgs} />
     </footer>
+    </>
   );
 }

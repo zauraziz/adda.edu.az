@@ -26,3 +26,19 @@ footer{background:var(--navy2);color:#fff;padding:0}
 .foot-bottom{padding:22px 0;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
 .foot-bottom p{font-size:12px;color:rgba(255,255,255,0.3);font-weight:300}
 .foot-bottom .designer span{color:var(--aqua);font-weight:500}
+
+/* ── F5.39 — səhifənin məsul redaktoru (Footer-dən əvvəl, yalnız təyin olunubsa) ── */
+.pon { background: var(--paper); border-top: 1px solid var(--line); }
+.pon-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+.pon-inner .ti { color: var(--gold-600); margin-right: 4px; font-size: 1rem; align-self: center; }
+.pon-name { color: var(--navy-800); font-weight: 600; text-decoration: none; }
+a.pon-name:hover { text-decoration: underline; }
