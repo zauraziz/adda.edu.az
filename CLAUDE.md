@@ -184,6 +184,11 @@ qorunur:
 
 **İş qaydası:** `FLAG=true` → deploy → **logu yoxla** → **flagı SİL**.
 
+Bir dəfəlik, admin məzmununu əzməyən yeniləmələr (F5.38+) bayraqsız işləyir:
+plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v1`,
+`editorRole:v1`, `tehsilMenu:v2`) + mövcud vəziyyətin yoxlanması. Marker
+silinmədən təkrar işləmir.
+
 > Flag silinməyəndə hər boot-da yenidən işləyir. Bir dəfə `HEAD_RESEED` +
 > `KAFEDRA_RESEED` unudulub və boot 220 saniyəyə çıxıb.
 
@@ -431,6 +436,17 @@ olunur. Çevirmə kimdə?
    `https://adda-edu-az.onrender.com`), `SITE_URL` (defolt
    `https://demo.adda.edu.az`). Həftəlik xatırlatma: bazar ertəsi 09:00 (Bakı).
    Saytda ad 5 dəqiqəyə qədər gecikmə ilə görünür (keş: Strapi 60 s + Next 300 s).
+11. **F5.40 — «Təhsil» menyusu v2** (təhlil: layihə sənədi
+   `claude/tehsil-menyusu-optimallasdirma.md`). Prod menyusu
+   `src/utils/menu-tehsil.ts` ilə BİR DƏFƏ yenilənir: bayraq YOX, store marker
+   `tehsilMenu:v2`; yalnız «Təhsil» köhnə 6 qrupdadırsa (admin dəyişibsə
+   toxunulmur, logda xəbərdarlıq). Seed (`src/index.ts` MENU) və
+   `lib/menu-fallback.ts` eyni quruluşdadır — yeni etiket = `MENU_T`-yə ru/en.
+   Kataloq `/ixtisaslar?tab=<catalogTab>` və `?dil=en` qəbul edir
+   (ProgramDirectoryIsland). 3-cü mərhələ (akademik təqvim, qiymətləndirmə
+   qaydaları, köçürmə/bərpa, STCW standartları) «Məsul redaktorlar»-da
+   «Menyuda yoxdur» kimi gözləyir: səhifə dərc olunanda «Tədris prosesi»
+   qrupu menyuya əl ilə (və ya yeni miqrasiya ilə) əlavə olunur.
 
 ---
 
