@@ -8,6 +8,8 @@ import { applyInboxLayouts, registerAdminInbox } from './utils/admin-inbox';
 import { applyAzFieldLabels } from './utils/cm-az';
 // F5.39 — məsul redaktorlar (bax src/utils/page-owners.ts).
 import { ensureEditorRole, registerOwnerCondition, registerPageOwners, scheduleWeeklyDigest } from './utils/page-owners';
+// F5.40 — «Təhsil» menyusunun yeni quruluşu (bax src/utils/menu-tehsil.ts).
+import { applyTehsilMenuV2 } from './utils/menu-tehsil';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -412,24 +414,19 @@ const SEED = {
       {
         "label": "Təhsil",
         "order": 3,
-        "url": "#",
+        "url": "/ixtisaslar",
         "groups": [
           {
-            "title": "Rəqəmsal Akademiya",
+            "title": "Təhsil proqramları",
             "links": [
               {
-                "label": "LMS Portalı",
-                "url": "#"
+                "label": "Bütün ixtisaslar",
+                "url": "/ixtisaslar"
               },
               {
-                "label": "E-Tədris resursları",
-                "url": "/hazirlanir/e-tedris-resurslari"
-              }
-            ]
-          },
-          {
-            "title": "Proqramların kataloqu",
-            "links": [
+                "label": "Subbakalavr (kollec)",
+                "url": "/ixtisaslar?tab=subbakalavr"
+              },
               {
                 "label": "Bakalavriat",
                 "url": "/sehife/bakalavriat"
@@ -443,100 +440,67 @@ const SEED = {
                 "url": "/sehife/doktorantura"
               },
               {
-                "label": "Əlavə təhsil",
-                "url": "/hazirlanir/elave-tehsil"
+                "label": "Qiyabi və təkrar ali təhsil",
+                "url": "/ixtisaslar?tab=tekrar_ali"
               },
               {
-                "label": "Dəniz naviqasiyası mühəndisliyi",
-                "url": "/ixtisaslar/deniz-naviqasiyasi-muhendisliyi"
-              },
-              {
-                "label": "Gəmi energetik qurğularının istismarı mühəndisliyi",
-                "url": "/ixtisaslar/gemi-energetik-qurgularinin-istismari-muhendisliyi"
-              },
-              {
-                "label": "Gəmiqayırma və gəmi təmiri mühəndisliyi",
-                "url": "/ixtisaslar/gemiqayirma-ve-gemi-temiri-muhendisliyi"
-              },
-              {
-                "label": "Elektrik və elektronika mühəndisliyi",
-                "url": "/ixtisaslar/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre"
+                "label": "İngilis dilində tədris",
+                "url": "/ixtisaslar?dil=en"
               }
             ]
           },
           {
-            "title": "Təhsil standartları",
+            "title": "Dəniz praktikası",
             "links": [
               {
-                "label": "Dənizçilik qanunvericilik sənədləri",
-                "url": "/hazirlanir/denizcilik-qanunvericilik-senedleri"
+                "label": "Tədris gəmisi",
+                "url": "/sehife/tedris-gemisi"
               },
               {
-                "label": "Beynəlxalq standartlar (IMO/STCW)",
-                "url": "/hazirlanir/beynelxalq-standartlar-imo-stcw"
+                "label": "Laboratoriya və trenajorlar",
+                "url": "/auditoriyalar"
+              },
+              {
+                "label": "Təcrübə (praktika)",
+                "url": "/sehife/tecrube-haqqinda"
               }
             ]
           },
           {
-            "title": "Təhsilin keyfiyyətinin qiymətləndirilməsi",
+            "title": "Əlavə təhsil",
             "links": [
               {
-                "label": "Yerli və beynəlxalq akkreditasiya",
-                "url": "/hazirlanir/yerli-ve-beynelxalq-akkreditasiya"
+                "label": "STCW kursları",
+                "url": "/struktur/telim-tedris-merkezi"
               },
               {
-                "label": "Tələbə sorğuları",
-                "url": "/hazirlanir/telebe-sorgulari"
-              },
-              {
-                "label": "Qaynar xətt və təkliflər",
-                "url": "/hazirlanir/qaynar-xett-ve-teklifler"
+                "label": "İxtisasartırma və xaricdə təhsil",
+                "url": "/sehife/xaricde-tehsil-ve-ixtisasartirma"
               }
             ]
           },
           {
-            "title": "Fakültələr",
+            "title": "Struktur və keyfiyyət",
             "links": [
               {
-                "label": "Gəmi sürücülüyü fakültəsi",
-                "url": "/fakulteler/gemi-suruculuyu-fakultesi"
+                "label": "Fakültələr",
+                "url": "/fakulteler"
               },
               {
-                "label": "Gəmi mexanikası və elektromexanikası fakültəsi",
-                "url": "/fakulteler/gemi-mexanikasi-ve-elektromexanikasi-fakultesi"
-              }
-            ]
-          },
-          {
-            "title": "Kafedralar",
-            "links": [
-              {
-                "label": "Tətbiqi mexanika kafedrası",
-                "url": "/struktur/tetbiqi-mexanika-kafedrasi"
+                "label": "Kafedralar",
+                "url": "/kafedralar"
               },
               {
-                "label": "Gəmi energetik qurğuları kafedrası",
-                "url": "/struktur/gemi-energetik-qurgulari-kafedrasi"
+                "label": "Tədris ofisi",
+                "url": "/struktur/tedris-proseslerinin-teskili-sobesi"
               },
               {
-                "label": "Gəmi elektroavtomatikası kafedrası",
-                "url": "/struktur/gemi-elektroavtomatikasi-kafedrasi"
+                "label": "E-Kitabxana",
+                "url": "/sehife/elektron-kitabxana"
               },
               {
-                "label": "Dəniz naviqasiyası kafedrası",
-                "url": "/struktur/deniz-naviqasiyasi-kafedrasi"
-              },
-              {
-                "label": "Gəmiqayırma və gəmi təmiri kafedrası",
-                "url": "/struktur/gemiqayirma-ve-gemi-temiri-kafedrasi"
-              },
-              {
-                "label": "İngilis dili kafedrası",
-                "url": "/struktur/ingilis-dili-kafedrasi"
-              },
-              {
-                "label": "Humanitar fənlər kafedrası",
-                "url": "/struktur/humanitar-fenler-kafedrasi"
+                "label": "Keyfiyyət və nəticələr",
+                "url": "/sehife/keyfiyyetin-monitorinqi"
               }
             ]
           }
@@ -2203,6 +2167,9 @@ export default {
     } catch (err) {
       strapi.log.error('[seed] menu xetasi: ' + (err as Error).message);
     }
+    // F5.40 — «Təhsil» menyusunun yeni quruluşu, BİR DƏFƏ və yalnız köhnə quruluşda
+    // olanda (bax src/utils/menu-tehsil.ts). Gözlənilmir — portu bloklamır.
+    applyTehsilMenuV2(strapi).catch((e: Error) => strapi.log.error('[menu] F5.40: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

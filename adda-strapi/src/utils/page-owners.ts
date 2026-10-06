@@ -156,10 +156,12 @@ export async function loadMenuPages(strapi: Core.Strapi): Promise<MenuPage[]> {
   const cats = (v: unknown, section: string) => {
     for (const cat of (Array.isArray(v) ? v : []) as Row[]) {
       const cl = str(cat.label);
-      add(cat.url, cl, [section]);
       for (const g of (Array.isArray(cat.groups) ? cat.groups : []) as Row[]) {
         for (const l of (Array.isArray(g.links) ? g.links : []) as Row[]) add(l.url, l.label, [section === 'Əsas menyu' ? '' : section, cl, str(g.title)]);
       }
+      // Başlığın öz keçidi qruplardan SONRA: eyni səhifə qrupda daha dəqiq adla
+      // varsa o qalır (F5.40: «Təhsil» → /ixtisaslar = «Bütün ixtisaslar»).
+      add(cat.url, cl, [section]);
     }
   };
   cats(menu.esasMenyu, 'Əsas menyu');
