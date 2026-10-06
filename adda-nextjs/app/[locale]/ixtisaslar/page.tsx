@@ -140,6 +140,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             admissionLabel: admissionLabel(p.admissionScores),
             languagesLabel: languagesLabel(p.languages),
             seatsTotal: p.admissionSeats?.total ?? null,
+            langCodes: p.languages.map((l) => l.code),
           }),
         ),
     }))
@@ -173,6 +174,8 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                   colAdmission: tr('Qəbul balı (minimum/maksimum)', locale),
                   colLanguages: tr('Tədris dili', locale),
                   years: tr('il', locale),
+                  langFilter: tr('Tədris dili', locale),
+                  showAll: tr('Bütün proqramlar', locale),
                 }}
               />
             ) : (

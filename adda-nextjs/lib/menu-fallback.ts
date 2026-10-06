@@ -19,11 +19,12 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'Əcnəbi tələbə qəbulu', links: [{label:'Əcnəbi tələbələrin qəbulu',url:'#'},{label:'Viza və miqrasiya dəstəyi',url:'#'}] },
       { title: 'Faydalı məlumatlar və keçidlər', links: [{label:'Qeydiyyat xidməti',url:'#'},{label:'Təhsil haqqı və güzəştlər',url:'#'},{label:'Onlayn qeydiyyat',url:'#'},{label:'Açıq qapı günləri',url:'#'}] },
     ]},
-    { label: 'Təhsil', order: 3, url: '#', groups: [
-      { title: 'Rəqəmsal Akademiya', links: [{label:'LMS Portalı',url:'#'},{label:'E-Tədris resursları',url:'#'}] },
-      { title: 'Proqramların kataloqu', links: [{label:'Bakalavriat',url:'#'},{label:'Magistratura',url:'#'},{label:'Doktorantura',url:'#'},{label:'Əlavə təhsil',url:'#'}] },
-      { title: 'Təhsil standartları', links: [{label:'Dənizçilik qanunvericilik sənədləri',url:'#'},{label:'Beynəlxalq standartlar (IMO/STCW)',url:'#'}] },
-      { title: 'Təhsilin keyfiyyətinin qiymətləndirilməsi', links: [{label:'Yerli və beynəlxalq akkreditasiya',url:'#'},{label:'Tələbə sorğuları',url:'#'},{label:'Qaynar xətt və təkliflər',url:'#'}] },
+    // F5.40 — «Təhsil» yeni quruluşu (adda-strapi/src/utils/menu-tehsil.ts ilə eyni).
+    { label: 'Təhsil', order: 3, url: '/ixtisaslar', groups: [
+      { title: 'Təhsil proqramları', links: [{label:'Bütün ixtisaslar',url:'/ixtisaslar'},{label:'Subbakalavr (kollec)',url:'/ixtisaslar?tab=subbakalavr'},{label:'Bakalavriat',url:'/sehife/bakalavriat'},{label:'Magistratura',url:'/sehife/magistratura'},{label:'Doktorantura',url:'/sehife/doktorantura'},{label:'Qiyabi və təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'},{label:'İngilis dilində tədris',url:'/ixtisaslar?dil=en'}] },
+      { title: 'Dəniz praktikası', links: [{label:'Tədris gəmisi',url:'/sehife/tedris-gemisi'},{label:'Laboratoriya və trenajorlar',url:'/auditoriyalar'},{label:'Təcrübə (praktika)',url:'/sehife/tecrube-haqqinda'}] },
+      { title: 'Əlavə təhsil', links: [{label:'STCW kursları',url:'/struktur/telim-tedris-merkezi'},{label:'İxtisasartırma və xaricdə təhsil',url:'/sehife/xaricde-tehsil-ve-ixtisasartirma'}] },
+      { title: 'Struktur və keyfiyyət', links: [{label:'Fakültələr',url:'/fakulteler'},{label:'Kafedralar',url:'/kafedralar'},{label:'Tədris ofisi',url:'/struktur/tedris-proseslerinin-teskili-sobesi'},{label:'E-Kitabxana',url:'/sehife/elektron-kitabxana'},{label:'Keyfiyyət və nəticələr',url:'/sehife/keyfiyyetin-monitorinqi'}] },
     ]},
     { label: 'Elm və innovasiya', order: 4, url: '#', groups: [
       { title: 'Elmi idarəetmə və strategiya', links: [{label:'Elmi siyasət',url:'#'},{label:'Tədris-Metodiki Şura',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },

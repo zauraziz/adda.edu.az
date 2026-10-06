@@ -36,6 +36,15 @@
   background: var(--gold-500);
 }
 
+/* ── F5.40: `?dil=` filtri sətri ── */
+.prg-filter {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+.prg-filter strong { color: var(--navy-800); }
+.prg-filter a { color: var(--navy-800); font-weight: 600; text-decoration: underline; text-decoration-color: var(--gold-500); text-underline-offset: 3px; }
+
 /* ── Sətir siyahısı (F5.20b) ──
    Real <table> DEYİL — div-lər `role="table"` ilə.
    GENİŞ EKRAN: CSS grid, sütunlar `minmax()` ilə ÇEVİKDİR (sabit `width`

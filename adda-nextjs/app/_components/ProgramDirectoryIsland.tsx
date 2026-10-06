@@ -5,6 +5,8 @@
 // F5.18c-də SİLİNDİ — sadə sıralı cədvəl). Yeni server sorğusu YOXDUR — bütün
 // proqramlar page.tsx-də bir dəfə çəkilib, tab keçidi client state-dir.
 //
+// F5.40 — `?tab=` və `?dil=` ilə birbaşa keçid (menyunun «Təhsil» bölməsi).
+//
 // F5.24d — tab AÇARI `catalogTab`-dır (əvvəl `degree` idi) — qrup adı və
 // sırası artıq page.tsx-dəki CATALOG_TAB_ORDER-dən gəlir, bura yalnız
 // hazır qrupları göstərir.
@@ -15,7 +17,7 @@
 // hazırlanıb hazır string kimi gəlir — bura YALNIZ tab keçidi və şərti
 // sütunların (Təhsil haqqı, Yer sayı) görünürlüyünü hesablayır.
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 export interface ProgramRow {
@@ -29,6 +31,8 @@ export interface ProgramRow {
   languagesLabel: string;
   /** F5.24d — admissionSeats.total, boşdursa sütun tam gizlənir. */
   seatsTotal: number | null;
+  /** F5.40 — tədris dilləri (az/ru/en), `?dil=` filtri üçün. */
+  langCodes: string[];
 }
 
 export interface ProgramCatalogGroup {
@@ -47,6 +51,9 @@ interface Labels {
   colLanguages: string;
   colSeats: string;
   years: string;
+  /** F5.40 — `?dil=` filtri aktiv olanda: «Tədris dili: EN · Bütün proqramlar». */
+  langFilter: string;
+  showAll: string;
 }
 
 interface Props {
@@ -55,11 +62,42 @@ interface Props {
   labels: Labels;
 }
 
+const LANGS = ['az', 'ru', 'en'];
+
 export default function ProgramDirectoryIsland({ groups, basePath, labels }: Props) {
   const [activeTab, setActiveTab] = useState(groups[0]?.tab ?? '');
+  const [lang, setLang] = useState<string | null>(null);
 
-  const activeGroup = groups.find((g) => g.tab === activeTab) ?? groups[0];
+  // F5.40 — menyudan birbaşa keçid: `?tab=<catalogTab>` və `?dil=<az|ru|en>`.
+  // Menyu keçidləri adi <a>-dır (səhifə yenidən yüklənir), ona görə URL-i
+  // ilk render-dən sonra bir dəfə oxumaq kifayətdir. Server HTML-i dəyişmir —
+  // səhifə statik/ISR qalır, ilk tab axtarış sistemləri üçün görünür.
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const dil = sp.get('dil');
+    if (dil && LANGS.includes(dil)) setLang(dil);
+    const tab = sp.get('tab');
+    if (tab && groups.some((g) => g.tab === tab)) setActiveTab(tab);
+  }, [groups]);
+
+  // Filtr heç nə tapmasa (məs. /en-də ingilisdilli proqramın ingiliscə versiyası
+  // hələ yoxdur) boş cədvəl göstərilmir — bütün proqramlar, filtr sətri olmadan.
+  const filtered = useMemo(
+    () => (lang ? groups.map((g) => ({ ...g, items: g.items.filter((p) => p.langCodes.includes(lang)) })).filter((g) => g.items.length) : []),
+    [groups, lang],
+  );
+  const langActive = Boolean(lang) && filtered.length > 0;
+  const shown = langActive ? filtered : groups;
+  const activeGroup = shown.find((g) => g.tab === activeTab) ?? shown[0];
   const items = activeGroup?.items ?? [];
+
+  // Tab dəyişəndə ünvan da dəyişir — keçidi paylaşmaq və «geri» düyməsi üçün.
+  const pickTab = (tab: string) => {
+    setActiveTab(tab);
+    const sp = new URLSearchParams(window.location.search);
+    sp.set('tab', tab);
+    window.history.replaceState(window.history.state, '', `${window.location.pathname}?${sp.toString()}`);
+  };
 
   // F5.18c/F5.24d — "Təhsil haqqı" və "Yer sayı" sütunları YALNIZ ən azı bir
   // proqramda doludursa görünür (başlığı daxil) — hamısı boşdursa sütun tam
@@ -71,15 +109,22 @@ export default function ProgramDirectoryIsland({ groups, basePath, labels }: Pro
 
   return (
     <>
-      {groups.length > 1 ? (
+      {langActive && lang ? (
+        <p className="prg-filter">
+          {labels.langFilter}: <strong>{lang.toUpperCase()}</strong>
+          <span aria-hidden="true"> · </span>
+          <a href={basePath}>{labels.showAll}</a>
+        </p>
+      ) : null}
+      {shown.length > 1 ? (
         <nav className="prg-tabs" aria-label={labels.colSpeciality}>
-          {groups.map((g) => (
+          {shown.map((g) => (
             <button
               key={g.tab}
               type="button"
               className="prg-tab"
               aria-current={g.tab === activeGroup?.tab ? 'page' : undefined}
-              onClick={() => setActiveTab(g.tab)}
+              onClick={() => pickTab(g.tab)}
             >
               {g.label}
             </button>

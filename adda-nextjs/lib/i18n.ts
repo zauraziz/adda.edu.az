@@ -919,6 +919,20 @@ const T: Array<[string, string, string]> = [
   ['Hazırda', 'Сейчас', 'Present'],
   ['Vəfat edib', 'Скончался', 'Deceased'],
   ['Akademiyaya rəhbərlik etmiş rektorlar — fəaliyyət dövrləri, elmi dərəcələri və bioqrafiyaları.', 'Ректоры, возглавлявшие Академию, — сроки полномочий, учёные степени и биографии.', 'The rectors who have led the Academy — terms of office, academic degrees and biographies.'],
+  // F5.40 — /ixtisaslar kataloqu: sütun başlıqları və `?dil=` filtri (əvvəl ru/en-də
+  // Azərbaycanca görünürdü — «İngilis dilində tədris» keçidi ingilisdilli ziyarətçini bura gətirir).
+  ['Şifr', 'Шифр', 'Code'],
+  ['Müddət', 'Срок обучения', 'Duration'],
+  ['Təhsil forması', 'Форма обучения', 'Mode of study'],
+  ['Təhsil haqqı (AZN)', 'Стоимость обучения (AZN)', 'Tuition fee (AZN)'],
+  ['Yer sayı (2026/27)', 'Количество мест (2026/27)', 'Places (2026/27)'],
+  ['Qəbul balı (minimum/maksimum)', 'Проходной балл (мин./макс.)', 'Admission score (min/max)'],
+  ['il', 'г.', 'years'],
+  ['Əyani', 'Очная', 'Full-time'],
+  ['Qiyabi', 'Заочная', 'Part-time'],
+  ['Bakalavriat, magistratura və doktorantura proqramları.', 'Программы бакалавриата, магистратуры и докторантуры.', 'Bachelor\'s, master\'s and doctoral programmes.'],
+  ['Tədris dili', 'Язык обучения', 'Language of instruction'],
+  ['Bütün proqramlar', 'Все программы', 'All programmes'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1256,7 +1270,7 @@ const MENU_T: Array<[string, string, string]> = [
   ['Soft Skills təlimləri', 'Тренинги по развитию Soft Skills', 'Soft Skills Training'],
   ['Sertifikatlaşdırma dəstəyi', 'Поддержка сертификации', 'Certification Support'],
   ['Master-klaslar', 'Мастер-классы', 'Masterclasses'],
-  ['Fakültələr', 'Отделения', 'Academic Departments'],
+  ['Fakültələr', 'Факультеты', 'Faculties'], // F5.40: «Отделения» səhv idi (/fakulteler başlığı da bundan gəlir)
   ['İnfrastruktur', 'Инфраструктура', 'Infrastructure'],
   ['FAQ', 'Часто задаваемые вопросы', 'FAQ'],
   ['E-Akademiya platforması', 'Платформа «Электронная академия»', 'E-Academy Platform'],
@@ -1378,6 +1392,21 @@ const MENU_T: Array<[string, string, string]> = [
   ['Gəmi sürücülüyü fakültəsi', 'Судоводительский факультет', 'Faculty of Navigation'],
   ['Gəmi mexanikası və elektromexanikası fakültəsi', 'Факультет судовой механики и электромеханики', 'Faculty of Marine Engineering and Electrical Engineering'],
   ['Elmi-tədqiqat qrupu', 'Научно-исследовательская группа', 'Research Group'],
+  // F5.40 — «Təhsil» menyusunun yeni quruluşu (adda-strapi/src/utils/menu-tehsil.ts).
+  ['Təhsil proqramları', 'Образовательные программы', 'Study Programmes'],
+  ['Bütün ixtisaslar', 'Все специальности', 'All Programmes'],
+  ['Subbakalavr (kollec)', 'Суббакалавриат (колледж)', 'Sub-bachelor (College)'],
+  ['Qiyabi və təkrar ali təhsil', 'Заочное и второе высшее образование', 'Part-time and Second Degree'],
+  ['İngilis dilində tədris', 'Обучение на английском языке', 'English-taught Programmes'],
+  ['Dəniz praktikası', 'Морская практика', 'Sea Training'],
+  ['Laboratoriya və trenajorlar', 'Лаборатории и тренажёры', 'Laboratories and Simulators'],
+  ['Təcrübə (praktika)', 'Практика', 'Practical Training'],
+  ['STCW kursları', 'Курсы ПДНВ', 'STCW Courses'],
+  ['İxtisasartırma və xaricdə təhsil', 'Повышение квалификации и обучение за рубежом', 'Professional Development and Study Abroad'],
+  ['Struktur və keyfiyyət', 'Структура и качество', 'Structure and Quality'],
+  ['Kafedralar', 'Кафедры', 'Departments'],
+  ['Tədris ofisi', 'Учебный офис', 'Study Office'],
+  ['Keyfiyyət və nəticələr', 'Качество и результаты', 'Quality and Outcomes'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.
