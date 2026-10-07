@@ -1,5 +1,13 @@
 // K26 — /[locale]/fakulteler
 // K26-3-de menyudan bura link qoymusdum, amma siyahi sehifesi yox idi -> 404.
+//
+// F5.41 — BU, SİYAHI SƏHİFƏSİDİR (kafedralar nümunəsi). /fakulteler/[slug]
+// DETAL SƏHİFƏSİ SİLİNDİ: eyni fakültənin iki səhifəsi (/fakulteler/x və
+// /struktur/x) çaşqınlıq yaradırdı. Kart birbaşa /struktur/[slug]-ə keçir —
+// fakültənin YEGANƏ səhifəsi struktur bölmədir; köhnə /fakulteler/x ünvanı
+// next.config.js-də 301 ilə ora gedir. Məlumat da bölmələrdən gəlir
+// (getFacultyUnits): ad ru/en-də var, dekan bölmənin rəhbəridir.
+// «2. Akademiya — Fakültə» (Strapi) arxivdir — burada OXUNMUR.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -24,7 +32,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
-import { getMenu, getFaculties, type FacultyDoc, type SiteMenu } from '@/lib/strapi';
+import { getMenu, getFacultyUnits, type FacultyUnit, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 300;
@@ -46,13 +54,61 @@ export async function generateMetadata({
   };
 }
 
+/** Kart üçün qısa düz mətn — Markdown işarələri, şəkil və keçidlər atılır. */
+function plainExcerpt(md: string | null, max = 180): string {
+  if (!md) return '';
+  const t = md
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/^[ \t]*(?:[-*+>]|\d+\.)\s+/gm, '')
+    .replace(/^[ \t]*#{1,6}\s+/gm, '')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const sp = cut.lastIndexOf(' ');
+  return (sp > max * 0.6 ? cut.slice(0, sp) : cut).trimEnd() + '…';
+}
+
+function FacultyCard({ f, locale }: { f: FacultyUnit; locale: Locale }) {
+  const dean = f.head ? f.head.displayName?.trim() || f.head.name.trim() : '';
+  const role = f.head?.position?.trim() || 'Dekan';
+  const excerpt = plainExcerpt(f.about);
+  const kafedras = (f.children ?? []).filter((c) => c.slug.endsWith('-kafedrasi')).length;
+  return (
+    <Link href={`/${locale}/struktur/${f.slug}`} className="np-card">
+      <span className="np-card-body">
+        <h2 className="np-card-title">{f.name}</h2>
+        {dean ? (
+          <p className="np-card-ex">
+            {tr(role, locale)}: {dean}
+          </p>
+        ) : null}
+        {excerpt ? <p className="np-card-ex">{excerpt}</p> : null}
+        {kafedras ? (
+          <span className="np-meta">
+            <span className="np-date">
+              <i className="ti ti-sitemap" aria-hidden="true" />
+              {tr('Kafedralar', locale)}: {kafedras}
+            </span>
+          </span>
+        ) : null}
+      </span>
+    </Link>
+  );
+}
+
 export default async function FacultyListPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
 
   const [menu, faculties] = await Promise.all([
     getMenu(locale).catch(() => null as SiteMenu | null),
-    getFaculties(locale).catch(() => [] as FacultyDoc[]),
+    // Bölmənin ru/en versiyası yoxdursa az siyahısı (slug eynidir).
+    getFacultyUnits(locale)
+      .then((list) => (list.length || locale === 'az' ? list : getFacultyUnits('az')))
+      .catch(() => [] as FacultyUnit[]),
   ]);
 
   return (
@@ -72,12 +128,7 @@ export default async function FacultyListPage({ params }: { params: Promise<{ lo
             {faculties.length ? (
               <div className="np-grid">
                 {faculties.map((f) => (
-                  <Link key={f.slug} href={`/${locale}/fakulteler/${f.slug}`} className="np-card">
-                    <span className="np-card-body">
-                      <h2 className="np-card-title">{f.name}</h2>
-                      {f.about ? <p className="np-card-ex">{f.about.slice(0, 160)}</p> : null}
-                    </span>
-                  </Link>
+                  <FacultyCard key={f.slug} f={f} locale={locale} />
                 ))}
               </div>
             ) : (

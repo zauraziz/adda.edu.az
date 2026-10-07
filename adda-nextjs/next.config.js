@@ -47,6 +47,16 @@ const nextConfig = {
         destination: '/:locale/elaqe',
         permanent: true,
       },
+      // F5.41: /fakulteler/<slug> -> /struktur/<slug>. Eyni fakültənin iki
+      // səhifəsi var idi («2. Akademiya — Fakültə» qeydi və struktur bölmə,
+      // slug qəsdən eynidir — F5.6). Detal səhifəsi silindi, fakültənin
+      // yeganə səhifəsi struktur bölmədir. /fakulteler SİYAHISI qalır
+      // (bölmələrdən qurulur, kartlar /struktur/<slug>-ə keçir).
+      {
+        source: '/:locale(az|ru|en)/fakulteler/:slug',
+        destination: '/:locale/struktur/:slug',
+        permanent: true,
+      },
     ];
   },
 };

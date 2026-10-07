@@ -52,7 +52,7 @@ import {
   getProgramDetail,
   getProgramDocuments,
   getProgramSlugs,
-  getFacultyBySlug,
+  getUnitBySlug,
   getMenu,
   getPrograms,
   getUnitStaff,
@@ -352,16 +352,19 @@ export default async function ProgramPage({
   // görünməsin) — əvvəl bütün proqramlar (dərəcədən asılı olmayaraq) gəlirdi.
   const otherPrograms = allPrograms.filter((p) => p.slug !== program.slug && p.degree === program.degree);
 
-  // F5.5b/F5.6 — `program.faculty` sxemdə var, amma boş ola bilər. Boşdursa
-  // KAFEDRA_FACULTY sabitindən (bax lib/strapi.ts) götürülür — `unit.parent`
-  // zənciri ARTIQ GƏZİLMİR, birbaşa kafedranın öz slug-ı ilə axtarılır.
-  const facultyDisplay = program.faculty
-    ? { name: program.faculty.name, slug: program.faculty.slug }
-    : program.unit && KAFEDRA_FACULTY[program.unit.slug]
-      ? await getFacultyBySlug(KAFEDRA_FACULTY[program.unit.slug], locale)
-          .then((f) => (f ? { name: f.name, slug: f.slug } : null))
-          .catch(() => null)
-      : null;
+  // F5.5b/F5.6 — fakültə kafedradan (KAFEDRA_FACULTY, bax lib/strapi.ts),
+  // kafedra yoxdursa köhnə `program.faculty` əlaqəsindən tapılır.
+  // F5.41 — fakültənin YEGANƏ səhifəsi struktur bölmədir (/struktur/<slug>,
+  // slug eynidir); ad da oradan, cari dildə gəlir. «2. Akademiya — Fakültə»
+  // arxivdir — adı (sonda boşluq, ingiliscə böyük hərf) burada göstərilmir.
+  const facultySlug =
+    (program.unit && KAFEDRA_FACULTY[program.unit.slug]) || program.faculty?.slug || null;
+  const facultyDisplay = facultySlug
+    ? await getUnitBySlug(facultySlug, locale)
+        .then((u) => u ?? (locale === 'az' ? null : getUnitBySlug(facultySlug, 'az')))
+        .then((u) => (u ? { name: u.name, slug: u.slug } : null))
+        .catch(() => null)
+    : null;
 
   // F5.26b — `competencies` səhifədən ÇIXARILIB (Zaur müəllimin qərarı):
   // rəsmi sənəd mətnidir, yan paneldəki PDF-də onsuz da var, səhifədə
@@ -547,7 +550,7 @@ export default async function ProgramPage({
                   <li className="un-fact">
                     <i className="ti ti-building-arch" aria-hidden="true" />
                     <span className="un-fact-k">{tr('Fakültə', locale)}</span>
-                    <Link href={`/${locale}/fakulteler/${facultyDisplay.slug}`} className="un-fact-v">
+                    <Link href={`/${locale}/struktur/${facultyDisplay.slug}`} className="un-fact-v">
                       {facultyDisplay.name}
                     </Link>
                   </li>
@@ -861,7 +864,7 @@ export default async function ProgramPage({
                 {facultyDisplay ? (
                   <div>
                     <div className="un-sub-title">{tr('Fakültə', locale)}</div>
-                    <Link href={`/${locale}/fakulteler/${facultyDisplay.slug}`} className="un-link-btn">
+                    <Link href={`/${locale}/struktur/${facultyDisplay.slug}`} className="un-link-btn">
                       <i className="ti ti-building-arch" aria-hidden="true" />
                       {facultyDisplay.name}
                     </Link>

@@ -24,7 +24,9 @@ export const SEARCH_ROUTES: Record<string, string> = {
   page: 'sehife',
   department: 'struktur',
   program: 'ixtisaslar',
-  faculty: 'fakulteler',
+  // F5.41 — fakültənin səhifəsi struktur bölmədir (slug eyni); Strapi
+  // site-search «faculty» nəticəsini də bölmələrdən verir.
+  faculty: 'struktur',
 };
 
 export function searchHref(locale: string, contentType: string | undefined, slug: string | undefined): string | null {

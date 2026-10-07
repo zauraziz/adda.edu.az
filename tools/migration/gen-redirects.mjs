@@ -32,7 +32,9 @@ const SEGMENT = {
   article: 'xeberler',
   announcement: 'elanlar',
   page: 'sehife',
-  faculty: 'fakulteler',
+  // F5.41: fakültənin səhifəsi struktur bölmədir (slug eyni) — /fakulteler/x
+  // 301 ilə ora gedir, zəncir olmasın deyə köhnə URL birbaşa /struktur-a.
+  faculty: 'struktur',
   program: 'ixtisaslar',
   department: 'struktur',
 };

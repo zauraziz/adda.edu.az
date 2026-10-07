@@ -34,6 +34,8 @@ const T: Array<[string, string, string]> = [
   ['Struktur', 'Структура', 'Structure'],
   ['İxtisas', 'Специальность', 'Programme'],
   ['Fakültə', 'Факультет', 'Faculty'],
+  ['Dekan', 'Декан', 'Dean'], // F5.41: /fakulteler kartı (bölmə rəhbərinin vəzifəsi)
+  ['Akademiyanın fakültələri və tədris istiqamətləri.', 'Факультеты Академии и направления обучения.', 'The Academy’s faculties and fields of study.'],
   ['Bu səhifənin məzmunu hazırlanır.', 'Содержание этой страницы готовится.', 'The content of this page is being prepared.'],
   ['Səhv gördünüzsə bizə bildirin.', 'Заметили ошибку — сообщите нам.', 'Spotted an error? Let us know.'],
   ['Hansı sahə?', 'Какое поле?', 'Which field?'],
@@ -1422,7 +1424,7 @@ export function tr(az: string, locale: Locale): string {
   return locale === 'ru' ? hit[0] : hit[1];
 }
 
-// F3.28 — `az` fallback bildirişi (sehife/ixtisaslar/fakulteler [slug]).
+// F3.28 — `az` fallback bildirişi (sehife/ixtisaslar [slug]; fakulteler [slug] F5.41-də silindi).
 // tr() bura yaramır: ru və en mesajları eyni cümlənin tərcüməsi DEYİL, hərəsi
 // öz dilinin adını çəkir ("rus dilinə" / "into English") — TR_MAP-in tək-az-
 // mənbə modeli fərqli məzmunu tuta bilməz.

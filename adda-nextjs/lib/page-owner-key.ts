@@ -4,7 +4,8 @@
  * Strapi-dəki EYNİ funksiyanın güzgüsü (adda-strapi/src/utils/page-owners.ts →
  * normalizePath/ownerKey). Biri dəyişəndə o biri də dəyişməlidir:
  *   /sehife/x və /hazirlanir/x → page:x  (eyni səhifə, hazırlanır → hazır)
- *   /struktur/x → unit:x, /ixtisaslar/x → program:x, /fakulteler/x → faculty:x,
+ *   /struktur/x və /fakulteler/x → unit:x (F5.41: ikincisi birinciyə 301),
+ *   /ixtisaslar/x → program:x,
  *   /emekdas/x → person:x, /auditoriyalar/x → facility:x,
  *   /qehremanlarimiz/x → hero:x, /sabiq-rektorlar/x → rector:x
  *   digərləri → path:/xeberler və s.
@@ -13,7 +14,7 @@ const DETAIL: [RegExp, string][] = [
   [/^\/(?:sehife|hazirlanir)\/([^/]+)$/, 'page'],
   [/^\/struktur\/([^/]+)$/, 'unit'],
   [/^\/ixtisaslar\/([^/]+)$/, 'program'],
-  [/^\/fakulteler\/([^/]+)$/, 'faculty'],
+  [/^\/fakulteler\/([^/]+)$/, 'unit'],
   [/^\/emekdas\/([^/]+)$/, 'person'],
   [/^\/auditoriyalar\/([^/]+)$/, 'facility'],
   [/^\/qehremanlarimiz\/([^/]+)$/, 'hero'],

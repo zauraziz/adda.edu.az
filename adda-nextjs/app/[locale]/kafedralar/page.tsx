@@ -5,6 +5,8 @@
 // kafedranın YEGANƏ detal səhifəsi odur. Eyni bölmə üçün iki ayrı detal
 // səhifəsi (department/unit, /fakulteler/[slug] vs /struktur/[slug]) bu
 // layihədə dəfələrlə problem yaradıb (bax CLAUDE.md) — təkrarlanmır.
+// F5.41: /fakulteler/[slug] də silindi, /fakulteler siyahısı bu səhifənin
+// nümunəsi ilə qurulub.
 //
 // DATA MƏNBƏYİ: getLeadership(locale) (F3.11) — YENİ sorğu yazılmır, bu
 // funksiya artıq head/foto/parent.slug daşıyır. Fakültə adı əlavə sorğu

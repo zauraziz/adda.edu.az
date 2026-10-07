@@ -223,15 +223,6 @@ export interface Department {
   locale: Locale;
 }
 
-export interface FacultyDoc {
-  id: number;
-  documentId: string;
-  name: string;
-  slug: string;
-  about: string | null;
-  locale: Locale;
-}
-
 /** Statik məzmun sənədinin ümumi forması (marşrutlar bunu işlədir). */
 export interface ContentDoc {
   title: string;
@@ -312,13 +303,10 @@ export const getDepartmentBySlug = (slug: string, locale: Locale = 'az') =>
   oneBySlug<Department>('/departments', slug, locale);
 export const getProgramBySlug = (slug: string, locale: Locale = 'az') =>
   oneBySlug<Program>('/programs', slug, locale);
-export const getFacultyBySlug = (slug: string, locale: Locale = 'az') =>
-  oneBySlug<FacultyDoc>('/faculties', slug, locale);
 
 export const getPageSlugs = (locale: Locale = 'az') => allSlugs('/pages', locale);
 export const getDepartmentSlugs = (locale: Locale = 'az') => allSlugs('/departments', locale);
 export const getProgramSlugs = (locale: Locale = 'az') => allSlugs('/programs', locale);
-export const getFacultySlugs = (locale: Locale = 'az') => allSlugs('/faculties', locale);
 
 export interface LocaleFallback<T> {
   doc: T | null;
@@ -1064,12 +1052,36 @@ export async function getStaff(_locale: Locale = 'az'): Promise<Person[]> {
   return fetchAllPages<Person>('/people', { 'populate[roles]': true });
 }
 
-/** Bütün fakültələr. */
-export async function getFaculties(locale: Locale = 'az'): Promise<FacultyDoc[]> {
-  const json = await strapiFetch<StrapiList<FacultyDoc>>('/faculties', {
+/**
+ * F5.41 — fakültələr STRUKTUR BÖLMƏLƏRİDİR (`unit`, slug «…-fakultesi»).
+ *
+ * «2. Akademiya — Fakültə» (`/faculties`) arxivdir, sayt onu oxumur:
+ * fakültənin yeganə səhifəsi /struktur/<slug>-dir, /fakulteler/<slug> ora 301
+ * ilə gedir (next.config.js). Slug lokallar arasında eynidir (K2), ona görə
+ * süzgəc ru/en adlarında da işləyir. Sıra: admin «sortOrder», sonra ad.
+ */
+export interface FacultyUnit {
+  name: string;
+  slug: string;
+  about: string | null;
+  head: { name: string; displayName: string | null; position: string | null } | null;
+  children: { slug: string; name: string }[] | null;
+}
+export async function getFacultyUnits(locale: Locale = 'az'): Promise<FacultyUnit[]> {
+  const json = await strapiFetch<StrapiList<FacultyUnit>>('/units', {
     locale,
-    sort: 'name:asc',
-    'pagination[pageSize]': 100,
+    'filters[slug][$endsWith]': '-fakultesi',
+    'sort[0]': 'sortOrder:asc',
+    'sort[1]': 'name:asc',
+    'fields[0]': 'name',
+    'fields[1]': 'slug',
+    'fields[2]': 'about',
+    'populate[head][fields][0]': 'name',
+    'populate[head][fields][1]': 'displayName',
+    'populate[head][fields][2]': 'position',
+    'populate[children][fields][0]': 'slug',
+    'populate[children][fields][1]': 'name',
+    'pagination[pageSize]': 20,
   });
   return json.data ?? [];
 }
