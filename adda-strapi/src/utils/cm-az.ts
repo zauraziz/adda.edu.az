@@ -17,6 +17,7 @@
  * toxunmur. Portu bloklamır (bootstrap-da gözlənilmir).
  */
 import type { Core } from '@strapi/strapi';
+import { FACULTY_ARCHIVE_NOTE } from './faculty-units';
 
 /** [ad, qayda?, nümunə?] */
 type F = [string, string?, string?];
@@ -228,9 +229,10 @@ const CT: Record<string, Dict> = {
     highlights: ['Seçilmiş faktlar', 'Rəqəm + izah, məs. «240» — «kredit».'],
     faq: ['Tez-tez verilən suallar', 'Sual + cavab, hər biri ayrıca sətir.'],
   },
+  // F5.41 — arxiv: fakültənin səhifəsi struktur bölmədir (src/utils/faculty-units.ts).
   'api::faculty.faculty': {
-    name: ['Adı', 'Rəsmi ad: «Gəmi mexanikası fakültəsi».'],
-    slug: ['Ünvan (slug)', SLUG + ' Ünvan: /fakulteler/<slug>.'],
+    name: ['Adı', FACULTY_ARCHIVE_NOTE],
+    slug: ['Ünvan (slug)', SLUG + ' Struktur bölmənin slug-ı ilə eyni olmalıdır (/struktur/<slug>).'],
     about: ['Haqqında', MD],
     dean: ['Dekan', 'Heyət siyahısından.'],
     departments: ['Kafedralar (köhnə)', AUTO_REL],

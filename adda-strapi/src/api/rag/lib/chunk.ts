@@ -100,7 +100,9 @@ export const SOURCES: SourceDef[] = [
     uid: 'api::faculty.faculty',
     title: 'name',
     body: 'about',
-    route: '/fakulteler/',
+    // F5.41 — /fakulteler/<slug> səhifəsi yoxdur: fakültənin səhifəsi struktur
+    // bölmədir, slug eynidir. Mətn hələ arxiv qeydindən oxunur.
+    route: '/struktur/',
     fields: ['documentId', 'slug', 'name', 'about', 'publishedAt'],
   },
   {

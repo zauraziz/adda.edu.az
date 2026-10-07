@@ -122,7 +122,8 @@ const SPECS: SourceSpec[] = [
     nameFields: ['displayName', 'name'],
   },
   { kind: 'program', uid: 'api::program.program', route: '/ixtisaslar/', fields: ['documentId', 'slug', 'title'], nameFields: ['title'] },
-  { kind: 'faculty', uid: 'api::faculty.faculty', route: '/fakulteler/', fields: ['documentId', 'slug', 'name'], nameFields: ['name'] },
+  // F5.41 — fakültənin səhifəsi struktur bölmədir (slug eyni).
+  { kind: 'faculty', uid: 'api::faculty.faculty', route: '/struktur/', fields: ['documentId', 'slug', 'name'], nameFields: ['name'] },
   { kind: 'department', uid: 'api::department.department', route: '/struktur/', fields: ['documentId', 'slug', 'name'], nameFields: ['name'] },
   { kind: 'unit', uid: 'api::unit.unit', route: '/struktur/', fields: ['documentId', 'slug', 'name'], nameFields: ['name'] },
 ];

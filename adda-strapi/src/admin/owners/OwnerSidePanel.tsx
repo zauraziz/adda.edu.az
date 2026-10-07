@@ -3,8 +3,9 @@
  * Baş admin buradan dəyişir (təyinat məktubu gedir); digərləri yalnız görür.
  * Qeydi dəyişə bilməyən istifadəçiyə əvvəlcədən xəbərdarlıq göstərilir
  * (şərtli icazədə Strapi sahələri açıq saxlayır, server isə rədd edir).
- * Səhifələr, struktur bölmələr, ixtisaslar, fakültələr, heyət, obyektlər,
- * qəhrəmanlar və sabiq rektorlar üçün (bax src/utils/page-owners.ts KIND_UID).
+ * Səhifələr, struktur bölmələr, ixtisaslar, heyət, obyektlər, qəhrəmanlar və
+ * sabiq rektorlar üçün (bax src/utils/page-owners.ts KIND_UID). Fakültə (F5.41)
+ * yoxdur: onun səhifəsi struktur bölmədir, arxiv qeydinin məsulu olmur.
  */
 import * as React from 'react';
 import { Box, Flex, LinkButton, Loader, SingleSelect, SingleSelectOption, Typography } from '@strapi/design-system';
@@ -14,7 +15,7 @@ import type { PanelComponent } from '@strapi/content-manager/strapi-admin';
 import { ownersApi, siteUrl, type RecordOwner } from './api';
 
 const OWNED_UIDS = new Set([
-  'api::page.page', 'api::unit.unit', 'api::program.program', 'api::faculty.faculty', 'api::person.person',
+  'api::page.page', 'api::unit.unit', 'api::program.program', 'api::person.person',
   'api::facility.facility', 'api::hero.hero', 'api::rector.rector',
 ]);
 

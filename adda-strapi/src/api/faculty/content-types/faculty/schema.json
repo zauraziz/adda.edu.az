@@ -4,8 +4,8 @@
   "info": {
     "singularName": "faculty",
     "pluralName": "faculties",
-    "displayName": "2. Akademiya — Fakültə",
-    "description": "Akademiyanın fakültələri"
+    "displayName": "2. Akademiya — Fakültə (arxiv)",
+    "description": "F5.41 — ARXİV, saytda göstərilmir. Fakültənin yeganə səhifəsi struktur bölmədir (/struktur/<slug>, slug eynidir); /fakulteler/<slug> ora 301 ilə yönlənir. Silinmir: proqram/xəbər/heyət əlaqələri və kopilot mətni buradadır."
   },
   "options": {
     "draftAndPublish": true

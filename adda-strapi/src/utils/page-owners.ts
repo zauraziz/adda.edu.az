@@ -36,25 +36,28 @@ const ADMIN_URL = (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender
 
 // ── Açar ─────────────────────────────────────────────────────────────────────
 
-/** Qeyd səhifələri: ünvan → növ (slug ilə tapılır). */
+/**
+ * Qeyd səhifələri: ünvan → növ (slug ilə tapılır).
+ * F5.41: /fakulteler/x → /struktur/x-ə 301 yönlənir (fakültənin yeganə səhifəsi
+ * bölmədir, slug eynidir) — ona görə açar da unit:x-dir.
+ */
 const DETAIL: [RegExp, Kind][] = [
   [/^\/(?:sehife|hazirlanir)\/([^/]+)$/, 'page'],
   [/^\/struktur\/([^/]+)$/, 'unit'],
   [/^\/ixtisaslar\/([^/]+)$/, 'program'],
-  [/^\/fakulteler\/([^/]+)$/, 'faculty'],
+  [/^\/fakulteler\/([^/]+)$/, 'unit'],
   [/^\/emekdas\/([^/]+)$/, 'person'],
   [/^\/auditoriyalar\/([^/]+)$/, 'facility'],
   [/^\/qehremanlarimiz\/([^/]+)$/, 'hero'],
   [/^\/sabiq-rektorlar\/([^/]+)$/, 'rector'],
 ];
 
-type Kind = 'page' | 'unit' | 'program' | 'faculty' | 'person' | 'facility' | 'hero' | 'rector';
+type Kind = 'page' | 'unit' | 'program' | 'person' | 'facility' | 'hero' | 'rector';
 
 const KIND_UID: Record<Kind, string> = {
   page: 'api::page.page',
   unit: 'api::unit.unit',
   program: 'api::program.program',
-  faculty: 'api::faculty.faculty',
   person: 'api::person.person',
   facility: 'api::facility.facility',
   hero: 'api::hero.hero',
@@ -74,7 +77,9 @@ const SECTIONS: [RegExp, string][] = [
   [/^\/qehremanlarimiz$/, 'api::hero.hero'],
   [/^\/auditoriyalar$/, 'api::facility.facility'],
   [/^\/ixtisaslar$/, 'api::program.program'],
-  [/^\/fakulteler$/, 'api::faculty.faculty'],
+  // F5.41: /fakulteler siyahısı bölmələrdən qurulur, amma BURADA YOXDUR —
+  // bütün bölmələrə icazə vermək olmaz; fakültə bölməsinin məsulu qeydin
+  // öz yan panelindən (unit:<slug>) təyin olunur.
   [/^\/(?:struktur|kafedralar)$/, 'api::unit.unit'],
 ];
 
@@ -194,7 +199,6 @@ const CONTENT_FIELDS: Record<Kind, string[]> = {
   page: ['body'],
   unit: ['about', 'functions', 'services'],
   program: ['overview', 'description'],
-  faculty: ['about'],
   person: ['bio'],
   facility: ['description'],
   hero: ['biography'],
@@ -202,10 +206,10 @@ const CONTENT_FIELDS: Record<Kind, string[]> = {
 };
 /** Qeydin adı hansı sahədədir. */
 const TITLE_FIELD: Record<Kind, string> = {
-  page: 'title', unit: 'name', program: 'title', faculty: 'name', person: 'name', facility: 'name', hero: 'name', rector: 'name',
+  page: 'title', unit: 'name', program: 'title', person: 'name', facility: 'name', hero: 'name', rector: 'name',
 };
 const LOCALIZED: Record<Kind, boolean> = {
-  page: true, unit: true, program: true, faculty: true, person: false, facility: false, hero: false, rector: true,
+  page: true, unit: true, program: true, person: false, facility: false, hero: false, rector: true,
 };
 
 export interface RecordInfo {
@@ -380,7 +384,7 @@ export async function registerOwnerCondition(strapi: Core.Strapi): Promise<void>
 
 /** Redaktorun dəyişə biləcəyi tiplər (şərtlə). */
 const EDITABLE = [
-  'api::page.page', 'api::unit.unit', 'api::program.program', 'api::faculty.faculty', 'api::person.person',
+  'api::page.page', 'api::unit.unit', 'api::program.program', 'api::person.person',
   'api::facility.facility', 'api::hero.hero', 'api::rector.rector',
   'api::article.article', 'api::announcement.announcement', 'api::event.event', 'api::milestone.milestone',
 ];
@@ -770,7 +774,7 @@ export function registerPageOwners(strapi: Core.Strapi): void {
     const sup = isSuper(strapi, ctx.state.user);
     const users = await adminUsers(strapi);
     const owner = a?.editorId != null ? users.find((u) => u.id === a.editorId) : undefined;
-    const defaultPath = kind === 'page' ? `/sehife/${slug}` : kind === 'unit' ? `/struktur/${slug}` : kind === 'program' ? `/ixtisaslar/${slug}` : kind === 'faculty' ? `/fakulteler/${slug}` : kind === 'person' ? `/emekdas/${slug}` : kind === 'facility' ? `/auditoriyalar/${slug}` : kind === 'hero' ? `/qehremanlarimiz/${slug}` : `/sabiq-rektorlar/${slug}`;
+    const defaultPath = kind === 'page' ? `/sehife/${slug}` : kind === 'unit' ? `/struktur/${slug}` : kind === 'program' ? `/ixtisaslar/${slug}` : kind === 'person' ? `/emekdas/${slug}` : kind === 'facility' ? `/auditoriyalar/${slug}` : kind === 'hero' ? `/qehremanlarimiz/${slug}` : `/sabiq-rektorlar/${slug}`;
     ctx.body = {
       ok: true,
       key,

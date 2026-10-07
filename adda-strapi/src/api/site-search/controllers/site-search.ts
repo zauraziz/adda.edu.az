@@ -43,6 +43,8 @@ const SOURCES: Array<{
   body: string;
   excerpt?: string;
   category?: string;
+  /** Əlavə süzgəc (axtarış şərti ilə $and). */
+  where?: Row;
 }> = [
   { uid: 'api::article.article', contentType: 'article', title: 'title', body: 'body', excerpt: 'excerpt', category: 'category' },
   { uid: 'api::announcement.announcement', contentType: 'announcement', title: 'title', body: 'body', excerpt: 'excerpt', category: 'importance' },
@@ -50,7 +52,10 @@ const SOURCES: Array<{
   { uid: 'api::page.page', contentType: 'page', title: 'title', body: 'body', excerpt: 'seoDescription' },
   { uid: 'api::department.department', contentType: 'department', title: 'name', body: 'about' },
   { uid: 'api::program.program', contentType: 'program', title: 'title', body: 'description', category: 'degree' },
-  { uid: 'api::faculty.faculty', contentType: 'faculty', title: 'name', body: 'about' },
+  // F5.41 — fakültənin yeganə səhifəsi struktur bölmədir (/struktur/<slug>);
+  // «2. Akademiya — Fakültə» arxivdir. Növ adı «faculty» qalır (nəticədə
+  // «Fakültə» yazılır), Next.js onu /struktur/-a aparır (lib/search-ui.ts).
+  { uid: 'api::unit.unit', contentType: 'faculty', title: 'name', body: 'about', where: { slug: { $endsWith: '-fakultesi' } } },
 ];
 
 const LOCALES = ['az', 'ru', 'en'];
@@ -133,7 +138,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
           const rows = await strapi.documents(src.uid).findMany({
             locale,
             status: 'published',
-            filters: { $or: or },
+            filters: src.where ? { $and: [src.where, { $or: or }] } : { $or: or },
             limit: PER_TYPE,
             fields: [
               'documentId',

@@ -10,6 +10,7 @@ import { applyAzFieldLabels } from './utils/cm-az';
 import { ensureEditorRole, registerOwnerCondition, registerPageOwners, scheduleWeeklyDigest } from './utils/page-owners';
 // F5.40 — «Təhsil» menyusunun yeni quruluşu (bax src/utils/menu-tehsil.ts).
 import { applyTehsilMenuV2 } from './utils/menu-tehsil';
+import { applyFacultyUnitsV1 } from './utils/faculty-units';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1932,7 +1933,8 @@ export default {
     ensureEditorRole(strapi).catch((e: Error) => strapi.log.error('[adda-owners] rol: ' + e.message));
     scheduleWeeklyDigest(strapi);
     // F5.39 — ardıcıl: hər ikisi eyni CM konfiqurasiyasını yazır (müraciət/düzəliş/qeydiyyat).
-    applyInboxLayouts(strapi)
+    // F5.41 — fakültə arxiv qeydi də (aşağıda) bu zəncirdən SONRA yazılır.
+    const cmConfigured = applyInboxLayouts(strapi)
       .catch((e: Error) => strapi.log.error('[adda-inbox] CM görünüşü: ' + e.message))
       .then(() => applyAzFieldLabels(strapi))
       .catch((e: Error) => strapi.log.error('[adda-admin] Az sahə adları: ' + e.message));
@@ -2170,6 +2172,12 @@ export default {
     // F5.40 — «Təhsil» menyusunun yeni quruluşu, BİR DƏFƏ və yalnız köhnə quruluşda
     // olanda (bax src/utils/menu-tehsil.ts). Gözlənilmir — portu bloklamır.
     applyTehsilMenuV2(strapi).catch((e: Error) => strapi.log.error('[menu] F5.40: ' + e.message));
+    // F5.41 — fakültənin yeganə səhifəsi /struktur/<slug>: boş bölməyə fakültə
+    // mətni, məsul redaktor və kopilot keçidləri, BİR DƏFƏ (bax
+    // src/utils/faculty-units.ts). CM konfiqurasiyası yazılandan sonra.
+    cmConfigured
+      .then(() => applyFacultyUnitsV1(strapi))
+      .catch((e: Error) => strapi.log.error('[faculty] F5.41: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
