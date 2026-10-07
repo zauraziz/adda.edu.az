@@ -165,7 +165,7 @@ const PREFIX_TYPES = {
   tedbirler: ['events'],
   sehife: ['pages'],
   ixtisaslar: ['programs'],
-  fakulteler: ['faculties'],
+  // F5.41: /fakulteler/[slug] yoxdur (301 → /struktur/[slug]) — fakültə bölmədir.
   'sabiq-rektorlar': ['rectors'],
 };
 const TYPE_INFO = {
@@ -177,12 +177,11 @@ const TYPE_INFO = {
   events: { endpoint: '/events', localized: true, nameField: 'title' },
   pages: { endpoint: '/pages', localized: true, nameField: 'title' },
   programs: { endpoint: '/programs', localized: true, nameField: 'title' },
-  faculties: { endpoint: '/faculties', localized: true, nameField: 'name' },
   rectors: { endpoint: '/rectors', localized: true, nameField: 'name' },
 };
 // TƏKLİF indeksi bu tiplərdən qurulur — xəbər/elan/tədbir/şəxs YOXDUR:
 // menyu bəndi struktur səhifəsinə işarə edir, min-bir xəbərə yox.
-const SUGGEST_TYPES = ['units', 'departments', 'faculties', 'programs', 'rectors', 'pages'];
+const SUGGEST_TYPES = ['units', 'departments', 'programs', 'rectors', 'pages'];
 
 let coldStartWarned = false;
 async function api(pathname, params) {
@@ -312,7 +311,7 @@ const PREFIXED = /^\/(?:az|ru|en)(?:\/|$)/;
 // F3.28-də `az` fallback yalnız bu üç marşruta əlavə olundu (ContentPage
 // paylaşır). Buradan kənarda (struktur, emekdas, xeberler, ...) cari dildə
 // tapılmayan slug hələ də əsl QIRIQ-dır — fallback render YOXDUR.
-const FALLBACK_PREFIXES = new Set(['sehife', 'ixtisaslar', 'fakulteler']);
+const FALLBACK_PREFIXES = new Set(['sehife', 'ixtisaslar']); // F5.41: fakulteler/[slug] silindi
 
 async function classify(url, locale) {
   const raw = (url ?? '').trim();

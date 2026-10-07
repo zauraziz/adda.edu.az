@@ -228,6 +228,9 @@ bilinmir.
   düşmür, Vercel özü `413 FUNCTION_PAYLOAD_TOO_LARGE` qaytarır (cavab JSON
   deyil). Faylı base64 JSON-da göndərmə (×1.37 şişir) — `multipart/form-data`
   göndər, limiti hər iki tərəfdə yoxla (F5.37: müraciət əlavəsi, 4 MB).
+- **Marşrut silinəndə `.next/types` köhnə qalır** və `npx tsc --noEmit`
+  `Cannot find module '…/page.js'` verir (F5.41). Qovluq keşdir — sil,
+  `next dev`/`build` yenidən yaradır. Paket skripti bunu özü edir.
 - **Məzmun komponentində `<header>` elementi işlətmə — `<div>` işlət.**
   `02-header.css`-dəki qlobal `header{}` seçicisi (saytın öz başlığı üçün) HƏR
   `<header>`-ə navy gradient, kölgə və `z-index: 90` verir. Öz fonu olmayan
@@ -447,6 +450,18 @@ olunur. Çevirmə kimdə?
    qaydaları, köçürmə/bərpa, STCW standartları) «Məsul redaktorlar»-da
    «Menyuda yoxdur» kimi gözləyir: səhifə dərc olunanda «Tədris prosesi»
    qrupu menyuya əl ilə (və ya yeni miqrasiya ilə) əlavə olunur.
+12. **F5.41 — fakültənin YEGANƏ səhifəsi `/struktur/<slug>`-dir** (unit).
+   `/fakulteler/[slug]` silindi, `next.config.js` 301 ilə `/struktur/<slug>`-ə
+   aparır (köhnə sayt `faculty/N` də birbaşa ora — `gen-redirects.mjs`).
+   `/fakulteler` SİYAHISI qalır, kafedralar nümunəsi ilə bölmələrdən qurulur
+   (`getFacultyUnits`: unit, slug `…-fakultesi`). Proqram səhifəsində fakültə
+   adı/keçidi də bölmədəndir. «2. Akademiya — Fakültə» **arxivdir, silinmir**
+   (proqram/xəbər/heyət əlaqələri, kopilot mətni): admin menyusunda «(arxiv)»,
+   «Məsul redaktor» sistemində yoxdur, sayt axtarışı fakültəni bölmədən tapır.
+   Birdəfəlik (`facultyUnits:v1`, `src/utils/faculty-units.ts`): boş bölməyə
+   fakültə mətni (təmizlənmiş), `faculty:<slug>` təyinatları → `unit:<slug>`,
+   kopilot parçalarının ünvanı. Açıq qalan: kopilot fakültəni hələ arxiv
+   qeydindən oxuyur (`rag/lib/chunk.ts`) — bölmələr kopilot mənbəyi deyil.
 
 ---
 
@@ -487,4 +502,6 @@ Yoxlama sluqları `npm run check:units` çıxışından götürülür.
   department: muhasibat-ucotu-ve-hesabat-sobesi
 
 Fakültə həlli: `KAFEDRA_FACULTY` sabiti, `lib/strapi.ts`. Slug uyğunluğu
-(unit.slug === faculty.slug) qəsdəndir, F5.6-da sənədləşib.
+(unit.slug === faculty.slug) qəsdəndir, F5.6-da sənədləşib. F5.41-dən
+fakültənin səhifəsi YALNIZ `/struktur/<slug>`-dir — `/fakulteler/<slug>`
+yaratma (bax «Qalan iş» 12).

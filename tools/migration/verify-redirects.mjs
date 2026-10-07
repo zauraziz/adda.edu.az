@@ -26,14 +26,14 @@ const argOf = (f, d) => {
 };
 const SITE = argOf('--site', 'https://demo.adda.edu.az').replace(/\/+$/, '');
 
-// Yönləndirmə hədəfindəki seqment -> Strapi kolleksiyası.
+// Yönləndirmə hədəfindəki seqment -> Strapi kolleksiyası (bir neçəsi ola bilər).
+// F5.41: fakültə /struktur/<slug>-dədir (unit), köhnə şöbələr də (department).
 const SEGMENT_TO_PLURAL = {
-  xeberler: 'articles',
-  elanlar: 'announcements',
-  sehife: 'pages',
-  fakulteler: 'faculties',
-  ixtisaslar: 'programs',
-  struktur: 'departments',
+  xeberler: ['articles'],
+  elanlar: ['announcements'],
+  sehife: ['pages'],
+  ixtisaslar: ['programs'],
+  struktur: ['departments', 'units'],
 };
 
 // ── Xəritəni oxu ──────────────────────────────────────────────────────────
@@ -87,12 +87,18 @@ const live = new Map();
 const apiErrors = [];
 
 for (const seg of needed) {
-  const plural = SEGMENT_TO_PLURAL[seg];
-  if (!plural) { apiErrors.push(`"${seg}" seqmenti taninmir`); continue; }
-  const r = await allSlugs(plural);
-  if (r.error) { apiErrors.push(r.error); continue; }
-  live.set(seg, r.slugs);
-  console.log(`  ${seg.padEnd(12)} ${String(r.slugs.size).padStart(5)} slug`);
+  const plurals = SEGMENT_TO_PLURAL[seg];
+  if (!plurals) { apiErrors.push(`"${seg}" seqmenti taninmir`); continue; }
+  const slugs = new Set();
+  let failed = false;
+  for (const plural of plurals) {
+    const r = await allSlugs(plural);
+    if (r.error) { apiErrors.push(r.error); failed = true; continue; }
+    for (const s of r.slugs) slugs.add(s);
+  }
+  if (failed && !slugs.size) continue;
+  live.set(seg, slugs);
+  console.log(`  ${seg.padEnd(12)} ${String(slugs.size).padStart(5)} slug`);
 }
 
 if (apiErrors.length) {
