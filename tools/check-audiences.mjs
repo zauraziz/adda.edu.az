@@ -30,6 +30,8 @@ const AUD = eval('(' + body + ')');
 const i18n = read(path.join(NEXT, 'lib', 'i18n.ts'));
 const seed = read(path.join(REPO, 'adda-strapi', 'src', 'index.ts'));
 const seedUrls = new Set([...seed.matchAll(/"url":\s*"([^"]*)"/g)].map((m) => m[1]));
+// F5.44: struktur bolmeleri menyu seed-inde deyil, bolme seed-indedir (UNITS)
+const unitSlugs = new Set([...seed.matchAll(/\{ slug: '([^']+)', az: '/g)].map((m) => m[1]));
 const routes = fs
   .readdirSync(path.join(NEXT, 'app', '[locale]'), { withFileTypes: true })
   .filter((d) => d.isDirectory())
@@ -61,10 +63,12 @@ for (const k of keys) {
 }
 
 for (const [aud, href] of links) {
-  const seg = href.split('/')[1];
+  // F5.44: kataloq suzgecleri (/ixtisaslar?tab=..., ?dil=en) — yol sorgusuz yoxlanir
+  const p = href.split(/[?#]/)[0];
+  const seg = p.split('/')[1];
   if (!routes.includes(seg)) {
     problems.push(`[${aud}] marsrut yoxdur: ${href} (app/[locale]/${seg} tapilmadi)`);
-  } else if (href.split('/').length > 2 && !seedUrls.has(href)) {
+  } else if (p.split('/').length > 2 && !seedUrls.has(p) && !(seg === 'struktur' && unitSlugs.has(p.split('/')[2]))) {
     problems.push(`[${aud}] SEED-de yoxdur: ${href}`);
   }
 }

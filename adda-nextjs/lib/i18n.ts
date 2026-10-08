@@ -948,6 +948,8 @@ const T: Array<[string, string, string]> = [
   ['Bakalavriat, magistratura və doktorantura proqramları.', 'Программы бакалавриата, магистратуры и докторантуры.', 'Bachelor\'s, master\'s and doctoral programmes.'],
   ['Tədris dili', 'Язык обучения', 'Language of instruction'],
   ['Bütün proqramlar', 'Все программы', 'All programmes'],
+  // F5.44 — «Bunlar üçün → Abituriyentlər» yeni «Qəbul» menyusu ilə uyğunlaşdı.
+  ['Hər ixtisas üzrə — proqram kataloqunda', 'По каждой специальности — в каталоге программ', 'For each programme — in the programme catalogue'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1422,6 +1424,13 @@ const MENU_T: Array<[string, string, string]> = [
   ['Kafedralar', 'Кафедры', 'Departments'],
   ['Tədris ofisi', 'Учебный офис', 'Study Office'],
   ['Keyfiyyət və nəticələr', 'Качество и результаты', 'Quality and Outcomes'],
+  // F5.44 — «Qəbul» menyusunun yeni quruluşu (adda-strapi/src/utils/menu-qebul.ts).
+  ['Pillələr üzrə qəbul', 'Приём по уровням образования', 'Admission by Study Level'],
+  ['İxtisas seçimi', 'Выбор специальности', 'Choosing a Programme'],
+  ['Keçid balları, yer sayı və haqq', 'Проходные баллы, места и стоимость', 'Passing Scores, Places and Fees'],
+  ['Əcnəbi vətəndaşlar', 'Иностранным гражданам', 'International Applicants'],
+  ['Qəbul qaydaları və təhsil haqqı', 'Правила приёма и стоимость обучения', 'Admission Rules and Tuition Fees'],
+  ['Tanışlıq və əlaqə', 'Знакомство и контакты', 'Visits and Contacts'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

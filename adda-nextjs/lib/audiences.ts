@@ -45,26 +45,37 @@ export const AUDIENCES: Audience[] = [
     icon: 'ti-school',
     lead: 'Qəbul, ixtisaslar və akademiyada təhsilin necə qurulduğu — bir səhifədə.',
     steps: [
+      // F5.44 — «Qəbul» menyusunun başlığı bura aparır: qruplar menyu ilə eynidir
+      // (adda-strapi/src/utils/menu-qebul.ts); «Tanışlıq və əlaqə» səhifənin
+      // auditoriya keçidləri və «Əlaqə» düyməsindədir.
+      { label: 'Keçid balları, yer sayı və haqq', href: '/ixtisaslar', note: 'Hər ixtisas üzrə — proqram kataloqunda' },
       { label: 'Bakalavriat', href: '/sehife/bakalavriat', note: 'Qəbul şərtləri və təhsil müddəti' },
-      { label: 'İxtisaslar', href: '/ixtisaslar', note: 'Dörd mühəndislik ixtisası' },
-      { label: 'Fakültələr', href: '/fakulteler', note: 'Hansı fakültə hansı ixtisası aparır' },
+      { label: 'Yataqxana', href: '/sehife/yataqxana', note: 'Yaşayış şəraiti' },
     ],
     groups: [
       {
-        title: 'Təhsil pillələri',
+        title: 'Pillələr üzrə qəbul',
         links: [
+          { label: 'Subbakalavr (kollec)', href: '/ixtisaslar?tab=subbakalavr' },
           { label: 'Bakalavriat', href: '/sehife/bakalavriat' },
           { label: 'Magistratura', href: '/sehife/magistratura' },
           { label: 'Doktorantura', href: '/sehife/doktorantura' },
+          { label: 'Təkrar ali təhsil', href: '/ixtisaslar?tab=tekrar_ali' },
         ],
       },
       {
-        title: 'İxtisaslar',
+        title: 'İxtisas seçimi',
         links: [
-          { label: 'Dəniz naviqasiyası mühəndisliyi', href: '/ixtisaslar/deniz-naviqasiyasi-muhendisliyi' },
-          { label: 'Gəmi energetik qurğularının istismarı mühəndisliyi', href: '/ixtisaslar/gemi-energetik-qurgularinin-istismari-muhendisliyi' },
-          { label: 'Gəmiqayırma və gəmi təmiri mühəndisliyi', href: '/ixtisaslar/gemiqayirma-ve-gemi-temiri-muhendisliyi' },
-          { label: 'Elektrik və elektronika mühəndisliyi (su nəqliyyatı üzrə)', href: '/ixtisaslar/elektrik-ve-elektronika-muhendisliyi-su-neqliyyati-uzre' },
+          { label: 'Keçid balları, yer sayı və haqq', href: '/ixtisaslar' },
+          { label: 'Məzunların işlə təminatı', href: '/sehife/mezunlarin-isle-teminati' },
+          { label: 'Yataqxana', href: '/sehife/yataqxana' },
+        ],
+      },
+      {
+        title: 'Əcnəbi vətəndaşlar',
+        links: [
+          { label: 'Qəbul qaydaları və təhsil haqqı', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari' },
+          { label: 'İngilis dilində tədris', href: '/ixtisaslar?dil=en' },
         ],
       },
       {
@@ -79,7 +90,6 @@ export const AUDIENCES: Audience[] = [
       {
         title: 'Tələbə həyatı',
         links: [
-          { label: 'Yataqxana', href: '/sehife/yataqxana' },
           { label: 'İdman', href: '/sehife/idman' },
           { label: 'Tələbə Gənclər Təşkilatı', href: '/sehife/telebe-gencler-teskilati' },
         ],
@@ -111,7 +121,6 @@ export const AUDIENCES: Audience[] = [
         links: [
           { label: 'Elektron kitabxana', href: '/sehife/elektron-kitabxana' },
           { label: 'İnformasiya Resurs Mərkəzi', href: '/struktur/informasiya-resurs-merkezi' },
-          { label: 'Faydalı linklər', href: '/sehife/faydali-linkler' },
         ],
       },
       {
@@ -180,7 +189,7 @@ export const AUDIENCES: Audience[] = [
         title: 'Əlaqə',
         links: [
           { label: 'Xəbərlər', href: '/xeberler' },
-          { label: 'Əlaqə', href: '/sehife/elaqe' },
+          { label: 'Əlaqə', href: '/elaqe' },
         ],
       },
     ],
@@ -208,8 +217,8 @@ export const AUDIENCES: Audience[] = [
         title: 'Struktur bölmələri',
         links: [
           { label: 'Struktur', href: '/struktur' },
-          { label: 'Personalın idarə edilməsi, əmək haqqı şöbəsi və kargüzarlıq şöbəsi', href: '/struktur/personalin-idare-edilmesi-emek-haqqi-sobesi-ve-karguzarliq-sobesi' },
-          { label: 'Mühasibat uçotu və hesabat şöbəsi', href: '/struktur/muhasibat-ucotu-ve-hesabat-sobesi' },
+          { label: 'Personalın idarə edilməsi, əmək haqqı şöbəsi və kargüzarlıq şöbəsi', href: '/struktur/personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi' },
+          { label: 'Mühasibat uçotu və hesabat şöbəsi', href: '/struktur/muhasibat-ucotu-ve-hesabati-sobesi' },
           { label: 'Tədris proseslərinin təşkili şöbəsi', href: '/struktur/tedris-proseslerinin-teskili-sobesi' },
         ],
       },
@@ -220,7 +229,7 @@ export const AUDIENCES: Audience[] = [
           { label: 'Elmi-tədqiqat fəaliyyəti', href: '/sehife/elmi-tedqiqat-fealiyyeti' },
           { label: 'Elmi-tədqiqat laboratoriyaları', href: '/sehife/elmi-tedqiqat-laboratoriyalari' },
           { label: 'Elmi jurnal', href: '/sehife/elmi-jurnal' },
-          { label: 'Elmi katib', href: '/sehife/elmi-katib' },
+          { label: 'Elmi katib', href: '/struktur/elmi-katib' },
         ],
       },
       {
@@ -239,7 +248,7 @@ export const AUDIENCES: Audience[] = [
     lead: 'Əcnəbi vətəndaşlar üçün qəbul qaydaları, təhsil şəraiti və yaşayış.',
     steps: [
       { label: 'Əcnəbi tələbələrin qəbulu qaydaları', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari', note: 'Sənədlər və müraciət ardıcıllığı' },
-      { label: 'Əcnəbi tələbələrin təhsili', href: '/sehife/ecnebi-telebelerin-tehsili', note: 'Tədris dili və proqramlar' },
+      { label: 'İngilis dilində tədris', href: '/ixtisaslar?dil=en', note: 'Tədris dili və proqramlar' },
       { label: 'Yataqxana', href: '/sehife/yataqxana', note: 'Yaşayış şəraiti' },
     ],
     groups: [
@@ -247,7 +256,7 @@ export const AUDIENCES: Audience[] = [
         title: 'Qəbul',
         links: [
           { label: 'Əcnəbi tələbələrin qəbulu qaydaları', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari' },
-          { label: 'Əcnəbi tələbələrin təhsili', href: '/sehife/ecnebi-telebelerin-tehsili' },
+          { label: 'İngilis dilində tədris', href: '/ixtisaslar?dil=en' },
           { label: 'Bakalavriat', href: '/sehife/bakalavriat' },
           { label: 'Magistratura', href: '/sehife/magistratura' },
         ],
@@ -273,7 +282,7 @@ export const AUDIENCES: Audience[] = [
         links: [
           { label: 'Yataqxana', href: '/sehife/yataqxana' },
           { label: 'İdman', href: '/sehife/idman' },
-          { label: 'Əlaqə', href: '/sehife/elaqe' },
+          { label: 'Əlaqə', href: '/elaqe' },
         ],
       },
     ],
@@ -318,7 +327,7 @@ export const AUDIENCES: Audience[] = [
         title: 'Əlaqə',
         links: [
           { label: 'Xəbərlər', href: '/xeberler' },
-          { label: 'Əlaqə', href: '/sehife/elaqe' },
+          { label: 'Əlaqə', href: '/elaqe' },
         ],
       },
     ],

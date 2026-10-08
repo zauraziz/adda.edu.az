@@ -154,7 +154,7 @@ export default async function AudiencePage({
                 <b>{tr('Sualınız var?', locale)}</b>
                 <small>{tr('Akademiya ilə birbaşa əlaqə saxlayın.', locale)}</small>
               </div>
-              <Link href={href('/sehife/elaqe')} className="aud-cta-btn">
+              <Link href={href('/elaqe')} className="aud-cta-btn">
                 {tr('Əlaqə', locale)}
                 <i className="ti ti-arrow-right" aria-hidden="true" />
               </Link>
