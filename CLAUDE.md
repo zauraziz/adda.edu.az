@@ -188,7 +188,7 @@ Bir dəfəlik, admin məzmununu əzməyən yeniləmələr (F5.38+) bayraqsız i�
 plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v3`,
 `editorRole:v1`, `tehsilMenu:v2`, `facultyUnits:v1`, `admissionScores:v1`,
 `unitMedia:v1`, `facilitySlugs:v1`, `dedupe:v1`, `unitBlocks:v1`,
-`facilitySeed:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+`facilitySeed:v1`, `qebulMenu:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
 işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -507,6 +507,20 @@ olunur. Çevirmə kimdə?
      dil üzrə. Gizli blok admində «boş blok» kimi təklif olunmur.
    - **«İxtisaslar» bloku:** alt bölmələrin ixtisasları YALNIZ fakültədə
      (rektorun alt bölməsi kollecdir).
+15. **F5.44 — «Qəbul» menyusu, 1-ci mərhələ** (təhlil: layihə sənədi
+   `claude/qebul-menyusu-optimallasdirma.md`). `src/utils/menu-qebul.ts`, BİR
+   DƏFƏ (`qebulMenu:v1`), yalnız «Qəbul» köhnə 4 qrupdadırsa; footer-in «Qəbul»
+   sütunu da yalnız köhnə 4 keçiddirsə. Zəncirdə F5.43 `dedupe:v1` və F5.40-dan
+   SONRA — menyuya yazan iki miqrasiya eyni anda işləməməlidir. 4 qrup /
+   12 keçid, hamısı işləyən səhifəyə; başlıq `/bunlar-ucun/abituriyentler`
+   (`lib/audiences.ts` qrupları menyu ilə eynidir). Seed, `lib/menu-fallback.ts`
+   eyni quruluşdadır, yeni etiketlər `MENU_T`-də. 2-ci və 3-cü mərhələnin
+   səhifələri (`QEBUL_PENDING_PAGES`: tibbi müayinə, qəbul təqvimi, qeydiyyat,
+   suallar, haqq, viza, açıq qapı, kollec, təkrar ali) «Məsul redaktorlar»-da
+   «Menyuda yoxdur» kimi gözləyir — dərc olunanda menyuya əl ilə və ya yeni
+   miqrasiya (`qebulMenu:v2`) ilə əlavə olunur. «Əlaqə» keçidi qəbul
+   komissiyasının əlaqəsi verilənə qədər `/elaqe`-dir.
+   `npm run check:audiences` sorğulu keçidi (`?tab=`) və bölmə seed-ini tanıyır.
 
 ---
 
