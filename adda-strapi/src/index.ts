@@ -11,6 +11,9 @@ import { ensureEditorRole, registerOwnerCondition, registerPageOwners, scheduleW
 // F5.40 — «Təhsil» menyusunun yeni quruluşu (bax src/utils/menu-tehsil.ts).
 import { applyTehsilMenuV2 } from './utils/menu-tehsil';
 import { applyFacultyUnitsV1 } from './utils/faculty-units';
+// F5.42 — qəbul balı: vergüllü onluq (227,6) 2276 olmasın.
+import { applyAdmissionScoresV1, registerScoreNormalizer } from './utils/admission-scores';
+import { placeUnitMediaFields } from './utils/unit-media';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1839,6 +1842,8 @@ export default {
     registerAdminInbox(strapi);
     // F5.39 — /adda-owners/* admin marşrutları + ictimai /api/adda-owners/public.
     registerPageOwners(strapi);
+    // F5.42 — proqram yazılanda 700-dən böyük qəbul balı vergüllü onluqdur → düzəlir.
+    registerScoreNormalizer(strapi);
     const inFlight = new Set<string>();
     (strapi.documents as unknown as { use: (m: unknown) => void }).use(
       async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
@@ -2177,7 +2182,15 @@ export default {
     // src/utils/faculty-units.ts). CM konfiqurasiyası yazılandan sonra.
     cmConfigured
       .then(() => applyFacultyUnitsV1(strapi))
-      .catch((e: Error) => strapi.log.error('[faculty] F5.41: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[faculty] F5.41: ' + e.message))
+      // F5.42 — bazadakı korlanmış qəbul balları + admin qaydası, BİR DƏFƏ
+      // (bax src/utils/admission-scores.ts). Komponent CM konfiqurasiyası da
+      // yazıldığı üçün eyni zəncirdə.
+      .then(() => applyAdmissionScoresV1(strapi))
+      .catch((e: Error) => strapi.log.error('[qebul-bali] F5.42: ' + e.message))
+      // F5.42 — bölmənin foto/qalereya sahələri admin formasında yuxarıda.
+      .then(() => placeUnitMediaFields(strapi))
+      .catch((e: Error) => strapi.log.error('[unit-media] F5.42: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

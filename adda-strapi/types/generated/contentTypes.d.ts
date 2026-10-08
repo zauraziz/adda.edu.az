@@ -1225,8 +1225,8 @@ export interface ApiFacilityFacility extends Struct.CollectionTypeSchema {
 export interface ApiFacultyFaculty extends Struct.CollectionTypeSchema {
   collectionName: 'faculties';
   info: {
-    description: 'Akademiyan\u0131n fak\u00FClt\u0259l\u0259ri';
-    displayName: '2. Akademiya \u2014 Fak\u00FClt\u0259';
+    description: 'F5.41 \u2014 ARX\u0130V, saytda g\u00F6st\u0259rilmir. Fak\u00FClt\u0259nin yegan\u0259 s\u0259hif\u0259si struktur b\u00F6lm\u0259dir (/struktur/<slug>, slug eynidir); /fakulteler/<slug> ora 301 il\u0259 y\u00F6nl\u0259nir. Silinmir: proqram/x\u0259b\u0259r/hey\u0259t \u0259laq\u0259l\u0259ri v\u0259 kopilot m\u0259tni buradad\u0131r.';
+    displayName: '2. Akademiya \u2014 Fak\u00FClt\u0259 (arxiv)';
     pluralName: 'faculties';
     singularName: 'faculty';
   };
@@ -2848,6 +2848,12 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    gallery: Schema.Attribute.Media<'images', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     head: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
     links: Schema.Attribute.Component<'nav.link', true> &
       Schema.Attribute.SetPluginOptions<{
@@ -2882,6 +2888,12 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+      }>;
+    photo: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }>;
     publishedAt: Schema.Attribute.DateTime;

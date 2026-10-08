@@ -18,6 +18,7 @@
  */
 import type { Core } from '@strapi/strapi';
 import { FACULTY_ARCHIVE_NOTE } from './faculty-units';
+import { SCORE_HINT } from './admission-scores';
 
 /** [ad, qayda?, nümunə?] */
 type F = [string, string?, string?];
@@ -198,6 +199,9 @@ const CT: Record<string, Dict> = {
     sortOrder: ['Sıra', SORT + ' Standart: 100.'],
     documents: ['Sənədlər', 'Əsasnamə, hesabat və s.'],
     facilities: ['Auditoriya və laboratoriyalar', 'Avtomatik: obyektin «Struktur bölmə» sahəsindən gəlir.'],
+    // F5.42 — əsas foto + qalereya (cmAz:v2).
+    photo: ['Əsas foto', 'Səhifənin yuxarısında, mətndən əvvəl. Üfüqi foto (məs. 1600×900 px), JPEG/PNG/WebP. Bütün dillərdə eynidir.'],
+    gallery: ['Qalereya', 'Bir neçə foto: bina, laboratoriya, tədbirlər. Saytda şəbəkə, kliklə böyüyür. Bütün dillərdə eynidir.'],
   },
   'api::program.program': {
     title: ['İxtisasın adı', 'Rəsmi ad, məs. «Dəniz naviqasiyası mühəndisliyi».'],
@@ -525,8 +529,8 @@ const COMP: Record<string, Dict> = {
   },
   'program.admission-score': {
     year: ['İl'],
-    minScorePaid: ['Ödənişli (minimum bal)', 'Onluq bal NÖQTƏ ilə: 239.5 — vergül rəqəmi 2395 edir.'],
-    minScoreFree: ['Ödənişsiz (minimum bal)', 'Onluq bal NÖQTƏ ilə: 239.5.'],
+    minScorePaid: ['Ödənişli (minimum bal)', SCORE_HINT],
+    minScoreFree: ['Ödənişsiz (minimum bal)', SCORE_HINT],
   },
   'program.admission-seats': {
     year: ['İl'],
@@ -596,7 +600,8 @@ function merge(conf: Conf, dict: Dict): number {
   return n;
 }
 
-const MARKER = 'cmAz:v1';
+// v2 (F5.42): unit.photo/gallery. Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
+const MARKER = 'cmAz:v2';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
