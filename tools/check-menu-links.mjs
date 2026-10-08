@@ -158,7 +158,8 @@ const TRANSLATED_AZ = new Set([...T_ENTRIES, ...MENU_T_ENTRIES].map((row) => row
 
 /** Prefiks -> hansı Strapi content type(lər)i bu slug-ı təsdiqləyə bilər. */
 const PREFIX_TYPES = {
-  struktur: ['units', 'departments'],
+  // F5.43: /struktur/[slug] YALNIZ bölmədir — köhnə `department` (arxiv) səhifəsi yoxdur.
+  struktur: ['units'],
   emekdas: ['people'],
   xeberler: ['articles'],
   elanlar: ['announcements'],
@@ -181,7 +182,7 @@ const TYPE_INFO = {
 };
 // TƏKLİF indeksi bu tiplərdən qurulur — xəbər/elan/tədbir/şəxs YOXDUR:
 // menyu bəndi struktur səhifəsinə işarə edir, min-bir xəbərə yox.
-const SUGGEST_TYPES = ['units', 'departments', 'programs', 'rectors', 'pages'];
+const SUGGEST_TYPES = ['units', 'programs', 'rectors', 'pages'];
 
 let coldStartWarned = false;
 async function api(pathname, params) {

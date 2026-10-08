@@ -39,6 +39,22 @@ const SEGMENT = {
   department: 'struktur',
 };
 
+/**
+ * Öz yerinə köçmüş səhifələr: köhnə URL birbaşa yeni ünvana (301 → 301
+ * zənciri olmasın). F5.21d/F5.30a — öz marşrutu; F5.43 — struktur bölmə.
+ * SİNXRON: adda-strapi/src/utils/moved-pages.ts, adda-nextjs/next.config.js.
+ */
+const MOVED = {
+  'sehife/qehremanlarimiz': 'qehremanlarimiz',
+  'sehife/elaqe': 'elaqe',
+  'sehife/rektor': 'struktur/rektor',
+  'sehife/elmi-sura': 'struktur/elmi-sura',
+  'sehife/elmi-katib': 'struktur/elmi-katib',
+  'sehife/rektor-komekcisi': 'struktur/rektorun-komekcisi',
+  'sehife/tedrisin-teskili-ve-idareedilmesi-uzre-prorektor': 'struktur/tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq',
+  'sehife/elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor': 'struktur/elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq',
+};
+
 const OUT = join(ROOT, '..', '..', 'adda-nextjs', 'lib', 'legacy-redirects.ts');
 
 const src = dataPath('redirects.json');
@@ -113,7 +129,8 @@ for (const r of rows) {
     dropped.push({ key, target: r.to, why: `taninmayan tip: ${type}` });
     continue;
   }
-  const target = `${seg}/${doc.slug}`;
+  const direct = `${seg}/${doc.slug}`;
+  const target = MOVED[direct] ?? direct;
 
   const prev = map.get(key);
   if (prev && prev !== target) {

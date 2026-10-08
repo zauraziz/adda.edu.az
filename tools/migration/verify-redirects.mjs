@@ -36,6 +36,12 @@ const SEGMENT_TO_PLURAL = {
   struktur: ['departments', 'units'],
 };
 
+/**
+ * Slug-sız hədəf = Next.js-in öz marşrutu (səhifə qeydi ora köçüb, bax
+ * gen-redirects.mjs → MOVED). API-də yoxlanmır, mövcud sayılır.
+ */
+const STATIC_ROUTES = new Set(['elaqe', 'qehremanlarimiz']);
+
 // ── Xəritəni oxu ──────────────────────────────────────────────────────────
 const mapFile = join(ROOT, '..', '..', 'adda-nextjs', 'lib', 'legacy-redirects.ts');
 if (!existsSync(mapFile)) {
@@ -82,7 +88,7 @@ async function allSlugs(plural) {
   return { slugs: out };
 }
 
-const needed = new Set(Object.values(map).map((v) => v.split('/')[0]));
+const needed = new Set(Object.values(map).filter((v) => v.includes('/')).map((v) => v.split('/')[0]));
 const live = new Map();
 const apiErrors = [];
 
@@ -112,6 +118,10 @@ if (apiErrors.length) {
 const missing = [];
 const unchecked = [];
 for (const [key, target] of Object.entries(map)) {
+  if (!target.includes('/')) {
+    if (!STATIC_ROUTES.has(target)) missing.push([key, target]);
+    continue;
+  }
   const [seg, slug] = [target.split('/')[0], target.split('/').slice(1).join('/')];
   const set = live.get(seg);
   if (!set) { unchecked.push([key, target]); continue; }

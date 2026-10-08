@@ -185,10 +185,16 @@ qorunur:
 **İş qaydası:** `FLAG=true` → deploy → **logu yoxla** → **flagı SİL**.
 
 Bir dəfəlik, admin məzmununu əzməyən yeniləmələr (F5.38+) bayraqsız işləyir:
-plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v2`,
+plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v3`,
 `editorRole:v1`, `tehsilMenu:v2`, `facultyUnits:v1`, `admissionScores:v1`,
-`unitMedia:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+`unitMedia:v1`, `facilitySlugs:v1`, `dedupe:v1`, `unitBlocks:v1`,
+`facilitySeed:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
 işləmir.
+
+`FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
+Bayraq Render-də qalmışdı və hər deploy-da redaktorun adını dəyişdiyi obyekti
+«<slug>-2» qaralaması kimi yenidən yaradırdı. `LEADERSHIP_RESEED` (F5.43-dən)
+mətni SƏHİFƏYƏ yox, struktur bölmənin «Haqqında»-sına yazır (rektor, Elmi Şura).
 
 > Flag silinməyəndə hər boot-da yenidən işləyir. Bir dəfə `HEAD_RESEED` +
 > `KAFEDRA_RESEED` unudulub və boot 220 saniyəyə çıxıb.
@@ -481,6 +487,26 @@ olunur. Çevirmə kimdə?
    bütün dillərdə). İxtisas fakt zolağında `highlights` təkrarı atılır
    («təhsil müddəti», «ECTS krediti», «təhsil forması»), «kredit X» etiketi
    «X: N kredit» olur (`factHighlights`) — məlumat Strapi-də dəyişmir.
+14. **F5.43 — təkrarlar, auditoriyalar, blok başlıqları.**
+   - **Səhifə ↔ bölmə:** eyni məlumatın iki ünvanı (`/sehife/x` və
+     `/struktur/y`) — kanonik bölmədir. Siyahı: `src/utils/moved-pages.ts`
+     (`PAGE_UNIT_MOVES`; SİNXRON: `next.config.js` `PAGE_UNIT_MAP`,
+     `tools/migration/gen-redirects.mjs` `MOVED`). Rektor və Elmi Şura
+     mətni bölmənin boş «Haqqında»-sına köçüb; elmi katib, rektorun köməkçisi,
+     iki prorektor üçün köhnə ru/en tərcümeyi-halı səhifələri sadəcə dərcdən
+     çıxıb. Yeni belə cüt tapılsa: siyahıya əlavə et + yeni marker (`dedupe:v2`).
+   - **Köhnə «Kafedra» (`department`) arxivdir:** saytda göstərilmir
+     (`/struktur/[slug]` fallback-i silindi), axtarışda bölmə (`unit`)
+     axtarılır. Admin menyusunda «(arxiv)».
+   - **/auditoriyalar:** slug-ı boş obyekt atılmır — açar `slug || documentId`
+     (`facilityKey`), detal səhifəsi documentId ilə də tapır. Strapi yazılanda
+     boş və ya «facility» slug-ı otaq + addan doldurur (`registerFacilitySlugFill`).
+   - **Bölmə blokları:** `unit.blockSettings` (standart blokun başlığı /
+     gizlədilməsi; açarlar `UnitBlockKey`, Strapi enum-u ilə EYNİ) və
+     `unit.extraBlocks` (başlıq + mətn + yer: `basda`, blok açarı, `sonda`),
+     dil üzrə. Gizli blok admində «boş blok» kimi təklif olunmur.
+   - **«İxtisaslar» bloku:** alt bölmələrin ixtisasları YALNIZ fakültədə
+     (rektorun alt bölməsi kollecdir).
 
 ---
 
