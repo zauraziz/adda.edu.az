@@ -22,3 +22,23 @@ export function unitType(name: string): { nom: string; gen: string } | null {
   const lower = azLower(name);
   return UNIT_TYPE_SUFFIXES.find((t) => lower.endsWith(t.suffix)) ?? null;
 }
+
+/**
+ * F5.42 — tip slug-dan (ru/en adında «kafedrası» sonluğu yoxdur, slug isə
+ * bütün dillərdə eynidir — K2). Səhifənin yuxarı sətri və fakültə/kafedra
+ * ayrımı üçün; «… haqqında» kimi başlıqlar az adından (`unitType`) qalır.
+ */
+const SLUG_TYPE: [string, string][] = [
+  ['merkezi', 'mərkəzi'],
+  ['kafedrasi', 'kafedrası'],
+  ['sobesi', 'şöbəsi'],
+  ['fakultesi', 'fakültəsi'],
+  ['surasi', 'şurası'],
+  ['kolleci', 'kolleci'],
+];
+export function unitTypeBySlug(slug: string): { nom: string; gen: string } | null {
+  for (const [part, suffix] of SLUG_TYPE) {
+    if (new RegExp(`(^|-)${part}($|-)`).test(slug)) return UNIT_TYPE_SUFFIXES.find((t) => t.suffix === suffix) ?? null;
+  }
+  return null;
+}

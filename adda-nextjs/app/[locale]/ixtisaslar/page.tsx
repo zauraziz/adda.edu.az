@@ -40,6 +40,7 @@ import ProgramDirectoryIsland, {
 } from '../../_components/ProgramDirectoryIsland';
 import { getMenu, getPrograms, type Program, type ProgramCatalogTab, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
+import { fmtScore } from '@/lib/format';
 
 export const revalidate = 300;
 
@@ -73,11 +74,6 @@ function languagesLabel(languages: Program['languages']): string {
     .join('+');
 }
 
-/** F5.20d — onluq ayırıcı vergüllə ("239,5"), nöqtə ilə YOX. */
-function formatScore(n: number): string {
-  return String(n).replace('.', ',');
-}
-
 /**
  * F5.20d — siyahı görünüşü YALNIZI: ən son il (year azalan sıra, ilk
  * element), ödənişli/ödənişsiz AYRI-AYRI YOX, minimum/maksimum kimi
@@ -85,16 +81,16 @@ function formatScore(n: number): string {
  * DİQQƏT: AdmissionScoreChart.tsx-də ödənişli/ödənişsiz ayrımı DƏQİQ
  * qalır — bu funksiya ora TƏSİR ETMİR, TOXUNULMAYIB (F5.20d).
  */
-function admissionLabel(scores: Program['admissionScores']): string {
+function admissionLabel(scores: Program['admissionScores'], locale: Locale): string {
   if (!scores.length) return '—';
   const latest = [...scores].sort((a, b) => b.year - a.year)[0];
   const paid = latest.minScorePaid;
   const free = latest.minScoreFree;
   if (paid == null && free == null) return '—';
   if (paid != null && free != null) {
-    return `${formatScore(Math.min(paid, free))} / ${formatScore(Math.max(paid, free))}`;
+    return `${fmtScore(Math.min(paid, free), locale)} / ${fmtScore(Math.max(paid, free), locale)}`;
   }
-  return formatScore(paid ?? free!);
+  return fmtScore(paid ?? free!, locale);
 }
 
 export function generateStaticParams() {
@@ -137,7 +133,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             durationYears: p.durationYears,
             studyFormLabel: p.studyForm ? tr(STUDY_FORM_LABEL[p.studyForm], locale) : null,
             tuitionFee: p.tuitionFee,
-            admissionLabel: admissionLabel(p.admissionScores),
+            admissionLabel: admissionLabel(p.admissionScores, locale),
             languagesLabel: languagesLabel(p.languages),
             seatsTotal: p.admissionSeats?.total ?? null,
             langCodes: p.languages.map((l) => l.code),

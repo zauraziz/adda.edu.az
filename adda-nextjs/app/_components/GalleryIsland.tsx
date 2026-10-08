@@ -19,9 +19,11 @@ export interface GalleryImage {
 interface GalleryIslandProps {
   images: GalleryImage[];
   labels: Record<string, string>;
+  /** F5.42 — səhifənin öz bölmə başlığı varsa (bölmə səhifəsi): öz başlığı və üst xətti yoxdur. */
+  bare?: boolean;
 }
 
-export default function GalleryIsland({ images, labels }: GalleryIslandProps) {
+export default function GalleryIsland({ images, labels, bare = false }: GalleryIslandProps) {
   const [open, setOpen] = useState<number | null>(null);
   const L = (k: string): string => labels[k] ?? k;
 
@@ -51,12 +53,14 @@ export default function GalleryIsland({ images, labels }: GalleryIslandProps) {
   if (!images.length) return null;
 
   return (
-    <section className="gal" aria-label={L("gallery")}>
-      <h2 className="gal-h">
-        <i className="ti ti-photo" aria-hidden="true" />
-        {" " + L("gallery")}
-        <span className="gal-count">{images.length}</span>
-      </h2>
+    <section className={bare ? "gal gal--bare" : "gal"} aria-label={L("gallery")}>
+      {bare ? null : (
+        <h2 className="gal-h">
+          <i className="ti ti-photo" aria-hidden="true" />
+          {" " + L("gallery")}
+          <span className="gal-count">{images.length}</span>
+        </h2>
+      )}
 
       <ul className="gal-grid">
         {images.map((img, i) => (

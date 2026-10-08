@@ -1281,6 +1281,9 @@ export interface UnitDetail {
   parent: { slug: string; name: string } | null;
   children: { slug: string; name: string; sortOrder?: number }[];
   head: LeaderPerson | null;
+  /** F5.42 — əsas foto (mətndən əvvəl) və qalereya; dillər üzrə eynidir. */
+  photo: StrapiMedia | null;
+  gallery: StrapiMedia[] | null;
 }
 
 /**
@@ -1316,8 +1319,58 @@ export async function getUnitDetail(slug: string, locale: Locale = 'az'): Promis
     'populate[head][fields][8]': 'office',
     'populate[head][fields][9]': 'building',
     'populate[head][populate][photo][fields][0]': 'url',
+    // F5.42 — media populate yazılmasa cavabda ÜMUMİYYƏTLƏ olmur.
+    'populate[photo][fields][0]': 'url',
+    'populate[photo][fields][1]': 'alternativeText',
+    'populate[photo][fields][2]': 'width',
+    'populate[photo][fields][3]': 'height',
+    'populate[gallery][fields][0]': 'url',
+    'populate[gallery][fields][1]': 'alternativeText',
+    'populate[gallery][fields][2]': 'width',
+    'populate[gallery][fields][3]': 'height',
   });
   return json.data?.[0] ?? null;
+}
+
+/**
+ * F5.42 — bölmə səhifəsinin «İxtisaslar» bloku: kafedranın öz ixtisasları,
+ * fakültədə alt kafedraların ixtisasları (+ köhnə `program.faculty` əlaqəsi),
+ * kollecdə kollec proqramları — hamısı `program.unit` üzərindən. Dildə
+ * proqram yoxdursa az siyahısı (ixtisas səhifəsi özü az fallback göstərir).
+ */
+export interface UnitProgramCard {
+  title: string;
+  slug: string;
+  degree: Program['degree'];
+  durationYears: number | null;
+  studyForm: Program['studyForm'];
+}
+export async function getUnitPrograms(
+  unitSlugs: string[],
+  facultySlug: string | null,
+  locale: Locale = 'az',
+): Promise<UnitProgramCard[]> {
+  if (!unitSlugs.length && !facultySlug) return [];
+  const load = async (loc: Locale) => {
+    const params: Record<string, string | number | boolean> = {
+      locale: loc,
+      'pagination[pageSize]': 100,
+      'sort[0]': 'title:asc',
+      'fields[0]': 'title',
+      'fields[1]': 'slug',
+      'fields[2]': 'degree',
+      'fields[3]': 'durationYears',
+      'fields[4]': 'studyForm',
+    };
+    unitSlugs.forEach((u, i) => {
+      params[`filters[$or][0][unit][slug][$in][${i}]`] = u;
+    });
+    if (facultySlug) params['filters[$or][1][faculty][slug][$eq]'] = facultySlug;
+    const json = await strapiFetch<StrapiList<UnitProgramCard>>('/programs', params);
+    return json.data ?? [];
+  };
+  const list = await load(locale);
+  return list.length || locale === 'az' ? list : load('az');
 }
 
 /** Bölməyə bağlı sənədlər (əsasnamə, hesabat və s.) — `document.units` çoxa-çox, `document` lokallaşdırılmayıb. */

@@ -1,4 +1,10 @@
-// F3.22 — /[locale]/struktur/[slug]: bölmə səhifəsi, beş blok.
+// F3.22 — /[locale]/struktur/[slug]: bölmə səhifəsi (fakültə, kafedra,
+// şöbə, mərkəz — hamısı `unit`).
+//
+// F5.42 — quruluş İXTİSAS SƏHİFƏSİ kimidir (ixtisaslar/[slug]): fakt zolağı,
+// əsas foto, hər bölmə öz açıq `<section id>`-i + mündəricat (ProgramToc),
+// «İxtisaslar» kartları, qalereya, yan panel, alt bölmələr. F4.10-un vahid
+// akkordeon qrupu LƏĞV EDİLİB.
 //
 // ƏN VACİB QAYDA: boş blok göstərilmir. Məzmun demək olar ki, sıfırdır
 // (about 0/28, foto 1/23) — sahə boşdursa blok, başlıq və ayırıcı da
@@ -32,7 +38,9 @@ import '../../../_styles/23-correction.css';
 import '../../../_styles/24-identity.css';
 import '../../../_styles/28-staff.css';
 import '../../../_styles/35-leadership.css';
+import '../../../_styles/27-gallery.css';
 import '../../../_styles/36-unit.css';
+import '../../../_styles/37-program.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -44,10 +52,12 @@ import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import StaffReveal from '../../../_components/StaffReveal';
 import LeaderCard from '../../../_components/LeaderCard';
+import ProgramToc from '../../../_components/ProgramToc';
+import GalleryIsland, { type GalleryImage } from '../../../_components/GalleryIsland';
 import { AdminProvider, AdminOnly } from '../../../_components/AdminGate';
-import { adminUrl, BlockTitle, AdminEditRow, EmptyBlock, EmptyExpandItem } from '../../../_components/AdminOnly';
+import { adminUrl, BlockTitle, EmptyBlock } from '../../../_components/AdminOnly';
 import { DocList, DOC_CATEGORY_ORDER } from '../../../_components/DocList';
-import { unitType } from '@/lib/unit-type';
+import { unitType, unitTypeBySlug } from '@/lib/unit-type';
 import {
   getDepartmentBySlug,
   getDepartmentSlugs,
@@ -58,6 +68,7 @@ import {
   getUnitArticles,
   getUnitAnnouncements,
   getUnitFacilities,
+  getUnitPrograms,
   getUnits,
   mediaUrl,
   docText,
@@ -75,6 +86,7 @@ import {
   type Department,
   type OrgUnit,
   type Facility,
+  type UnitProgramCard,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
@@ -106,10 +118,22 @@ export async function generateMetadata({
     getDepartmentBySlug(slug, locale).catch(() => null as Department | null),
   ]);
   const name = unit?.name ?? dep?.name;
-  return name ? { title: name } : { title: tr('Struktur', locale) };
+  if (!name) return { title: tr('Struktur', locale) };
+  // F5.42 — əsas foto paylaşım şəkli kimi (sosial şəbəkə önizləməsi).
+  const og = mediaUrl(unit?.photo);
+  return og ? { title: name, openGraph: { title: name, images: [og] } } : { title: name };
 }
 
 const azSort = (a: string, b: string) => a.localeCompare(b, 'az');
+
+// F5.42 — «İxtisaslar» kartları: ixtisas səhifəsindəki DEGREE_LABEL ilə eyni ad.
+const DEGREE_ORDER: UnitProgramCard['degree'][] = ['subbachelor', 'bachelor', 'master', 'phd'];
+const DEGREE_LABEL: Record<UnitProgramCard['degree'], string> = {
+  bachelor: 'Bakalavriat',
+  master: 'Magistratura',
+  phd: 'Doktorantura',
+  subbachelor: 'Subbakalavr',
+};
 
 // F4.11c — `receptionSlots` həftə sırası (bax unit/reception-slot.json enum-u,
 // EYNİ sıra). Əlifba ilə YOX — "Şənbə" (Ə-dən sonra) əlifba sırasında sona
@@ -208,11 +232,8 @@ function buildCrumbs(unit: UnitDetail, allUnits: OrgUnit[]): { slug: string; nam
 // artıq _components/AdminOnly.tsx-dədir (struktur/ixtisas səhifələri
 // eyni komponentləri idxal edir, iki nüsxə saxlanılmır).
 
-// F4.10 — `about`/`functions`/`services`/`results` artıq VAHİD akkordeon
-// qrupudur (bax UnitPage-dəki un-expand-group), uzunluqdan asılı olmayaraq
-// HAMISI ExpandBlock qabığında göstərilir (əvvəlki 1200-simvol eşiyi və
-// qısa-mətn/akkordeon ayrımı LƏĞV EDİLDİ — "eyni konteyner, eyni davranış"
-// tələbi qarışıq görünüşə yol vermir).
+// F4.10-un vahid akkordeon qrupu F5.42-də LƏĞV EDİLİB: hər sahə ixtisas
+// səhifəsindəki kimi öz açıq bölməsidir, mündəricatdan keçilir.
 
 // F4.4 — `functions`/`services` üçün markdown siyahısı kart toruna çevrilir.
 // Format: `- **Başlıq** — açıqlama`. YALNIZ hər sətir bullet-lə başlayırsa
@@ -354,28 +375,39 @@ export default async function UnitPage({
     );
   }
 
-  // ── `unit` — beş blok ──
-  const [allUnits, docs, staff, articles, announcements, facilities] = await Promise.all([
+  // ── `unit` — F5.42: ixtisas səhifəsinin quruluşu ──
+  // Fakt zolağı · əsas foto · hər bölmə öz AÇIQ `<section id>`-i (akkordeon
+  // YOX, F4.10 qrupu ləğv) · mündəricat (ProgramToc, mobil + yapışqan yan
+  // panel) · «İxtisaslar» kartları (ixtisas səhifəsindəki «Digər
+  // ixtisaslar» ilə eyni) · qalereya · alt bölmələr.
+  const isFaculty = unit.slug.endsWith('-fakultesi');
+  const [allUnits, docs, staff, articles, announcements, facilities, programsRaw] = await Promise.all([
     getUnits(locale).catch(() => [] as OrgUnit[]),
     getUnitDocuments(unit.slug).catch(() => [] as UnitDocumentItem[]),
     getUnitStaff(unit.slug, unit.name).catch(() => [] as (Person & { photo: StrapiMedia | null })[]),
     getUnitArticles(unit.slug, locale, 6),
     getUnitAnnouncements(unit.slug, locale, 6),
     getUnitFacilities(unit.slug, locale).catch(() => [] as Facility[]),
+    // Kafedra/kollec: öz ixtisasları; fakültə: alt kafedralarınkı + köhnə
+    // `program.faculty` əlaqəsi (slug eynidir, F5.6).
+    getUnitPrograms(
+      [unit.slug, ...unit.children.map((c) => c.slug)],
+      isFaculty ? unit.slug : null,
+      locale,
+    ).catch(() => [] as UnitProgramCard[]),
   ]);
 
   const crumbs = buildCrumbs(unit, allUnits);
+  const programs = [...programsRaw].sort(
+    (a, b) => DEGREE_ORDER.indexOf(a.degree) - DEGREE_ORDER.indexOf(b.degree) || azSort(a.title, b.title),
+  );
 
   const hesabat = [...docs.filter((d) => d.category === 'hesabat')].sort(
     (a, b) => (b.year ?? 0) - (a.year ?? 0),
   );
 
-  // F4.13 — sənədlər YALNIZ yan paneldə, hesabat İSTİSNA (əsas sütunda qalır,
-  // F4.6d). Kəsmə/kateqoriya-başlığı YOXDUR — düz siyahı, çünki gedəcək yer
-  // qalmayıb (əsas sütundakı «Hüquqi sənədlər» bloku F4.11b-də silinib).
-  // Sıra: əvvəl esasname (DOC_CATEGORY_ORDER-in özündə onsuz da 0-cı indeksdə),
-  // sonra qalan kateqoriyalar sıra üzrə; hər kateqoriya daxilində `year`
-  // azalan, sonra ad. Faylı olmayan sənəd (mediaUrl null) daxil edilmir.
+  // F4.13 — sənədlər YALNIZ yan paneldə, hesabat İSTİSNA (əsas sütunda,
+  // «Görülmüş işlər və nəticələr» blokunda). Faylı olmayan sənəd daxil edilmir.
   const sideDocsSorted = [...docs]
     .filter((d) => d.category !== 'hesabat' && Boolean(mediaUrl(d.file)))
     .sort(
@@ -385,127 +417,103 @@ export default async function UnitPage({
         azSort(docText(a, locale).title, docText(b, locale).title),
     );
 
-  // F4.8c — heyət siyahısında rəhbər TƏKRARLANMIR (yan paneldə onsuz da
-  // var, bax .un-side rəhbər kartı) — `unit.head.documentId` ilə süzülür,
-  // sıralama sadə əlifba (name, localeCompare 'az' MƏCBURİ). Fakt zolağının
-  // "Heyət" sayı isə TAM heyəti göstərir (bax `staff.length`, aşağıda).
+  // F4.8c — heyət siyahısında rəhbər TƏKRARLANMIR (yan paneldə kartı var);
+  // fakt zolağının «Heyət» sayı isə TAM heyətdir (`staff.length`).
   const staffList = staff
     .filter((p) => !unit.head || p.documentId !== unit.head.documentId)
     .sort((a, b) => azSort(a.name ?? '', b.name ?? ''));
 
-
   const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
   // F4.11c — `receptionSlots` doludursa köhnə `receptionHours` sətrinin ƏVƏZİNƏ göstərilir.
   const receptionRows = buildReceptionRows(unit.receptionSlots, locale);
-  const missionHas = Boolean(unit.mission);
-  const aboutHas = Boolean(unit.about);
-  const functionsHas = Boolean(unit.functions);
-  const servicesHas = Boolean(unit.services);
-  const block4Has = Boolean(unit.links.length);
   const subunits = [...unit.children].sort(
     (a, b) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100) || azSort(a.name, b.name),
   );
-  // F4.5c — alt bölmələr artıq nəticələr sahəsinin İÇİNDƏ deyil (səhifənin
-  // sonuna öz kart cərgəsinə keçib, aşağıda) — ona görə "var" statusu
-  // subunits-i SAYMIR, əks halda başlıq görünüb altı boş qalardı.
-  // F4.6d — hesabat bloku ikiyə bölünür: nəticə mətni (unit.results) + varsa
-  // PDF sənədləri.
-  // F4.6e — xəbər/elan artıq bu sahədə deyil, ayrıca "Əlaqəli xəbərlər" blokundadır.
-  const resultsHas = Boolean(unit.results || hesabat.length);
-  // F4.11d — akkordeon qrupunun BEŞİNCİ (sonuncu) elementi.
-  const strategyHas = Boolean(unit.strategy);
-  // F4.11e/F4.13 — «Vakansiyalar» qısa siyahısı və akkordeon qrupundan AYRI FAQ bloku.
-  const vacanciesHas = Boolean(unit.vacancies.length);
-  const faqHas = Boolean(unit.faq.length);
-  // F5.34e — auditoriya/laboratoriya, tipə görə qruplaşdırılıb (sxem sırası,
-  // FACILITY_TYPES). Boş qrup (bu bölmədə həmin tipdən yoxdur) atlanır.
+  // Alt bölmələrin hamısı kafedradırsa fakt zolağında «Kafedra», əks halda «Alt bölmə».
+  const subunitsAreKafedras = subunits.length > 0 && subunits.every((c) => c.slug.endsWith('-kafedrasi'));
   const facilitiesByType = FACILITY_TYPES.map((t) => ({
     type: t,
     label: tr(t, locale),
     items: facilities.filter((f) => f.facilityType === t),
   })).filter((g) => g.items.length);
-  // F4.10/F4.11d — «Haqqında»/«Fəaliyyət sahəsi»/«Xidmətlər»/«Görülmüş işlər
-  // və nəticələr»/«Strateji hədəflər üzrə öhdəliklər» VAHİD akkordeon
-  // qrupudur (bax .un-expand-group aşağıda); qrup ictimai görünürsə bu 5
-  // sahədən ƏN AZI biri doludur.
-  const groupHas = aboutHas || functionsHas || servicesHas || resultsHas || strategyHas;
-  const block6Has = Boolean(articles.length || announcements.length);
 
-  // F4.5c — hər alt bölmə kartında ad + rəhbər + heyət sayı. Rəhbər `allUnits`-dən
-  // (artıq yüklənib, əlavə sorğu yoxdur); heyət sayı üçün hər alt bölmə üçün
-  // `getUnitStaff` çağrılır (adətən 2-7 uşaq — qəbul edilə bilən əlavə yük).
-  const subunitHeadBySlug = new Map(allUnits.map((u) => [u.slug, u.head ?? null]));
-  const subunitStaffCounts = await Promise.all(
-    subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
-  );
+  // F5.42 — əsas foto + qalereya (dillər üzrə eynidir).
+  const photoUrl = mediaUrl(unit.photo);
+  const gallery: GalleryImage[] = (unit.gallery ?? [])
+    .map((m) => ({ url: mediaUrl(m) ?? '', alt: m.alternativeText || unit.name, width: m.width, height: m.height }))
+    .filter((m) => m.url);
+  const galleryLabels: Record<string, string> = {
+    gallery: tr('Foto qalereya', locale),
+    openImage: tr('Şəkli aç', locale),
+    previous: tr('Əvvəlki şəkil', locale),
+    next: tr('Növbəti şəkil', locale),
+    close: tr('Bağla', locale),
+  };
 
-  // F4.7a — başlıqlar bölmə tipindən törəyir (məs. "Mərkəz haqqında",
-  // "Kafedranın heyəti"); uyğunluq yoxdursa fallback.
+  // F4.7a — «… haqqında» kimi başlıqlar az adının sonluğundan (ru/en-də
+  // söz sırası fərqlidir — ümumi başlıq); yuxarı sətir isə slug-dan, bütün dillərdə.
   const unitT = unitType(unit.name);
-  const blockTitle1 = unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale);
-  // F4.8b — missiya AYRICA başlıq daşıyır (genitiv), "haqqında" ilə qarışmır.
-  const missionTitle = unitT ? `${unitT.gen} ${tr('missiyası', locale)}` : tr('Missiya', locale);
-  const blockTitle3 = tr('Fəaliyyət sahəsi', locale);
-  const blockTitle4 = tr('Faydalı linklər', locale);
-  const blockTitle5 = tr('Görülmüş işlər və nəticələr', locale);
-  const blockTitle6 = tr('Əlaqəli xəbərlər', locale);
+  const typeBySlug = unitTypeBySlug(unit.slug);
+  const parentIsFaculty = Boolean(unit.parent?.slug.endsWith('-fakultesi'));
+  const blockTitleAbout = unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale);
+  const blockTitleMission = unitT ? `${unitT.gen} ${tr('missiyası', locale)}` : tr('Missiya', locale);
+  const blockTitleFunctions = tr('Fəaliyyət sahəsi', locale);
+  const blockTitleServices = tr('Xidmətlər', locale);
+  const blockTitlePrograms = tr('İxtisaslar', locale);
+  const blockTitleResults = tr('Görülmüş işlər və nəticələr', locale);
   const blockTitleStrategy = tr('Strateji hədəflər üzrə öhdəliklər', locale);
-  // F4.13 — «Açıq vəzifələr» -> «Vakansiyalar» (yalnız başlıq, davranış eyni).
+  const blockTitleGallery = tr('Foto qalereya', locale);
+  const blockTitleLinks = tr('Faydalı linklər', locale);
   const blockTitleVacancies = tr('Vakansiyalar', locale);
   const blockTitleFaq = tr('Tez-tez verilən suallar', locale);
+  const blockTitleNews = tr('Əlaqəli xəbərlər', locale);
   const blockTitleFacilities = tr('Auditoriya və laboratoriyalar', locale);
-  // F4.9a — heyət yan panelə keçib, artıq "blok" deyil (bax .un-side).
-  // F4.10/F4.11d/F4.11e — admin diaqnostikası indi 9 AYRI sahə sayır (əvvəl
-  // 5 birləşdirilmiş blok idi: missiya+haqqında bir, fəaliyyət+xidmət bir) —
-  // CMS-də konkret hansı sahənin boş olduğunu göstərir.
-  const fieldStatus = [
-    { has: missionHas, title: missionTitle },
-    { has: aboutHas, title: blockTitle1 },
-    { has: functionsHas, title: blockTitle3 },
-    { has: servicesHas, title: tr('Xidmətlər', locale) },
-    { has: resultsHas, title: blockTitle5 },
-    { has: strategyHas, title: blockTitleStrategy },
-    { has: block4Has, title: blockTitle4 },
-    { has: vacanciesHas, title: blockTitleVacancies },
-    { has: faqHas, title: blockTitleFaq },
-    { has: block6Has, title: blockTitle6 },
-  ];
-  const openBlockCount = fieldStatus.filter((f) => f.has).length;
-  const closedBlockTitles = fieldStatus.filter((f) => !f.has).map((f) => f.title);
 
-  // F4.4/F4.9b/F4.10 — ağ/boz ritm YALNIZ ictimai görünüşdə faktiki render
-  // olunan bloklara görə sayılır (missiya/qrup/linklər/xəbərlər). Akkordeon
-  // qrupu (F4.10: "F4.5b tint bu qrupa tətbiq olunmur") HEÇ VAXT tint almır,
-  // amma növbəni İRƏLİ APARIR ki, ondan sonrakı bloklar (linklər/xəbərlər)
-  // öz alternasiya növbəsini itirməsin. Admin boş-blok görünüşü artıq
-  // server-də deyil, klient adasında qərarlaşır — tint hesabı bunu gözləyə
-  // bilməz, ona görə YALNIZ ictimai `has`. Boş blokun tint-i vizual olaraq
-  // önəmsizdir: .un-block--empty öz fonunu üstələyir (F4.8e).
-  type TopKey = 'mission' | 'group' | 'links' | 'vacancies' | 'faq' | 'news';
-  const topSections: { key: TopKey; has: boolean; tintable: boolean }[] = [
-    { key: 'mission', has: missionHas, tintable: true },
-    { key: 'group', has: groupHas, tintable: false },
-    { key: 'links', has: block4Has, tintable: true },
-    { key: 'vacancies', has: vacanciesHas, tintable: true },
-    { key: 'faq', has: faqHas, tintable: true },
-    { key: 'news', has: block6Has, tintable: true },
+  // Sıra ixtisas səhifəsinin məntiqi ilə: nədir → nə edir → hansı ixtisaslar →
+  // nəticələr → görüntülər → faydalı məlumat → xəbərlər. `editable` — bölmə
+  // qeydinin öz sahəsi (admin «boş blok» göstərir); «İxtisaslar» proqramlardan gəlir.
+  type TopKey =
+    | 'mission' | 'about' | 'functions' | 'services' | 'programs' | 'results'
+    | 'strategy' | 'gallery' | 'links' | 'vacancies' | 'faq' | 'news';
+  const sections: { id: TopKey; has: boolean; title: string; editable: boolean }[] = [
+    { id: 'mission', has: Boolean(unit.mission), title: blockTitleMission, editable: true },
+    { id: 'about', has: Boolean(unit.about), title: blockTitleAbout, editable: true },
+    { id: 'functions', has: Boolean(unit.functions), title: blockTitleFunctions, editable: true },
+    { id: 'services', has: Boolean(unit.services), title: blockTitleServices, editable: true },
+    { id: 'programs', has: programs.length > 0, title: blockTitlePrograms, editable: false },
+    { id: 'results', has: Boolean(unit.results || hesabat.length), title: blockTitleResults, editable: true },
+    { id: 'strategy', has: Boolean(unit.strategy), title: blockTitleStrategy, editable: true },
+    { id: 'gallery', has: gallery.length > 0, title: blockTitleGallery, editable: true },
+    { id: 'links', has: unit.links.length > 0, title: blockTitleLinks, editable: true },
+    { id: 'vacancies', has: unit.vacancies.length > 0, title: blockTitleVacancies, editable: true },
+    { id: 'faq', has: unit.faq.length > 0, title: blockTitleFaq, editable: true },
+    { id: 'news', has: Boolean(articles.length || announcements.length), title: blockTitleNews, editable: true },
   ];
+  const has = Object.fromEntries(sections.map((s) => [s.id, s.has])) as Record<TopKey, boolean>;
+  const fieldStatus = sections.filter((s) => s.editable);
+  const openBlockCount = fieldStatus.filter((f) => f.has).length + (photoUrl ? 1 : 0);
+  const closedBlockTitles = [
+    ...(photoUrl ? [] : [tr('Əsas foto', locale)]),
+    ...fieldStatus.filter((f) => !f.has).map((f) => f.title),
+  ];
+  // Mündəricat YALNIZ faktiki render olunan bölmələri sadalayır.
+  const tocItems = sections.filter((s) => s.has).map((s) => ({ id: s.id, label: s.title }));
+  // Ağ/boz ritm — ixtisas səhifəsi kimi, yalnız görünən bölmələr üzrə.
   let tintCursor = 0;
   const tintByKey = {} as Record<TopKey, boolean>;
-  for (const s of topSections) {
+  for (const s of sections) {
     if (!s.has) continue;
-    tintByKey[s.key] = s.tintable && tintCursor % 2 === 1;
+    tintByKey[s.id] = tintCursor % 2 === 1;
     tintCursor++;
   }
-  const blockClass = (key: TopKey) => 'un-block' + (tintByKey[key] ? ' un-block--tint' : '');
+  const blockClass = (key: TopKey) => 'un-block pr-anchor' + (tintByKey[key] ? ' un-block--tint' : '');
 
-  // F4.5a/F4.7d — sağ yan sütun: rəhbər · əlaqə · qəbul saatları · onlayn
-  // xidmətlər · tabe olduğu qurum · sənədlər. Heç biri yoxdursa sütun
-  // render olunmur, səhifə TƏK SÜTUN olur (bax .un-layout--single,
-  // 36-unit.css). Düzəliş təklifi (CorrectionIsland) BU statusa DAXİL
-  // DEYİL — o, sütun varsa altına, yoxdursa əsas sütuna keçir (aşağıda).
+  // Yan panel: mündəricat · üst bölmə · rəhbər · heyət · əlaqə · qəbul saatları ·
+  // auditoriyalar · onlayn xidmətlər · sənədlər · düzəliş. Heç biri yoxdursa
+  // səhifə TƏK SÜTUN olur (.un-layout--single).
   const sideHas = Boolean(
-    unit.head ||
+    tocItems.length ||
+      unit.head ||
       staffList.length ||
       facilities.length ||
       contactHas ||
@@ -516,11 +524,11 @@ export default async function UnitPage({
       sideDocsSorted.length,
   );
 
-  // F4.5b — fakt zolağı: otaq · daxili telefon · qəbul saatları · heyət sayı
-  // · alt bölmə sayı. Uydurma metrika yoxdur, YALNIZ mövcud dəyərlər — bir
-  // dənə də yoxdursa zolaq render olunmur.
+  // Fakt zolağı (ixtisas səhifəsindəki kimi): fakültə keçidi · ixtisas ·
+  // kafedra/alt bölmə · heyət · otaq · daxili telefon · qəbul saatları.
+  // Uydurma metrika yoxdur, YALNIZ mövcud dəyərlər.
   const factsHas = Boolean(
-    unit.room || unit.phoneExt || unit.receptionHours || staff.length || subunits.length,
+    parentIsFaculty || programs.length || subunits.length || staff.length || unit.room || unit.phoneExt || unit.receptionHours,
   );
 
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
@@ -530,6 +538,11 @@ export default async function UnitPage({
   const strategyHtml = unit.strategy ? await marked.parse(unit.strategy) : '';
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
+
+  const subunitHeadBySlug = new Map(allUnits.map((u) => [u.slug, u.head ?? null]));
+  const subunitStaffCounts = await Promise.all(
+    subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
+  );
 
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
@@ -568,13 +581,19 @@ export default async function UnitPage({
     mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
   };
 
+  const empty = (id: TopKey, title: string) => (
+    <AdminOnly>
+      <EmptyBlock uid="api::unit.unit" title={title} documentId={unit.documentId} locale={locale} tint={Boolean(tintByKey[id])} />
+    </AdminOnly>
+  );
+
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
       <main>
         <section className="np-hero">
           <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr('Struktur', locale)}</div>
+            <div className="np-eyebrow">{typeBySlug ? tr(typeBySlug.nom, locale) : tr('Struktur', locale)}</div>
             <h1 className="np-h1">{unit.name}</h1>
             {/* F4.11d — yaranma tarixi və əsası, adın altında kiçik/solğun sətir. */}
             {unit.establishedNote ? <p className="un-established-note">{unit.establishedNote}</p> : null}
@@ -590,6 +609,36 @@ export default async function UnitPage({
             </nav>
             {factsHas ? (
               <ul className="un-facts" aria-label={tr('Əsas faktlar', locale)}>
+                {parentIsFaculty && unit.parent ? (
+                  <li className="un-fact">
+                    <i className="ti ti-building-arch" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Fakültə', locale)}</span>
+                    <Link href={`/${locale}/struktur/${unit.parent.slug}`} className="un-fact-v">
+                      {unit.parent.name}
+                    </Link>
+                  </li>
+                ) : null}
+                {programs.length ? (
+                  <li className="un-fact">
+                    <i className="ti ti-school" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('İxtisas', locale)}</span>
+                    <a href="#programs" className="un-fact-v">{programs.length}</a>
+                  </li>
+                ) : null}
+                {subunits.length ? (
+                  <li className="un-fact">
+                    <i className="ti ti-sitemap" aria-hidden="true" />
+                    <span className="un-fact-k">{tr(subunitsAreKafedras ? 'Kafedra' : 'Alt bölmə', locale)}</span>
+                    <span className="un-fact-v">{subunits.length}</span>
+                  </li>
+                ) : null}
+                {staff.length ? (
+                  <li className="un-fact">
+                    <i className="ti ti-users" aria-hidden="true" />
+                    <span className="un-fact-k">{tr('Heyət', locale)}</span>
+                    <span className="un-fact-v">{staff.length}</span>
+                  </li>
+                ) : null}
                 {unit.room ? (
                   <li className="un-fact">
                     <i className="ti ti-map-pin" aria-hidden="true" />
@@ -611,146 +660,144 @@ export default async function UnitPage({
                     <span className="un-fact-v">{unit.receptionHours}</span>
                   </li>
                 ) : null}
-                {staff.length ? (
-                  <li className="un-fact">
-                    <i className="ti ti-users" aria-hidden="true" />
-                    <span className="un-fact-k">{tr('Heyət', locale)}</span>
-                    <span className="un-fact-v">{staff.length}</span>
-                  </li>
-                ) : null}
-                {subunits.length ? (
-                  <li className="un-fact">
-                    <i className="ti ti-sitemap" aria-hidden="true" />
-                    <span className="un-fact-k">{tr('Alt bölmə', locale)}</span>
-                    <span className="un-fact-v">{subunits.length}</span>
-                  </li>
-                ) : null}
               </ul>
             ) : null}
           </div>
         </section>
 
         <div className="container">
-          {/* F4.9b — admin bəzəkləri klient adasında (bax _components/AdminGate.tsx):
-              server statik qalır, kimlik yoxlaması hidrasiyadan sonra baş verir. */}
+          {/* Mündəricat, mobil variant: başlıqdan dərhal sonra (masaüstü yan panelin
+              yuxarısındadır — CSS hər ekranda YALNIZ birini göstərir, 37-program.css). */}
+          <ProgramToc items={tocItems} variant="mobile" />
+
+          {/* F4.9b — admin bəzəkləri klient adasında (bax _components/AdminGate.tsx). */}
           <AdminProvider>
           <AdminOnly>
             <div className="un-admin-status">
-              {tr('Bloklar', locale)}: {openBlockCount}/{fieldStatus.length}
+              {tr('Bloklar', locale)}: {openBlockCount}/{fieldStatus.length + 1}
               {closedBlockTitles.length ? ' · ' + tr('boş', locale) + ': ' + closedBlockTitles.join(', ') : ''}
             </div>
           </AdminOnly>
 
-          {/* F4.5a — iki sütun: əsas mətn + yapışqan yan sütun (rəhbər/əlaqə/
-              qəbul saatları/əsasnamə/onlayn xidmətlər). Yan sütunda heç nə
-              yoxdursa (.un-layout--single) tək sütuna düşür. */}
           <div className={'un-layout' + (sideHas ? '' : ' un-layout--single')}>
             <div className="un-main">
-              {/* ── Missiya (F4.8b) — akkordeon qrupundan KƏNAR, tək cümləlik
-                  ləp (bax .un-mission), F4.10-un dörd sahəsinə daxil deyil. ── */}
-              {missionHas ? (
-                <section className={blockClass('mission')}>
-                  <AdminEditRow uid="api::unit.unit" documentId={unit.documentId} locale={locale} />
-                  <h2 className="un-block-title">{missionTitle}</h2>
-                  <p className="un-mission">{unit.mission}</p>
-                </section>
-              ) : null}
-
-              {/* ── F4.10/F4.11d: Haqqında / Fəaliyyət sahəsi / Xidmətlər /
-                  Görülmüş işlər və nəticələr / Strateji hədəflər üzrə
-                  öhdəliklər — VAHİD akkordeon qrupu. Eyni konteyner
-                  (ExpandBlock/.un-expand), eyni davranış, aralarında bölmə
-                  ayırıcısı yoxdur, F4.5b tint tətbiq olunmur (bax
-                  .un-expand-group, 36-unit.css). Hər sahə müstəqil aç/bağla —
-                  biri digərini bağlamır. ── */}
-              {groupHas ? (
-                <section className="un-block un-accordion-group">
-                  <AdminEditRow uid="api::unit.unit" documentId={unit.documentId} locale={locale} />
-                  <div className="un-expand-group">
-                    {aboutHas ? (
-                      <ExpandBlock label={blockTitle1}>
-                        <div className="prose" dangerouslySetInnerHTML={{ __html: aboutHtml }} />
-                      </ExpandBlock>
-                    ) : (
-                      <AdminOnly>
-                        <EmptyExpandItem uid="api::unit.unit" title={blockTitle1} documentId={unit.documentId} locale={locale} />
-                      </AdminOnly>
-                    )}
-                    {functionsHas ? (
-                      <ExpandBlock label={blockTitle3}>
-                        {functionCards ? (
-                          <FnCardGrid cards={functionCards} />
-                        ) : (
-                          <div className="prose" dangerouslySetInnerHTML={{ __html: functionsHtml }} />
-                        )}
-                      </ExpandBlock>
-                    ) : (
-                      <AdminOnly>
-                        <EmptyExpandItem uid="api::unit.unit" title={blockTitle3} documentId={unit.documentId} locale={locale} />
-                      </AdminOnly>
-                    )}
-                    {servicesHas ? (
-                      <ExpandBlock label={tr('Xidmətlər', locale)}>
-                        {serviceCards ? (
-                          <FnCardGrid cards={serviceCards} />
-                        ) : (
-                          <div className="prose" dangerouslySetInnerHTML={{ __html: servicesHtml }} />
-                        )}
-                      </ExpandBlock>
-                    ) : (
-                      <AdminOnly>
-                        <EmptyExpandItem uid="api::unit.unit" title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
-                      </AdminOnly>
-                    )}
-                    {resultsHas ? (
-                      <ExpandBlock label={blockTitle5}>
-                        {unit.results ? (
-                          <div className="prose" dangerouslySetInnerHTML={{ __html: resultsHtml }} />
-                        ) : null}
-                        {hesabat.length ? (
-                          <>
-                            <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
-                            <DocList docs={hesabat} locale={locale} />
-                          </>
-                        ) : null}
-                      </ExpandBlock>
-                    ) : (
-                      <AdminOnly>
-                        <EmptyExpandItem uid="api::unit.unit" title={blockTitle5} documentId={unit.documentId} locale={locale} />
-                      </AdminOnly>
-                    )}
-                    {strategyHas ? (
-                      <ExpandBlock label={blockTitleStrategy}>
-                        <div className="prose" dangerouslySetInnerHTML={{ __html: strategyHtml }} />
-                      </ExpandBlock>
-                    ) : (
-                      <AdminOnly>
-                        <EmptyExpandItem uid="api::unit.unit" title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
-                      </AdminOnly>
-                    )}
-                  </div>
-                </section>
+              {/* F5.42 — əsas foto: mətndən əvvəl, bütün en (16:9). */}
+              {photoUrl ? (
+                <figure className="un-cover">
+                  <img src={photoUrl} alt={unit.photo?.alternativeText || unit.name} />
+                </figure>
               ) : (
                 <AdminOnly>
-                  <section className="un-block un-accordion-group">
-                    <AdminEditRow uid="api::unit.unit" documentId={unit.documentId} locale={locale} />
-                    <div className="un-expand-group">
-                      <EmptyExpandItem uid="api::unit.unit" title={blockTitle1} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem uid="api::unit.unit" title={blockTitle3} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem uid="api::unit.unit" title={tr('Xidmətlər', locale)} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem uid="api::unit.unit" title={blockTitle5} documentId={unit.documentId} locale={locale} />
-                      <EmptyExpandItem uid="api::unit.unit" title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
-                    </div>
-                  </section>
+                  <EmptyBlock uid="api::unit.unit" title={tr('Əsas foto', locale)} documentId={unit.documentId} locale={locale} tint={false} />
                 </AdminOnly>
               )}
 
-              {/* ── Faydalı linklər (əlaqə/onlayn xidmətlər yan sütuna keçib).
-                  F4.10 — əvvəllər Fəaliyyət/Xidmətlər ilə Nəticələr arasında
-                  idi, akkordeon qrupunu ikiyə bölürdü; indi qrupdan SONRA. ── */}
-              {block4Has ? (
-                <section className={blockClass('links')}>
-                  <BlockTitle uid="api::unit.unit" title={blockTitle4} documentId={unit.documentId} locale={locale} />
+              {has.mission ? (
+                <section id="mission" className={blockClass('mission')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleMission} documentId={unit.documentId} locale={locale} />
+                  <p className="un-mission">{unit.mission}</p>
+                </section>
+              ) : (
+                empty('mission', blockTitleMission)
+              )}
+
+              {has.about ? (
+                <section id="about" className={blockClass('about')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleAbout} documentId={unit.documentId} locale={locale} />
+                  <div className="prose" dangerouslySetInnerHTML={{ __html: aboutHtml }} />
+                </section>
+              ) : (
+                empty('about', blockTitleAbout)
+              )}
+
+              {has.functions ? (
+                <section id="functions" className={blockClass('functions')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleFunctions} documentId={unit.documentId} locale={locale} />
+                  {functionCards ? (
+                    <FnCardGrid cards={functionCards} />
+                  ) : (
+                    <div className="prose" dangerouslySetInnerHTML={{ __html: functionsHtml }} />
+                  )}
+                </section>
+              ) : (
+                empty('functions', blockTitleFunctions)
+              )}
+
+              {has.services ? (
+                <section id="services" className={blockClass('services')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleServices} documentId={unit.documentId} locale={locale} />
+                  {serviceCards ? (
+                    <FnCardGrid cards={serviceCards} />
+                  ) : (
+                    <div className="prose" dangerouslySetInnerHTML={{ __html: servicesHtml }} />
+                  )}
+                </section>
+              ) : (
+                empty('services', blockTitleServices)
+              )}
+
+              {/* F5.42 — kafedranın/fakültənin ixtisasları: ixtisas səhifəsindəki
+                  «Digər ixtisaslar» ilə EYNİ kart (.np-grid/.np-card, 19-news-page.css). */}
+              {has.programs ? (
+                <section id="programs" className={blockClass('programs')}>
+                  <h2 className="un-block-title">{blockTitlePrograms}</h2>
+                  <div className="np-grid">
+                    {programs.map((p) => (
+                      <Link key={p.slug} href={`/${locale}/ixtisaslar/${p.slug}`} className="np-card">
+                        <span className="np-card-body">
+                          <h3 className="np-card-title">{p.title}</h3>
+                          <span className="np-meta">
+                            <span className="np-chip">{tr(DEGREE_LABEL[p.degree], locale)}</span>
+                            {p.durationYears ? (
+                              <span className="np-date">{p.durationYears} {tr('il', locale)}</span>
+                            ) : null}
+                            {p.studyForm === 'qiyabi' ? <span className="np-date">{tr('Qiyabi', locale)}</span> : null}
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+
+              {has.results ? (
+                <section id="results" className={blockClass('results')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleResults} documentId={unit.documentId} locale={locale} />
+                  {unit.results ? <div className="prose" dangerouslySetInnerHTML={{ __html: resultsHtml }} /> : null}
+                  {hesabat.length ? (
+                    <>
+                      <div className="un-sub-title">{tr('Hesabat sənədləri', locale)}</div>
+                      <DocList docs={hesabat} locale={locale} />
+                    </>
+                  ) : null}
+                </section>
+              ) : (
+                empty('results', blockTitleResults)
+              )}
+
+              {has.strategy ? (
+                <section id="strategy" className={blockClass('strategy')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleStrategy} documentId={unit.documentId} locale={locale} />
+                  <div className="prose" dangerouslySetInnerHTML={{ __html: strategyHtml }} />
+                </section>
+              ) : (
+                empty('strategy', blockTitleStrategy)
+              )}
+
+              {/* F5.42 — qalereya: xəbər/auditoriya qalereyası ilə eyni ada
+                  (GalleryIsland), başlığı bu blokdandır (bare). */}
+              {has.gallery ? (
+                <section id="gallery" className={blockClass('gallery')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleGallery} documentId={unit.documentId} locale={locale} />
+                  <GalleryIsland images={gallery} labels={galleryLabels} bare />
+                </section>
+              ) : (
+                empty('gallery', blockTitleGallery)
+              )}
+
+              {has.links ? (
+                <section id="links" className={blockClass('links')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleLinks} documentId={unit.documentId} locale={locale} />
                   <div className="un-links">
                     {unit.links.map((l, i) => (
                       <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
@@ -761,14 +808,11 @@ export default async function UnitPage({
                   </div>
                 </section>
               ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::unit.unit" title={blockTitle4} documentId={unit.documentId} locale={locale} tint={tintByKey.links} />
-                </AdminOnly>
+                empty('links', blockTitleLinks)
               )}
 
-              {/* ── F4.11e/F4.13: Vakansiyalar — `unit.vacancies`, qısa siyahı. ── */}
-              {vacanciesHas ? (
-                <section className={blockClass('vacancies')}>
+              {has.vacancies ? (
+                <section id="vacancies" className={blockClass('vacancies')}>
                   <BlockTitle uid="api::unit.unit" title={blockTitleVacancies} documentId={unit.documentId} locale={locale} />
                   <ul className="un-vacancy-list">
                     {unit.vacancies.map((v, i) => (
@@ -780,15 +824,11 @@ export default async function UnitPage({
                   </ul>
                 </section>
               ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::unit.unit" title={blockTitleVacancies} documentId={unit.documentId} locale={locale} tint={tintByKey.vacancies} />
-                </AdminOnly>
+                empty('vacancies', blockTitleVacancies)
               )}
 
-              {/* ── F4.11e: FAQ — akkordeon qrupundan AYRI, amma EYNİ üslubda
-                  (bax .un-expand-group, ExpandBlock hər sual üçün). ── */}
-              {faqHas ? (
-                <section className={blockClass('faq')}>
+              {has.faq ? (
+                <section id="faq" className={blockClass('faq')}>
                   <BlockTitle uid="api::unit.unit" title={blockTitleFaq} documentId={unit.documentId} locale={locale} />
                   <div className="un-expand-group">
                     {unit.faq.map((f, i) => (
@@ -799,18 +839,13 @@ export default async function UnitPage({
                   </div>
                 </section>
               ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::unit.unit" title={blockTitleFaq} documentId={unit.documentId} locale={locale} tint={tintByKey.faq} />
-                </AdminOnly>
+                empty('faq', blockTitleFaq)
               )}
 
-
-              {/* ── Əlaqəli xəbərlər (F4.6e: hesabatdan ayrı öz bloku; elanlar
-                  varsa eyni blokda qısa siyahı kimi). Xəbər şəkilli (kiçik üz
-                  qabığı şəkli), elan qısa/tarixli/şəkilsiz qalır (F4.5c). ── */}
-              {block6Has ? (
-                <section className={blockClass('news')}>
-                  <BlockTitle uid="api::unit.unit" title={blockTitle6} documentId={unit.documentId} locale={locale} />
+              {/* F4.6e — xəbər şəkilli (kiçik üz qabığı), elan qısa/tarixli. */}
+              {has.news ? (
+                <section id="news" className={blockClass('news')}>
+                  <BlockTitle uid="api::unit.unit" title={blockTitleNews} documentId={unit.documentId} locale={locale} />
                   {articles.length ? (
                     <ul className="un-row-list">
                       {articles.map((a) => {
@@ -844,9 +879,7 @@ export default async function UnitPage({
                   ) : null}
                 </section>
               ) : (
-                <AdminOnly>
-                  <EmptyBlock uid="api::unit.unit" title={blockTitle6} documentId={unit.documentId} locale={locale} tint={tintByKey.news} />
-                </AdminOnly>
+                empty('news', blockTitleNews)
               )}
 
               <AdminOnly>
@@ -860,13 +893,24 @@ export default async function UnitPage({
 
             {sideHas ? (
               <aside className="un-side">
-                {/* F4.9d/F5.14a — rəhbər kartı `_components/LeaderCard.tsx`-də
-                    (ixtisas səhifəsi ilə paylaşılır). */}
+                {/* Mündəricat, masaüstü variant — yan panelin YUXARISINDA (ixtisas səhifəsi kimi). */}
+                <ProgramToc items={tocItems} variant="desktop" />
+
+                {/* F4.7d — üst bölmə; kafedrada «Fakültə» (ixtisas səhifəsi kimi). */}
+                {unit.parent ? (
+                  <div>
+                    <div className="un-sub-title">{tr(parentIsFaculty ? 'Fakültə' : 'Tabe olduğu qurum', locale)}</div>
+                    <Link href={`/${locale}/struktur/${unit.parent.slug}`} className="un-link-btn">
+                      <i className={parentIsFaculty ? 'ti ti-building-arch' : 'ti ti-sitemap'} aria-hidden="true" />
+                      {unit.parent.name}
+                    </Link>
+                  </div>
+                ) : null}
+
+                {/* F4.9d/F5.14a — rəhbər kartı (_components/LeaderCard.tsx, ixtisas səhifəsi ilə ortaq). */}
                 {unit.head ? <LeaderCard head={unit.head} locale={locale} /> : null}
 
-                {/* F4.9a — heyət yan panelə keçib (Rəhbərdən sonra, Əlaqədən
-                    əvvəl). Sticky panel ekrandan uzun olmasın deyə ilk 6-dan
-                    sonrakılar «Hamısı (N)» arxasında (bax StaffReveal). */}
+                {/* F4.9a — heyət: ilk 6-dan sonrakılar «Hamısı (N)» arxasında (StaffReveal). */}
                 {staffList.length ? (
                   <div>
                     <div className="un-sub-title">{tr('Heyət', locale)}</div>
@@ -884,34 +928,6 @@ export default async function UnitPage({
                         </ul>
                       </StaffReveal>
                     ) : null}
-                  </div>
-                ) : null}
-
-                {/* F5.35d — auditoriya/laboratoriya siyahısı: tipə görə açılan
-                    başlıqlar, içində obyekt adları (/auditoriyalar/<slug>).
-                    Sıfır olan tip görünmür, heç biri yoxdursa bölmə də yoxdur.
-                    F5.36a — bu, bölmənin YEGANƏ auditoriya siyahısıdır: əsas
-                    sütundakı təkrar blok (F5.34e) çıxarılıb, #auditoriyalar
-                    ankoru bura köçüb (köhnə keçidlər boşa düşməsin). */}
-                {facilitiesByType.length ? (
-                  <div id="auditoriyalar">
-                    <div className="un-sub-title">{blockTitleFacilities}</div>
-                    <div className="un-expand-group">
-                      {facilitiesByType.map((g) => (
-                        <ExpandBlock key={g.type} label={`${tr(FACILITY_PLURAL_AZ[g.type], locale)} (${g.items.length})`}>
-                          <ul className="un-fac-side-list">
-                            {g.items.map((f) => (
-                              <li key={f.documentId}>
-                                <Link href={`/${locale}/auditoriyalar/${f.slug}`}>
-                                  {f.roomNumber ? `${f.roomNumber} · ` : ''}
-                                  {f.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </ExpandBlock>
-                      ))}
-                    </div>
                   </div>
                 ) : null}
 
@@ -968,8 +984,7 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {/* F4.11c — `receptionSlots` doludursa gün-gün cədvəl (ardıcıl
-                    eyni saatlı günlər birləşir), boşdursa köhnə sətir. */}
+                {/* F4.11c — `receptionSlots` doludursa gün-gün cədvəl, boşdursa köhnə sətir. */}
                 {receptionRows.length ? (
                   <div>
                     <div className="un-sub-title">{tr('Qəbul saatları', locale)}</div>
@@ -995,6 +1010,30 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
+                {/* F5.35d/F5.36a — auditoriya/laboratoriya: tipə görə açılan başlıqlar
+                    (bölmənin YEGANƏ siyahısı, #auditoriyalar ankoru buradadır). */}
+                {facilitiesByType.length ? (
+                  <div id="auditoriyalar">
+                    <div className="un-sub-title">{blockTitleFacilities}</div>
+                    <div className="un-expand-group">
+                      {facilitiesByType.map((g) => (
+                        <ExpandBlock key={g.type} label={`${tr(FACILITY_PLURAL_AZ[g.type], locale)} (${g.items.length})`}>
+                          <ul className="un-fac-side-list">
+                            {g.items.map((f) => (
+                              <li key={f.documentId}>
+                                <Link href={`/${locale}/auditoriyalar/${f.slug}`}>
+                                  {f.roomNumber ? `${f.roomNumber} · ` : ''}
+                                  {f.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </ExpandBlock>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
                 {unit.onlineServices.length ? (
                   <div>
                     <div className="un-sub-title">{tr('Onlayn xidmətlər', locale)}</div>
@@ -1009,19 +1048,7 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {/* F4.7d — tabe olduğu qurum, slug hazırdır (unit.parent). */}
-                {unit.parent ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Tabe olduğu qurum', locale)}</div>
-                    <Link href={`/${locale}/struktur/${unit.parent.slug}`} className="un-link-btn">
-                      <i className="ti ti-sitemap" aria-hidden="true" />
-                      {unit.parent.name}
-                    </Link>
-                  </div>
-                ) : null}
-
-                {/* F4.13 — hesabatdan başqa bütün sənədlər, düz siyahı (kateqoriya
-                    alt başlığı YOXDUR — ad özünü izah edir), kəsmə yoxdur. */}
+                {/* F4.13 — hesabatdan başqa bütün sənədlər, düz siyahı. */}
                 {sideDocsSorted.length ? (
                   <div>
                     <div className="un-sub-title">{tr('Sənədlər', locale)}</div>
@@ -1029,9 +1056,6 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {/* F4.7d — «Bu səhifədə səhv gördünüz?» yan panelin ən altına
-                    köçürülüb. Yan panel yoxdursa (sideHas false) aşağıda əsas
-                    sütunda fallback edir. */}
                 <CorrectionIsland
                   targetType="general"
                   targetSlug={slug}
@@ -1043,12 +1067,10 @@ export default async function UnitPage({
             ) : null}
           </div>
 
-          {/* F4.5c — alt bölmələr blok 5-dən çıxıb səhifənin sonuna öz kart
-              cərgəsinə keçib (HSE "Другие программы" nümunəsi). Hər kartda
-              ad + rəhbər + heyət sayı — mövcud olmayan sahə göstərilmir. */}
+          {/* F4.5c — alt bölmələr səhifənin sonunda öz kart cərgəsində (ad + rəhbər + heyət sayı). */}
           {subunits.length ? (
             <section className="un-subunits">
-              <h2 className="un-block-title">{tr('Alt bölmələr', locale)}</h2>
+              <h2 className="un-block-title">{tr(subunitsAreKafedras ? 'Kafedralar' : 'Alt bölmələr', locale)}</h2>
               <ul className="un-subunit-grid">
                 {subunits.map((c, i) => {
                   const h = subunitHeadBySlug.get(c.slug);

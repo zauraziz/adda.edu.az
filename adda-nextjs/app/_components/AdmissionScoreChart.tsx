@@ -6,6 +6,7 @@
 // ilə eyni qayda: `locale` prop kimi gəlir, `tr()` birbaşa burada çağırılır.
 import { tr, type Locale } from '@/lib/i18n';
 import type { ProgramAdmissionScore } from '@/lib/strapi';
+import { fmtScore } from '@/lib/format';
 
 const CHART_HEIGHT = 140;
 const BAR_WIDTH = 20;
@@ -66,7 +67,7 @@ export default function AdmissionScoreChart({
                     className="pr-chart-bar pr-chart-bar--free"
                   />
                   <text x={freeX + BAR_WIDTH / 2} y={baseY - freeH - 6} className="pr-chart-value">
-                    {r.minScoreFree}
+                    {fmtScore(r.minScoreFree, locale)}
                   </text>
                 </>
               ) : null}
@@ -80,7 +81,7 @@ export default function AdmissionScoreChart({
                     className="pr-chart-bar pr-chart-bar--paid"
                   />
                   <text x={paidX + BAR_WIDTH / 2} y={baseY - paidH - 6} className="pr-chart-value">
-                    {r.minScorePaid}
+                    {fmtScore(r.minScorePaid, locale)}
                   </text>
                 </>
               ) : null}

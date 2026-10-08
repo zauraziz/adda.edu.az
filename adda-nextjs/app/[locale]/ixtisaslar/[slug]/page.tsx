@@ -64,6 +64,7 @@ import {
   type SiteMenu,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, fallbackNotice, type Locale } from '@/lib/i18n';
+import { fmtScore } from '@/lib/format';
 
 export const revalidate = 300;
 
@@ -91,21 +92,18 @@ const EDU_CREDENTIAL_LABEL: Record<ProgramDetail['degree'], string> = {
   subbachelor: 'Subbakalavr',
 };
 
-/** F5.26e — F5.20d ilə eyni onluq ayırıcı ("239,5"), ixtisaslar/page.tsx-dəki
- * `formatScore`/`admissionLabel` TƏKRARLANIB (ayrı fayl, ayrı komponent). */
-function formatScore(n: number): string {
-  return String(n).replace('.', ',');
-}
-function admissionCutoffLabel(scores: ProgramDetail['admissionScores']): string | null {
+/** F5.26e — kataloqdakı `admissionLabel` ilə eyni hesablama; onluq ayırıcı
+ * F5.42-dən `fmtScore`-dadır (lib/format.ts, qrafik də onu işlədir). */
+function admissionCutoffLabel(scores: ProgramDetail['admissionScores'], locale: Locale): string | null {
   if (!scores.length) return null;
   const latest = [...scores].sort((a, b) => b.year - a.year)[0];
   const paid = latest.minScorePaid;
   const free = latest.minScoreFree;
   if (paid == null && free == null) return null;
   if (paid != null && free != null) {
-    return `${formatScore(Math.min(paid, free))} / ${formatScore(Math.max(paid, free))}`;
+    return `${fmtScore(Math.min(paid, free), locale)} / ${fmtScore(Math.max(paid, free), locale)}`;
   }
-  return formatScore(paid ?? free!);
+  return fmtScore(paid ?? free!, locale);
 }
 
 /**
@@ -183,6 +181,37 @@ function groupBySemester(courses: ProgramCourse[]): SemesterGroup[] {
  * lazım deyil.
  */
 const KURS_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+/**
+ * F5.42 — `highlights` fakt zolağına birləşir (F5.26e), amma əsas sahələri
+ * TƏKRARLAYAN sətir atılır: «təhsil müddəti» (Müddət var), «ECTS krediti»
+ * (Kredit var), «təhsil forması» (Təhsil forması var). «30 — kredit dil
+ * hazırlığı» oxunmurdu («Kredit dil hazırlığı: 30»): «kredit …» etiketi
+ * açara, «kredit» sözü dəyərə keçir — «Dil hazırlığı: 30 kredit».
+ * Məlumat Strapi-də DƏYİŞMİR, yalnız göstəriş.
+ */
+function factHighlights(program: ProgramDetail, locale: Locale): { label: string; value: string }[] {
+  const low = (x: string) => x.toLocaleLowerCase('az').replace(/\s+/g, ' ').trim();
+  const out: { label: string; value: string }[] = [];
+  for (const h of program.highlights) {
+    const label = (h.label ?? '').trim();
+    const value = (h.value ?? '').trim();
+    if (!label || !value) continue;
+    const l = low(label);
+    if (program.durationYears && /müddət/.test(l)) continue;
+    if (program.totalCredits && /^(ects( krediti)?|ümumi kredit|kredit(i)?)$/.test(l)) continue;
+    if (program.studyForm && l === 'təhsil forması') continue;
+    // Digər faktlar kimi böyük hərflə («üzmə təcrübəsi» → «Üzmə təcrübəsi»; az: i → İ).
+    const cap = (x: string) => x.charAt(0).toLocaleUpperCase('az') + x.slice(1);
+    const credit = l.match(/^kredit\s+(.+)$/);
+    if (credit) {
+      out.push({ label: tr(cap(credit[1]), locale), value: `${value} ${tr('kredit', locale)}` });
+      continue;
+    }
+    out.push({ label: tr(cap(label), locale), value });
+  }
+  return out;
+}
 interface KursGroup {
   kurs: number;
   semesters: SemesterGroup[];
@@ -446,7 +475,7 @@ export default async function ProgramPage({
   const seatsStateFunded = program.admissionSeats?.stateFunded ?? null;
   const seatsPaid = program.admissionSeats?.paid ?? null;
   const admissionYear = program.admissionSeats?.year ?? null;
-  const cutoffLabel = admissionCutoffLabel(program.admissionScores);
+  const cutoffLabel = admissionCutoffLabel(program.admissionScores, locale);
   const admissionBlockHas = Boolean(
     seatsTotal != null || seatsStateFunded != null || seatsPaid != null || program.tuitionFee || cutoffLabel,
   );
@@ -463,6 +492,8 @@ export default async function ProgramPage({
 
   // F5.26e — `highlights` MÖVCUD fakt zolağına birləşir, ikinci zolaq
   // YARADILMIR — ona görə `factsHas` da highlights-i nəzərə alır.
+  // F5.42 — təkrarlar atılmış, «kredit …» etiketləri düzəldilmiş siyahı.
+  const highlights = factHighlights(program, locale);
   const factsHas = Boolean(
     program.degree ||
       program.durationYears ||
@@ -470,7 +501,7 @@ export default async function ProgramPage({
       program.totalCredits ||
       program.code ||
       facultyDisplay ||
-      program.highlights.length,
+      highlights.length,
   );
 
   const overviewHtml = program.overview ? await marked.parse(program.overview) : '';
@@ -583,7 +614,8 @@ export default async function ProgramPage({
                   <li className="un-fact">
                     <i className="ti ti-certificate" aria-hidden="true" />
                     <span className="un-fact-k">{tr('Kredit', locale)}</span>
-                    <span className="un-fact-v">{program.totalCredits}</span>
+                    {/* F5.42 — «ECTS krediti» highlight-ı atıldığı üçün vahid burada. */}
+                    <span className="un-fact-v">{program.totalCredits} ECTS</span>
                   </li>
                 ) : null}
                 {program.code ? (
@@ -597,7 +629,7 @@ export default async function ProgramPage({
                     zolaq YARADILMIR. Sərbəst dəyər+etiket cütü olduğu üçün
                     digər faktlardan fərqli sabit ikonu YOXDUR — Strapi
                     komponentindəki ("star") ilə eyni `ti-star` işlədilir. */}
-                {program.highlights.map((h, i) => (
+                {highlights.map((h, i) => (
                   <li className="un-fact" key={i}>
                     <i className="ti ti-star" aria-hidden="true" />
                     <span className="un-fact-k">{h.label}</span>

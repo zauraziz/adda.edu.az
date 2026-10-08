@@ -10,6 +10,9 @@
   border-top: 1px solid var(--gray-200);
 }
 
+/* F5.42 — bölmə səhifəsi: başlığı səhifənin öz bloku verir (BlockTitle). */
+.gal--bare { margin: 0; padding-top: 0; border-top: 0; }
+
 .gal-h {
   display: flex;
   align-items: center;

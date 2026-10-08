@@ -42,6 +42,17 @@ export function fmtCount(n: number | null | undefined, locale: Locale): string |
   return rounded.toLocaleString(locale, { maximumFractionDigits: 1 }) + (unit === 1_000_000 ? 'M' : 'K');
 }
 
+/**
+ * F5.42 — qəbul balı: «227,6» (az/ru vergül, en nöqtə), tam bal onluqsuz
+ * («329»). Əvvəl qrafik xam rəqəm yazırdı, kataloq və ixtisas səhifəsi isə
+ * hərəsi öz `formatScore`-u ilə — indi hamısı bu funksiyadır.
+ */
+export function fmtScore(n: number | null | undefined, locale: Locale): string {
+  if (n === null || n === undefined || !Number.isFinite(n)) return '';
+  const s = String(Math.round(n * 100) / 100);
+  return locale === 'en' ? s : s.replace('.', ',');
+}
+
 /** Article/announcement kateqoriya etiketləri (chip). */
 export const CAT_LABELS: Record<Locale, Record<string, string>> = {
   az: { xeber: 'Xəbər', elan: 'Elan', tedbir: 'Tədbir', elm: 'Elm' },
