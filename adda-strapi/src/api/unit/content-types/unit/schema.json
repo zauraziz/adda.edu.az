@@ -67,6 +67,26 @@
         }
       }
     },
+    "blockSettings": {
+      "type": "component",
+      "repeatable": true,
+      "component": "unit.block-setting",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "extraBlocks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "unit.extra-block",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "mission": {
       "type": "text",
       "pluginOptions": {

@@ -19,6 +19,7 @@
 import type { Core } from '@strapi/strapi';
 import { FACULTY_ARCHIVE_NOTE } from './faculty-units';
 import { SCORE_HINT } from './admission-scores';
+import { DEPARTMENT_ARCHIVE_NOTE } from './dedupe';
 
 /** [ad, qayda?, nümunə?] */
 type F = [string, string?, string?];
@@ -202,6 +203,16 @@ const CT: Record<string, Dict> = {
     // F5.42 — əsas foto + qalereya (cmAz:v2).
     photo: ['Əsas foto', 'Səhifənin yuxarısında, mətndən əvvəl. Üfüqi foto (məs. 1600×900 px), JPEG/PNG/WebP. Bütün dillərdə eynidir.'],
     gallery: ['Qalereya', 'Bir neçə foto: bina, laboratoriya, tədbirlər. Saytda şəbəkə, kliklə böyüyür. Bütün dillərdə eynidir.'],
+    // F5.43 — blok başlıqları və əlavə bloklar (cmAz:v3).
+    blockSettings: [
+      'Blok başlıqları',
+      'Standart blokun başlığı bölməyə uyğun gəlmirsə: «Blok»-u seçin və yeni başlığı yazın (boş qalsa standart başlıq). ' +
+        'Blok lazım deyilsə «Gizlət» — saytda göstərilmir, mətni silinmir. Hər dildə ayrıca.',
+    ],
+    extraBlocks: [
+      'Əlavə bloklar',
+      'Standart bloklara sığmayan məlumat (məs. «Tədris olunan fənlər»): başlıq + mətn. «Yeri» — hansı blokdan sonra görünəcək. Hər dildə ayrıca.',
+    ],
   },
   'api::program.program': {
     title: ['İxtisasın adı', 'Rəsmi ad, məs. «Dəniz naviqasiyası mühəndisliyi».'],
@@ -247,7 +258,7 @@ const CT: Record<string, Dict> = {
     programs: ['İxtisaslar', AUTO_REL],
   },
   'api::department.department': {
-    name: ['Adı', 'Köhnə «Kafedra» bölməsi. Yeni kafedra məlumatı «Struktur bölmə»-yə yazılır.'],
+    name: ['Adı', DEPARTMENT_ARCHIVE_NOTE],
     slug: ['Ünvan (slug)', SLUG],
     about: ['Haqqında', MD],
     head: ['Kafedra müdiri', 'Heyət siyahısından.'],
@@ -551,6 +562,22 @@ const COMP: Record<string, Dict> = {
     question: ['Sual'],
     answer: ['Cavab'],
   },
+  'unit.block-setting': {
+    block: [
+      'Blok',
+      'missiya — Missiya; haqqinda — «… haqqında»; fealiyyet_sahesi — Fəaliyyət sahəsi; xidmetler — Xidmətlər; ' +
+        'ixtisaslar — İxtisaslar; gorulmus_isler — Görülmüş işlər və nəticələr; strateji_hedefler — Strateji hədəflər; ' +
+        'foto_qalereya — Foto qalereya; faydali_linkler — Faydalı linklər; vakansiyalar — Vakansiyalar; ' +
+        'suallar — Tez-tez verilən suallar; xeberler — Əlaqəli xəbərlər; alt_bolmeler — Alt bölmələr / Kafedralar; heyet — Heyət.',
+    ],
+    title: ['Yeni başlıq', 'Boş qalsa standart başlıq göstərilir.', 'Məs.: Tədris olunan fənlər'],
+    hidden: ['Gizlət', 'Aktivdirsə blok saytda göstərilmir (mətn silinmir, sonra yenidən açmaq olar).'],
+  },
+  'unit.extra-block': {
+    title: ['Başlıq', 'Blokun saytdakı başlığı.', 'Məs.: Tədris olunan fənlər'],
+    body: ['Mətn', MD],
+    after: ['Yeri', 'Hansı blokdan sonra: basda — əsas fotodan dərhal sonra; sonda — bütün bloklardan sonra.'],
+  },
   'unit.reception-slot': {
     day: ['Gün'],
     timeFrom: ['Başlanğıc', 'Məs.: 09:00.'],
@@ -600,8 +627,9 @@ function merge(conf: Conf, dict: Dict): number {
   return n;
 }
 
-// v2 (F5.42): unit.photo/gallery. Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
-const MARKER = 'cmAz:v2';
+// v2 (F5.42): unit.photo/gallery. v3 (F5.43): unit.blockSettings/extraBlocks + komponentləri.
+// Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
+const MARKER = 'cmAz:v3';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });

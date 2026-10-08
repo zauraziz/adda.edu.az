@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_unit_block_settings",
+  "info": {
+    "displayName": "Blok başlığı",
+    "description": "Bölmə səhifəsində standart blokun başlığını dəyişmək və ya bloku gizlətmək (F5.43).",
+    "icon": "pencil"
+  },
+  "options": {},
+  "attributes": {
+    "block": {
+      "type": "enumeration",
+      "enum": [
+        "missiya",
+        "haqqinda",
+        "fealiyyet_sahesi",
+        "xidmetler",
+        "ixtisaslar",
+        "gorulmus_isler",
+        "strateji_hedefler",
+        "foto_qalereya",
+        "faydali_linkler",
+        "vakansiyalar",
+        "suallar",
+        "xeberler",
+        "alt_bolmeler",
+        "heyet"
+      ],
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

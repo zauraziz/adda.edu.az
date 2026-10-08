@@ -821,8 +821,8 @@ export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
 export interface ApiDepartmentDepartment extends Struct.CollectionTypeSchema {
   collectionName: 'departments';
   info: {
-    description: 'Fak\u00FClt\u0259 t\u0259rkibind\u0259ki kafedralar';
-    displayName: '2. Akademiya \u2014 Kafedra';
+    description: 'F5.43 \u2014 ARX\u0130V, saytda g\u00F6st\u0259rilmir v\u0259 axtar\u0131\u015Fda \u00E7\u0131xm\u0131r (F3.26-dan kafedra, \u015F\u00F6b\u0259 v\u0259 m\u0259rk\u0259zl\u0259r \u00AB2. Akademiya \u2014 Struktur b\u00F6lm\u0259\u00BB-d\u0259dir, /struktur/<slug>). Silinmir: k\u00F6hn\u0259 hey\u0259t \u0259laq\u0259l\u0259ri v\u0259 kopilot m\u0259tni buradad\u0131r.';
+    displayName: '2. Akademiya \u2014 Kafedra (arxiv)';
     pluralName: 'departments';
     singularName: 'department';
   };
@@ -2800,6 +2800,12 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    blockSettings: Schema.Attribute.Component<'unit.block-setting', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     building: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -2821,6 +2827,12 @@ export interface ApiUnitUnit extends Struct.CollectionTypeSchema {
         };
       }>;
     establishedNote: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    extraBlocks: Schema.Attribute.Component<'unit.extra-block', true> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;

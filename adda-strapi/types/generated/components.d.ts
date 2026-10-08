@@ -325,6 +325,76 @@ export interface StaffVacancy extends Struct.ComponentSchema {
   };
 }
 
+export interface UnitBlockSetting extends Struct.ComponentSchema {
+  collectionName: 'components_unit_block_settings';
+  info: {
+    description: 'B\u00F6lm\u0259 s\u0259hif\u0259sind\u0259 standart blokun ba\u015Fl\u0131\u011F\u0131n\u0131 d\u0259yi\u015Fm\u0259k v\u0259 ya bloku gizl\u0259tm\u0259k (F5.43).';
+    displayName: 'Blok ba\u015Fl\u0131\u011F\u0131';
+    icon: 'pencil';
+  };
+  attributes: {
+    block: Schema.Attribute.Enumeration<
+      [
+        'missiya',
+        'haqqinda',
+        'fealiyyet_sahesi',
+        'xidmetler',
+        'ixtisaslar',
+        'gorulmus_isler',
+        'strateji_hedefler',
+        'foto_qalereya',
+        'faydali_linkler',
+        'vakansiyalar',
+        'suallar',
+        'xeberler',
+        'alt_bolmeler',
+        'heyet',
+      ]
+    > &
+      Schema.Attribute.Required;
+    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+  };
+}
+
+export interface UnitExtraBlock extends Struct.ComponentSchema {
+  collectionName: 'components_unit_extra_blocks';
+  info: {
+    description: 'Standart bloklara uy\u011Fun g\u0259lm\u0259y\u0259n m\u0259lumat: \u00F6z ba\u015Fl\u0131\u011F\u0131 v\u0259 m\u0259tni il\u0259 (F5.43).';
+    displayName: '\u018Flav\u0259 blok';
+    icon: 'plus';
+  };
+  attributes: {
+    after: Schema.Attribute.Enumeration<
+      [
+        'basda',
+        'missiya',
+        'haqqinda',
+        'fealiyyet_sahesi',
+        'xidmetler',
+        'ixtisaslar',
+        'gorulmus_isler',
+        'strateji_hedefler',
+        'foto_qalereya',
+        'faydali_linkler',
+        'vakansiyalar',
+        'suallar',
+        'sonda',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'sonda'>;
+    body: Schema.Attribute.RichText;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+  };
+}
+
 export interface UnitFaq extends Struct.ComponentSchema {
   collectionName: 'components_unit_faqs';
   info: {
@@ -389,6 +459,8 @@ declare module '@strapi/strapi' {
       'staff.scholar': StaffScholar;
       'staff.tag': StaffTag;
       'staff.vacancy': StaffVacancy;
+      'unit.block-setting': UnitBlockSetting;
+      'unit.extra-block': UnitExtraBlock;
       'unit.faq': UnitFaq;
       'unit.reception-slot': UnitReceptionSlot;
     }

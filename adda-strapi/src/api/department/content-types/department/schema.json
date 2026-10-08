@@ -4,8 +4,8 @@
   "info": {
     "singularName": "department",
     "pluralName": "departments",
-    "displayName": "2. Akademiya — Kafedra",
-    "description": "Fakültə tərkibindəki kafedralar"
+    "displayName": "2. Akademiya — Kafedra (arxiv)",
+    "description": "F5.43 — ARXİV, saytda göstərilmir və axtarışda çıxmır (F3.26-dan kafedra, şöbə və mərkəzlər «2. Akademiya — Struktur bölmə»-dədir, /struktur/<slug>). Silinmir: köhnə heyət əlaqələri və kopilot mətni buradadır."
   },
   "options": {
     "draftAndPublish": true

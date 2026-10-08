@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_unit_extra_blocks",
+  "info": {
+    "displayName": "Əlavə blok",
+    "description": "Standart bloklara uyğun gəlməyən məlumat: öz başlığı və mətni ilə (F5.43).",
+    "icon": "plus"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "body": {
+      "type": "richtext"
+    },
+    "after": {
+      "type": "enumeration",
+      "enum": [
+        "basda",
+        "missiya",
+        "haqqinda",
+        "fealiyyet_sahesi",
+        "xidmetler",
+        "ixtisaslar",
+        "gorulmus_isler",
+        "strateji_hedefler",
+        "foto_qalereya",
+        "faydali_linkler",
+        "vakansiyalar",
+        "suallar",
+        "sonda"
+      ],
+      "default": "sonda"
+    }
+  }
+}

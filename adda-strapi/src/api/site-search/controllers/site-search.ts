@@ -18,6 +18,7 @@
  *
  * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
  */
+import { MOVED_PAGE_SLUGS } from '../../../utils/moved-pages';
 
 type Row = Record<string, unknown>;
 
@@ -49,13 +50,18 @@ const SOURCES: Array<{
   { uid: 'api::article.article', contentType: 'article', title: 'title', body: 'body', excerpt: 'excerpt', category: 'category' },
   { uid: 'api::announcement.announcement', contentType: 'announcement', title: 'title', body: 'body', excerpt: 'excerpt', category: 'importance' },
   { uid: 'api::event.event', contentType: 'event', title: 'title', body: 'body', excerpt: 'excerpt', category: 'format' },
-  { uid: 'api::page.page', contentType: 'page', title: 'title', body: 'body', excerpt: 'seoDescription' },
-  { uid: 'api::department.department', contentType: 'department', title: 'name', body: 'about' },
+  // F5.43 — bölməyə köçmüş səhifələr (rektor, Elmi Şura…) nəticədə çıxmır:
+  // ünvanları /struktur-a yönlənir, eyni nəticə iki dəfə görünməsin.
+  { uid: 'api::page.page', contentType: 'page', title: 'title', body: 'body', excerpt: 'seoDescription', where: { slug: { $notIn: MOVED_PAGE_SLUGS } } },
   { uid: 'api::program.program', contentType: 'program', title: 'title', body: 'description', category: 'degree' },
   // F5.41 — fakültənin yeganə səhifəsi struktur bölmədir (/struktur/<slug>);
   // «2. Akademiya — Fakültə» arxivdir. Növ adı «faculty» qalır (nəticədə
   // «Fakültə» yazılır), Next.js onu /struktur/-a aparır (lib/search-ui.ts).
   { uid: 'api::unit.unit', contentType: 'faculty', title: 'name', body: 'about', where: { slug: { $endsWith: '-fakultesi' } } },
+  // F5.43 — kafedra, şöbə, mərkəz: struktur bölmənin özü. Əvvəl köhnə
+  // «2. Akademiya — Kafedra» (department, arxiv) axtarılırdı: köhnə adlar
+  // («MÜHASİBAT UÇOTU VƏ HESABAT ŞÖBƏSİ») və bəziləri olmayan ünvanlar.
+  { uid: 'api::unit.unit', contentType: 'unit', title: 'name', body: 'about', where: { slug: { $notContains: '-fakultesi' } } },
 ];
 
 const LOCALES = ['az', 'ru', 'en'];
@@ -129,7 +135,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
-    // Tiplər PARALEL sorğulanır — 7 ardıcıl gediş-gəliş 7 dəfə yavaş olardı.
+    // Tiplər PARALEL sorğulanır — ardıcıl gediş-gəliş tip sayı qədər yavaş olardı.
     const perType = await Promise.all(
       SOURCES.map(async (src) => {
         const or: Row[] = [{ [src.title]: { $containsi: q } }, { [src.body]: { $containsi: q } }];
@@ -152,7 +158,7 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
           } as Row);
           return { src, rows };
         } catch (err) {
-          // Bir tipin sxemi dəyişibsə qalan altısı sınmasın.
+          // Bir tipin sxemi dəyişibsə qalanları sınmasın.
           strapi.log.warn('[search] ' + src.uid + ' atlandi: ' + (err as Error).message);
           return { src, rows: [] as Row[] };
         }
