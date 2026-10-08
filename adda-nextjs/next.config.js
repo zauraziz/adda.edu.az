@@ -13,6 +13,20 @@ const DEPT_UNIT_MAP = {
   irm: 'informasiya-resurs-merkezi',
 };
 
+// F5.43: eyni məlumatın iki səhifəsi — «Səhifə» (/sehife/x) və struktur bölmə
+// (/struktur/y). Kanonik ünvan bölmədir; səhifə Strapi-də dərcdən çıxarılır
+// (qaralama qalır), mətni bölmənin boş «Haqqında»-sına köçür. SİNXRON:
+// adda-strapi/src/utils/moved-pages.ts (PAGE_UNIT_MOVES), tools/migration/
+// gen-redirects.mjs (MOVED).
+const PAGE_UNIT_MAP = {
+  rektor: 'rektor',
+  'elmi-sura': 'elmi-sura',
+  'elmi-katib': 'elmi-katib',
+  'rektor-komekcisi': 'rektorun-komekcisi',
+  'tedrisin-teskili-ve-idareedilmesi-uzre-prorektor': 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq',
+  'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor': 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq',
+};
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -27,6 +41,11 @@ const nextConfig = {
     return [
       ...Object.entries(DEPT_UNIT_MAP).map(([from, to]) => ({
         source: '/:locale(az|ru|en)/struktur/' + from,
+        destination: '/:locale/struktur/' + to,
+        permanent: true,
+      })),
+      ...Object.entries(PAGE_UNIT_MAP).map(([from, to]) => ({
+        source: '/:locale(az|ru|en)/sehife/' + from,
         destination: '/:locale/struktur/' + to,
         permanent: true,
       })),

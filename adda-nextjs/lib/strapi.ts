@@ -1016,20 +1016,35 @@ export async function getFacilityCatalog(locale: Locale = 'az'): Promise<Facilit
   });
 }
 
-/** /auditoriyalar/[slug] — tək obyekt, bütün populate-lərlə. */
+/**
+ * F5.43 — obyektin saytdakı ünvan açarı: slug, o yoxdursa documentId.
+ * Prod-da dərc olunmuş versiyada slug boş qalmışdı (F5.34/F5.35 seed-i) və
+ * kataloq belə obyektləri ATIRDI — 38-dən 6-sı görünürdü. Strapi `facilitySlugs:v1`
+ * slug-ları doldurur; bu isə ehtiyatdır: obyekt heç vaxt itməsin.
+ */
+export function facilityKey(f: Pick<Facility, 'slug' | 'documentId'>): string {
+  return f.slug || f.documentId;
+}
+
+const FACILITY_DETAIL_POPULATE: Record<string, string | boolean> = {
+  'populate[inventory]': true,
+  'populate[photos]': true,
+  'populate[documents][populate][file]': true,
+  'populate[responsiblePerson][fields][0]': 'name',
+  'populate[responsiblePerson][fields][1]': 'displayName',
+  'populate[responsiblePerson][fields][2]': 'slug',
+  'populate[unit][fields][0]': 'slug',
+  'populate[unit][fields][1]': 'name',
+};
+
+/** /auditoriyalar/[slug] — tək obyekt, bütün populate-lərlə (slug, yoxdursa documentId ilə). */
 export async function getFacilityBySlug(slug: string, locale: Locale = 'az'): Promise<Facility | null> {
-  const rows = await facilitiesWithFallback(locale, {
-    'filters[slug][$eq]': slug,
-    'populate[inventory]': true,
-    'populate[photos]': true,
-    'populate[documents][populate][file]': true,
-    'populate[responsiblePerson][fields][0]': 'name',
-    'populate[responsiblePerson][fields][1]': 'displayName',
-    'populate[responsiblePerson][fields][2]': 'slug',
-    'populate[unit][fields][0]': 'slug',
-    'populate[unit][fields][1]': 'name',
-  });
-  return rows[0] ?? null;
+  const rows = await facilitiesWithFallback(locale, { 'filters[slug][$eq]': slug, ...FACILITY_DETAIL_POPULATE });
+  if (rows[0]) return rows[0];
+  // documentId: 24 simvol, kiçik latın hərfi və rəqəm.
+  if (!/^[a-z0-9]{24}$/.test(slug)) return null;
+  const byId = await facilitiesWithFallback(locale, { 'filters[documentId][$eq]': slug, ...FACILITY_DETAIL_POPULATE });
+  return byId[0] ?? null;
 }
 
 /** `generateStaticParams` üçün. */
@@ -1284,6 +1299,40 @@ export interface UnitDetail {
   /** F5.42 — əsas foto (mətndən əvvəl) və qalereya; dillər üzrə eynidir. */
   photo: StrapiMedia | null;
   gallery: StrapiMedia[] | null;
+  /** F5.43 — standart blokun başlığı/gizlədilməsi və əlavə bloklar (dil üzrə). */
+  blockSettings?: UnitBlockSetting[] | null;
+  extraBlocks?: UnitExtraBlock[] | null;
+}
+
+/**
+ * F5.43 — bölmə səhifəsinin standart blokları (Strapi `unit.block-setting.block`
+ * enum-u ilə EYNİ açarlar, src/components/unit/block-setting.json).
+ */
+export type UnitBlockKey =
+  | 'missiya'
+  | 'haqqinda'
+  | 'fealiyyet_sahesi'
+  | 'xidmetler'
+  | 'ixtisaslar'
+  | 'gorulmus_isler'
+  | 'strateji_hedefler'
+  | 'foto_qalereya'
+  | 'faydali_linkler'
+  | 'vakansiyalar'
+  | 'suallar'
+  | 'xeberler'
+  | 'alt_bolmeler'
+  | 'heyet';
+export interface UnitBlockSetting {
+  block: UnitBlockKey;
+  title: string | null;
+  hidden: boolean | null;
+}
+/** `after`: hansı standart blokdan sonra; «basda» — fotodan dərhal sonra, «sonda» — sonda. */
+export interface UnitExtraBlock {
+  title: string;
+  body: string | null;
+  after: Exclude<UnitBlockKey, 'xeberler' | 'alt_bolmeler' | 'heyet'> | 'basda' | 'sonda' | null;
 }
 
 /**
@@ -1303,6 +1352,8 @@ export async function getUnitDetail(slug: string, locale: Locale = 'az'): Promis
     'populate[receptionSlots]': true,
     'populate[vacancies]': true,
     'populate[faq]': true,
+    'populate[blockSettings]': true,
+    'populate[extraBlocks]': true,
     'populate[parent][fields][0]': 'slug',
     'populate[parent][fields][1]': 'name',
     'populate[children][fields][0]': 'slug',

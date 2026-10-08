@@ -30,6 +30,7 @@ import FacilityCatalog, { type FacilityGroup } from '../../_components/FacilityC
 import {
   getMenu,
   getFacilityCatalog,
+  facilityKey,
   FACILITY_TYPES,
   FACILITY_PLURAL_AZ,
   type SiteMenu,
@@ -55,14 +56,16 @@ export default async function FacilitiesPage({ params }: { params: Promise<{ loc
   ]);
 
   const sorted = [...facilities].sort((a, b) => a.sortOrder - b.sortOrder);
+  // F5.43 — slug-ı boş obyekt ATILMIR (əvvəl 38-dən 32-si itirdi): ünvan açarı
+  // slug, yoxdursa documentId (lib/strapi.ts → facilityKey).
   const groups: FacilityGroup[] = FACILITY_TYPES.map((t) => ({
     type: t,
     label: tr(FACILITY_PLURAL_AZ[t], locale),
     items: sorted
-      .filter((f) => f.facilityType === t && f.slug)
+      .filter((f) => f.facilityType === t)
       .map((f) => ({
-        slug: f.slug,
-        href: `/${locale}/auditoriyalar/${f.slug}`,
+        slug: facilityKey(f),
+        href: `/${locale}/auditoriyalar/${facilityKey(f)}`,
         roomNumber: f.roomNumber,
         name: f.name,
         unit: f.unit?.name

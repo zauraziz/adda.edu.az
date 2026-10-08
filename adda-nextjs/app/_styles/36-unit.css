@@ -209,6 +209,16 @@ a.un-fact-v:hover { text-decoration: underline; text-underline-offset: 2px; }
 }
 .prose > * + * { margin-top: 0.9em; }
 .prose > *:first-child { margin-top: 0; }
+/* F5.43 — mətndə «## » başlığı (redaktor yazır; köçürülən səhifələrdə bir
+   pillə aşağı salınıb). Blok başlığından (.un-block-title) kiçik qalır. */
+.prose h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--navy-800);
+  line-height: 1.25;
+  margin: 1.9em 0 0.6em;
+}
 .prose h3 {
   font-family: var(--font-display);
   font-weight: 600;

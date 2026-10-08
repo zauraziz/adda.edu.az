@@ -10,11 +10,13 @@
 // (about 0/28, foto 1/23) — sahə boşdursa blok, başlıq və ayırıcı da
 // görünməməlidir, əks halda səhifə boş başlıqlar divarı olar.
 //
-// HƏR İKİ MƏNBƏ: `unit` (2025 təşkilati sxemi, beş blok) və `department`
-// (köhnə saytdan miqrasiya, yalnız ad+mətn) EYNİ ŞEYİ modelləşdirir, cəmi
-// 5 slug üst-üstə düşür. `unit` tapılarsa beş blok qurulur; tapılmasa və
-// `department` varsa köhnə sadə görünüşə (ContentPage) keçilir ki, mövcud
-// keçidlər 404 verməsin.
+// F5.43 — YALNIZ `unit`. Köhnə «2. Akademiya — Kafedra» (`department`, arxiv)
+// fallback-i silindi: eyni bölmənin ikinci (köhnə adlı, köhnə mətnli) səhifəsi
+// idi, 7 oktyabrda redaktor kafedra mətnini səhvən ora yazmışdı. Köhnə
+// department slug-ları next.config.js-də (DEPT_UNIT_MAP) bölməyə 301-dir.
+//
+// F5.43 — redaktor standart blokun başlığını dəyişə, bloku gizlədə və öz
+// başlığı ilə ƏLAVƏ blok yarada bilir (`blockSettings`, `extraBlocks`, dil üzrə).
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -47,7 +49,6 @@ import { notFound } from 'next/navigation';
 import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
-import ContentPage from '../../../_components/ContentPage';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import ExpandBlock from '../../../_components/ExpandBlock';
 import StaffReveal from '../../../_components/StaffReveal';
@@ -59,8 +60,6 @@ import { adminUrl, BlockTitle, EmptyBlock } from '../../../_components/AdminOnly
 import { DocList, DOC_CATEGORY_ORDER } from '../../../_components/DocList';
 import { unitType, unitTypeBySlug } from '@/lib/unit-type';
 import {
-  getDepartmentBySlug,
-  getDepartmentSlugs,
   getMenu,
   getUnitDetail,
   getUnitDocuments,
@@ -83,10 +82,11 @@ import {
   type StrapiMedia,
   type Article,
   type Announcement,
-  type Department,
   type OrgUnit,
   type Facility,
   type UnitProgramCard,
+  type UnitBlockKey,
+  type UnitExtraBlock,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
@@ -95,13 +95,9 @@ export const revalidate = 300;
 
 export async function generateStaticParams() {
   const out: Array<{ locale: string; slug: string }> = [];
-  // `unit` (K36) və `department` (K18) slug-larının BİRLƏŞMƏSİ — yalnız 5-i üst-üstə düşür.
   for (const locale of LOCALES) {
-    const seen = new Set<string>();
     const units = await getUnits(locale).catch(() => [] as OrgUnit[]);
-    for (const u of units) seen.add(u.slug);
-    for (const slug of await getDepartmentSlugs(locale)) seen.add(slug);
-    for (const slug of seen) out.push({ locale, slug });
+    for (const slug of new Set(units.map((u) => u.slug))) out.push({ locale, slug });
   }
   return out;
 }
@@ -113,11 +109,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [unit, dep] = await Promise.all([
-    getUnitDetail(slug, locale).catch(() => null as UnitDetail | null),
-    getDepartmentBySlug(slug, locale).catch(() => null as Department | null),
-  ]);
-  const name = unit?.name ?? dep?.name;
+  const unit = await getUnitDetail(slug, locale).catch(() => null as UnitDetail | null);
+  const name = unit?.name;
   if (!name) return { title: tr('Struktur', locale) };
   // F5.42 — əsas foto paylaşım şəkli kimi (sosial şəbəkə önizləməsi).
   const og = mediaUrl(unit?.photo);
@@ -134,6 +127,38 @@ const DEGREE_LABEL: Record<UnitProgramCard['degree'], string> = {
   phd: 'Doktorantura',
   subbachelor: 'Subbakalavr',
 };
+
+// Əsas sütunun standart blokları (render sırası ilə, bölmənin `id` ankoru).
+type TopKey =
+  | 'mission' | 'about' | 'functions' | 'services' | 'programs' | 'results'
+  | 'strategy' | 'gallery' | 'links' | 'vacancies' | 'faq' | 'news';
+// F5.43 — Strapi `unit.block-setting.block` açarı (admin dilində, ASCII).
+const TOP_BLOCK: Record<TopKey, UnitBlockKey> = {
+  mission: 'missiya',
+  about: 'haqqinda',
+  functions: 'fealiyyet_sahesi',
+  services: 'xidmetler',
+  programs: 'ixtisaslar',
+  results: 'gorulmus_isler',
+  strategy: 'strateji_hedefler',
+  gallery: 'foto_qalereya',
+  links: 'faydali_linkler',
+  vacancies: 'vakansiyalar',
+  faq: 'suallar',
+  news: 'xeberler',
+};
+// F5.43 — əlavə blokun yeri: standart blokdan sonra, fotodan dərhal sonra və ya sonda.
+type ExtraSlot = Exclude<TopKey, 'news'> | 'basda' | 'sonda';
+const EXTRA_AFTER: Record<string, ExtraSlot> = {
+  basda: 'basda',
+  sonda: 'sonda',
+  ...Object.fromEntries(
+    (Object.entries(TOP_BLOCK) as [TopKey, UnitBlockKey][])
+      .filter(([k]) => k !== 'news')
+      .map(([k, v]) => [v, k as ExtraSlot]),
+  ),
+};
+const extraSlot = (after: UnitExtraBlock['after']): ExtraSlot => EXTRA_AFTER[after ?? 'sonda'] ?? 'sonda';
 
 // F4.11c — `receptionSlots` həftə sırası (bax unit/reception-slot.json enum-u,
 // EYNİ sıra). Əlifba ilə YOX — "Şənbə" (Ə-dən sonra) əlifba sırasında sona
@@ -316,64 +341,12 @@ export default async function UnitPage({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
 
-  const [unit, dep, menu] = await Promise.all([
+  const [unit, menu] = await Promise.all([
     getUnitDetail(slug, locale).catch(() => null as UnitDetail | null),
-    getDepartmentBySlug(slug, locale).catch(() => null as Department | null),
     getMenu(locale).catch(() => null as SiteMenu | null),
   ]);
 
-  if (!unit && !dep) notFound();
-
-  // ── `department`-yalnız fallback: köhnə sadə görünüş, dağıtmır ──
-  if (!unit) {
-    const d = dep as Department;
-    const correctionLabels: Record<string, string> = {
-      promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
-      prompt: tr('Düzəliş təklif et', locale),
-      title: tr('Düzəliş təklifi', locale),
-      subtitle: tr('Səhv gördünüzsə bizə bildirin.', locale),
-      fieldLabel: tr('Hansı sahə?', locale),
-      f_title: tr('Başlıq', locale),
-      f_body: tr('Mətn', locale),
-      f_other: tr('Digər', locale),
-      currentLabel: tr('Cari mətn', locale),
-      currentHint: tr('Düzəliş lazım olan hissəni bura köçürün', locale),
-      suggestedLabel: tr('Təklif etdiyiniz düzəliş', locale),
-      suggestedHint: tr('Düzgün variant', locale),
-      diffLabel: tr('Fərq önizləməsi', locale),
-      reasonLabel: tr('Səbəb (istəyə bağlı)', locale),
-      submit: tr('Düzəlişi göndər', locale),
-      sending: tr('Göndərilir', locale),
-      successMsg: tr('Təklifiniz göndərildi. Töhfəniz üçün təşəkkür edirik.', locale),
-      successSub: tr('Redaktə komandamız qısa zamanda yoxlayacaq.', locale),
-      emptyErr: tr('Zəhmət olmasa düzəliş mətnini daxil edin.', locale),
-      close: tr('Bağla', locale),
-      error: tr('Uğursuz əməliyyat', locale),
-      verified: tr('Təsdiqlənmiş', locale),
-      gateCorrection: tr('Düzəliş göndərmək üçün kimlik təsdiqi lazımdır', locale),
-      verifyHeading: tr('Kimliyinizi təsdiqləyin', locale),
-      verifyIntro: tr('E-poçtunuza bir dəfəlik giriş linki göndərəcəyik. Parol lazım deyil.', locale),
-      emailPlaceholder: tr('Email ünvanınız', locale),
-      sendLink: tr('Giriş linki göndər', locale),
-      linkSent: tr('Link göndərildi', locale),
-      checkInbox: tr('Poçt qutunuzu yoxlayın. Link 15 dəqiqə etibarlıdır.', locale),
-      otherAddress: tr('Başqa ünvan yaz', locale),
-      badEmail: tr('Düzgün e-poçt ünvanı daxil edin.', locale),
-      tooMany: tr('Çox sayda cəhd. Bir az sonra yenidən yoxlayın.', locale),
-      unconfigured: tr('Kimlik xidməti hazırda əlçatan deyil.', locale),
-      mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
-    };
-    return (
-      <ContentPage
-        locale={locale}
-        menu={menu}
-        kicker={tr('Struktur', locale)}
-        title={d.name}
-        body={d.about}
-        correction={{ targetType: 'general', targetSlug: slug, labels: correctionLabels }}
-      />
-    );
-  }
+  if (!unit) notFound();
 
   // ── `unit` — F5.42: ixtisas səhifəsinin quruluşu ──
   // Fakt zolağı · əsas foto · hər bölmə öz AÇIQ `<section id>`-i (akkordeon
@@ -389,9 +362,11 @@ export default async function UnitPage({
     getUnitAnnouncements(unit.slug, locale, 6),
     getUnitFacilities(unit.slug, locale).catch(() => [] as Facility[]),
     // Kafedra/kollec: öz ixtisasları; fakültə: alt kafedralarınkı + köhnə
-    // `program.faculty` əlaqəsi (slug eynidir, F5.6).
+    // `program.faculty` əlaqəsi (slug eynidir, F5.6). F5.43: alt bölmələrin
+    // ixtisasları YALNIZ fakültədə — rektorun alt bölməsi kollecdir və
+    // /struktur/rektor kollecin ixtisaslarını göstərirdi.
     getUnitPrograms(
-      [unit.slug, ...unit.children.map((c) => c.slug)],
+      isFaculty ? [unit.slug, ...unit.children.map((c) => c.slug)] : [unit.slug],
       isFaculty ? unit.slug : null,
       locale,
     ).catch(() => [] as UnitProgramCard[]),
@@ -455,58 +430,99 @@ export default async function UnitPage({
   const unitT = unitType(unit.name);
   const typeBySlug = unitTypeBySlug(unit.slug);
   const parentIsFaculty = Boolean(unit.parent?.slug.endsWith('-fakultesi'));
-  const blockTitleAbout = unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale);
-  const blockTitleMission = unitT ? `${unitT.gen} ${tr('missiyası', locale)}` : tr('Missiya', locale);
-  const blockTitleFunctions = tr('Fəaliyyət sahəsi', locale);
-  const blockTitleServices = tr('Xidmətlər', locale);
-  const blockTitlePrograms = tr('İxtisaslar', locale);
-  const blockTitleResults = tr('Görülmüş işlər və nəticələr', locale);
-  const blockTitleStrategy = tr('Strateji hədəflər üzrə öhdəliklər', locale);
-  const blockTitleGallery = tr('Foto qalereya', locale);
-  const blockTitleLinks = tr('Faydalı linklər', locale);
-  const blockTitleVacancies = tr('Vakansiyalar', locale);
-  const blockTitleFaq = tr('Tez-tez verilən suallar', locale);
-  const blockTitleNews = tr('Əlaqəli xəbərlər', locale);
+
+  // F5.43 — redaktorun blok ayarları (dil üzrə): yeni başlıq və ya gizlətmə.
+  // Eyni blok iki dəfə yazılıbsa sonuncu keçərlidir.
+  const blockCfg = new Map<UnitBlockKey, { title: string; hidden: boolean }>();
+  for (const b of unit.blockSettings ?? []) {
+    if (b?.block) blockCfg.set(b.block, { title: (b.title ?? '').trim(), hidden: Boolean(b.hidden) });
+  }
+  const titleOf = (key: UnitBlockKey, standard: string): string => blockCfg.get(key)?.title || standard;
+  const isHidden = (key: UnitBlockKey): boolean => Boolean(blockCfg.get(key)?.hidden);
+
+  const blockTitleAbout = titleOf('haqqinda', unitT ? `${unitT.nom} ${tr('haqqında', locale)}` : tr('Haqqında', locale));
+  const blockTitleMission = titleOf('missiya', unitT ? `${unitT.gen} ${tr('missiyası', locale)}` : tr('Missiya', locale));
+  const blockTitleFunctions = titleOf('fealiyyet_sahesi', tr('Fəaliyyət sahəsi', locale));
+  const blockTitleServices = titleOf('xidmetler', tr('Xidmətlər', locale));
+  const blockTitlePrograms = titleOf('ixtisaslar', tr('İxtisaslar', locale));
+  const blockTitleResults = titleOf('gorulmus_isler', tr('Görülmüş işlər və nəticələr', locale));
+  const blockTitleStrategy = titleOf('strateji_hedefler', tr('Strateji hədəflər üzrə öhdəliklər', locale));
+  const blockTitleGallery = titleOf('foto_qalereya', tr('Foto qalereya', locale));
+  const blockTitleLinks = titleOf('faydali_linkler', tr('Faydalı linklər', locale));
+  const blockTitleVacancies = titleOf('vakansiyalar', tr('Vakansiyalar', locale));
+  const blockTitleFaq = titleOf('suallar', tr('Tez-tez verilən suallar', locale));
+  const blockTitleNews = titleOf('xeberler', tr('Əlaqəli xəbərlər', locale));
   const blockTitleFacilities = tr('Auditoriya və laboratoriyalar', locale);
+  const blockTitleStaff = titleOf('heyet', tr('Heyət', locale));
+  const blockTitleSubunits = titleOf('alt_bolmeler', tr(subunitsAreKafedras ? 'Kafedralar' : 'Alt bölmələr', locale));
+  const staffShown = isHidden('heyet') ? [] : staffList;
+  const subunitsShown = isHidden('alt_bolmeler') ? [] : subunits;
 
   // Sıra ixtisas səhifəsinin məntiqi ilə: nədir → nə edir → hansı ixtisaslar →
   // nəticələr → görüntülər → faydalı məlumat → xəbərlər. `editable` — bölmə
   // qeydinin öz sahəsi (admin «boş blok» göstərir); «İxtisaslar» proqramlardan gəlir.
-  type TopKey =
-    | 'mission' | 'about' | 'functions' | 'services' | 'programs' | 'results'
-    | 'strategy' | 'gallery' | 'links' | 'vacancies' | 'faq' | 'news';
-  const sections: { id: TopKey; has: boolean; title: string; editable: boolean }[] = [
-    { id: 'mission', has: Boolean(unit.mission), title: blockTitleMission, editable: true },
-    { id: 'about', has: Boolean(unit.about), title: blockTitleAbout, editable: true },
-    { id: 'functions', has: Boolean(unit.functions), title: blockTitleFunctions, editable: true },
-    { id: 'services', has: Boolean(unit.services), title: blockTitleServices, editable: true },
-    { id: 'programs', has: programs.length > 0, title: blockTitlePrograms, editable: false },
-    { id: 'results', has: Boolean(unit.results || hesabat.length), title: blockTitleResults, editable: true },
-    { id: 'strategy', has: Boolean(unit.strategy), title: blockTitleStrategy, editable: true },
-    { id: 'gallery', has: gallery.length > 0, title: blockTitleGallery, editable: true },
-    { id: 'links', has: unit.links.length > 0, title: blockTitleLinks, editable: true },
-    { id: 'vacancies', has: unit.vacancies.length > 0, title: blockTitleVacancies, editable: true },
-    { id: 'faq', has: unit.faq.length > 0, title: blockTitleFaq, editable: true },
-    { id: 'news', has: Boolean(articles.length || announcements.length), title: blockTitleNews, editable: true },
-  ];
+  // Gizlədilən blok göstərilmir, adminə də boş blok kimi təklif olunmur.
+  const sections = (
+    [
+      { id: 'mission', content: Boolean(unit.mission), title: blockTitleMission, editable: true },
+      { id: 'about', content: Boolean(unit.about), title: blockTitleAbout, editable: true },
+      { id: 'functions', content: Boolean(unit.functions), title: blockTitleFunctions, editable: true },
+      { id: 'services', content: Boolean(unit.services), title: blockTitleServices, editable: true },
+      { id: 'programs', content: programs.length > 0, title: blockTitlePrograms, editable: false },
+      { id: 'results', content: Boolean(unit.results || hesabat.length), title: blockTitleResults, editable: true },
+      { id: 'strategy', content: Boolean(unit.strategy), title: blockTitleStrategy, editable: true },
+      { id: 'gallery', content: gallery.length > 0, title: blockTitleGallery, editable: true },
+      { id: 'links', content: unit.links.length > 0, title: blockTitleLinks, editable: true },
+      { id: 'vacancies', content: unit.vacancies.length > 0, title: blockTitleVacancies, editable: true },
+      { id: 'faq', content: unit.faq.length > 0, title: blockTitleFaq, editable: true },
+      { id: 'news', content: Boolean(articles.length || announcements.length), title: blockTitleNews, editable: true },
+    ] as { id: TopKey; content: boolean; title: string; editable: boolean }[]
+  ).map((s) => {
+    const hidden = isHidden(TOP_BLOCK[s.id]);
+    return { ...s, hidden, has: s.content && !hidden };
+  });
   const has = Object.fromEntries(sections.map((s) => [s.id, s.has])) as Record<TopKey, boolean>;
-  const fieldStatus = sections.filter((s) => s.editable);
+
+  // F5.43 — əlavə bloklar: öz başlığı + mətni, seçilmiş standart blokdan sonra
+  // (blok boş və ya gizli olsa da yeri eynidir). Mətnsiz blok göstərilmir.
+  const extras: { id: string; title: string; html: string; after: ExtraSlot }[] = [];
+  for (const [i, e] of (unit.extraBlocks ?? []).entries()) {
+    const title = (e?.title ?? '').trim();
+    const body = (e?.body ?? '').trim();
+    if (!title || !body) continue;
+    extras.push({ id: `elave-${i + 1}`, title, html: await marked.parse(body), after: extraSlot(e.after) });
+  }
+  const extrasAt = (slot: ExtraSlot) => extras.filter((x) => x.after === slot);
+
+  const fieldStatus = sections.filter((s) => s.editable && !s.hidden);
   const openBlockCount = fieldStatus.filter((f) => f.has).length + (photoUrl ? 1 : 0);
   const closedBlockTitles = [
     ...(photoUrl ? [] : [tr('Əsas foto', locale)]),
     ...fieldStatus.filter((f) => !f.has).map((f) => f.title),
   ];
-  // Mündəricat YALNIZ faktiki render olunan bölmələri sadalayır.
-  const tocItems = sections.filter((s) => s.has).map((s) => ({ id: s.id, label: s.title }));
-  // Ağ/boz ritm — ixtisas səhifəsi kimi, yalnız görünən bölmələr üzrə.
-  let tintCursor = 0;
-  const tintByKey = {} as Record<TopKey, boolean>;
+  const hiddenBlockTitles = [
+    ...sections.filter((s) => s.hidden).map((s) => s.title),
+    ...(isHidden('heyet') ? [blockTitleStaff] : []),
+    ...(isHidden('alt_bolmeler') ? [blockTitleSubunits] : []),
+  ];
+  // Mündəricat YALNIZ faktiki render olunan bölmələri, render sırası ilə sadalayır.
+  const ordered: { id: string; label: string }[] = [];
+  const pushExtras = (slot: ExtraSlot) => {
+    for (const x of extrasAt(slot)) ordered.push({ id: x.id, label: x.title });
+  };
+  pushExtras('basda');
   for (const s of sections) {
-    if (!s.has) continue;
-    tintByKey[s.id] = tintCursor % 2 === 1;
-    tintCursor++;
+    if (s.has) ordered.push({ id: s.id, label: s.title });
+    if (s.id !== 'news') pushExtras(s.id);
   }
-  const blockClass = (key: TopKey) => 'un-block pr-anchor' + (tintByKey[key] ? ' un-block--tint' : '');
+  pushExtras('sonda');
+  const tocItems = ordered;
+  // Ağ/boz ritm — ixtisas səhifəsi kimi, yalnız görünən bölmələr üzrə.
+  const tintByKey: Record<string, boolean> = {};
+  ordered.forEach((o, i) => {
+    tintByKey[o.id] = i % 2 === 1;
+  });
+  const blockClass = (key: string) => 'un-block pr-anchor' + (tintByKey[key] ? ' un-block--tint' : '');
 
   // Yan panel: mündəricat · üst bölmə · rəhbər · heyət · əlaqə · qəbul saatları ·
   // auditoriyalar · onlayn xidmətlər · sənədlər · düzəliş. Heç biri yoxdursa
@@ -514,7 +530,7 @@ export default async function UnitPage({
   const sideHas = Boolean(
     tocItems.length ||
       unit.head ||
-      staffList.length ||
+      staffShown.length ||
       facilities.length ||
       contactHas ||
       receptionRows.length ||
@@ -528,7 +544,7 @@ export default async function UnitPage({
   // kafedra/alt bölmə · heyət · otaq · daxili telefon · qəbul saatları.
   // Uydurma metrika yoxdur, YALNIZ mövcud dəyərlər.
   const factsHas = Boolean(
-    parentIsFaculty || programs.length || subunits.length || staff.length || unit.room || unit.phoneExt || unit.receptionHours,
+    parentIsFaculty || has.programs || subunitsShown.length || staffShown.length || unit.room || unit.phoneExt || unit.receptionHours,
   );
 
   const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
@@ -541,7 +557,7 @@ export default async function UnitPage({
 
   const subunitHeadBySlug = new Map(allUnits.map((u) => [u.slug, u.head ?? null]));
   const subunitStaffCounts = await Promise.all(
-    subunits.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
+    subunitsShown.map((c) => getUnitStaff(c.slug, c.name).then((s) => s.length).catch(() => 0)),
   );
 
   const correctionLabels: Record<string, string> = {
@@ -581,11 +597,20 @@ export default async function UnitPage({
     mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
   };
 
-  const empty = (id: TopKey, title: string) => (
-    <AdminOnly>
-      <EmptyBlock uid="api::unit.unit" title={title} documentId={unit.documentId} locale={locale} tint={Boolean(tintByKey[id])} />
-    </AdminOnly>
-  );
+  const empty = (id: TopKey, title: string) =>
+    isHidden(TOP_BLOCK[id]) ? null : (
+      <AdminOnly>
+        <EmptyBlock uid="api::unit.unit" title={title} documentId={unit.documentId} locale={locale} tint={Boolean(tintByKey[id])} />
+      </AdminOnly>
+    );
+  // F5.43 — əlavə bloklar həmin yerdə (blok başlığı adminə redaktə keçidi verir).
+  const renderExtras = (slot: ExtraSlot) =>
+    extrasAt(slot).map((x) => (
+      <section key={x.id} id={x.id} className={blockClass(x.id)}>
+        <BlockTitle uid="api::unit.unit" title={x.title} documentId={unit.documentId} locale={locale} />
+        <div className="prose" dangerouslySetInnerHTML={{ __html: x.html }} />
+      </section>
+    ));
 
   return (
     <>
@@ -618,21 +643,21 @@ export default async function UnitPage({
                     </Link>
                   </li>
                 ) : null}
-                {programs.length ? (
+                {has.programs ? (
                   <li className="un-fact">
                     <i className="ti ti-school" aria-hidden="true" />
                     <span className="un-fact-k">{tr('İxtisas', locale)}</span>
                     <a href="#programs" className="un-fact-v">{programs.length}</a>
                   </li>
                 ) : null}
-                {subunits.length ? (
+                {subunitsShown.length ? (
                   <li className="un-fact">
                     <i className="ti ti-sitemap" aria-hidden="true" />
                     <span className="un-fact-k">{tr(subunitsAreKafedras ? 'Kafedra' : 'Alt bölmə', locale)}</span>
-                    <span className="un-fact-v">{subunits.length}</span>
+                    <span className="un-fact-v">{subunitsShown.length}</span>
                   </li>
                 ) : null}
-                {staff.length ? (
+                {staff.length && !isHidden('heyet') ? (
                   <li className="un-fact">
                     <i className="ti ti-users" aria-hidden="true" />
                     <span className="un-fact-k">{tr('Heyət', locale)}</span>
@@ -676,6 +701,8 @@ export default async function UnitPage({
             <div className="un-admin-status">
               {tr('Bloklar', locale)}: {openBlockCount}/{fieldStatus.length + 1}
               {closedBlockTitles.length ? ' · ' + tr('boş', locale) + ': ' + closedBlockTitles.join(', ') : ''}
+              {hiddenBlockTitles.length ? ' · ' + tr('gizli', locale) + ': ' + hiddenBlockTitles.join(', ') : ''}
+              {extras.length ? ' · ' + tr('əlavə', locale) + ': ' + extras.length : ''}
             </div>
           </AdminOnly>
 
@@ -691,6 +718,7 @@ export default async function UnitPage({
                   <EmptyBlock uid="api::unit.unit" title={tr('Əsas foto', locale)} documentId={unit.documentId} locale={locale} tint={false} />
                 </AdminOnly>
               )}
+              {renderExtras('basda')}
 
               {has.mission ? (
                 <section id="mission" className={blockClass('mission')}>
@@ -700,6 +728,7 @@ export default async function UnitPage({
               ) : (
                 empty('mission', blockTitleMission)
               )}
+              {renderExtras('mission')}
 
               {has.about ? (
                 <section id="about" className={blockClass('about')}>
@@ -709,6 +738,7 @@ export default async function UnitPage({
               ) : (
                 empty('about', blockTitleAbout)
               )}
+              {renderExtras('about')}
 
               {has.functions ? (
                 <section id="functions" className={blockClass('functions')}>
@@ -722,6 +752,7 @@ export default async function UnitPage({
               ) : (
                 empty('functions', blockTitleFunctions)
               )}
+              {renderExtras('functions')}
 
               {has.services ? (
                 <section id="services" className={blockClass('services')}>
@@ -735,6 +766,7 @@ export default async function UnitPage({
               ) : (
                 empty('services', blockTitleServices)
               )}
+              {renderExtras('services')}
 
               {/* F5.42 — kafedranın/fakültənin ixtisasları: ixtisas səhifəsindəki
                   «Digər ixtisaslar» ilə EYNİ kart (.np-grid/.np-card, 19-news-page.css). */}
@@ -759,6 +791,7 @@ export default async function UnitPage({
                   </div>
                 </section>
               ) : null}
+              {renderExtras('programs')}
 
               {has.results ? (
                 <section id="results" className={blockClass('results')}>
@@ -774,6 +807,7 @@ export default async function UnitPage({
               ) : (
                 empty('results', blockTitleResults)
               )}
+              {renderExtras('results')}
 
               {has.strategy ? (
                 <section id="strategy" className={blockClass('strategy')}>
@@ -783,6 +817,7 @@ export default async function UnitPage({
               ) : (
                 empty('strategy', blockTitleStrategy)
               )}
+              {renderExtras('strategy')}
 
               {/* F5.42 — qalereya: xəbər/auditoriya qalereyası ilə eyni ada
                   (GalleryIsland), başlığı bu blokdandır (bare). */}
@@ -794,6 +829,7 @@ export default async function UnitPage({
               ) : (
                 empty('gallery', blockTitleGallery)
               )}
+              {renderExtras('gallery')}
 
               {has.links ? (
                 <section id="links" className={blockClass('links')}>
@@ -810,6 +846,7 @@ export default async function UnitPage({
               ) : (
                 empty('links', blockTitleLinks)
               )}
+              {renderExtras('links')}
 
               {has.vacancies ? (
                 <section id="vacancies" className={blockClass('vacancies')}>
@@ -826,6 +863,7 @@ export default async function UnitPage({
               ) : (
                 empty('vacancies', blockTitleVacancies)
               )}
+              {renderExtras('vacancies')}
 
               {has.faq ? (
                 <section id="faq" className={blockClass('faq')}>
@@ -841,6 +879,7 @@ export default async function UnitPage({
               ) : (
                 empty('faq', blockTitleFaq)
               )}
+              {renderExtras('faq')}
 
               {/* F4.6e — xəbər şəkilli (kiçik üz qabığı), elan qısa/tarixli. */}
               {has.news ? (
@@ -881,6 +920,7 @@ export default async function UnitPage({
               ) : (
                 empty('news', blockTitleNews)
               )}
+              {renderExtras('sonda')}
 
               <AdminOnly>
                 <div className="un-block" style={{ paddingTop: 0 }}>
@@ -911,18 +951,18 @@ export default async function UnitPage({
                 {unit.head ? <LeaderCard head={unit.head} locale={locale} /> : null}
 
                 {/* F4.9a — heyət: ilk 6-dan sonrakılar «Hamısı (N)» arxasında (StaffReveal). */}
-                {staffList.length ? (
+                {staffShown.length ? (
                   <div>
-                    <div className="un-sub-title">{tr('Heyət', locale)}</div>
+                    <div className="un-sub-title">{blockTitleStaff}</div>
                     <ul className="un-staff-mini-list">
-                      {staffList.slice(0, 6).map((p) => (
+                      {staffShown.slice(0, 6).map((p) => (
                         <StaffMiniRow key={p.documentId} p={p} unitName={unit.name} locale={locale} />
                       ))}
                     </ul>
-                    {staffList.length > 6 ? (
-                      <StaffReveal moreLabel={`${tr('Hamısı', locale)} (${staffList.length})`}>
+                    {staffShown.length > 6 ? (
+                      <StaffReveal moreLabel={`${tr('Hamısı', locale)} (${staffShown.length})`}>
                         <ul className="un-staff-mini-list">
-                          {staffList.slice(6).map((p) => (
+                          {staffShown.slice(6).map((p) => (
                             <StaffMiniRow key={p.documentId} p={p} unitName={unit.name} locale={locale} />
                           ))}
                         </ul>
@@ -1021,7 +1061,7 @@ export default async function UnitPage({
                           <ul className="un-fac-side-list">
                             {g.items.map((f) => (
                               <li key={f.documentId}>
-                                <Link href={`/${locale}/auditoriyalar/${f.slug}`}>
+                                <Link href={`/${locale}/auditoriyalar/${f.slug || f.documentId}`}>
                                   {f.roomNumber ? `${f.roomNumber} · ` : ''}
                                   {f.name}
                                 </Link>
@@ -1068,11 +1108,11 @@ export default async function UnitPage({
           </div>
 
           {/* F4.5c — alt bölmələr səhifənin sonunda öz kart cərgəsində (ad + rəhbər + heyət sayı). */}
-          {subunits.length ? (
+          {subunitsShown.length ? (
             <section className="un-subunits">
-              <h2 className="un-block-title">{tr(subunitsAreKafedras ? 'Kafedralar' : 'Alt bölmələr', locale)}</h2>
+              <h2 className="un-block-title">{blockTitleSubunits}</h2>
               <ul className="un-subunit-grid">
-                {subunits.map((c, i) => {
+                {subunitsShown.map((c, i) => {
                   const h = subunitHeadBySlug.get(c.slug);
                   const n = subunitStaffCounts[i] ?? 0;
                   return (

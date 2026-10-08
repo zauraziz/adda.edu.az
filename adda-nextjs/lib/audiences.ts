@@ -193,7 +193,7 @@ export const AUDIENCES: Audience[] = [
     steps: [
       { label: 'Profilim', href: '/profil', note: 'Öz məlumatlarını özün yenilə' },
       { label: 'Professor-müəllim heyəti', href: '/heyet/professor-muellim', note: 'Bütün kafedralar üzrə siyahı' },
-      { label: 'Elmi Şura', href: '/sehife/elmi-sura', note: 'Tərkib və iclas qaydaları' },
+      { label: 'Elmi Şura', href: '/struktur/elmi-sura', note: 'Tərkib və iclas qaydaları' },
     ],
     groups: [
       {
@@ -216,7 +216,7 @@ export const AUDIENCES: Audience[] = [
       {
         title: 'Elmi fəaliyyət',
         links: [
-          { label: 'Elmi Şura', href: '/sehife/elmi-sura' },
+          { label: 'Elmi Şura', href: '/struktur/elmi-sura' },
           { label: 'Elmi-tədqiqat fəaliyyəti', href: '/sehife/elmi-tedqiqat-fealiyyeti' },
           { label: 'Elmi-tədqiqat laboratoriyaları', href: '/sehife/elmi-tedqiqat-laboratoriyalari' },
           { label: 'Elmi jurnal', href: '/sehife/elmi-jurnal' },

@@ -23,6 +23,8 @@ export const SEARCH_ROUTES: Record<string, string> = {
   event: 'tedbirler',
   page: 'sehife',
   department: 'struktur',
+  // F5.43 — kafedra, şöbə, mərkəz (struktur bölmə); köhnə `department` arxivdir.
+  unit: 'struktur',
   program: 'ixtisaslar',
   // F5.41 — fakültənin səhifəsi struktur bölmədir (slug eyni); Strapi
   // site-search «faculty» nəticəsini də bölmələrdən verir.
@@ -45,6 +47,7 @@ export const SEARCH_UI: Record<Locale, SearchUi> = {
       program: 'İxtisas',
       page: 'Səhifə',
       department: 'Struktur',
+      unit: 'Struktur',
       faculty: 'Fakültə',
     },
     empty: 'Nəticə tapılmadı',
@@ -60,6 +63,7 @@ export const SEARCH_UI: Record<Locale, SearchUi> = {
       program: 'Специальность',
       page: 'Страница',
       department: 'Структура',
+      unit: 'Структура',
       faculty: 'Факультет',
     },
     empty: 'Ничего не найдено',
@@ -75,6 +79,7 @@ export const SEARCH_UI: Record<Locale, SearchUi> = {
       program: 'Programme',
       page: 'Page',
       department: 'Structure',
+      unit: 'Structure',
       faculty: 'Faculty',
     },
     empty: 'No results found',
