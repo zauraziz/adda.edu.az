@@ -185,9 +185,10 @@ qorunur:
 **İş qaydası:** `FLAG=true` → deploy → **logu yoxla** → **flagı SİL**.
 
 Bir dəfəlik, admin məzmununu əzməyən yeniləmələr (F5.38+) bayraqsız işləyir:
-plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v1`,
-`editorRole:v1`, `tehsilMenu:v2`) + mövcud vəziyyətin yoxlanması. Marker
-silinmədən təkrar işləmir.
+plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v2`,
+`editorRole:v1`, `tehsilMenu:v2`, `facultyUnits:v1`, `admissionScores:v1`,
+`unitMedia:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+işləmir.
 
 > Flag silinməyəndə hər boot-da yenidən işləyir. Bir dəfə `HEAD_RESEED` +
 > `KAFEDRA_RESEED` unudulub və boot 220 saniyəyə çıxıb.
@@ -415,7 +416,13 @@ olunur. Çevirmə kimdə?
    (`/sehife/umumi-isler-uzre-prorektor`, `check:menu` bax)
 7. Meilisearch plugini `package.json`-dan çıxarılmalıdır (boot-da xəta yazır)
 8. F2.7 RAG co-pilot — məzmun boşluqları dolandan sonra
-9. **F5.20a — qəbul balı sahələri əl ilə düzəldilməlidir.** `admission-score`
+9. **F5.20a — qəbul balı (F5.42-də HƏLL OLUNUB, aşağıdakı tarixçədir).**
+   F5.42: 700-dən böyük bal vergüllü onluq sayılır və 10-a bölünür — həm
+   yazılanda (`registerScoreNormalizer`, document middleware), həm bazada
+   bir dəfə (`admissionScores:v1`, `src/utils/admission-scores.ts`).
+   Admində «227,6» də, «227.6» də düzgün saxlanır. Saytda bal `fmtScore`
+   ilə (lib/format.ts): az/ru vergül, en nöqtə. Köhnə qeyd:
+   **qəbul balı sahələri əl ilə düzəldilməlidir.** `admission-score`
    komponentində `minScorePaid`/`minScoreFree` `integer` → `decimal` dəyişdi,
    AMMA mövcud korlanmış dəyərlər (onluq nöqtəsi/vergülü admin paneldə
    itib, "370,5" → "3705" kimi yazılıb) AVTOMATIK DÜZƏLMİR. Deploy edildikdən
@@ -462,6 +469,18 @@ olunur. Çevirmə kimdə?
    fakültə mətni (təmizlənmiş), `faculty:<slug>` təyinatları → `unit:<slug>`,
    kopilot parçalarının ünvanı. Açıq qalan: kopilot fakültəni hələ arxiv
    qeydindən oxuyur (`rag/lib/chunk.ts`) — bölmələr kopilot mənbəyi deyil.
+13. **F5.42 — bölmə səhifəsi ixtisas səhifəsi quruluşundadır**
+   (`struktur/[slug]`): fakt zolağı (kafedrada «Fakültə» keçidi, «İxtisas»
+   sayı), əsas foto, hər sahə öz açıq `<section id>`-i + mündəricat
+   (`ProgramToc`, mobil + yan panel), «İxtisaslar» kartları
+   (`getUnitPrograms`: `program.unit` = bölmə və ya alt bölmələri;
+   fakültədə + köhnə `program.faculty`), qalereya (`GalleryIsland bare`).
+   F4.10-un akkordeon qrupu LƏĞV EDİLİB. Sxem: `unit.photo` (tək) və
+   `unit.gallery` (çox), dillər üzrə eyni; admin formasında «Haqqında»-dan
+   sonra (`unitMedia:v1`). Yuxarı sətir tipi slug-dandır (`unitTypeBySlug`,
+   bütün dillərdə). İxtisas fakt zolağında `highlights` təkrarı atılır
+   («təhsil müddəti», «ECTS krediti», «təhsil forması»), «kredit X» etiketi
+   «X: N kredit» olur (`factHighlights`) — məlumat Strapi-də dəyişmir.
 
 ---
 
