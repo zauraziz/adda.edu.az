@@ -18,6 +18,8 @@ import { placeUnitMediaFields } from './utils/unit-media';
 import { applyFacilitySlugsV1, facilitySlug, registerFacilitySlugFill } from './utils/facility-slugs';
 import { applyDedupeV1 } from './utils/dedupe';
 import { placeUnitBlockFields } from './utils/unit-blocks';
+// F5.44 — «Qəbul» menyusunun yeni quruluşu (bax src/utils/menu-qebul.ts).
+import { applyQebulMenuV1 } from './utils/menu-qebul';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -333,22 +335,18 @@ const SEED = {
       {
         "label": "Qəbul",
         "order": 2,
-        "url": "#",
+        "url": "/bunlar-ucun/abituriyentler",
         "groups": [
           {
-            "title": "Akademik səviyyələr üzrə qəbul",
+            "title": "Pillələr üzrə qəbul",
             "links": [
+              {
+                "label": "Subbakalavr (kollec)",
+                "url": "/ixtisaslar?tab=subbakalavr"
+              },
               {
                 "label": "Bakalavriat",
                 "url": "/sehife/bakalavriat"
-              },
-              {
-                "label": "Subbakalavr",
-                "url": "/hazirlanir/subbakalavr"
-              },
-              {
-                "label": "Əcnəbi tələbələr",
-                "url": "/sehife/ecnebi-telebelerin-tehsili"
               },
               {
                 "label": "Magistratura",
@@ -357,65 +355,53 @@ const SEED = {
               {
                 "label": "Doktorantura",
                 "url": "/sehife/doktorantura"
-              }
-            ]
-          },
-          {
-            "title": "Əlavə təhsil",
-            "links": [
+              },
               {
                 "label": "Təkrar ali təhsil",
-                "url": "/hazirlanir/tekrar-ali-tehsil"
-              },
-              {
-                "label": "İxtisasartırma",
-                "url": "/sehife/xaricde-tehsil-ve-ixtisasartirma"
-              },
-              {
-                "label": "Təkmilləşdirmə",
-                "url": "/hazirlanir/tekmillesdirme"
-              },
-              {
-                "label": "Sertifikatlar",
-                "url": "#"
+                "url": "/ixtisaslar?tab=tekrar_ali"
               }
             ]
           },
           {
-            "title": "Əcnəbi tələbə qəbulu",
+            "title": "İxtisas seçimi",
             "links": [
               {
-                "label": "Əcnəbi tələbələrin qəbulu",
+                "label": "Keçid balları, yer sayı və haqq",
+                "url": "/ixtisaslar"
+              },
+              {
+                "label": "Məzunların işlə təminatı",
+                "url": "/sehife/mezunlarin-isle-teminati"
+              },
+              {
+                "label": "Yataqxana",
+                "url": "/sehife/yataqxana"
+              }
+            ]
+          },
+          {
+            "title": "Əcnəbi vətəndaşlar",
+            "links": [
+              {
+                "label": "Qəbul qaydaları və təhsil haqqı",
                 "url": "/sehife/ecnebi-telebelerin-qebulu-qaydalari"
               },
               {
-                "label": "Viza və miqrasiya dəstəyi",
-                "url": "/hazirlanir/viza-ve-miqrasiya-desteyi"
+                "label": "İngilis dilində tədris",
+                "url": "/ixtisaslar?dil=en"
               }
             ]
           },
           {
-            "title": "Faydalı məlumatlar və keçidlər",
+            "title": "Tanışlıq və əlaqə",
             "links": [
               {
-                "label": "Qeydiyyat xidməti",
-                "url": "/hazirlanir/qeydiyyat-xidmeti"
+                "label": "Valideynlər",
+                "url": "/bunlar-ucun/valideynler"
               },
               {
-                "label": "Təhsil haqqı və güzəştlər",
-                "url": "/hazirlanir/tehsil-haqqi-ve-guzestler"
-              },
-              {
-                "label": "Onlayn qeydiyyat",
-                "url": "/hazirlanir/onlayn-qeydiyyat"
-              },
-              {
-                "label": "Açıq qapı günləri",
-                "url": "/hazirlanir/aciq-qapi-gunleri"
-              },
-              {
-                "label": "Faydalı linklər",
-                "url": "/sehife/faydali-linkler"
+                "label": "Əlaqə",
+                "url": "/elaqe"
               }
             ]
           }
@@ -1139,12 +1125,12 @@ const SEED = {
             "url": "/sehife/magistratura"
           },
           {
-            "label": "Onlayn müraciət",
-            "url": "#"
+            "label": "Keçid balları, yer sayı və haqq",
+            "url": "/ixtisaslar"
           },
           {
-            "label": "Qəbul şərtləri",
-            "url": "/hazirlanir/qebul-sertleri"
+            "label": "Əcnəbi vətəndaşlar",
+            "url": "/sehife/ecnebi-telebelerin-qebulu-qaydalari"
           }
         ]
       },
@@ -2188,7 +2174,7 @@ export default {
     }
     // F5.40 — «Təhsil» menyusunun yeni quruluşu, BİR DƏFƏ və yalnız köhnə quruluşda
     // olanda (bax src/utils/menu-tehsil.ts). Gözlənilmir — portu bloklamır.
-    applyTehsilMenuV2(strapi).catch((e: Error) => strapi.log.error('[menu] F5.40: ' + e.message));
+    const tehsilMenuDone = applyTehsilMenuV2(strapi).catch((e: Error) => strapi.log.error('[menu] F5.40: ' + e.message));
     // F5.41 — fakültənin yeganə səhifəsi /struktur/<slug>: boş bölməyə fakültə
     // mətni, məsul redaktor və kopilot keçidləri, BİR DƏFƏ (bax
     // src/utils/faculty-units.ts). CM konfiqurasiyası yazılandan sonra.
@@ -2213,7 +2199,13 @@ export default {
       .catch((e: Error) => strapi.log.error('[tekrar] F5.43: ' + e.message))
       // F5.43 — «Blok başlıqları» / «Əlavə bloklar» admin formasında yuxarıda.
       .then(() => placeUnitBlockFields(strapi))
-      .catch((e: Error) => strapi.log.error('[unit-blocks] F5.43: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[unit-blocks] F5.43: ' + e.message))
+      // F5.44 — «Qəbul» menyusunun yeni quruluşu, BİR DƏFƏ və yalnız köhnə
+      // quruluşda olanda (bax src/utils/menu-qebul.ts). Menyuya F5.43-ün keçid
+      // düzəlişi və F5.40 da yazır — onlardan SONRA, eyni anda yox.
+      .then(() => tehsilMenuDone)
+      .then(() => applyQebulMenuV1(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.44: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
