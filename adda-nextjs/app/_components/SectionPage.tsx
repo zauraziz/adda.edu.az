@@ -8,7 +8,9 @@
 // Boş sahə render olunmur. `qebul` — üstəlik «Qəbul» qırıntısı və yan
 // paneldə «Sual ver» (müraciət forması, «Qəbul məsələləri» istiqaməti).
 // F5.46: `tehsil` — «Təhsil» qırıntısı (kataloq) və «Sual ver» → «Tədris
-// prosesi və sənədlər».
+// prosesi və sənədlər». F5.47: `elm` — «Elm və innovasiya» qırıntısı (bölmənin
+// ana səhifəsi; ana səhifənin özündə yoxdur) və «Sual ver» → «Elmi işlər,
+// nəşr və qrantlar»; canlı blok `konfrans` — elmi tədbirlər və xəbərlər.
 import Link from 'next/link';
 import { marked } from 'marked';
 import SiteHeaderStack from './SiteHeaderStack';
@@ -45,8 +47,14 @@ const FACT_ICON: Record<string, string> = {
   qoruma: 'ti-shield-check',
   gemi: 'ti-ship',
   kitab: 'ti-books',
+  laboratoriya: 'ti-flask',
+  konfrans: 'ti-presentation',
+  beynelxalq: 'ti-world',
   diger: 'ti-star',
 };
+
+/** F5.47 — «Elm və innovasiya» bölməsinin ana səhifəsi (qırıntının hədəfi). */
+const ELM_HUB = 'elmi-tedqiqat-fealiyyeti';
 
 // ── Mətn köməkçiləri ─────────────────────────────────────────────────────────
 const AZ_FOLD: Record<string, string> = { ə: 'e', ı: 'i', ö: 'o', ü: 'u', ş: 's', ç: 'c', ğ: 'g' };
@@ -214,6 +222,7 @@ export interface SectionPageProps {
 export default async function SectionPage({ locale, menu, doc, slug, isFallback, data, correctionLabels }: SectionPageProps) {
   const isQebul = doc.layout === 'qebul';
   const isTehsil = doc.layout === 'tehsil';
+  const isElm = doc.layout === 'elm';
   const block = doc.dataBlock ?? 'yox';
   const facts = (doc.facts ?? []).filter((f) => f.label && f.value);
   const steps = (doc.steps ?? []).filter((s) => s.title);
@@ -237,10 +246,26 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const tab = BLOCK_TAB[block];
   const blockRows = tab ? rowsForTab(rows, tab) : block === 'ingilis' ? englishRows(rows) : block === 'qebul_cedveli' ? rows : [];
   const blockStats = blockRows.length ? stats(blockRows) : null;
-  const openDays = block === 'aciq_qapi';
+  // Başlıq üzrə lent: açıq qapı günləri (F5.45), elmi konfranslar (F5.47).
+  const feed = block === 'aciq_qapi' || block === 'konfrans' ? block : null;
+  const openDays = feed !== null;
+  const feedText =
+    feed === 'konfrans'
+      ? {
+          empty: tr('Hazırda elan olunmuş elmi tədbir yoxdur. Konfrans elan olunanda burada görünəcək.', locale),
+          past: tr('Ötən konfranslar və xəbərlər', locale),
+          action: tr('Ətraflı', locale),
+          hash: '',
+        }
+      : {
+          empty: tr('Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.', locale),
+          past: tr('Ötən açıq qapı günləri', locale),
+          action: tr('Qeydiyyatdan keç', locale),
+          hash: '#qeydiyyat',
+        };
   const blockHas = openDays || blockRows.length > 0;
   const blockTitle = openDays
-    ? tr('Növbəti açıq qapı günü', locale)
+    ? tr(feed === 'konfrans' ? 'Növbəti elmi tədbirlər' : 'Növbəti açıq qapı günü', locale)
     : block === 'qebul_cedveli'
       ? tr('İxtisaslar üzrə cədvəl', locale)
       : tr('İxtisaslar, yer sayı və haqq', locale);
@@ -262,12 +287,15 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const nextTint = () => (tint++ % 2 === 1 ? ' un-block--tint' : '');
 
   const notice = isFallback ? fallbackNotice(locale) : null;
-  // Qırıntı və «Sual ver»: qəbul → abituriyent bələdçisi; təhsil → kataloq.
+  // Qırıntı və «Sual ver»: qəbul → abituriyent bələdçisi; təhsil → kataloq;
+  // elm → bölmənin ana səhifəsi (ana səhifənin özündə qırıntı yoxdur).
   const crumb = isQebul
     ? { href: `/${locale}/bunlar-ucun/abituriyentler`, label: tr('Qəbul', locale) }
     : isTehsil
       ? { href: `/${locale}/ixtisaslar`, label: tr('Təhsil', locale) }
-      : null;
+      : isElm && slug !== ELM_HUB
+        ? { href: `/${locale}/sehife/${ELM_HUB}`, label: tr('Elm və innovasiya', locale) }
+        : null;
   const cta = isQebul
     ? { text: tr('Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', locale), href: `/${locale}/vetendaslarin-muracieti?istiqamet=qebul` }
     : isTehsil
@@ -275,7 +303,12 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
           text: tr('Tədris prosesi, təcrübə və sənədlər üzrə Akademiyaya onlayn yazın.', locale),
           href: `/${locale}/vetendaslarin-muracieti?istiqamet=tedris`,
         }
-      : null;
+      : isElm
+        ? {
+            text: tr('Elmi işlər, nəşr, qrant və konfranslar üzrə Akademiyaya onlayn yazın.', locale),
+            href: `/${locale}/vetendaslarin-muracieti?istiqamet=elm`,
+          }
+        : null;
   const sideHas = Boolean(toc.length || sideLinks.length || contactHtml || cta || blockStats);
 
   return (
@@ -284,7 +317,7 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
       <main className="qb-page">
         <section className="np-hero">
           <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr(isQebul ? 'Qəbul' : isTehsil ? 'Təhsil' : 'Səhifə', locale)}</div>
+            <div className="np-eyebrow">{tr(isQebul ? 'Qəbul' : isTehsil ? 'Təhsil' : isElm ? 'Elm və innovasiya' : 'Səhifə', locale)}</div>
             <h1 className="np-h1">{doc.title}</h1>
             {doc.lead ? <p className="np-lead">{doc.lead}</p> : null}
             {crumb ? (
@@ -336,7 +369,13 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                   <section id="ixtisaslar" className={'un-block pr-anchor' + nextTint()}>
                     <h2 className="un-block-title">{blockTitle}</h2>
                     {openDays ? (
-                      <OpenDays events={data.events ?? []} news={data.news ?? []} locale={locale} now={data.now ?? 0} />
+                      <OpenDays
+                        events={data.events ?? []}
+                        news={data.news ?? []}
+                        locale={locale}
+                        now={data.now ?? 0}
+                        text={feedText}
+                      />
                     ) : block === 'qebul_cedveli' ? (
                       <AllLevels rows={blockRows} locale={locale} />
                     ) : (

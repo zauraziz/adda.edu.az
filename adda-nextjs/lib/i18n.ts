@@ -990,6 +990,13 @@ const T: Array<[string, string, string]> = [
   ['İngilis dilində tədris: qəbul və tələblər', 'Обучение на английском: приём и требования', 'English-taught programmes: admission and requirements'],
   ['Fond, Elektron Akademiya və açıq resurslar', 'Фонд, Электронная академия и открытые ресурсы', 'Collection, Electronic Academy and open resources'],
   ['Növlər, müddət, bazalar və işçi diplomu', 'Виды, сроки, базы и рабочий диплом', 'Types, duration, bases and certificate of competency'],
+  // F5.47 — «Elm və innovasiya» səhifələri (layout=elm), «konfrans» bloku, müraciət istiqaməti.
+  ['Elmi işlər, nəşr, qrant və konfranslar üzrə Akademiyaya onlayn yazın.', 'Напишите в Академию онлайн о научной работе, публикациях, грантах и конференциях.', 'Write to the Academy online about research, publications, grants and conferences.'],
+  ['Növbəti elmi tədbirlər', 'Ближайшие научные мероприятия', 'Upcoming Research Events'],
+  ['Hazırda elan olunmuş elmi tədbir yoxdur. Konfrans elan olunanda burada görünəcək.', 'Сейчас объявленных научных мероприятий нет. Конференция появится здесь, когда её объявят.', 'No research events are announced at the moment. A conference will appear here once announced.'],
+  ['Ötən konfranslar və xəbərlər', 'Прошедшие конференции и новости', 'Past Conferences and News'],
+  ['Elmi işlər, nəşr və qrantlar', 'Наука, публикации и гранты', 'Research, publications and grants'],
+  ['Tədqiqat, jurnal, konfrans, qrant', 'Исследования, журнал, конференции, гранты', 'Research, journal, conferences, grants'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1475,6 +1482,18 @@ const MENU_T: Array<[string, string, string]> = [
   ['Keçid balları, yer sayı və təhsil haqqı', 'Проходные баллы, места и стоимость обучения', 'Passing Scores, Places and Tuition Fees'],
   // F5.46 — «Təhsil» v3 (adda-strapi/src/utils/menu-tehsil.ts).
   ['Tədris prosesi və keyfiyyət', 'Учебный процесс и качество', 'Academic Process and Quality'],
+  // F5.47 — «Elm və innovasiya» v1 (adda-strapi/src/utils/menu-elm.ts).
+  ['Tədqiqat', 'Исследования', 'Research'],
+  ['Ümumi baxış', 'Обзор', 'Overview'],
+  ['Elmi-tədqiqat şöbəsi', 'Научно-исследовательский отдел', 'Research Office'],
+  ['Nəşrlər və resurslar', 'Публикации и ресурсы', 'Publications and Resources'],
+  ['«Elmi Əsərlər» jurnalı', 'Журнал «Научные труды»', 'The “Proceedings” Journal'],
+  ['Elm Portalı (CRIS)', 'Научный портал (CRIS)', 'Research Portal (CRIS)'],
+  ['Kitabxana və elektron resurslar', 'Библиотека и электронные ресурсы', 'Library and E-resources'],
+  ['Doktorantura və gənc alimlər', 'Докторантура и молодые учёные', 'Doctoral Studies and Young Scientists'],
+  ['Gənc alimlər və tədqiqatçılar', 'Молодые учёные и исследователи', 'Young Scientists and Researchers'],
+  ['Konfranslar və qrantlar', 'Конференции и гранты', 'Conferences and Grants'],
+  ['Qrantlar və müsabiqələr', 'Гранты и конкурсы', 'Grants and Competitions'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

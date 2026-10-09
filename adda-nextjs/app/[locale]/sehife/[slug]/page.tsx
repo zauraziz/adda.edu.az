@@ -2,7 +2,7 @@
 //
 // Miqrasiyadan gələn məzmun burada görünür. Layout `ContentPage`-dədir,
 // bu fayl yalnız məlumat çəkir və etiketləri hazırlayır.
-// F5.45 — `layout` bolmeli/qebul olan səhifə sağ panelli şablonda
+// F5.45 — `layout` bolmeli/qebul (F5.46 tehsil, F5.47 elm) olan səhifə sağ panelli şablonda
 // (`SectionPage`, ixtisas səhifəsinin dizaynı); `dataBlock` üçün canlı
 // məlumat (kataloq, açıq qapı tədbirləri) burada çəkilir.
 import '../../../_styles/01-base.css';
@@ -38,8 +38,8 @@ import {
   getPageSlugs,
   getMenu,
   getPrograms,
-  getOpenDayEvents,
-  getOpenDayNews,
+  getTitleFeedEvents,
+  getTitleFeedNews,
   withAzFallback,
   type PageDoc,
   type Program,
@@ -74,8 +74,9 @@ export async function generateMetadata({
 async function loadSectionData(doc: PageDoc, locale: Locale): Promise<SectionPageData> {
   const block = doc.dataBlock ?? 'yox';
   if (block === 'yox') return {};
-  if (block === 'aciq_qapi') {
-    const [events, news] = await Promise.all([getOpenDayEvents(locale), getOpenDayNews(locale)]);
+  // F5.47 — `konfrans` də başlıq üzrə lentdir (elmi konfranslar).
+  if (block === 'aciq_qapi' || block === 'konfrans') {
+    const [events, news] = await Promise.all([getTitleFeedEvents(block, locale), getTitleFeedNews(block, locale)]);
     return { events, news, now: Date.now() };
   }
   // Kataloq: az tam siyahıdır, cari dildə yalnız başlıq/slug (documentId üzrə).
@@ -138,7 +139,7 @@ export default async function Page({
     mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
   };
 
-  if (doc.layout === 'bolmeli' || doc.layout === 'qebul' || doc.layout === 'tehsil') {
+  if (doc.layout === 'bolmeli' || doc.layout === 'qebul' || doc.layout === 'tehsil' || doc.layout === 'elm') {
     const data = await loadSectionData(doc, locale);
     return (
       <SectionPage

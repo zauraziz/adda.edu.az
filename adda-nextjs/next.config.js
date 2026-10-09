@@ -25,6 +25,14 @@ const PAGE_UNIT_MAP = {
   'rektor-komekcisi': 'rektorun-komekcisi',
   'tedrisin-teskili-ve-idareedilmesi-uzre-prorektor': 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq',
   'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor': 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq',
+  // F5.47 (dedupe:v2): şöbənin köhnə adı və köhnə heyəti.
+  'elmi-tedqiqat-qrupu': 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
+};
+
+// F5.47: köhnə səhifə yeni səhifənin içindədir (dedupe:v2, Strapi-də dərcdən
+// çıxır). SİNXRON: adda-strapi/src/utils/moved-pages.ts (PAGE_PAGE_MOVES).
+const PAGE_PAGE_MAP = {
+  'elmi-jurnalimiz-onlayn-versiyada': 'elmi-jurnal',
 };
 
 /** @type {import('next').NextConfig} */
@@ -47,6 +55,11 @@ const nextConfig = {
       ...Object.entries(PAGE_UNIT_MAP).map(([from, to]) => ({
         source: '/:locale(az|ru|en)/sehife/' + from,
         destination: '/:locale/struktur/' + to,
+        permanent: true,
+      })),
+      ...Object.entries(PAGE_PAGE_MAP).map(([from, to]) => ({
+        source: '/:locale(az|ru|en)/sehife/' + from,
+        destination: '/:locale/sehife/' + to,
         permanent: true,
       })),
       // F5.21d: /sehife/qehremanlarimiz -> /qehremanlarimiz (öz marşrutuna

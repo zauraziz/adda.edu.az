@@ -50,8 +50,8 @@ import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 export const revalidate = 300;
 
 /**
- * F5.36b — «Aidiyyəti bölmə»: 28 bölməlik açılan siyahı əvəzinə 4 əsas
- * müraciət istiqaməti. Hər istiqamət MÖVCUD bir struktur bölməsinə bağlanır:
+ * F5.36b — «Aidiyyəti bölmə»: 28 bölməlik açılan siyahı əvəzinə əsas
+ * müraciət istiqamətləri (F5.46-ya qədər 4, F5.47-dən «Elmi işlər» ilə 5). Hər istiqamət MÖVCUD bir struktur bölməsinə bağlanır:
  * müraciətin bildirişi həmin bölmənin e-poçtuna gedir (adda-strapi
  * utils/appeal-mail.ts; bölmədə e-poçt yoxdursa ümumi ünvana).
  *
@@ -80,6 +80,13 @@ const APPEAL_DIRECTIONS: { key: string; unitSlug: string; label: string; hint: s
     hint: 'Dərslər, imtahanlar, arayışlar',
   },
   { key: 'telim', unitSlug: 'telim-tedris-merkezi', label: 'Dənizçi sertifikatları və kurslar', hint: 'STCW təlimləri və sertifikatlar' },
+  // F5.47 — «Elm və innovasiya» səhifələrinin «Sual ver» düyməsi (`?istiqamet=elm`).
+  {
+    key: 'elm',
+    unitSlug: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
+    label: 'Elmi işlər, nəşr və qrantlar',
+    hint: 'Tədqiqat, jurnal, konfrans, qrant',
+  },
 ];
 
 /**

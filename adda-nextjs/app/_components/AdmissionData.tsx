@@ -216,17 +216,34 @@ export function SideSummary({ s, locale }: { s: AdmissionStats; locale: Locale }
 }
 
 /** Açıq qapı günləri: növbəti tədbir(lər) + ötənlər (tədbir və xəbər). */
+/** F5.47 — lentin mətnləri (açıq qapı / elmi konfrans); verilməsə açıq qapı. */
+export interface FeedText {
+  empty: string;
+  past: string;
+  action: string;
+  /** Tədbir keçidinin lövbəri: açıq qapı — `#qeydiyyat`, konfrans — boş. */
+  hash: string;
+}
+
 export function OpenDays({
   events,
   news,
   locale,
   now,
+  text,
 }: {
   events: EventItem[];
   news: Article[];
   locale: Locale;
   now: number;
+  text?: FeedText;
 }) {
+  const t: FeedText = text ?? {
+    empty: tr('Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.', locale),
+    past: tr('Ötən açıq qapı günləri', locale),
+    action: tr('Qeydiyyatdan keç', locale),
+    hash: '#qeydiyyat',
+  };
   const time = (e: EventItem) => (e.endAt || e.startAt ? new Date((e.endAt || e.startAt) as string).getTime() : 0);
   const upcoming = events.filter((e) => time(e) >= now).sort((a, b) => time(a) - time(b));
   const past = events.filter((e) => time(e) < now).slice(0, 3);
@@ -248,8 +265,8 @@ export function OpenDays({
                 </p>
               ) : null}
               {e.excerpt ? <p className="qb-event-text">{e.excerpt}</p> : null}
-              <Link href={`/${locale}/tedbirler/${e.slug}#qeydiyyat`} className="qb-btn">
-                {tr('Qeydiyyatdan keç', locale)}
+              <Link href={`/${locale}/tedbirler/${e.slug}${t.hash}`} className="qb-btn">
+                {t.action}
                 <i className="ti ti-arrow-right" aria-hidden="true" />
               </Link>
             </li>
@@ -258,12 +275,12 @@ export function OpenDays({
       ) : (
         <p className="qb-empty">
           <i className="ti ti-calendar-time" aria-hidden="true" />
-          {tr('Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.', locale)}
+          {t.empty}
         </p>
       )}
       {past.length || news.length ? (
         <>
-          <h3 className="un-sub-title">{tr('Ötən açıq qapı günləri', locale)}</h3>
+          <h3 className="un-sub-title">{t.past}</h3>
           <ul className="un-row-list">
             {past.map((e) => (
               <li className="un-row" key={'e-' + e.documentId}>

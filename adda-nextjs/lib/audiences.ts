@@ -150,7 +150,7 @@ export const AUDIENCES: Audience[] = [
         links: [
           { label: 'Elmi jurnal', href: '/sehife/elmi-jurnal' },
           { label: 'Elmi konfranslar', href: '/sehife/elmi-konfranslar' },
-          { label: 'Gənc Alimlər Şurası', href: '/sehife/genc-alimler-surasi' },
+          { label: 'Gənc alimlər və tədqiqatçılar', href: '/sehife/genc-alimler-surasi' },
         ],
       },
     ],
@@ -179,7 +179,8 @@ export const AUDIENCES: Audience[] = [
         title: 'Elm və nəşrlər',
         links: [
           { label: 'Elmi jurnal', href: '/sehife/elmi-jurnal' },
-          { label: 'Elmi jurnalımız onlayn versiyada', href: '/sehife/elmi-jurnalimiz-onlayn-versiyada' },
+          // F5.47: köhnə «onlayn versiya» səhifəsi jurnalın içindədir (301).
+          { label: 'Elm və innovasiya', href: '/sehife/elmi-tedqiqat-fealiyyeti' },
           { label: 'Elmi konfranslar', href: '/sehife/elmi-konfranslar' },
         ],
       },
@@ -232,9 +233,10 @@ export const AUDIENCES: Audience[] = [
         title: 'Elmi fəaliyyət',
         links: [
           { label: 'Elmi Şura', href: '/struktur/elmi-sura' },
-          { label: 'Elmi-tədqiqat fəaliyyəti', href: '/sehife/elmi-tedqiqat-fealiyyeti' },
+          { label: 'Elm və innovasiya', href: '/sehife/elmi-tedqiqat-fealiyyeti' },
           { label: 'Elmi-tədqiqat laboratoriyaları', href: '/sehife/elmi-tedqiqat-laboratoriyalari' },
           { label: 'Elmi jurnal', href: '/sehife/elmi-jurnal' },
+          { label: 'Qrantlar və müsabiqələr', href: '/sehife/qrantlar' },
           { label: 'Elmi katib', href: '/struktur/elmi-katib' },
         ],
       },

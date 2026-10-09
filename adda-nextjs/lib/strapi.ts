@@ -106,8 +106,8 @@ export interface Program {
   locale: Locale;
 }
 
-/** F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`. */
-export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil';
+/** F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`; F5.47 — `elm`. */
+export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil' | 'elm';
 /** F5.45 — kataloqdan canlı blok (bax app/_components/AdmissionData.tsx). */
 export type PageDataBlock =
   | 'yox'
@@ -118,7 +118,9 @@ export type PageDataBlock =
   | 'tekrar_ali'
   | 'ingilis'
   | 'qebul_cedveli'
-  | 'aciq_qapi';
+  | 'aciq_qapi'
+  // F5.47 — elmi konfranslar (adında «konfrans» olan tədbir və xəbərlər).
+  | 'konfrans';
 export interface PageFact {
   label: string;
   value: string;
@@ -585,15 +587,32 @@ export const getUpcomingEvents = (locale: Locale = 'az', limit?: number) =>
 
 /**
  * F5.45 — «Açıq qapı günləri» səhifəsi: adında «açıq qapı» olan tədbirlər
- * (yeni → köhnə) və xəbərlər. Cari dildə yoxdursa `az`.
+ * (yeni → köhnə) və xəbərlər. F5.47 — eyni qayda «Elmi konfranslar» üçün
+ * (`konfrans`). Açar sözlərdən HƏR HANSI biri başlıqdadırsa (hərf fərqi
+ * nəzərə alınmır). Cari dildə yoxdursa `az`.
  */
-export async function getOpenDayEvents(locale: Locale = 'az'): Promise<EventItem[]> {
+export type TitleFeed = 'aciq_qapi' | 'konfrans';
+const TITLE_FEEDS: Record<TitleFeed, { events: string[]; news: string[] }> = {
+  aciq_qapi: { events: ['açıq qapı'], news: ['açıq qapı'] },
+  // Xəbərlərdə yalnız elmi konfranslar: «təlim-konfrans» kimi başlıqlar düşməsin.
+  konfrans: {
+    events: ['konfrans', 'conference', 'конференц'],
+    news: ['elmi-texniki konfrans', 'elmi konfrans', 'beynəlxalq konfrans', 'risk konfrans', 'conference', 'конференц'],
+  },
+};
+
+function titleFilter(words: string[]): Record<string, string> {
+  if (words.length === 1) return { 'filters[title][$containsi]': words[0] };
+  return Object.fromEntries(words.map((w, i) => [`filters[$or][${i}][title][$containsi]`, w]));
+}
+
+export async function getTitleFeedEvents(feed: TitleFeed, locale: Locale = 'az'): Promise<EventItem[]> {
   const load = (loc: Locale) =>
     strapiFetch<StrapiList<EventItem>>(
       '/events',
       {
         locale: loc,
-        'filters[title][$containsi]': 'açıq qapı',
+        ...titleFilter(TITLE_FEEDS[feed].events),
         sort: 'startAt:desc',
         'pagination[pageSize]': 8,
       },
@@ -606,13 +625,13 @@ export async function getOpenDayEvents(locale: Locale = 'az'): Promise<EventItem
     return [];
   }
 }
-export async function getOpenDayNews(locale: Locale = 'az'): Promise<Article[]> {
+export async function getTitleFeedNews(feed: TitleFeed, locale: Locale = 'az'): Promise<Article[]> {
   const load = (loc: Locale) =>
     strapiFetch<StrapiList<Article>>(
       '/articles',
       {
         locale: loc,
-        'filters[title][$containsi]': 'açıq qapı',
+        ...titleFilter(TITLE_FEEDS[feed].news),
         sort: 'newsDate:desc',
         'pagination[pageSize]': 4,
       },
@@ -625,6 +644,8 @@ export async function getOpenDayNews(locale: Locale = 'az'): Promise<Article[]> 
     return [];
   }
 }
+export const getOpenDayEvents = (locale: Locale = 'az') => getTitleFeedEvents('aciq_qapi', locale);
+export const getOpenDayNews = (locale: Locale = 'az') => getTitleFeedNews('aciq_qapi', locale);
 
 /** ── F2.4: Ana səhifə üçün seçilmiş (curated) xəbərlər ──
  * showOnHome=true VƏ homeStatus=approved. Boşdursa ən son academy xəbərlərinə

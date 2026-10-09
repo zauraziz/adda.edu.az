@@ -27,12 +27,12 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'Əlavə təhsil', links: [{label:'STCW kursları',url:'/struktur/telim-tedris-merkezi'},{label:'İxtisasartırma və xaricdə təhsil',url:'/sehife/xaricde-tehsil-ve-ixtisasartirma'}] },
       { title: 'Tədris prosesi və keyfiyyət', links: [{label:'Tədris ofisi',url:'/struktur/tedris-proseslerinin-teskili-sobesi'},{label:'E-Kitabxana',url:'/sehife/elektron-kitabxana'},{label:'Keyfiyyət və nəticələr',url:'/sehife/keyfiyyetin-monitorinqi'}] },
     ]},
-    { label: 'Elm və innovasiya', order: 4, url: '#', groups: [
-      { title: 'Elmi idarəetmə və strategiya', links: [{label:'Elmi siyasət',url:'#'},{label:'Tədris-Metodiki Şura',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
-      { title: 'Elmi-tədqiqat mərkəzləri və laboratoriyalar', links: [{label:'Tədqiqat mərkəzləri və laboratoriyalar',url:'#'}] },
-      { title: 'Elmi nəşrlər və kitabxana', links: [{label:'ADDA-nın Elmi Jurnalı',url:'#'},{label:'Əməkdaşların nəşrləri',url:'#'},{label:'E-Kitabxana',url:'#'},{label:'Konvensiyalar və normativ sənədlər fondu',url:'#'},{label:'Tərəfdaş kitabxanalar və elmi bazalar',url:'#'}] },
-      { title: 'Doktorantura və elmi kadrların hazırlığı', links: [{label:'Doktorantura',url:'#'},{label:'Dissertasiya şuraları',url:'#'},{label:'Gənc alimlərin platforması',url:'#'}] },
-      { title: 'Qrantlar, müsabiqələr və tədbirlər', links: [{label:'Qrantlar',url:'#'},{label:'Mükafatlar',url:'#'},{label:'Elmi tədbirlər təqvimi',url:'#'},{label:'Beynəlxalq Dənizçilik Konfransları',url:'#'},{label:'Sahəvi seminarlar və təlimlər',url:'#'}] },
+    // F5.47 — «Elm və innovasiya» v1 (adda-strapi/src/utils/menu-elm.ts ELM_MENU_V1 ilə eyni).
+    { label: 'Elm və innovasiya', order: 4, url: '/sehife/elmi-tedqiqat-fealiyyeti', groups: [
+      { title: 'Tədqiqat', links: [{label:'Ümumi baxış',url:'/sehife/elmi-tedqiqat-fealiyyeti'},{label:'Elmi-tədqiqat laboratoriyaları',url:'/sehife/elmi-tedqiqat-laboratoriyalari'},{label:'Elmi-tədqiqat şöbəsi',url:'/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi'}] },
+      { title: 'Nəşrlər və resurslar', links: [{label:'«Elmi Əsərlər» jurnalı',url:'/sehife/elmi-jurnal'},{label:'Elm Portalı (CRIS)',url:'https://cris.adda.edu.az'},{label:'Kitabxana və elektron resurslar',url:'/sehife/elektron-kitabxana'}] },
+      { title: 'Doktorantura və gənc alimlər', links: [{label:'Doktorantura',url:'/sehife/doktorantura'},{label:'Gənc alimlər və tədqiqatçılar',url:'/sehife/genc-alimler-surasi'}] },
+      { title: 'Konfranslar və qrantlar', links: [{label:'Elmi konfranslar',url:'/sehife/elmi-konfranslar'},{label:'Qrantlar və müsabiqələr',url:'/sehife/qrantlar'}] },
     ]},
     { label: 'Tələbə həyatı', order: 5, url: '#', groups: [
       { title: 'Tələbə təşkilatları', links: [{label:'Tələbə Gənclər Təşkilatı (TGK)',url:'#'},{label:'Tələbə Həmkarlar İttifaqı (THİK)',url:'#'},{label:'Tələbə Elmi Cəmiyyəti (TEC)',url:'#'},{label:'Könüllülük hərəkatı',url:'#'}] },
@@ -86,7 +86,7 @@ export const FALLBACK_MENU: SiteMenu = {
     { title: 'Akademiya', links: [{label:'Haqqımızda',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Struktur',url:'#'},{label:'Tarix',url:'#'},{label:'Akkreditasiya',url:'#'}] },
     { title: 'Qəbul', links: [{label:'Bakalavr qəbulu',url:'/sehife/bakalavriat'},{label:'Magistratura qəbulu',url:'/sehife/magistratura'},{label:'Keçid balları, yer sayı və təhsil haqqı',url:'/sehife/kecid-ballari'},{label:'Onlayn müraciət',url:'/sehife/onlayn-muraciet'}] },
     { title: 'Təhsil', links: [{label:'İxtisaslar',url:'/ixtisaslar'},{label:'Bakalavriat',url:'/ixtisaslar?tab=bakalavr'},{label:'Magistratura',url:'/ixtisaslar?tab=magistr'},{label:'Qiyabi və təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'},{label:'Təcrübə (praktika)',url:'/sehife/tecrube-haqqinda'}] },
-    { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'#'},{label:'Tələbə həyatı',url:'#'},{label:'Beynəlxalq əməkdaşlıq',url:'#'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
+    { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'/sehife/elmi-tedqiqat-fealiyyeti'},{label:'Tələbə həyatı',url:'#'},{label:'Beynəlxalq əməkdaşlıq',url:'#'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
   ],
 };
 

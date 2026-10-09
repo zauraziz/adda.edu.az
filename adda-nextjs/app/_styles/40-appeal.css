@@ -327,6 +327,10 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+/* F5.47: istiqamət sayı tək olanda sonuncu tam en tutur (5-ci «Elmi işlər»). */
+.ap-dir:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
 .ap-dir {
   position: relative;
 }
