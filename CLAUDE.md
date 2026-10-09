@@ -185,10 +185,11 @@ qorunur:
 **İş qaydası:** `FLAG=true` → deploy → **logu yoxla** → **flagı SİL**.
 
 Bir dəfəlik, admin məzmununu əzməyən yeniləmələr (F5.38+) bayraqsız işləyir:
-plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v3`,
+plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v4`,
 `editorRole:v1`, `tehsilMenu:v2`, `facultyUnits:v1`, `admissionScores:v1`,
 `unitMedia:v1`, `facilitySlugs:v1`, `dedupe:v1`, `unitBlocks:v1`,
-`facilitySeed:v1`, `qebulMenu:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+`facilitySeed:v1`, `qebulMenu:v1`, `qebulMenu:v2`, `qebulPages:v1`,
+`pageLayout:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
 işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -521,6 +522,41 @@ olunur. Çevirmə kimdə?
    miqrasiya (`qebulMenu:v2`) ilə əlavə olunur. «Əlaqə» keçidi qəbul
    komissiyasının əlaqəsi verilənə qədər `/elaqe`-dir.
    `npm run check:audiences` sorğulu keçidi (`?tab=`) və bölmə seed-ini tanıyır.
+16. **F5.45 — «Qəbul» səhifələri sağ panelli şablonda** (2-ci və 3-cü mərhələ,
+   təhlil: eyni layihə sənədi).
+   - **Şablon:** `page.layout` (`standart` | `bolmeli` | `qebul`) və
+     `page.dataBlock` — dil üzrə EYNİ (non-localized). `bolmeli`/`qebul` →
+     `app/_components/SectionPage.tsx` (ixtisas səhifəsi kimi): mətn `## `
+     başlıqlarından `<section id>` + mündəricat, hero-da fakt zolağı
+     (`page.facts`, komponent `page.fact`), «Qəbul trayektoriyası»
+     (`page.steps`, `page.step`; `track` doludursa bir neçə yol), suallar
+     (`page.faq` = `unit.faq`), yan panel: kataloq xülasəsi, «Sual ver»
+     (`/vetendaslarin-muracieti?istiqamet=qebul`), `sideLinks`, `contact`.
+     `standart` — köhnə `ContentPage`.
+   - **Canlı blok** (`dataBlock`): pillə cədvəli, `qebul_cedveli` (bütün
+     pillələr + keçid balı illəri), `ingilis` (EN dili/yeri olan ixtisaslar),
+     `aciq_qapi` (adında «açıq qapı» olan tədbir + xəbər; qeydiyyat
+     `/tedbirler/<slug>#qeydiyyat`). Rəqəmlər ixtisas kataloqundandır
+     (`lib/admission.ts`) — səhifə mətninə yer sayı/bal YAZILMIR.
+   - **Miqrasiya** `src/utils/qebul-pages.ts` (məzmun `qebul-pages-content.ts`),
+     BİR DƏFƏ (`qebulPages:v1`): 12 səhifə yaradılır və ya yenidən qurulur
+     (köhnə başlıq/mətn store-da `qebulPages:backup:<slug>:<locale>`);
+     9.10.2026-dan sonra redaktə olunan dil TOXUNULMUR. ru/en yalnız iki əcnəbi
+     səhifəsində yazılır; digərlərinin dərc olunmuş ru/en sətri köhnə mətn və
+     köhnə şablonda qalır (yenidən dərc olunanda yeni şablona keçir). Təkrar
+     ali haqqı 2500/2700 qalıbsa → `3800 AZN/il`. F5.44-ün 6 gözləyən
+     «Məsul redaktorlar» sətri (tibbi müayinə, təqvim, qeydiyyat, suallar,
+     haqq, viza) redaktorsuzdursa silinir — mövzu pillə səhifələrinin
+     içindədir. `PAGES_RESEED` bu 12 səhifəyə toxunmur.
+   - **Menyu v2** (`qebulMenu:v2`, `menu-qebul.ts`, v1-dən SONRA): yalnız
+     «Qəbul» F5.44 və ya köhnə quruluşdadırsa (əks halda logda xəbərdarlıq,
+     marker yazılmır). 12 keçidin hamısı qəbul səhifəsinə; «Tanışlıq və əlaqə»
+     = «Açıq qapı günləri» + «Onlayn müraciət» (Valideynlər «Bunlar üçün»-də
+     qalır; `/elaqe`-də «Abituriyent» → onlayn müraciət). Seed, fallback,
+     `audiences.ts` eyni quruluşdadır.
+   - **Vaxt:** sayt tarix/saatı Bakı vaxtı ilə göstərir (`lib/format.ts`,
+     UTC+4; Vercel serveri UTC-dədir). Haqq `fmtFee` ilə («3800 AZN/il»).
+     Admin: `cmAz:v4` (yeni sahə adları), `pageLayout:v1` (yeni sahələrin yeri).
 
 ---
 
