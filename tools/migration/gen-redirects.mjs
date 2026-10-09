@@ -53,6 +53,9 @@ const MOVED = {
   'sehife/rektor-komekcisi': 'struktur/rektorun-komekcisi',
   'sehife/tedrisin-teskili-ve-idareedilmesi-uzre-prorektor': 'struktur/tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq',
   'sehife/elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor': 'struktur/elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq',
+  // F5.47 (dedupe:v2)
+  'sehife/elmi-tedqiqat-qrupu': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
+  'sehife/elmi-jurnalimiz-onlayn-versiyada': 'sehife/elmi-jurnal',
 };
 
 const OUT = join(ROOT, '..', '..', 'adda-nextjs', 'lib', 'legacy-redirects.ts');

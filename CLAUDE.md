@@ -189,7 +189,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `editorRole:v1`, `tehsilMenu:v2`, `facultyUnits:v1`, `admissionScores:v1`,
 `unitMedia:v1`, `facilitySlugs:v1`, `dedupe:v1`, `unitBlocks:v1`,
 `facilitySeed:v1`, `qebulMenu:v1`, `qebulMenu:v2`, `qebulPages:v1`,
-`pageLayout:v1`, `tehsilMenu:v3`, `tehsilPages:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+`pageLayout:v1`, `tehsilMenu:v3`, `tehsilPages:v1`, `cmAz:v6`, `elmMenu:v1`, `elmPages:v1`,
+`dedupe:v2`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
 işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -585,6 +586,34 @@ olunur. Çevirmə kimdə?
      səhifədə, həm bölmə səhifəsində (`lib/md-links.ts`); bölmənin
      «Onlayn xidmətlər» və «Faydalı linklər» düymələri daxili ünvanda
      eyni vərəqdə açılır.
+18. **F5.47 — «Elm və innovasiya» menyusu və səhifələri** (təhlil: layihə sənədi
+   `claude/elm-menyusu-optimallasdirma.md`).
+   - **Menyu v1** (`elmMenu:v1`, `src/utils/menu-elm.ts`): yalnız «Elm və
+     innovasiya» köhnə 5 qrup / 19 keçid quruluşundadırsa (əks halda logda
+     xəbərdarlıq, marker yazılmır). 4 qrup / 10 keçid, hamısı işləyən səhifəyə;
+     başlıq `#` → `/sehife/elmi-tedqiqat-fealiyyeti`. «Elm Portalı (CRIS)» xarici
+     keçiddir (cris.adda.edu.az). Məzmunu olmayan 4 mövzu (dissertasiya
+     şuraları, mükafatlar, konvensiyalar fondu, Tədris-Metodiki Şura)
+     «Məsul redaktorlar»-da «Menyuda yoxdur». Seed, fallback eyni; yeni
+     etiketlər `MENU_T`-də.
+   - **Şablon `layout=elm`:** «Elm və innovasiya» qırıntısı (ana səhifənin özündə
+     yoxdur), «Sual ver» → `?istiqamet=elm` (müraciət formasında 5-ci istiqamət —
+     Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi). Canlı blok `dataBlock=konfrans`:
+     adında «konfrans» olan tədbirlər və elmi konfrans xəbərləri (`getTitleFeedEvents/News`,
+     açar sözlər `lib/strapi.ts` → `TITLE_FEEDS`; «təlim-konfrans» düşmür).
+     Fakt ikonları: `laboratoriya`, `konfrans`, `beynelxalq`. Admin: `cmAz:v6`.
+   - **Səhifələr** (`elmPages:v1`, `src/utils/elm-pages.ts`, məzmun
+     `elm-pages-content.ts`, qayda F5.46 kimi, ehtiyat `elmPages:backup:…`):
+     ana səhifə, laboratoriyalar, «Elmi Əsərlər» jurnalı (arxiv 2018–2025,
+     tərtib qaydaları), gənc alimlər, elmi konfranslar, YENİ «Qrantlar və
+     müsabiqələr» — hamısı az/en/ru. Redaksiya heyətinin adları və Gənc Alimlər
+     Şurasının sədri yazılmayıb (rəhbərlik dəyişib) — redaksiya təsdiq edəndən
+     sonra admində. CJMSE saytına keçid ISSN alınandan sonra.
+   - **Təkrarlar v2** (`dedupe:v2`): «Elmi-tədqiqat qrupu» → şöbənin bölmə
+     səhifəsi, «Elmi jurnalımız onlayn versiyada» → «Elmi jurnal»
+     (`PAGE_PAGE_MOVES`, SİNXRON: `next.config.js` `PAGE_PAGE_MAP`,
+     `gen-redirects.mjs` `MOVED`); səhifələr dərcdən çıxır, «Məsul redaktor»
+     yeni ünvana (yeni adla). Zəncir: menyu → səhifələr → təkrarlar.
 
 ---
 
