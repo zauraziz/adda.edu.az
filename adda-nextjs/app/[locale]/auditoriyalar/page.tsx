@@ -43,7 +43,8 @@ export const revalidate = 300;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  return { title: tr('Auditoriya və laboratoriyalar', locale) };
+  // F5.46 — ad «Təhsil → Dəniz praktikası» menyusundakı keçidlə eynidir.
+  return { title: tr('Laboratoriya və trenajorlar', locale) };
 }
 
 export default async function FacilitiesPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -87,8 +88,8 @@ export default async function FacilitiesPage({ params }: { params: Promise<{ loc
       <main>
         <section className="np-hero">
           <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr('Akademiya', locale)}</div>
-            <h1 className="np-h1">{tr('Auditoriya və laboratoriyalar', locale)}</h1>
+            <div className="np-eyebrow">{tr('Təhsil', locale)}</div>
+            <h1 className="np-h1">{tr('Laboratoriya və trenajorlar', locale)}</h1>
             <p className="np-lead">
               {tr(
                 'Akademiyanın simulyator, trenajor, laboratoriya və ixtisaslaşdırılmış auditoriyaları — kafedralar üzrə.',

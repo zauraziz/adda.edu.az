@@ -45,6 +45,24 @@
 .prg-filter strong { color: var(--navy-800); }
 .prg-filter a { color: var(--navy-800); font-weight: 600; text-decoration: underline; text-decoration-color: var(--gold-500); text-underline-offset: 3px; }
 
+/* ── F5.46: tabın altında pillənin qəbul səhifəsinə keçid ── */
+.prg-note {
+  margin: -0.5rem 0 1rem;
+  font-size: 0.9375rem;
+}
+.prg-note a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--navy-800);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--gold-500);
+  text-underline-offset: 3px;
+}
+.prg-note a i { transition: transform 200ms ease; }
+.prg-note a:hover i { transform: translateX(3px); }
+
 /* ── Sətir siyahısı (F5.20b) ──
    Real <table> DEYİL — div-lər `role="table"` ilə.
    GENİŞ EKRAN: CSS grid, sütunlar `minmax()` ilə ÇEVİKDİR (sabit `width`

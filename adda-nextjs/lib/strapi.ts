@@ -106,8 +106,8 @@ export interface Program {
   locale: Locale;
 }
 
-/** F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli. */
-export type PageLayout = 'standart' | 'bolmeli' | 'qebul';
+/** F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`. */
+export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil';
 /** F5.45 — kataloqdan canlı blok (bax app/_components/AdmissionData.tsx). */
 export type PageDataBlock =
   | 'yox'

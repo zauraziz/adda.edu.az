@@ -7,6 +7,8 @@
 // canlı blok (AdmissionData) və «Suallar» strukturlaşdırılmış sahələrdən.
 // Boş sahə render olunmur. `qebul` — üstəlik «Qəbul» qırıntısı və yan
 // paneldə «Sual ver» (müraciət forması, «Qəbul məsələləri» istiqaməti).
+// F5.46: `tehsil` — «Təhsil» qırıntısı (kataloq) və «Sual ver» → «Tədris
+// prosesi və sənədlər».
 import Link from 'next/link';
 import { marked } from 'marked';
 import SiteHeaderStack from './SiteHeaderStack';
@@ -20,6 +22,7 @@ import { AllLevels, LevelTable, OpenDays, SideSummary } from './AdmissionData';
 import type { Article, EventItem, MenuLink, PageDoc, PageStep, SiteMenu } from '@/lib/strapi';
 import { BLOCK_TAB, englishRows, rowsForTab, stats, type AdmissionRow } from '@/lib/admission';
 import { tr, fallbackNotice, type Locale } from '@/lib/i18n';
+import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
 
 const PAGE_UID = 'api::page.page';
 
@@ -40,6 +43,8 @@ const FACT_ICON: Record<string, string> = {
   qrup: 'ti-category',
   bina: 'ti-building',
   qoruma: 'ti-shield-check',
+  gemi: 'ti-ship',
+  kitab: 'ti-books',
   diger: 'ti-star',
 };
 
@@ -93,26 +98,12 @@ function splitSections(md: string): { intro: string; sections: Section[] } {
   return { intro: intro.join('\n').trim(), sections };
 }
 
-const isExternal = (u: string) => /^(https?:)?\/\//i.test(u) || /^mailto:|^tel:/i.test(u);
-
-/** Saytdaxili «/…» ünvanına dil prefiksi; xarici, «#» və artıq prefiksli olduğu kimi. */
-export function localHref(url: string, locale: Locale): string {
-  const u = url.trim();
-  if (!u || u.startsWith('#') || isExternal(u)) return u;
-  if (!u.startsWith('/')) return u;
-  if (/^\/(az|ru|en)(\/|$|[?#])/.test(u)) return u;
-  return `/${locale}${u === '/' ? '' : u}`;
-}
+const isExternal = isExternalHref;
+export { localHref };
 
 /** marked HTML-i: daxili keçidlərə dil, xarici keçidlər yeni vərəqdə, cədvəl sürüşən qabda. */
 function polishHtml(html: string, locale: Locale): string {
-  return html
-    .replace(/<a href="([^"]+)"/g, (_m, href: string) => {
-      const h = localHref(href, locale);
-      return isExternal(h) && !/^mailto:|^tel:/i.test(h)
-        ? `<a href="${h}" target="_blank" rel="noopener noreferrer"`
-        : `<a href="${h}"`;
-    })
+  return localizeLinks(html, locale)
     .replace(/<table>/g, '<div class="qb-table-scroll"><table>')
     .replace(/<\/table>/g, '</table></div>');
 }
@@ -222,6 +213,7 @@ export interface SectionPageProps {
 
 export default async function SectionPage({ locale, menu, doc, slug, isFallback, data, correctionLabels }: SectionPageProps) {
   const isQebul = doc.layout === 'qebul';
+  const isTehsil = doc.layout === 'tehsil';
   const block = doc.dataBlock ?? 'yox';
   const facts = (doc.facts ?? []).filter((f) => f.label && f.value);
   const steps = (doc.steps ?? []).filter((s) => s.title);
@@ -255,7 +247,8 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
 
   const tracks = new Set(steps.map((s) => (s.track ?? '').trim()));
   const stepsTitle =
-    (doc.stepsTitle ?? '').trim() || tr(tracks.size > 1 ? 'Qəbul trayektoriyaları' : 'Qəbul trayektoriyası', locale);
+    (doc.stepsTitle ?? '').trim() ||
+    tr(isQebul ? (tracks.size > 1 ? 'Qəbul trayektoriyaları' : 'Qəbul trayektoriyası') : 'Addım-addım', locale);
   const faqTitle = tr('Tez-tez verilən suallar', locale);
 
   // Sıra: giriş → trayektoriya → canlı blok → mətn bölmələri → suallar.
@@ -269,7 +262,21 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const nextTint = () => (tint++ % 2 === 1 ? ' un-block--tint' : '');
 
   const notice = isFallback ? fallbackNotice(locale) : null;
-  const sideHas = Boolean(toc.length || sideLinks.length || contactHtml || isQebul || blockStats);
+  // Qırıntı və «Sual ver»: qəbul → abituriyent bələdçisi; təhsil → kataloq.
+  const crumb = isQebul
+    ? { href: `/${locale}/bunlar-ucun/abituriyentler`, label: tr('Qəbul', locale) }
+    : isTehsil
+      ? { href: `/${locale}/ixtisaslar`, label: tr('Təhsil', locale) }
+      : null;
+  const cta = isQebul
+    ? { text: tr('Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', locale), href: `/${locale}/vetendaslarin-muracieti?istiqamet=qebul` }
+    : isTehsil
+      ? {
+          text: tr('Tədris prosesi, təcrübə və sənədlər üzrə Akademiyaya onlayn yazın.', locale),
+          href: `/${locale}/vetendaslarin-muracieti?istiqamet=tedris`,
+        }
+      : null;
+  const sideHas = Boolean(toc.length || sideLinks.length || contactHtml || cta || blockStats);
 
   return (
     <>
@@ -277,12 +284,12 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
       <main className="qb-page">
         <section className="np-hero">
           <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr(isQebul ? 'Qəbul' : 'Səhifə', locale)}</div>
+            <div className="np-eyebrow">{tr(isQebul ? 'Qəbul' : isTehsil ? 'Təhsil' : 'Səhifə', locale)}</div>
             <h1 className="np-h1">{doc.title}</h1>
             {doc.lead ? <p className="np-lead">{doc.lead}</p> : null}
-            {isQebul ? (
-              <nav className="un-crumbs" aria-label={tr('Qəbul', locale)}>
-                <Link href={`/${locale}/bunlar-ucun/abituriyentler`}>{tr('Qəbul', locale)}</Link>
+            {crumb ? (
+              <nav className="un-crumbs" aria-label={crumb.label}>
+                <Link href={crumb.href}>{crumb.label}</Link>
                 <span className="un-crumb-sep">/</span> <span className="un-crumb-cur">{doc.title}</span>
               </nav>
             ) : null}
@@ -368,11 +375,11 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                   <ProgramToc items={toc} variant="desktop" />
 
                   {/* «Sual ver» mündəricatdan dərhal sonra — uzun yan paneldə də görünsün. */}
-                  {isQebul ? (
+                  {cta ? (
                     <div className="qb-cta">
                       <b>{tr('Sualınız var?', locale)}</b>
-                      <small>{tr('Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', locale)}</small>
-                      <Link href={`/${locale}/vetendaslarin-muracieti?istiqamet=qebul`} className="qb-btn">
+                      <small>{cta.text}</small>
+                      <Link href={cta.href} className="qb-btn">
                         {tr('Sual ver', locale)}
                         <i className="ti ti-arrow-right" aria-hidden="true" />
                       </Link>

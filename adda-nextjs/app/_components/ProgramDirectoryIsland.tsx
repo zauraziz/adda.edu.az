@@ -39,6 +39,8 @@ export interface ProgramCatalogGroup {
   tab: string;
   label: string;
   items: ProgramRow[];
+  /** F5.46 — pillənin qəbul səhifəsi (tabın altında keçid). */
+  note?: { href: string; label: string } | null;
 }
 
 interface Labels {
@@ -60,11 +62,13 @@ interface Props {
   groups: ProgramCatalogGroup[];
   basePath: string;
   labels: Labels;
+  /** F5.46 — `?dil=` filtri aktiv olanda əlavə keçid (məs. en → ingilis dilində tədris səhifəsi). */
+  langNotes?: Record<string, { href: string; label: string }>;
 }
 
 const LANGS = ['az', 'ru', 'en'];
 
-export default function ProgramDirectoryIsland({ groups, basePath, labels }: Props) {
+export default function ProgramDirectoryIsland({ groups, basePath, labels, langNotes }: Props) {
   const [activeTab, setActiveTab] = useState(groups[0]?.tab ?? '');
   const [lang, setLang] = useState<string | null>(null);
 
@@ -114,6 +118,12 @@ export default function ProgramDirectoryIsland({ groups, basePath, labels }: Pro
           {labels.langFilter}: <strong>{lang.toUpperCase()}</strong>
           <span aria-hidden="true"> · </span>
           <a href={basePath}>{labels.showAll}</a>
+          {langNotes?.[lang] ? (
+            <>
+              <span aria-hidden="true"> · </span>
+              <Link href={langNotes[lang].href}>{langNotes[lang].label}</Link>
+            </>
+          ) : null}
         </p>
       ) : null}
       {shown.length > 1 ? (
@@ -130,6 +140,15 @@ export default function ProgramDirectoryIsland({ groups, basePath, labels }: Pro
             </button>
           ))}
         </nav>
+      ) : null}
+
+      {activeGroup?.note ? (
+        <p className="prg-note">
+          <Link href={activeGroup.note.href}>
+            {activeGroup.note.label}
+            <i className="ti ti-arrow-right" aria-hidden="true" />
+          </Link>
+        </p>
       ) : null}
 
       {/* F5.20b — geniş ekranda cədvəl (CSS grid, çevik sütunlar), dar ekranda

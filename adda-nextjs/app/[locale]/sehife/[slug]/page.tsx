@@ -138,7 +138,7 @@ export default async function Page({
     mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
   };
 
-  if (doc.layout === 'bolmeli' || doc.layout === 'qebul') {
+  if (doc.layout === 'bolmeli' || doc.layout === 'qebul' || doc.layout === 'tehsil') {
     const data = await loadSectionData(doc, locale);
     return (
       <SectionPage

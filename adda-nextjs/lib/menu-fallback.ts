@@ -6,7 +6,7 @@ export const FALLBACK_MENU: SiteMenu = {
   esasMenyu: [
     { label: 'Akademiya', order: 1, url: '#', groups: [
       { title: 'Akademik irs və missiya', links: [{label:'Akademiya haqqında',url:'#'},{label:'Akademiyanın tarixi',url:'#'},{label:'Sabiq rektorlarımız',url:'/sabiq-rektorlar'},{label:'ADDA Qəhrəmanları',url:'#'},{label:'Fəxri doktorlarımız',url:'#'},{label:'Fəxri məzunlar',url:'#'},{label:'ADDA reytinqlərdə',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
-      { title: 'Rəhbərlik və idarəetmə', links: [{label:'Rektor',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Elmi Şura',url:'#'},{label:'Himayəçilər Şurası',url:'#'},{label:'Təşkilati struktur',url:'#'}] },
+      { title: 'Rəhbərlik və idarəetmə', links: [{label:'Rektor',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Elmi Şura',url:'#'},{label:'Himayəçilər Şurası',url:'#'},{label:'Təşkilati struktur',url:'#'},{label:'Fakültələr',url:'/fakulteler'},{label:'Kafedralar',url:'/kafedralar'}] },
       { title: 'Hüquqi baza və etika', links: [{label:'Nizamnamə və təsis sənədləri',url:'#'},{label:'Normativ-hüquqi sənədlər',url:'#'},{label:'Struktur bölmələrin əsasnamələri',url:'#'},{label:'Akademik dürüstlük bəyannaməsi',url:'#'},{label:'ADDA etika kodeksi',url:'#'},{label:'Müraciətlərə baxılma qaydası',url:'#'}] },
       { title: 'Keyfiyyət və hesabatlılıq', links: [{label:'Keyfiyyət siyasəti',url:'#'},{label:'Akkreditasiya və sertifikatlar',url:'#'},{label:'İllik fəaliyyət hesabatları',url:'#'},{label:'Özünüqiymətləndirmə nəticələri',url:'#'},{label:'Tələbə və məzun sorğuları',url:'#'},{label:'Məzunların məşğulluq göstəriciləri',url:'#'},{label:'Dayanıqlı inkişaf',url:'#'}] },
       { title: 'Heyət', links: [{label:'Professor-müəllim heyəti',url:'#'},{label:'Təlimçi-texniki heyət',url:'#'},{label:'İnzibati heyət',url:'#'}] },
@@ -22,10 +22,10 @@ export const FALLBACK_MENU: SiteMenu = {
     ]},
     // F5.40 — «Təhsil» yeni quruluşu (adda-strapi/src/utils/menu-tehsil.ts ilə eyni).
     { label: 'Təhsil', order: 3, url: '/ixtisaslar', groups: [
-      { title: 'Təhsil proqramları', links: [{label:'Bütün ixtisaslar',url:'/ixtisaslar'},{label:'Subbakalavr (kollec)',url:'/ixtisaslar?tab=subbakalavr'},{label:'Bakalavriat',url:'/sehife/bakalavriat'},{label:'Magistratura',url:'/sehife/magistratura'},{label:'Doktorantura',url:'/sehife/doktorantura'},{label:'Qiyabi və təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'},{label:'İngilis dilində tədris',url:'/ixtisaslar?dil=en'}] },
-      { title: 'Dəniz praktikası', links: [{label:'Tədris gəmisi',url:'/sehife/tedris-gemisi'},{label:'Laboratoriya və trenajorlar',url:'/auditoriyalar'},{label:'Təcrübə (praktika)',url:'/sehife/tecrube-haqqinda'}] },
+      { title: 'Təhsil proqramları', links: [{label:'Bütün ixtisaslar',url:'/ixtisaslar'},{label:'Subbakalavr (kollec)',url:'/ixtisaslar?tab=subbakalavr'},{label:'Bakalavriat',url:'/ixtisaslar?tab=bakalavr'},{label:'Magistratura',url:'/ixtisaslar?tab=magistr'},{label:'Doktorantura',url:'/ixtisaslar?tab=doktorantura'},{label:'Qiyabi və təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'},{label:'İngilis dilində tədris',url:'/ixtisaslar?dil=en'}] },
+      { title: 'Dəniz praktikası', links: [{label:'Təcrübə (praktika)',url:'/sehife/tecrube-haqqinda'},{label:'Tədris gəmisi',url:'/sehife/tedris-gemisi'},{label:'Laboratoriya və trenajorlar',url:'/auditoriyalar'}] },
       { title: 'Əlavə təhsil', links: [{label:'STCW kursları',url:'/struktur/telim-tedris-merkezi'},{label:'İxtisasartırma və xaricdə təhsil',url:'/sehife/xaricde-tehsil-ve-ixtisasartirma'}] },
-      { title: 'Struktur və keyfiyyət', links: [{label:'Fakültələr',url:'/fakulteler'},{label:'Kafedralar',url:'/kafedralar'},{label:'Tədris ofisi',url:'/struktur/tedris-proseslerinin-teskili-sobesi'},{label:'E-Kitabxana',url:'/sehife/elektron-kitabxana'},{label:'Keyfiyyət və nəticələr',url:'/sehife/keyfiyyetin-monitorinqi'}] },
+      { title: 'Tədris prosesi və keyfiyyət', links: [{label:'Tədris ofisi',url:'/struktur/tedris-proseslerinin-teskili-sobesi'},{label:'E-Kitabxana',url:'/sehife/elektron-kitabxana'},{label:'Keyfiyyət və nəticələr',url:'/sehife/keyfiyyetin-monitorinqi'}] },
     ]},
     { label: 'Elm və innovasiya', order: 4, url: '#', groups: [
       { title: 'Elmi idarəetmə və strategiya', links: [{label:'Elmi siyasət',url:'#'},{label:'Tədris-Metodiki Şura',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
@@ -85,7 +85,7 @@ export const FALLBACK_MENU: SiteMenu = {
   footerMenyusu: [
     { title: 'Akademiya', links: [{label:'Haqqımızda',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Struktur',url:'#'},{label:'Tarix',url:'#'},{label:'Akkreditasiya',url:'#'}] },
     { title: 'Qəbul', links: [{label:'Bakalavr qəbulu',url:'/sehife/bakalavriat'},{label:'Magistratura qəbulu',url:'/sehife/magistratura'},{label:'Keçid balları, yer sayı və təhsil haqqı',url:'/sehife/kecid-ballari'},{label:'Onlayn müraciət',url:'/sehife/onlayn-muraciet'}] },
-    { title: 'Təhsil', links: [{label:'Bakalavriat',url:'#'},{label:'Magistratura',url:'#'},{label:'Qiyabi təhsil',url:'#'},{label:'İxtisaslar',url:'#'},{label:'E-Akademiya',url:'#'}] },
+    { title: 'Təhsil', links: [{label:'İxtisaslar',url:'/ixtisaslar'},{label:'Bakalavriat',url:'/ixtisaslar?tab=bakalavr'},{label:'Magistratura',url:'/ixtisaslar?tab=magistr'},{label:'Qiyabi və təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'},{label:'Təcrübə (praktika)',url:'/sehife/tecrube-haqqinda'}] },
     { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'#'},{label:'Tələbə həyatı',url:'#'},{label:'Beynəlxalq əməkdaşlıq',url:'#'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
   ],
 };

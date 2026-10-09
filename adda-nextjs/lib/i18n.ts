@@ -978,6 +978,18 @@ const T: Array<[string, string, string]> = [
   ['Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.', 'Сейчас день открытых дверей не запланирован. Дата появится здесь, когда будет объявлена.', 'No open day is scheduled at the moment. The date will appear here once announced.'],
   ['Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', 'Напишите в Академию онлайн по вопросам приёма.', 'Write to the Academy online about admissions.'],
   ['Sual ver', 'Задать вопрос', 'Ask a Question'],
+  // F5.46 — «Təhsil» səhifələri (layout=tehsil) və kataloqun pillə keçidləri.
+  ['Addım-addım', 'Шаг за шагом', 'Step by Step'],
+  ['Tədris prosesi, təcrübə və sənədlər üzrə Akademiyaya onlayn yazın.', 'Напишите в Академию онлайн об учебном процессе, практике и документах.', 'Write to the Academy online about studies, practice and documents.'],
+  ['Kollec, bakalavriat, magistratura, doktorantura və təkrar ali təhsil proqramları — müddət, təhsil haqqı, yer sayı və keçid balları.', 'Программы колледжа, бакалавриата, магистратуры, докторантуры и второго высшего образования — сроки, стоимость, места и проходные баллы.', 'College, bachelor’s, master’s, doctoral and second-degree programmes — duration, tuition fees, places and passing scores.'],
+  ['Kollecə qəbul: şərtlər, tarixlər, sənədlər', 'Приём в колледж: условия, сроки, документы', 'College admission: requirements, dates, documents'],
+  ['Bakalavriata qəbul: şərtlər, tarixlər, sənədlər', 'Приём в бакалавриат: условия, сроки, документы', 'Bachelor’s admission: requirements, dates, documents'],
+  ['Magistraturaya qəbul: şərtlər, tarixlər, sənədlər', 'Приём в магистратуру: условия, сроки, документы', 'Master’s admission: requirements, dates, documents'],
+  ['Doktoranturaya qəbul: şərtlər, tarixlər, sənədlər', 'Приём в докторантуру: условия, сроки, документы', 'Doctoral admission: requirements, dates, documents'],
+  ['Təkrar ali təhsilə qəbul: şərtlər, tarixlər, sənədlər', 'Приём на второе высшее: условия, сроки, документы', 'Second-degree admission: requirements, dates, documents'],
+  ['İngilis dilində tədris: qəbul və tələblər', 'Обучение на английском: приём и требования', 'English-taught programmes: admission and requirements'],
+  ['Fond, Elektron Akademiya və açıq resurslar', 'Фонд, Электронная академия и открытые ресурсы', 'Collection, Electronic Academy and open resources'],
+  ['Növlər, müddət, bazalar və işçi diplomu', 'Виды, сроки, базы и рабочий диплом', 'Types, duration, bases and certificate of competency'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1461,6 +1473,8 @@ const MENU_T: Array<[string, string, string]> = [
   ['Tanışlıq və əlaqə', 'Знакомство и контакты', 'Visits and Contacts'],
   // F5.45 — «Keçid balları, yer sayı və haqq» → tam ad (öz səhifəsi var).
   ['Keçid balları, yer sayı və təhsil haqqı', 'Проходные баллы, места и стоимость обучения', 'Passing Scores, Places and Tuition Fees'],
+  // F5.46 — «Təhsil» v3 (adda-strapi/src/utils/menu-tehsil.ts).
+  ['Tədris prosesi və keyfiyyət', 'Учебный процесс и качество', 'Academic Process and Quality'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

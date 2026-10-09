@@ -108,8 +108,8 @@ export const AUDIENCES: Audience[] = [
     icon: 'ti-book',
     lead: 'Tədris, resurslar, təşkilatlar və kampus — gündəlik lazım olanlar.',
     steps: [
-      { label: 'Elektron kitabxana', href: '/sehife/elektron-kitabxana', note: 'Onlayn kitab və jurnal bazası' },
-      { label: 'Təcrübə haqqında', href: '/sehife/tecrube-haqqinda', note: 'Gəmi təcrübəsi və hesabat qaydaları' },
+      { label: 'Elektron kitabxana', href: '/sehife/elektron-kitabxana', note: 'Fond, Elektron Akademiya və açıq resurslar' },
+      { label: 'Təcrübə (praktika)', href: '/sehife/tecrube-haqqinda', note: 'Növlər, müddət, bazalar və işçi diplomu' },
       { label: 'İnformasiya Resurs Mərkəzi', href: '/struktur/informasiya-resurs-merkezi', note: 'Kitabxana və oxu zalları' },
     ],
     groups: [
@@ -118,7 +118,7 @@ export const AUDIENCES: Audience[] = [
         links: [
           { label: 'Fakültələr', href: '/fakulteler' },
           { label: 'İxtisaslar', href: '/ixtisaslar' },
-          { label: 'Təcrübə haqqında', href: '/sehife/tecrube-haqqinda' },
+          { label: 'Təcrübə (praktika)', href: '/sehife/tecrube-haqqinda' },
           { label: 'Tədris proseslərinin təşkili şöbəsi', href: '/struktur/tedris-proseslerinin-teskili-sobesi' },
         ],
       },

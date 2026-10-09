@@ -47,6 +47,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { marked } from 'marked';
+import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
@@ -90,6 +91,11 @@ import {
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { fmtDate } from '@/lib/format';
+
+/** F5.46 — admin keçidi: daxili ünvana dil prefiksi (eyni vərəq), xarici — yeni vərəqdə. */
+function linkProps(url: string, locale: Locale): { href: string; target?: string; rel?: string } {
+  return isExternalHref(url) ? { href: url, target: '_blank', rel: 'noreferrer' } : { href: localHref(url, locale) };
+}
 
 export const revalidate = 300;
 
@@ -283,14 +289,14 @@ function parseListCards(raw: string): FnCard[] | null {
   });
 }
 
-function FnCardGrid({ cards }: { cards: FnCard[] }) {
+function FnCardGrid({ cards, locale }: { cards: FnCard[]; locale: Locale }) {
   return (
     <div className="un-card-grid">
       {cards.map((c, i) => (
         <div key={i} className="un-card">
           {c.title ? <div className="un-card-title">{c.title}</div> : null}
           {c.body ? (
-            <div className="un-card-body" dangerouslySetInnerHTML={{ __html: marked.parseInline(c.body) as string }} />
+            <div className="un-card-body" dangerouslySetInnerHTML={{ __html: localizeLinks(marked.parseInline(c.body) as string, locale) }} />
           ) : null}
         </div>
       ))}
@@ -490,7 +496,7 @@ export default async function UnitPage({
     const title = (e?.title ?? '').trim();
     const body = (e?.body ?? '').trim();
     if (!title || !body) continue;
-    extras.push({ id: `elave-${i + 1}`, title, html: await marked.parse(body), after: extraSlot(e.after) });
+    extras.push({ id: `elave-${i + 1}`, title, html: localizeLinks(await marked.parse(body), locale), after: extraSlot(e.after) });
   }
   const extrasAt = (slot: ExtraSlot) => extras.filter((x) => x.after === slot);
 
@@ -547,11 +553,13 @@ export default async function UnitPage({
     parentIsFaculty || has.programs || subunitsShown.length || staffShown.length || unit.room || unit.phoneExt || unit.receptionHours,
   );
 
-  const aboutHtml = unit.about ? await marked.parse(unit.about) : '';
-  const functionsHtml = unit.functions ? await marked.parse(unit.functions) : '';
-  const servicesHtml = unit.services ? await marked.parse(unit.services) : '';
-  const resultsHtml = unit.results ? await marked.parse(unit.results) : '';
-  const strategyHtml = unit.strategy ? await marked.parse(unit.strategy) : '';
+  // F5.46 — mətndəki «/…» keçidlərinə dil prefiksi (lib/md-links.ts).
+  const md = async (src: string | null | undefined) => (src ? localizeLinks(await marked.parse(src), locale) : '');
+  const aboutHtml = await md(unit.about);
+  const functionsHtml = await md(unit.functions);
+  const servicesHtml = await md(unit.services);
+  const resultsHtml = await md(unit.results);
+  const strategyHtml = await md(unit.strategy);
   const functionCards = unit.functions ? parseListCards(unit.functions) : null;
   const serviceCards = unit.services ? parseListCards(unit.services) : null;
 
@@ -744,7 +752,7 @@ export default async function UnitPage({
                 <section id="functions" className={blockClass('functions')}>
                   <BlockTitle uid="api::unit.unit" title={blockTitleFunctions} documentId={unit.documentId} locale={locale} />
                   {functionCards ? (
-                    <FnCardGrid cards={functionCards} />
+                    <FnCardGrid cards={functionCards} locale={locale} />
                   ) : (
                     <div className="prose" dangerouslySetInnerHTML={{ __html: functionsHtml }} />
                   )}
@@ -758,7 +766,7 @@ export default async function UnitPage({
                 <section id="services" className={blockClass('services')}>
                   <BlockTitle uid="api::unit.unit" title={blockTitleServices} documentId={unit.documentId} locale={locale} />
                   {serviceCards ? (
-                    <FnCardGrid cards={serviceCards} />
+                    <FnCardGrid cards={serviceCards} locale={locale} />
                   ) : (
                     <div className="prose" dangerouslySetInnerHTML={{ __html: servicesHtml }} />
                   )}
@@ -836,7 +844,7 @@ export default async function UnitPage({
                   <BlockTitle uid="api::unit.unit" title={blockTitleLinks} documentId={unit.documentId} locale={locale} />
                   <div className="un-links">
                     {unit.links.map((l, i) => (
-                      <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
+                      <a key={i} {...linkProps(l.url, locale)} className="un-link-btn">
                         <i className="ti ti-link" aria-hidden="true" />
                         {l.label}
                       </a>
@@ -1079,8 +1087,8 @@ export default async function UnitPage({
                     <div className="un-sub-title">{tr('Onlayn xidmətlər', locale)}</div>
                     <div className="un-links">
                       {unit.onlineServices.map((l, i) => (
-                        <a key={i} href={l.url} className="un-link-btn" target="_blank" rel="noreferrer">
-                          <i className="ti ti-external-link" aria-hidden="true" />
+                        <a key={i} {...linkProps(l.url, locale)} className="un-link-btn">
+                          <i className={'ti ' + (isExternalHref(l.url) ? 'ti-external-link' : 'ti-arrow-right')} aria-hidden="true" />
                           {l.label}
                         </a>
                       ))}

@@ -57,6 +57,17 @@ const CATALOG_TAB_LABEL: Record<ProgramCatalogTab, string> = {
   doktorantura: 'Doktorantura',
 };
 
+// F5.46 — «Təhsil» menyusu pillə tablarına aparır; pillənin QƏBUL səhifəsi
+// (F5.45) tabın altında keçid kimi — təhsil (kataloq) və qəbul ayrı yerdədir.
+const TAB_ADMISSION: Partial<Record<ProgramCatalogTab, { slug: string; label: string }>> = {
+  subbakalavr: { slug: 'subbakalavr', label: 'Kollecə qəbul: şərtlər, tarixlər, sənədlər' },
+  bakalavr: { slug: 'bakalavriat', label: 'Bakalavriata qəbul: şərtlər, tarixlər, sənədlər' },
+  magistr: { slug: 'magistratura', label: 'Magistraturaya qəbul: şərtlər, tarixlər, sənədlər' },
+  doktorantura: { slug: 'doktorantura', label: 'Doktoranturaya qəbul: şərtlər, tarixlər, sənədlər' },
+  tekrar_ali: { slug: 'tekrar-ali-tehsil', label: 'Təkrar ali təhsilə qəbul: şərtlər, tarixlər, sənədlər' },
+};
+const CATALOG_LEAD = 'Kollec, bakalavriat, magistratura, doktorantura və təkrar ali təhsil proqramları — müddət, təhsil haqqı, yer sayı və keçid balları.';
+
 // F5.8a — dil DEYİL, fakt (bax ProgramDetail eyni sabit, [slug]/page.tsx — TOXUNULMUR).
 const STUDY_FORM_LABEL: Record<NonNullable<Program['studyForm']>, string> = {
   eyani: 'Əyani',
@@ -106,7 +117,7 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   return {
     title: tr('İxtisaslar', locale),
-    description: tr('Bakalavriat, magistratura və doktorantura proqramları.', locale),
+    description: tr(CATALOG_LEAD, locale),
   };
 }
 
@@ -123,6 +134,9 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
     .map((tab) => ({
       tab,
       label: tr(CATALOG_TAB_LABEL[tab], locale),
+      note: TAB_ADMISSION[tab]
+        ? { href: `/${locale}/sehife/${TAB_ADMISSION[tab]!.slug}`, label: tr(TAB_ADMISSION[tab]!.label, locale) }
+        : null,
       items: programs
         .filter((p) => p.catalogTab === tab)
         .map(
@@ -151,7 +165,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
           <div className="container np-hero-inner">
             <div className="np-eyebrow">{tr('Təhsil', locale)}</div>
             <h1 className="np-h1">{tr('İxtisaslar', locale)}</h1>
-            <p className="np-lead">{tr('Bakalavriat, magistratura və doktorantura proqramları.', locale)}</p>
+            <p className="np-lead">{tr(CATALOG_LEAD, locale)}</p>
           </div>
         </section>
 
@@ -161,6 +175,9 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
               <ProgramDirectoryIsland
                 groups={groups}
                 basePath={`/${locale}/ixtisaslar`}
+                langNotes={{
+                  en: { href: `/${locale}/sehife/ingilis-dilinde-tedris`, label: tr('İngilis dilində tədris: qəbul və tələblər', locale) },
+                }}
                 labels={{
                   colSpeciality: tr('İxtisas', locale),
                   colCode: tr('Şifr', locale),
