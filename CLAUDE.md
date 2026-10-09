@@ -185,11 +185,11 @@ qorunur:
 **İş qaydası:** `FLAG=true` → deploy → **logu yoxla** → **flagı SİL**.
 
 Bir dəfəlik, admin məzmununu əzməyən yeniləmələr (F5.38+) bayraqsız işləyir:
-plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v4`,
+plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5`,
 `editorRole:v1`, `tehsilMenu:v2`, `facultyUnits:v1`, `admissionScores:v1`,
 `unitMedia:v1`, `facilitySlugs:v1`, `dedupe:v1`, `unitBlocks:v1`,
 `facilitySeed:v1`, `qebulMenu:v1`, `qebulMenu:v2`, `qebulPages:v1`,
-`pageLayout:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+`pageLayout:v1`, `tehsilMenu:v3`, `tehsilPages:v1`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
 işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -557,6 +557,34 @@ olunur. Çevirmə kimdə?
    - **Vaxt:** sayt tarix/saatı Bakı vaxtı ilə göstərir (`lib/format.ts`,
      UTC+4; Vercel serveri UTC-dədir). Haqq `fmtFee` ilə («3800 AZN/il»).
      Admin: `cmAz:v4` (yeni sahə adları), `pageLayout:v1` (yeni sahələrin yeri).
+17. **F5.46 — «Təhsil» səhifələri eyni şablonda** (təhlil: layihə sənədi
+   `claude/tehsil-menyusu-optimallasdirma.md`).
+   - **Şablon `layout=tehsil`:** SectionPage-də «Təhsil» qırıntısı (`/ixtisaslar`)
+     və «Sual ver» → `?istiqamet=tedris` (Tədris ofisi). Fakt ikonlarına
+     `gemi`, `kitab` əlavə olundu. Admin qaydaları `cmAz:v5`-dədir: v4 mətni
+     YALNIZ admində dəyişdirilməyibsə yenilənir (`applyAzFieldUpgrades`).
+   - **Miqrasiya** `src/utils/tehsil-pages.ts` (`tehsilPages:v1`, qayda F5.45-dəki
+     kimi, ehtiyat `tehsilPages:backup:…`): 5 səhifə — təcrübə, tədris gəmisi,
+     ixtisasartırma və xaricdə təhsil, kitabxana, keyfiyyət (ru/en: təcrübə,
+     gəmi, keyfiyyət). İki bölmə (`tehsil-units-content.ts`): TTM (kurslar
+     mövzu və STCW qaydası üzrə, akkreditasiya, trenajorlar) və Tədris ofisi
+     (tələbə xidmətləri, funksiyalar) — yalnız az; keçid/sual/bina yalnız
+     boşdursa, blok başlığı yalnız ayarı olmayan bloka. F5.40-ın «STCW
+     standartları» gözləyən sətri silinir (mövzu təcrübə və TTM-dədir).
+     `PAGES_RESEED` bu 5 səhifəyə də toxunmur.
+   - **Menyu v3** (`tehsilMenu:v3`, `menu-tehsil.ts`): yalnız «Təhsil» F5.40
+     quruluşundadırsa. Bakalavriat/Magistratura/Doktorantura kataloqun pillə
+     tabına (`?tab=bakalavr|magistr|doktorantura`) — `/sehife/bakalavriat` və s.
+     F5.45-dən QƏBUL səhifəsidir; kataloqda tabın altında həmin qəbul səhifəsinə
+     keçid var. «Struktur və keyfiyyət» → «Tədris prosesi və keyfiyyət»
+     (Tədris ofisi, E-Kitabxana, Keyfiyyət). Fakültələr və Kafedralar
+     təşkilati quruluşdur → «Akademiya → Rəhbərlik və idarəetmə»
+     («Təşkilati struktur»-dan sonra). Footer «Təhsil» kataloqa. Seed,
+     fallback eyni; F5.40 v2 seed-dən gələn v3 bazanı «artıq yeni» sayır.
+   - **Keçidlər:** redaktor mətnindəki «/…» keçidinə dil prefiksi həm
+     səhifədə, həm bölmə səhifəsində (`lib/md-links.ts`); bölmənin
+     «Onlayn xidmətlər» və «Faydalı linklər» düymələri daxili ünvanda
+     eyni vərəqdə açılır.
 
 ---
 
