@@ -155,6 +155,8 @@ export interface PageFact extends Struct.ComponentSchema {
         'qrup',
         'bina',
         'qoruma',
+        'gemi',
+        'kitab',
         'diger',
       ]
     > &

@@ -40,7 +40,8 @@
       "enum": [
         "standart",
         "bolmeli",
-        "qebul"
+        "qebul",
+        "tehsil"
       ],
       "default": "standart",
       "pluginOptions": {

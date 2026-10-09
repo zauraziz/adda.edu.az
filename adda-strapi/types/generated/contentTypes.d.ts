@@ -1725,7 +1725,9 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    layout: Schema.Attribute.Enumeration<['standart', 'bolmeli', 'qebul']> &
+    layout: Schema.Attribute.Enumeration<
+      ['standart', 'bolmeli', 'qebul', 'tehsil']
+    > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;

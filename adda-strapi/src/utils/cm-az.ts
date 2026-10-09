@@ -43,6 +43,20 @@ const TAGS = 'Mövzu etiketləri. Struktur bölmənin slug-ı ilə eyni etiket q
 const PHOTO_PORTRAIT = 'Portret, kvadrata yaxın (məs. 800×800 px), JPEG/PNG/WebP, 4 MB-a qədər.';
 
 // ── Bölmələr (content type) ──────────────────────────────────────────────────
+// F5.45 (v4) qaydaları — v5 bunları YALNIZ admində dəyişdirilməyibsə yeniləyir.
+const LAYOUT_DESC_V4 =
+  'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
+  'qebul — bolmeli + qəbul bələdçisinin keçidi və «Sual ver» düyməsi. Bütün dillərdə eynidir.';
+const FACT_ICON_DESC_V4 =
+  'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, diger (ulduz).';
+// F5.46 (v5).
+const LAYOUT_DESC_V5 =
+  'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
+  'qebul — bolmeli + «Qəbul» qırıntısı və «Sual ver» (qəbul məsələləri); tehsil — bolmeli + «Təhsil» qırıntısı və «Sual ver» (tədris prosesi). ' +
+  'Bütün dillərdə eynidir.';
+const FACT_ICON_DESC_V5 =
+  'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, gemi (gəmi), kitab, diger (ulduz).';
+
 const CT: Record<string, Dict> = {
   'api::page.page': {
     title: ['Başlıq', 'Səhifənin adı — menyuda və brauzer vərəqində görünür. Məs.: «Akademiyanın tarixi».'],
@@ -50,11 +64,7 @@ const CT: Record<string, Dict> = {
     body: ['Mətn', 'Səhifənin əsas mətni. ' + MD],
     seoDescription: ['Axtarış təsviri', 'Google nəticəsində başlığın altında görünən 1–2 cümlə (180 simvola qədər).'],
     // F5.45 — sağ panelli şablon (cmAz:v4).
-    layout: [
-      'Şablon',
-      'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
-        'qebul — bolmeli + qəbul bələdçisinin keçidi və «Sual ver» düyməsi. Bütün dillərdə eynidir.',
-    ],
+    layout: ['Şablon', LAYOUT_DESC_V4],
     dataBlock: [
       'Avtomatik blok',
       'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
@@ -582,10 +592,7 @@ const COMP: Record<string, Dict> = {
   'page.fact': {
     label: ['Etiket', 'Məs.: Təhsil müddəti'],
     value: ['Dəyər', 'Məs.: 4 il'],
-    icon: [
-      'İkon',
-      'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, diger (ulduz).',
-    ],
+    icon: ['İkon', FACT_ICON_DESC_V4],
   },
   'page.step': {
     track: ['Trayektoriya', 'Boş qalsa addımlar bir siyahıdır. Doldurulsa eyni adlı addımlar bir qrupda göstərilir.', 'Məs.: 9 illik baza'],
@@ -717,3 +724,44 @@ export const CM_AZ_SIZE = {
   types: Object.keys(CT).length + Object.keys(COMP).length,
   fields: [...Object.values(CT), ...Object.values(COMP)].reduce((a, d) => a + Object.keys(d).length, 0),
 };
+
+// ── v5 (F5.46): v4-də yazılmış qaydaların yenilənməsi ────────────────────────
+// Yalnız təsvir v4-dəki mətnlə EYNİDİRSƏ (admin dəyişməyibsə) əvəz olunur.
+const MARKER_V5 = 'cmAz:v5';
+const UPGRADES: { kind: 'ct' | 'comp'; uid: string; field: string; from: string; to: string }[] = [
+  { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V4, to: LAYOUT_DESC_V5 },
+  { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V4, to: FACT_ICON_DESC_V5 },
+];
+
+export async function applyAzFieldUpgrades(strapi: Core.Strapi): Promise<void> {
+  const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
+  if ((await store.get({ key: MARKER_V5 })) === true) return;
+  const cm = strapi.plugin('content-manager');
+  const svc = {
+    ct: cm.service('content-types') as unknown as {
+      findContentType: (uid: string) => { uid: string } | null;
+      findConfiguration: (ct: { uid: string }) => Promise<Conf>;
+      updateConfiguration: (ct: { uid: string }, conf: Conf) => Promise<unknown>;
+    },
+    comp: cm.service('components') as unknown as {
+      findComponent: (uid: string) => { uid: string } | null | undefined;
+      findConfiguration: (c: { uid: string }) => Promise<Conf>;
+      updateConfiguration: (c: { uid: string }, conf: Conf) => Promise<unknown>;
+    },
+  };
+  let n = 0;
+  for (const u of UPGRADES) {
+    const target = u.kind === 'ct' ? svc.ct.findContentType(u.uid) : svc.comp.findComponent(u.uid);
+    if (!target) continue;
+    const conf = u.kind === 'ct' ? await svc.ct.findConfiguration(target) : await svc.comp.findConfiguration(target);
+    const edit = conf.metadatas[u.field]?.edit;
+    if (!edit || edit.description !== u.from) continue;
+    edit.description = u.to;
+    const next = { settings: conf.settings, metadatas: conf.metadatas, layouts: conf.layouts };
+    if (u.kind === 'ct') await svc.ct.updateConfiguration(target, next);
+    else await svc.comp.updateConfiguration(target, next);
+    n++;
+  }
+  await store.set({ key: MARKER_V5, value: true });
+  strapi.log.info(`[adda-admin] F5.46: sahə qaydaları yeniləndi: ${n} (Şablon «tehsil», fakt ikonları «gemi», «kitab»).`);
+}

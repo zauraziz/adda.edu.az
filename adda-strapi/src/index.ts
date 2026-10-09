@@ -5,11 +5,11 @@ import type { Core } from '@strapi/strapi';
 // F5.38 — admin «Bildirişlər» API-si (bax src/utils/admin-inbox.ts).
 import { applyInboxLayouts, registerAdminInbox } from './utils/admin-inbox';
 // F5.39 — CM sahə adları və doldurma qaydaları (bax src/utils/cm-az.ts).
-import { applyAzFieldLabels } from './utils/cm-az';
+import { applyAzFieldLabels, applyAzFieldUpgrades } from './utils/cm-az';
 // F5.39 — məsul redaktorlar (bax src/utils/page-owners.ts).
 import { ensureEditorRole, registerOwnerCondition, registerPageOwners, scheduleWeeklyDigest } from './utils/page-owners';
 // F5.40 — «Təhsil» menyusunun yeni quruluşu (bax src/utils/menu-tehsil.ts).
-import { applyTehsilMenuV2 } from './utils/menu-tehsil';
+import { applyTehsilMenuV2, applyTehsilMenuV3 } from './utils/menu-tehsil';
 import { applyFacultyUnitsV1 } from './utils/faculty-units';
 // F5.42 — qəbul balı: vergüllü onluq (227,6) 2276 olmasın.
 import { applyAdmissionScoresV1, registerScoreNormalizer } from './utils/admission-scores';
@@ -23,6 +23,8 @@ import { applyQebulMenuV1, applyQebulMenuV2 } from './utils/menu-qebul';
 // F5.45 — qəbul səhifələri sağ panelli şablonda (bax src/utils/qebul-pages.ts).
 import { applyQebulPagesV1, placePageFields } from './utils/qebul-pages';
 import { QEBUL_PAGE_SLUGS } from './utils/qebul-pages-content';
+import { applyTehsilPagesV1 } from './utils/tehsil-pages';
+import { TEHSIL_PAGE_SLUGS } from './utils/tehsil-pages-content';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -160,6 +162,14 @@ const SEED = {
               {
                 "label": "Təşkilati struktur",
                 "url": "/struktur"
+              },
+              {
+                "label": "Fakültələr",
+                "url": "/fakulteler"
+              },
+              {
+                "label": "Kafedralar",
+                "url": "/kafedralar"
               }
             ]
           },
@@ -428,15 +438,15 @@ const SEED = {
               },
               {
                 "label": "Bakalavriat",
-                "url": "/sehife/bakalavriat"
+                "url": "/ixtisaslar?tab=bakalavr"
               },
               {
                 "label": "Magistratura",
-                "url": "/sehife/magistratura"
+                "url": "/ixtisaslar?tab=magistr"
               },
               {
                 "label": "Doktorantura",
-                "url": "/sehife/doktorantura"
+                "url": "/ixtisaslar?tab=doktorantura"
               },
               {
                 "label": "Qiyabi və təkrar ali təhsil",
@@ -452,16 +462,16 @@ const SEED = {
             "title": "Dəniz praktikası",
             "links": [
               {
+                "label": "Təcrübə (praktika)",
+                "url": "/sehife/tecrube-haqqinda"
+              },
+              {
                 "label": "Tədris gəmisi",
                 "url": "/sehife/tedris-gemisi"
               },
               {
                 "label": "Laboratoriya və trenajorlar",
                 "url": "/auditoriyalar"
-              },
-              {
-                "label": "Təcrübə (praktika)",
-                "url": "/sehife/tecrube-haqqinda"
               }
             ]
           },
@@ -479,16 +489,8 @@ const SEED = {
             ]
           },
           {
-            "title": "Struktur və keyfiyyət",
+            "title": "Tədris prosesi və keyfiyyət",
             "links": [
-              {
-                "label": "Fakültələr",
-                "url": "/fakulteler"
-              },
-              {
-                "label": "Kafedralar",
-                "url": "/kafedralar"
-              },
               {
                 "label": "Tədris ofisi",
                 "url": "/struktur/tedris-proseslerinin-teskili-sobesi"
@@ -1141,24 +1143,24 @@ const SEED = {
         "title": "Təhsil",
         "links": [
           {
-            "label": "Bakalavriat",
-            "url": "/sehife/bakalavriat"
-          },
-          {
-            "label": "Magistratura",
-            "url": "/sehife/magistratura"
-          },
-          {
-            "label": "Qiyabi təhsil",
-            "url": "/hazirlanir/qiyabi-tehsil"
-          },
-          {
             "label": "İxtisaslar",
             "url": "/ixtisaslar"
           },
           {
-            "label": "E-Akademiya",
-            "url": "#"
+            "label": "Bakalavriat",
+            "url": "/ixtisaslar?tab=bakalavr"
+          },
+          {
+            "label": "Magistratura",
+            "url": "/ixtisaslar?tab=magistr"
+          },
+          {
+            "label": "Qiyabi və təkrar ali təhsil",
+            "url": "/ixtisaslar?tab=tekrar_ali"
+          },
+          {
+            "label": "Təcrübə (praktika)",
+            "url": "/sehife/tecrube-haqqinda"
           }
         ]
       },
@@ -1943,6 +1945,8 @@ export default {
     const cmConfigured = applyInboxLayouts(strapi)
       .catch((e: Error) => strapi.log.error('[adda-inbox] CM görünüşü: ' + e.message))
       .then(() => applyAzFieldLabels(strapi))
+      // F5.46 — v4 qaydalarının yenilənməsi (yalnız admində dəyişdirilməyibsə).
+      .then(() => applyAzFieldUpgrades(strapi))
       .catch((e: Error) => strapi.log.error('[adda-admin] Az sahə adları: ' + e.message));
     // Lokallar (az/ru/en)
     try {
@@ -2216,7 +2220,14 @@ export default {
       .then(() => applyQebulPagesV1(strapi))
       .catch((e: Error) => strapi.log.error('[qebul] F5.45: ' + e.message))
       .then(() => placePageFields(strapi))
-      .catch((e: Error) => strapi.log.error('[qebul] F5.45 forma: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[qebul] F5.45 forma: ' + e.message))
+      // F5.46 — «Təhsil» v3 (kataloq tabları, «Tədris prosesi və keyfiyyət»,
+      // Fakültələr/Kafedralar → Akademiya) və səhifələr layout=tehsil, BİR DƏFƏ,
+      // menyuya yazan bütün əvvəlki miqrasiyalardan SONRA.
+      .then(() => applyTehsilMenuV3(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.46: ' + e.message))
+      .then(() => applyTehsilPagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[tehsil] F5.46: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
@@ -2458,7 +2469,8 @@ export default {
         }
         // F5.45 — qəbul səhifələri (məs. «Məzunların işlə təminatı») sağ panelli
         // şablondadır: PAGES_RESEED onları köhnə mətnə qaytarmasın.
-        if (existing && QEBUL_PAGE_SLUGS.includes(p.slug)) {
+        // F5.46 — «Təhsil» səhifələri də (layout=tehsil).
+        if (existing && (QEBUL_PAGE_SLUGS.includes(p.slug) || TEHSIL_PAGE_SLUGS.includes(p.slug))) {
           skipped++;
           continue;
         }

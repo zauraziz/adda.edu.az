@@ -17,7 +17,7 @@
     },
     "icon": {
       "type": "enumeration",
-      "enum": ["tarix", "muddet", "yer", "haqq", "bal", "dil", "forma", "sened", "imtahan", "diplom", "unvan", "telefon", "qrup", "bina", "qoruma", "diger"],
+      "enum": ["tarix", "muddet", "yer", "haqq", "bal", "dil", "forma", "sened", "imtahan", "diplom", "unvan", "telefon", "qrup", "bina", "qoruma", "gemi", "kitab", "diger"],
       "default": "diger"
     }
   }

@@ -42,6 +42,9 @@ export type FactIcon =
   | 'qrup'
   | 'bina'
   | 'qoruma'
+  // F5.46: gəmi (ti-ship), kitab (ti-books).
+  | 'gemi'
+  | 'kitab'
   | 'diger';
 
 export type DataBlock =
