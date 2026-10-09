@@ -255,6 +255,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               </div>
             ) : null}
 
+            {/* F5.45 — «Açıq qapı günləri» səhifəsindən birbaşa qeydiyyata (#qeydiyyat). */}
+            <div id="qeydiyyat" className="pr-anchor" />
             <RsvpIsland
               eventSlug={ev.slug}
               eventTitle={ev.title}

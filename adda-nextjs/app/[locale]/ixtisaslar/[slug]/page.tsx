@@ -64,7 +64,7 @@ import {
   type SiteMenu,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, fallbackNotice, type Locale } from '@/lib/i18n';
-import { fmtScore } from '@/lib/format';
+import { fmtFee, fmtScore } from '@/lib/format';
 
 export const revalidate = 300;
 
@@ -873,7 +873,7 @@ export default async function ProgramPage({
                     {program.tuitionFee ? (
                       <p className="un-side-text un-side-text--icon">
                         <i className="ti ti-cash" aria-hidden="true" />
-                        {tr('Təhsil haqqı', locale)}: {program.tuitionFee}
+                        {tr('Təhsil haqqı', locale)}: {fmtFee(program.tuitionFee, locale)}
                       </p>
                     ) : null}
                     {cutoffLabel ? (

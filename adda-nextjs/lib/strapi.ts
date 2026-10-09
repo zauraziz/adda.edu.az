@@ -106,6 +106,38 @@ export interface Program {
   locale: Locale;
 }
 
+/** F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli. */
+export type PageLayout = 'standart' | 'bolmeli' | 'qebul';
+/** F5.45 — kataloqdan canlı blok (bax app/_components/AdmissionData.tsx). */
+export type PageDataBlock =
+  | 'yox'
+  | 'subbakalavr'
+  | 'bakalavr'
+  | 'magistr'
+  | 'doktorantura'
+  | 'tekrar_ali'
+  | 'ingilis'
+  | 'qebul_cedveli'
+  | 'aciq_qapi';
+export interface PageFact {
+  label: string;
+  value: string;
+  icon: string | null;
+}
+export interface PageStep {
+  track: string | null;
+  title: string;
+  period: string | null;
+  who: string | null;
+  body: string | null;
+  linkLabel: string | null;
+  linkUrl: string | null;
+}
+export interface PageFaq {
+  question: string;
+  answer: string;
+}
+
 export interface PageDoc {
   id: number;
   documentId: string;
@@ -114,6 +146,16 @@ export interface PageDoc {
   body: string | null;
   seoDescription: string | null;
   locale: Locale;
+  // F5.45 — sağ panelli şablonun sahələri (köhnə Strapi-də yoxdur → undefined).
+  layout?: PageLayout | null;
+  dataBlock?: PageDataBlock | null;
+  lead?: string | null;
+  stepsTitle?: string | null;
+  steps?: PageStep[];
+  facts?: PageFact[];
+  faq?: PageFaq[];
+  sideLinks?: MenuLink[];
+  contact?: string | null;
 }
 
 interface StrapiList<T> {
@@ -297,7 +339,19 @@ async function allSlugs(path: string, locale: Locale | null): Promise<string[]> 
 
 /** Slug ilə səhifə. */
 export async function getPageBySlug(slug: string, locale: Locale = 'az'): Promise<PageDoc | null> {
-  return oneBySlug<PageDoc>('/pages', slug, locale);
+  try {
+    // F5.45 — şablon komponentləri Strapi 5-də ƏL İLƏ populate olunur.
+    return await oneBySlug<PageDoc>('/pages', slug, locale, {
+      'populate[steps]': true,
+      'populate[facts]': true,
+      'populate[faq]': true,
+      'populate[sideLinks]': true,
+    });
+  } catch {
+    // Deploy pəncərəsi: Vercel Render-dən tez qurulur, köhnə Strapi bu
+    // sahələri tanımır (400) — səhifə 404 olmasın, sadə formada gəlsin.
+    return oneBySlug<PageDoc>('/pages', slug, locale);
+  }
 }
 export const getDepartmentBySlug = (slug: string, locale: Locale = 'az') =>
   oneBySlug<Department>('/departments', slug, locale);
@@ -528,6 +582,49 @@ export const getFacultyEvents = (facultySlug: string, locale: Locale = 'az', lim
   getFeed<EventItem>('events', locale, { visibility: 'faculty', facultySlug, limit }, 'startAt:asc');
 export const getUpcomingEvents = (locale: Locale = 'az', limit?: number) =>
   getFeed<EventItem>('events', locale, { visibility: 'academy', upcoming: true, limit }, 'startAt:asc');
+
+/**
+ * F5.45 — «Açıq qapı günləri» səhifəsi: adında «açıq qapı» olan tədbirlər
+ * (yeni → köhnə) və xəbərlər. Cari dildə yoxdursa `az`.
+ */
+export async function getOpenDayEvents(locale: Locale = 'az'): Promise<EventItem[]> {
+  const load = (loc: Locale) =>
+    strapiFetch<StrapiList<EventItem>>(
+      '/events',
+      {
+        locale: loc,
+        'filters[title][$containsi]': 'açıq qapı',
+        sort: 'startAt:desc',
+        'pagination[pageSize]': 8,
+      },
+      300,
+    ).then((j) => j.data ?? []);
+  try {
+    const rows = await load(locale);
+    return rows.length || locale === 'az' ? rows : await load('az');
+  } catch {
+    return [];
+  }
+}
+export async function getOpenDayNews(locale: Locale = 'az'): Promise<Article[]> {
+  const load = (loc: Locale) =>
+    strapiFetch<StrapiList<Article>>(
+      '/articles',
+      {
+        locale: loc,
+        'filters[title][$containsi]': 'açıq qapı',
+        sort: 'newsDate:desc',
+        'pagination[pageSize]': 4,
+      },
+      300,
+    ).then((j) => j.data ?? []);
+  try {
+    const rows = await load(locale);
+    return rows.length || locale === 'az' ? rows : await load('az');
+  } catch {
+    return [];
+  }
+}
 
 /** ── F2.4: Ana səhifə üçün seçilmiş (curated) xəbərlər ──
  * showOnHome=true VƏ homeStatus=approved. Boşdursa ən son academy xəbərlərinə

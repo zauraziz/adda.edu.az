@@ -950,6 +950,34 @@ const T: Array<[string, string, string]> = [
   ['Bütün proqramlar', 'Все программы', 'All programmes'],
   // F5.44 — «Bunlar üçün → Abituriyentlər» yeni «Qəbul» menyusu ilə uyğunlaşdı.
   ['Hər ixtisas üzrə — proqram kataloqunda', 'По каждой специальности — в каталоге программ', 'For each programme — in the programme catalogue'],
+  // F5.45 — sağ panelli səhifə şablonu (SectionPage) və canlı qəbul cədvəlləri.
+  ['Qəbul trayektoriyası', 'Траектория поступления', 'Admission Pathway'],
+  ['Qəbul trayektoriyaları', 'Траектории поступления', 'Admission Pathways'],
+  ['İxtisaslar, yer sayı və haqq', 'Специальности, места и стоимость', 'Programmes, Places and Fees'],
+  ['İxtisaslar üzrə cədvəl', 'Таблица по специальностям', 'Table by Programme'],
+  ['Keçid balları üzrə illər', 'Проходные баллы по годам', 'Passing Scores by Year'],
+  ['Plan yerləri', 'План приёма', 'Places'],
+  ['Təhsil haqqı', 'Стоимость обучения', 'Tuition Fee'],
+  ['Keçid balı', 'Проходной балл', 'Passing Score'],
+  ['Dövlət sifarişi', 'Госзаказ', 'State-funded'],
+  ['Ödənişli', 'Платно', 'Fee-paying'],
+  ['ödənişsiz', 'бесплатно', 'state-funded'],
+  ['ödənişli', 'платно', 'fee-paying'],
+  ['əyani', 'очно', 'full-time'],
+  ['qiyabi', 'заочно', 'part-time'],
+  ['AZ əyani', 'AZ очно', 'AZ full-time'],
+  ['AZ qiyabi', 'AZ заочно', 'AZ part-time'],
+  ['qəbul', 'приём', 'admission'],
+  ['Pillə', 'Уровень', 'Level'],
+  ['İxtisas sayı', 'Число специальностей', 'Programmes'],
+  ['Tez-tez verilən suallar', 'Часто задаваемые вопросы', 'Frequently Asked Questions'],
+  ['Əsas faktlar', 'Основные факты', 'Key Facts'],
+  ['Faydalı keçidlər', 'Полезные ссылки', 'Useful Links'],
+  ['Növbəti açıq qapı günü', 'Ближайший день открытых дверей', 'Next Open Day'],
+  ['Ötən açıq qapı günləri', 'Прошедшие дни открытых дверей', 'Past Open Days'],
+  ['Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.', 'Сейчас день открытых дверей не запланирован. Дата появится здесь, когда будет объявлена.', 'No open day is scheduled at the moment. The date will appear here once announced.'],
+  ['Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', 'Напишите в Академию онлайн по вопросам приёма.', 'Write to the Academy online about admissions.'],
+  ['Sual ver', 'Задать вопрос', 'Ask a Question'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1431,6 +1459,8 @@ const MENU_T: Array<[string, string, string]> = [
   ['Əcnəbi vətəndaşlar', 'Иностранным гражданам', 'International Applicants'],
   ['Qəbul qaydaları və təhsil haqqı', 'Правила приёма и стоимость обучения', 'Admission Rules and Tuition Fees'],
   ['Tanışlıq və əlaqə', 'Знакомство и контакты', 'Visits and Contacts'],
+  // F5.45 — «Keçid balları, yer sayı və haqq» → tam ad (öz səhifəsi var).
+  ['Keçid balları, yer sayı və təhsil haqqı', 'Проходные баллы, места и стоимость обучения', 'Passing Scores, Places and Tuition Fees'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

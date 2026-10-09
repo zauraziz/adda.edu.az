@@ -40,7 +40,7 @@ import ProgramDirectoryIsland, {
 } from '../../_components/ProgramDirectoryIsland';
 import { getMenu, getPrograms, type Program, type ProgramCatalogTab, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
-import { fmtScore } from '@/lib/format';
+import { fmtFee, fmtScore } from '@/lib/format';
 
 export const revalidate = 300;
 
@@ -132,7 +132,8 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             code: p.code,
             durationYears: p.durationYears,
             studyFormLabel: p.studyForm ? tr(STUDY_FORM_LABEL[p.studyForm], locale) : null,
-            tuitionFee: p.tuitionFee,
+            // F5.45 — vahid yazılış («2700» → «2700 AZN/il»).
+            tuitionFee: p.tuitionFee ? fmtFee(p.tuitionFee, locale) : null,
             admissionLabel: admissionLabel(p.admissionScores, locale),
             languagesLabel: languagesLabel(p.languages),
             seatsTotal: p.admissionSeats?.total ?? null,

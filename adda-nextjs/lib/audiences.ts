@@ -45,10 +45,9 @@ export const AUDIENCES: Audience[] = [
     icon: 'ti-school',
     lead: 'Qəbul, ixtisaslar və akademiyada təhsilin necə qurulduğu — bir səhifədə.',
     steps: [
-      // F5.44 — «Qəbul» menyusunun başlığı bura aparır: qruplar menyu ilə eynidir
-      // (adda-strapi/src/utils/menu-qebul.ts); «Tanışlıq və əlaqə» səhifənin
-      // auditoriya keçidləri və «Əlaqə» düyməsindədir.
-      { label: 'Keçid balları, yer sayı və haqq', href: '/ixtisaslar', note: 'Hər ixtisas üzrə — proqram kataloqunda' },
+      // F5.44/F5.45 — «Qəbul» menyusunun başlığı bura aparır: qruplar menyu
+      // ilə eynidir (adda-strapi/src/utils/menu-qebul.ts, QEBUL_MENU_V2).
+      { label: 'Keçid balları, yer sayı və təhsil haqqı', href: '/sehife/kecid-ballari', note: 'Hər ixtisas üzrə — proqram kataloqunda' },
       { label: 'Bakalavriat', href: '/sehife/bakalavriat', note: 'Qəbul şərtləri və təhsil müddəti' },
       { label: 'Yataqxana', href: '/sehife/yataqxana', note: 'Yaşayış şəraiti' },
     ],
@@ -56,17 +55,17 @@ export const AUDIENCES: Audience[] = [
       {
         title: 'Pillələr üzrə qəbul',
         links: [
-          { label: 'Subbakalavr (kollec)', href: '/ixtisaslar?tab=subbakalavr' },
+          { label: 'Subbakalavr (kollec)', href: '/sehife/subbakalavr' },
           { label: 'Bakalavriat', href: '/sehife/bakalavriat' },
           { label: 'Magistratura', href: '/sehife/magistratura' },
           { label: 'Doktorantura', href: '/sehife/doktorantura' },
-          { label: 'Təkrar ali təhsil', href: '/ixtisaslar?tab=tekrar_ali' },
+          { label: 'Təkrar ali təhsil', href: '/sehife/tekrar-ali-tehsil' },
         ],
       },
       {
         title: 'İxtisas seçimi',
         links: [
-          { label: 'Keçid balları, yer sayı və haqq', href: '/ixtisaslar' },
+          { label: 'Keçid balları, yer sayı və təhsil haqqı', href: '/sehife/kecid-ballari' },
           { label: 'Məzunların işlə təminatı', href: '/sehife/mezunlarin-isle-teminati' },
           { label: 'Yataqxana', href: '/sehife/yataqxana' },
         ],
@@ -75,7 +74,14 @@ export const AUDIENCES: Audience[] = [
         title: 'Əcnəbi vətəndaşlar',
         links: [
           { label: 'Qəbul qaydaları və təhsil haqqı', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari' },
-          { label: 'İngilis dilində tədris', href: '/ixtisaslar?dil=en' },
+          { label: 'İngilis dilində tədris', href: '/sehife/ingilis-dilinde-tedris' },
+        ],
+      },
+      {
+        title: 'Tanışlıq və əlaqə',
+        links: [
+          { label: 'Açıq qapı günləri', href: '/sehife/aciq-qapi-gunleri' },
+          { label: 'Onlayn müraciət', href: '/sehife/onlayn-muraciet' },
         ],
       },
       {
@@ -248,7 +254,7 @@ export const AUDIENCES: Audience[] = [
     lead: 'Əcnəbi vətəndaşlar üçün qəbul qaydaları, təhsil şəraiti və yaşayış.',
     steps: [
       { label: 'Əcnəbi tələbələrin qəbulu qaydaları', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari', note: 'Sənədlər və müraciət ardıcıllığı' },
-      { label: 'İngilis dilində tədris', href: '/ixtisaslar?dil=en', note: 'Tədris dili və proqramlar' },
+      { label: 'İngilis dilində tədris', href: '/sehife/ingilis-dilinde-tedris', note: 'Tədris dili və proqramlar' },
       { label: 'Yataqxana', href: '/sehife/yataqxana', note: 'Yaşayış şəraiti' },
     ],
     groups: [
@@ -256,7 +262,7 @@ export const AUDIENCES: Audience[] = [
         title: 'Qəbul',
         links: [
           { label: 'Əcnəbi tələbələrin qəbulu qaydaları', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari' },
-          { label: 'İngilis dilində tədris', href: '/ixtisaslar?dil=en' },
+          { label: 'İngilis dilində tədris', href: '/sehife/ingilis-dilinde-tedris' },
           { label: 'Bakalavriat', href: '/sehife/bakalavriat' },
           { label: 'Magistratura', href: '/sehife/magistratura' },
         ],

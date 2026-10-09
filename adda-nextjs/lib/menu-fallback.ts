@@ -13,12 +13,12 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'Təminat', links: [{label:'Satınalmalar',url:'#'},{label:'Binalar və infrastruktur',url:'#'},{label:'Yataqxana',url:'#'},{label:'Təlim-Tədris Mərkəzi',url:'#'},{label:'Tədris gəmisi',url:'#'},{label:'Kollec',url:'#'}] },
       { title: 'Kommunikasiya', links: [{label:'Vətəndaşların müraciəti',url:'#'},{label:'Əlaqə',url:'#'}] },
     ]},
-    // F5.44 — «Qəbul» yeni quruluşu (adda-strapi/src/utils/menu-qebul.ts ilə eyni).
+    // F5.45 — «Qəbul» v2 (adda-strapi/src/utils/menu-qebul.ts QEBUL_MENU_V2 ilə eyni).
     { label: 'Qəbul', order: 2, url: '/bunlar-ucun/abituriyentler', groups: [
-      { title: 'Pillələr üzrə qəbul', links: [{label:'Subbakalavr (kollec)',url:'/ixtisaslar?tab=subbakalavr'},{label:'Bakalavriat',url:'/sehife/bakalavriat'},{label:'Magistratura',url:'/sehife/magistratura'},{label:'Doktorantura',url:'/sehife/doktorantura'},{label:'Təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'}] },
-      { title: 'İxtisas seçimi', links: [{label:'Keçid balları, yer sayı və haqq',url:'/ixtisaslar'},{label:'Məzunların işlə təminatı',url:'/sehife/mezunlarin-isle-teminati'},{label:'Yataqxana',url:'/sehife/yataqxana'}] },
-      { title: 'Əcnəbi vətəndaşlar', links: [{label:'Qəbul qaydaları və təhsil haqqı',url:'/sehife/ecnebi-telebelerin-qebulu-qaydalari'},{label:'İngilis dilində tədris',url:'/ixtisaslar?dil=en'}] },
-      { title: 'Tanışlıq və əlaqə', links: [{label:'Valideynlər',url:'/bunlar-ucun/valideynler'},{label:'Əlaqə',url:'/elaqe'}] },
+      { title: 'Pillələr üzrə qəbul', links: [{label:'Subbakalavr (kollec)',url:'/sehife/subbakalavr'},{label:'Bakalavriat',url:'/sehife/bakalavriat'},{label:'Magistratura',url:'/sehife/magistratura'},{label:'Doktorantura',url:'/sehife/doktorantura'},{label:'Təkrar ali təhsil',url:'/sehife/tekrar-ali-tehsil'}] },
+      { title: 'İxtisas seçimi', links: [{label:'Keçid balları, yer sayı və təhsil haqqı',url:'/sehife/kecid-ballari'},{label:'Məzunların işlə təminatı',url:'/sehife/mezunlarin-isle-teminati'},{label:'Yataqxana',url:'/sehife/yataqxana'}] },
+      { title: 'Əcnəbi vətəndaşlar', links: [{label:'Qəbul qaydaları və təhsil haqqı',url:'/sehife/ecnebi-telebelerin-qebulu-qaydalari'},{label:'İngilis dilində tədris',url:'/sehife/ingilis-dilinde-tedris'}] },
+      { title: 'Tanışlıq və əlaqə', links: [{label:'Açıq qapı günləri',url:'/sehife/aciq-qapi-gunleri'},{label:'Onlayn müraciət',url:'/sehife/onlayn-muraciet'}] },
     ]},
     // F5.40 — «Təhsil» yeni quruluşu (adda-strapi/src/utils/menu-tehsil.ts ilə eyni).
     { label: 'Təhsil', order: 3, url: '/ixtisaslar', groups: [
@@ -84,7 +84,7 @@ export const FALLBACK_MENU: SiteMenu = {
   ],
   footerMenyusu: [
     { title: 'Akademiya', links: [{label:'Haqqımızda',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Struktur',url:'#'},{label:'Tarix',url:'#'},{label:'Akkreditasiya',url:'#'}] },
-    { title: 'Qəbul', links: [{label:'Bakalavr qəbulu',url:'/sehife/bakalavriat'},{label:'Magistratura qəbulu',url:'/sehife/magistratura'},{label:'Keçid balları, yer sayı və haqq',url:'/ixtisaslar'},{label:'Əcnəbi vətəndaşlar',url:'/sehife/ecnebi-telebelerin-qebulu-qaydalari'}] },
+    { title: 'Qəbul', links: [{label:'Bakalavr qəbulu',url:'/sehife/bakalavriat'},{label:'Magistratura qəbulu',url:'/sehife/magistratura'},{label:'Keçid balları, yer sayı və təhsil haqqı',url:'/sehife/kecid-ballari'},{label:'Onlayn müraciət',url:'/sehife/onlayn-muraciet'}] },
     { title: 'Təhsil', links: [{label:'Bakalavriat',url:'#'},{label:'Magistratura',url:'#'},{label:'Qiyabi təhsil',url:'#'},{label:'İxtisaslar',url:'#'},{label:'E-Akademiya',url:'#'}] },
     { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'#'},{label:'Tələbə həyatı',url:'#'},{label:'Beynəlxalq əməkdaşlıq',url:'#'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
   ],

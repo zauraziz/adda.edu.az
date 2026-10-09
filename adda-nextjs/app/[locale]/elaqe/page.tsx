@@ -71,7 +71,8 @@ interface RouteRow {
   href: string | null;
 }
 const ROUTING_TABLE: RouteRow[] = [
-  { audience: 'Abituriyent', target: 'Qəbul', href: '/ixtisaslar' },
+  // F5.45 — qəbulun «hara müraciət etməli» səhifəsi (+ «Qəbul məsələləri» forması).
+  { audience: 'Abituriyent', target: 'Qəbul', href: '/sehife/onlayn-muraciet' },
   { audience: 'Tələbə', target: 'Tədris proseslərinin təşkili şöbəsi', href: '/struktur/tedris-proseslerinin-teskili-sobesi' },
   { audience: 'Məzun', target: 'Karyera', href: '/hazirlanir/karyera-merkezi-haqqinda' },
   { audience: 'İşəgötürən', target: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi', href: '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
