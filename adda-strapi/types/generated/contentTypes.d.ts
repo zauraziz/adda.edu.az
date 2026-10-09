@@ -1705,6 +1705,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'ingilis',
         'qebul_cedveli',
         'aciq_qapi',
+        'konfrans',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{
@@ -1726,7 +1727,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         };
       }>;
     layout: Schema.Attribute.Enumeration<
-      ['standart', 'bolmeli', 'qebul', 'tehsil']
+      ['standart', 'bolmeli', 'qebul', 'tehsil', 'elm']
     > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {

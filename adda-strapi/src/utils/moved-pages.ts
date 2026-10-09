@@ -11,9 +11,13 @@
  *   copy: false — səhifə köhnə saytın şəxsi tərcümeyi-halıdır (az versiyası
  *                 artıq dərcdən çıxarılıb, ru/en qalmışdı, bəziləri köhnə
  *                 prorektora aiddir) — mətn köçürülmür, şəxsin profili
- *                 /emekdas/<slug>-dədir.
+ *                 /emekdas/<slug>-dədir. F5.47: «Elmi-tədqiqat qrupu» —
+ *                 şöbənin köhnə adı və köhnə heyəti; bölmənin öz mətni var.
  *
- * SİNXRON: adda-nextjs/next.config.js (PAGE_UNIT_MAP), tools/migration/
+ * F5.47 (dedupe:v2): PAGE_PAGE_MOVES — səhifə başqa səhifənin içinə köçüb
+ * («Elmi jurnalımız onlayn versiyada» → «Elmi jurnal»).
+ *
+ * SİNXRON: adda-nextjs/next.config.js (PAGE_UNIT_MAP, PAGE_PAGE_MAP), tools/migration/
  * gen-redirects.mjs (MOVED). Bu fayl @strapi tiplərini import ETMİR — sayt
  * axtarışı (standalone) da oxuyur.
  */
@@ -32,7 +36,14 @@ export const PAGE_UNIT_MOVES: ReadonlyArray<{ page: string; unit: string; copy: 
     unit: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq',
     copy: false,
   },
+  // F5.47 (dedupe:v2)
+  { page: 'elmi-tedqiqat-qrupu', unit: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi', copy: false },
 ];
+
+/** F5.47 — köhnə səhifə yeni səhifənin içindədir: /sehife/<açar> → /sehife/<dəyər> 301, köhnəsi dərcdən çıxır. */
+export const PAGE_PAGE_MOVES: Readonly<Record<string, string>> = {
+  'elmi-jurnalimiz-onlayn-versiyada': 'elmi-jurnal',
+};
 
 /**
  * Öz marşrutuna əvvəl köçmüş səhifələr (F5.21d, F5.30a). Səhifə qeydi arxiv
@@ -44,11 +55,12 @@ export const PAGE_ROUTE_MOVES: Readonly<Record<string, string>> = {
 };
 
 /** Axtarışda göstərilməyən səhifələr (köçmüş, ünvanı yönlənir). */
-export const MOVED_PAGE_SLUGS: string[] = PAGE_UNIT_MOVES.map((m) => m.page);
+export const MOVED_PAGE_SLUGS: string[] = [...PAGE_UNIT_MOVES.map((m) => m.page), ...Object.keys(PAGE_PAGE_MOVES)];
 
 /** /sehife/<slug> köçübsə yeni ünvan (dilsiz), yoxsa null. */
 export function movedPageTarget(slug: string): string | null {
   const m = PAGE_UNIT_MOVES.find((x) => x.page === slug);
   if (m) return `/struktur/${m.unit}`;
+  if (PAGE_PAGE_MOVES[slug]) return `/sehife/${PAGE_PAGE_MOVES[slug]}`;
   return PAGE_ROUTE_MOVES[slug] ?? null;
 }

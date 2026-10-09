@@ -16,7 +16,7 @@ import { applyAdmissionScoresV1, registerScoreNormalizer } from './utils/admissi
 import { placeUnitMediaFields } from './utils/unit-media';
 // F5.43 — auditoriya ünvanları, saytdakı təkrarlar, bölmə blok başlıqları.
 import { applyFacilitySlugsV1, facilitySlug, registerFacilitySlugFill } from './utils/facility-slugs';
-import { applyDedupeV1 } from './utils/dedupe';
+import { applyDedupeV1, applyDedupeV2 } from './utils/dedupe';
 import { placeUnitBlockFields } from './utils/unit-blocks';
 // F5.44 — «Qəbul» menyusunun yeni quruluşu (bax src/utils/menu-qebul.ts).
 import { applyQebulMenuV1, applyQebulMenuV2 } from './utils/menu-qebul';
@@ -25,6 +25,9 @@ import { applyQebulPagesV1, placePageFields } from './utils/qebul-pages';
 import { QEBUL_PAGE_SLUGS } from './utils/qebul-pages-content';
 import { applyTehsilPagesV1 } from './utils/tehsil-pages';
 import { TEHSIL_PAGE_SLUGS } from './utils/tehsil-pages-content';
+// F5.47 — «Elm və innovasiya» menyusu və səhifələri (bax src/utils/menu-elm.ts, elm-pages.ts).
+import { applyElmMenuV1 } from './utils/menu-elm';
+import { applyElmPagesV1 } from './utils/elm-pages';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -510,106 +513,65 @@ const SEED = {
       {
         "label": "Elm və innovasiya",
         "order": 4,
-        "url": "#",
+        "url": "/sehife/elmi-tedqiqat-fealiyyeti",
         "groups": [
           {
-            "title": "Elmi idarəetmə və strategiya",
+            "title": "Tədqiqat",
             "links": [
               {
-                "label": "Elmi siyasət",
-                "url": "/hazirlanir/elmi-siyaset"
+                "label": "Ümumi baxış",
+                "url": "/sehife/elmi-tedqiqat-fealiyyeti"
               },
               {
-                "label": "Tədris-Metodiki Şura",
-                "url": "/hazirlanir/tedris-metodiki-sura"
-              },
-              {
-                "label": "Rəqəmlər və faktlar",
-                "url": "/sehife/reqemler-ve-faktlar"
-              }
-            ]
-          },
-          {
-            "title": "Elmi-tədqiqat mərkəzləri və laboratoriyalar",
-            "links": [
-              {
-                "label": "Tədqiqat mərkəzləri və laboratoriyalar",
+                "label": "Elmi-tədqiqat laboratoriyaları",
                 "url": "/sehife/elmi-tedqiqat-laboratoriyalari"
               },
               {
-                "label": "Elmi-tədqiqat qrupu",
-                "url": "/sehife/elmi-tedqiqat-qrupu"
+                "label": "Elmi-tədqiqat şöbəsi",
+                "url": "/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi"
               }
             ]
           },
           {
-            "title": "Elmi nəşrlər və kitabxana",
+            "title": "Nəşrlər və resurslar",
             "links": [
               {
-                "label": "ADDA-nın Elmi Jurnalı",
+                "label": "«Elmi Əsərlər» jurnalı",
                 "url": "/sehife/elmi-jurnal"
               },
               {
-                "label": "Əməkdaşların nəşrləri",
-                "url": "/hazirlanir/emekdaslarin-nesrleri"
+                "label": "Elm Portalı (CRIS)",
+                "url": "https://cris.adda.edu.az"
               },
               {
-                "label": "E-Kitabxana",
+                "label": "Kitabxana və elektron resurslar",
                 "url": "/sehife/elektron-kitabxana"
-              },
-              {
-                "label": "Konvensiyalar və normativ sənədlər fondu",
-                "url": "/hazirlanir/konvensiyalar-ve-normativ-senedler-fondu"
-              },
-              {
-                "label": "Tərəfdaş kitabxanalar və elmi bazalar",
-                "url": "/hazirlanir/terefdas-kitabxanalar-ve-elmi-bazalar"
-              },
-              {
-                "label": "Elmi jurnalımız onlayn versiyada",
-                "url": "/sehife/elmi-jurnalimiz-onlayn-versiyada"
               }
             ]
           },
           {
-            "title": "Doktorantura və elmi kadrların hazırlığı",
+            "title": "Doktorantura və gənc alimlər",
             "links": [
               {
                 "label": "Doktorantura",
                 "url": "/sehife/doktorantura"
               },
               {
-                "label": "Dissertasiya şuraları",
-                "url": "/hazirlanir/dissertasiya-suralari"
-              },
-              {
-                "label": "Gənc alimlərin platforması",
+                "label": "Gənc alimlər və tədqiqatçılar",
                 "url": "/sehife/genc-alimler-surasi"
               }
             ]
           },
           {
-            "title": "Qrantlar, müsabiqələr və tədbirlər",
+            "title": "Konfranslar və qrantlar",
             "links": [
               {
-                "label": "Qrantlar",
-                "url": "/hazirlanir/qrantlar"
+                "label": "Elmi konfranslar",
+                "url": "/sehife/elmi-konfranslar"
               },
               {
-                "label": "Mükafatlar",
-                "url": "/hazirlanir/mukafatlar"
-              },
-              {
-                "label": "Elmi tədbirlər təqvimi",
-                "url": "/hazirlanir/elmi-tedbirler-teqvimi"
-              },
-              {
-                "label": "Beynəlxalq Dənizçilik Konfransları",
-                "url": "/hazirlanir/beynelxalq-denizcilik-konfranslari"
-              },
-              {
-                "label": "Sahəvi seminarlar və təlimlər",
-                "url": "/hazirlanir/sahevi-seminarlar-ve-telimler"
+                "label": "Qrantlar və müsabiqələr",
+                "url": "/sehife/qrantlar"
               }
             ]
           }
@@ -2227,7 +2189,16 @@ export default {
       .then(() => applyTehsilMenuV3(strapi))
       .catch((e: Error) => strapi.log.error('[menu] F5.46: ' + e.message))
       .then(() => applyTehsilPagesV1(strapi))
-      .catch((e: Error) => strapi.log.error('[tehsil] F5.46: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[tehsil] F5.46: ' + e.message))
+      // F5.47 — «Elm və innovasiya» v1 (4 qrup / 10 keçid), səhifələr
+      // layout=elm və təkrarlar v2 («Elmi-tədqiqat qrupu» → şöbə, «Elmi
+      // jurnalımız onlayn versiyada» → jurnal), BİR DƏFƏ, bu ardıcıllıqla.
+      .then(() => applyElmMenuV1(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.47: ' + e.message))
+      .then(() => applyElmPagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[elm] F5.47: ' + e.message))
+      .then(() => applyDedupeV2(strapi))
+      .catch((e: Error) => strapi.log.error('[tekrar] F5.47: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

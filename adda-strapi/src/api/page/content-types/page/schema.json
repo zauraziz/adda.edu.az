@@ -41,7 +41,8 @@
         "standart",
         "bolmeli",
         "qebul",
-        "tehsil"
+        "tehsil",
+        "elm"
       ],
       "default": "standart",
       "pluginOptions": {
@@ -61,7 +62,8 @@
         "tekrar_ali",
         "ingilis",
         "qebul_cedveli",
-        "aciq_qapi"
+        "aciq_qapi",
+        "konfrans"
       ],
       "default": "yox",
       "pluginOptions": {

@@ -2,7 +2,7 @@
  * F5.43 — saytda eyni məlumatın iki yerdə olması (təkrarlar).
  *
  * Prod-da tapılanlar (8 oktyabr 2026) və burada BİR DƏFƏ (store `adda-admin` →
- * `dedupe:v1`) görülən iş:
+ * `dedupe:v1`; F5.47-nin yeni cütləri — `dedupe:v2`, faylın sonunda) görülən iş:
  *   1. Səhifə ↔ struktur bölmə (src/utils/moved-pages.ts): rektor və Elmi Şura
  *      həm /sehife/x, həm /struktur/x idi; elmi katib, rektorun köməkçisi və iki
  *      prorektor üçün köhnə saytın ru/en tərcümeyi-halı səhifələri dərcdə
@@ -26,7 +26,7 @@
  *      göstərmir — bax struktur səhifəsi və axtarış).
  */
 import type { Core } from '@strapi/strapi';
-import { PAGE_UNIT_MOVES, movedPageTarget } from './moved-pages';
+import { PAGE_PAGE_MOVES, PAGE_UNIT_MOVES, movedPageTarget } from './moved-pages';
 
 type Row = Record<string, unknown>;
 
@@ -117,49 +117,56 @@ async function copyBodies(strapi: Core.Strapi): Promise<string[]> {
 }
 
 /** Köçmüş səhifələr dərcdən çıxır (bütün dillər). Qaytarır: «səhifə (dil)». */
-async function unpublishMoved(strapi: Core.Strapi): Promise<string[]> {
+async function unpublishMoved(strapi: Core.Strapi, slugs: string[] = PAGE_UNIT_MOVES.map((m) => m.page)): Promise<string[]> {
   const done: string[] = [];
-  for (const m of PAGE_UNIT_MOVES) {
+  for (const slug of slugs) {
     const rows = await q(strapi, PAGE_UID).findMany({
-      where: { slug: m.page, publishedAt: { $notNull: true } },
+      where: { slug, publishedAt: { $notNull: true } },
       select: ['documentId', 'locale'],
     });
     for (const r of rows) {
       await docs(strapi, PAGE_UID).unpublish({ documentId: r.documentId, locale: r.locale });
-      done.push(`${m.page} (${str(r.locale)})`);
+      done.push(`${slug} (${str(r.locale)})`);
     }
   }
   return done;
 }
 
-/** page:<səhifə> → unit:<bölmə>. Bölmənin öz təyinatı varsa o qalır. */
-async function moveOwners(strapi: Core.Strapi): Promise<number> {
+/**
+ * «Məsul redaktor» təyinatı köhnə açardan yenisinə. Hədəfin öz təyinatı varsa
+ * o qalır. `label` (F5.47) — yeni ünvanın adı («Menyuda yoxdur» siyahısında
+ * köhnə ad qalmasın); verilməsə köhnə ad saxlanılır (v1 davranışı).
+ */
+async function moveOwner(strapi: Core.Strapi, fromKey: string, key: string, path: string, label?: string): Promise<boolean> {
   const repo = q(strapi, OWNER_UID);
-  let moved = 0;
-  for (const m of PAGE_UNIT_MOVES) {
-    const from = await repo.findOne({ where: { key: `page:${m.page}` } });
-    if (!from) continue;
-    const key = `unit:${m.unit}`;
-    const target = await repo.findOne({ where: { key } });
-    if (!target) {
-      await repo.update({ where: { id: from.id }, data: { key, path: `/struktur/${m.unit}` } });
-      moved++;
-      continue;
-    }
-    if (target.editorId == null && from.editorId != null) {
-      await repo.update({
-        where: { id: target.id },
-        data: {
-          editorId: from.editorId,
-          assignedById: from.assignedById ?? null,
-          assignedAt: from.assignedAt ?? null,
-          notifiedAt: from.notifiedAt ?? null,
-        },
-      });
-      moved++;
-    }
-    await repo.delete({ where: { id: from.id } });
+  const from = await repo.findOne({ where: { key: fromKey } });
+  if (!from) return false;
+  const target = await repo.findOne({ where: { key } });
+  if (!target) {
+    await repo.update({ where: { id: from.id }, data: { key, path, ...(label ? { label } : {}) } });
+    return true;
   }
+  let moved = false;
+  if (target.editorId == null && from.editorId != null) {
+    await repo.update({
+      where: { id: target.id },
+      data: {
+        editorId: from.editorId,
+        assignedById: from.assignedById ?? null,
+        assignedAt: from.assignedAt ?? null,
+        notifiedAt: from.notifiedAt ?? null,
+      },
+    });
+    moved = true;
+  }
+  await repo.delete({ where: { id: from.id } });
+  return moved;
+}
+
+/** page:<səhifə> → unit:<bölmə>. */
+async function moveOwners(strapi: Core.Strapi, moves: ReadonlyArray<{ page: string; unit: string }> = PAGE_UNIT_MOVES): Promise<number> {
+  let moved = 0;
+  for (const m of moves) if (await moveOwner(strapi, `page:${m.page}`, `unit:${m.unit}`, `/struktur/${m.unit}`)) moved++;
   return moved;
 }
 
@@ -282,4 +289,45 @@ export async function applyDedupeV1(strapi: Core.Strapi): Promise<void> {
       `məsul redaktor: ${owners}; keçid: ${list(links)}; təkrar xəbər dərcdən çıxdı: ${list(news)}; ` +
       `kafedra arxiv qeydi: ${archive ? 'bəli' : 'xeyr'}.`,
   );
+}
+
+// ── F5.47: dedupe:v2 ─────────────────────────────────────────────────────────
+const MARKER_V2 = 'dedupe:v2';
+/** v2-nin yeni «səhifə → bölmə» cütləri (v1 cütlərinə yenidən toxunulmur). */
+const V2_UNIT_PAGES = ['elmi-tedqiqat-qrupu'];
+
+/**
+ * BİR DƏFƏ (`dedupe:v2`), «Elm və innovasiya» menyusundan və səhifələrindən
+ * (F5.47 elmMenu:v1, elmPages:v1 — «Məsul redaktor» sətrinə yeni ad yazılsın)
+ * SONRA: «Elmi-tədqiqat qrupu» (şöbənin köhnə adı və köhnə heyəti) →
+ * /struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi; «Elmi jurnalımız
+ * onlayn versiyada» (2018-ci il xəbəri) → «Elmi jurnal». Səhifələr dərcdən
+ * çıxır (qaralama qalır), «Məsul redaktor» yeni açara keçir, menyu və keçid
+ * komponentləri yeni ünvana. Bölmənin mətninə toxunulmur (copy: false).
+ */
+export async function applyDedupeV2(strapi: Core.Strapi): Promise<void> {
+  const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
+  if ((await store.get({ key: MARKER_V2 })) === true) return;
+
+  const unitMoves = PAGE_UNIT_MOVES.filter((m) => V2_UNIT_PAGES.includes(m.page));
+  const pageMoves = Object.entries(PAGE_PAGE_MOVES);
+  const unpublished = await unpublishMoved(strapi, [...unitMoves.map((m) => m.page), ...pageMoves.map(([from]) => from)]);
+  // Yeni ünvanın adı (az): bölmənin adı, səhifənin başlığı.
+  const azName = async (uid: string, slug: string, field: string): Promise<string | undefined> => {
+    const row = await q(strapi, uid).findOne({ where: { slug, locale: 'az' }, select: [field] });
+    return str(row?.[field]).trim() || undefined;
+  };
+  let owners = 0;
+  for (const m of unitMoves) {
+    const label = await azName(UNIT_UID, m.unit, 'name');
+    if (await moveOwner(strapi, `page:${m.page}`, `unit:${m.unit}`, `/struktur/${m.unit}`, label)) owners++;
+  }
+  for (const [from, to] of pageMoves) {
+    const label = await azName(PAGE_UID, to, 'title');
+    if (await moveOwner(strapi, `page:${from}`, `page:${to}`, `/sehife/${to}`, label)) owners++;
+  }
+  const links = await rewriteLinks(strapi);
+  await store.set({ key: MARKER_V2, value: true });
+  const list = (a: string[]): string => (a.length ? `${a.length} (${a.join('; ')})` : '0');
+  strapi.log.info(`[tekrar] F5.47: dərcdən çıxan səhifə: ${list(unpublished)}; məsul redaktor: ${owners}; keçid: ${list(links)}.`);
 }

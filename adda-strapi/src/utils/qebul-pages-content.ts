@@ -45,6 +45,10 @@ export type FactIcon =
   // F5.46: gəmi (ti-ship), kitab (ti-books).
   | 'gemi'
   | 'kitab'
+  // F5.47: laboratoriya (ti-flask), konfrans (ti-presentation), beynəlxalq (ti-world).
+  | 'laboratoriya'
+  | 'konfrans'
+  | 'beynelxalq'
   | 'diger';
 
 export type DataBlock =
@@ -56,7 +60,9 @@ export type DataBlock =
   | 'tekrar_ali'
   | 'ingilis'
   | 'qebul_cedveli'
-  | 'aciq_qapi';
+  | 'aciq_qapi'
+  // F5.47: adında «konfrans» olan tədbir və xəbərlər (elmi konfranslar səhifəsi).
+  | 'konfrans';
 
 export interface StepSeed {
   /** Bir səhifədə bir neçə trayektoriya varsa (məs. 9 və 11 illik baza). */

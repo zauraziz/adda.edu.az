@@ -56,6 +56,21 @@ const LAYOUT_DESC_V5 =
   'Bütün dillərdə eynidir.';
 const FACT_ICON_DESC_V5 =
   'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, gemi (gəmi), kitab, diger (ulduz).';
+const DATABLOCK_DESC_V4 =
+  'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
+  'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları; aciq_qapi — «Açıq qapı» tədbirləri. yox — blok yoxdur.';
+// F5.47 (v6).
+const LAYOUT_DESC_V6 =
+  'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
+  'qebul — bolmeli + «Qəbul» qırıntısı və «Sual ver» (qəbul məsələləri); tehsil — bolmeli + «Təhsil» qırıntısı və «Sual ver» (tədris prosesi); ' +
+  'elm — bolmeli + «Elm və innovasiya» qırıntısı və «Sual ver» (elmi işlər). Bütün dillərdə eynidir.';
+const FACT_ICON_DESC_V6 =
+  'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, gemi (gəmi), kitab, ' +
+  'laboratoriya (kolba), konfrans (təqdimat), beynelxalq (qlobus), diger (ulduz).';
+const DATABLOCK_DESC_V6 =
+  'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
+  'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları; aciq_qapi — «Açıq qapı» tədbirləri; ' +
+  'konfrans — adında «konfrans» olan tədbirlər və elmi konfrans xəbərləri. yox — blok yoxdur.';
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -65,11 +80,7 @@ const CT: Record<string, Dict> = {
     seoDescription: ['Axtarış təsviri', 'Google nəticəsində başlığın altında görünən 1–2 cümlə (180 simvola qədər).'],
     // F5.45 — sağ panelli şablon (cmAz:v4).
     layout: ['Şablon', LAYOUT_DESC_V4],
-    dataBlock: [
-      'Avtomatik blok',
-      'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
-        'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları; aciq_qapi — «Açıq qapı» tədbirləri. yox — blok yoxdur.',
-    ],
+    dataBlock: ['Avtomatik blok', DATABLOCK_DESC_V4],
     lead: ['Qısa giriş', 'Başlığın altında 1–2 cümlə: səhifə nə haqqındadır.'],
     stepsTitle: ['Trayektoriya başlığı', 'Boş qalsa «Qəbul trayektoriyası». Məs.: «Karyera yolu».'],
     steps: [
@@ -725,17 +736,35 @@ export const CM_AZ_SIZE = {
   fields: [...Object.values(CT), ...Object.values(COMP)].reduce((a, d) => a + Object.keys(d).length, 0),
 };
 
-// ── v5 (F5.46): v4-də yazılmış qaydaların yenilənməsi ────────────────────────
-// Yalnız təsvir v4-dəki mətnlə EYNİDİRSƏ (admin dəyişməyibsə) əvəz olunur.
-const MARKER_V5 = 'cmAz:v5';
-const UPGRADES: { kind: 'ct' | 'comp'; uid: string; field: string; from: string; to: string }[] = [
-  { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V4, to: LAYOUT_DESC_V5 },
-  { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V4, to: FACT_ICON_DESC_V5 },
+// ── v5 (F5.46), v6 (F5.47): əvvəlki versiyalarda yazılmış qaydaların yenilənməsi ──
+// Yalnız təsvir əvvəlki mətnlə EYNİDİRSƏ (admin dəyişməyibsə) əvəz olunur. Hər
+// dəst öz markeri ilə BİR DƏFƏ; sıra ilə (yeni bazada v4 → v5 → v6).
+const UPGRADE_SETS: {
+  marker: string;
+  note: string;
+  list: { kind: 'ct' | 'comp'; uid: string; field: string; from: string; to: string }[];
+}[] = [
+  {
+    marker: 'cmAz:v5',
+    note: 'F5.46: sahə qaydaları yeniləndi: {n} (Şablon «tehsil», fakt ikonları «gemi», «kitab»).',
+    list: [
+      { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V4, to: LAYOUT_DESC_V5 },
+      { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V4, to: FACT_ICON_DESC_V5 },
+    ],
+  },
+  {
+    marker: 'cmAz:v6',
+    note: 'F5.47: sahə qaydaları yeniləndi: {n} (Şablon «elm», blok «konfrans», ikonlar «laboratoriya», «konfrans», «beynelxalq»).',
+    list: [
+      { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V5, to: LAYOUT_DESC_V6 },
+      { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V4, to: DATABLOCK_DESC_V6 },
+      { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V5, to: FACT_ICON_DESC_V6 },
+    ],
+  },
 ];
 
 export async function applyAzFieldUpgrades(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
-  if ((await store.get({ key: MARKER_V5 })) === true) return;
   const cm = strapi.plugin('content-manager');
   const svc = {
     ct: cm.service('content-types') as unknown as {
@@ -749,19 +778,22 @@ export async function applyAzFieldUpgrades(strapi: Core.Strapi): Promise<void> {
       updateConfiguration: (c: { uid: string }, conf: Conf) => Promise<unknown>;
     },
   };
-  let n = 0;
-  for (const u of UPGRADES) {
-    const target = u.kind === 'ct' ? svc.ct.findContentType(u.uid) : svc.comp.findComponent(u.uid);
-    if (!target) continue;
-    const conf = u.kind === 'ct' ? await svc.ct.findConfiguration(target) : await svc.comp.findConfiguration(target);
-    const edit = conf.metadatas[u.field]?.edit;
-    if (!edit || edit.description !== u.from) continue;
-    edit.description = u.to;
-    const next = { settings: conf.settings, metadatas: conf.metadatas, layouts: conf.layouts };
-    if (u.kind === 'ct') await svc.ct.updateConfiguration(target, next);
-    else await svc.comp.updateConfiguration(target, next);
-    n++;
+  for (const set of UPGRADE_SETS) {
+    if ((await store.get({ key: set.marker })) === true) continue;
+    let n = 0;
+    for (const u of set.list) {
+      const target = u.kind === 'ct' ? svc.ct.findContentType(u.uid) : svc.comp.findComponent(u.uid);
+      if (!target) continue;
+      const conf = u.kind === 'ct' ? await svc.ct.findConfiguration(target) : await svc.comp.findConfiguration(target);
+      const edit = conf.metadatas[u.field]?.edit;
+      if (!edit || edit.description !== u.from) continue;
+      edit.description = u.to;
+      const next = { settings: conf.settings, metadatas: conf.metadatas, layouts: conf.layouts };
+      if (u.kind === 'ct') await svc.ct.updateConfiguration(target, next);
+      else await svc.comp.updateConfiguration(target, next);
+      n++;
+    }
+    await store.set({ key: set.marker, value: true });
+    strapi.log.info('[adda-admin] ' + set.note.replace('{n}', String(n)));
   }
-  await store.set({ key: MARKER_V5, value: true });
-  strapi.log.info(`[adda-admin] F5.46: sahə qaydaları yeniləndi: ${n} (Şablon «tehsil», fakt ikonları «gemi», «kitab»).`);
 }
