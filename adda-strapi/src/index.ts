@@ -19,7 +19,10 @@ import { applyFacilitySlugsV1, facilitySlug, registerFacilitySlugFill } from './
 import { applyDedupeV1 } from './utils/dedupe';
 import { placeUnitBlockFields } from './utils/unit-blocks';
 // F5.44 — «Qəbul» menyusunun yeni quruluşu (bax src/utils/menu-qebul.ts).
-import { applyQebulMenuV1 } from './utils/menu-qebul';
+import { applyQebulMenuV1, applyQebulMenuV2 } from './utils/menu-qebul';
+// F5.45 — qəbul səhifələri sağ panelli şablonda (bax src/utils/qebul-pages.ts).
+import { applyQebulPagesV1, placePageFields } from './utils/qebul-pages';
+import { QEBUL_PAGE_SLUGS } from './utils/qebul-pages-content';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -342,7 +345,7 @@ const SEED = {
             "links": [
               {
                 "label": "Subbakalavr (kollec)",
-                "url": "/ixtisaslar?tab=subbakalavr"
+                "url": "/sehife/subbakalavr"
               },
               {
                 "label": "Bakalavriat",
@@ -358,7 +361,7 @@ const SEED = {
               },
               {
                 "label": "Təkrar ali təhsil",
-                "url": "/ixtisaslar?tab=tekrar_ali"
+                "url": "/sehife/tekrar-ali-tehsil"
               }
             ]
           },
@@ -366,8 +369,8 @@ const SEED = {
             "title": "İxtisas seçimi",
             "links": [
               {
-                "label": "Keçid balları, yer sayı və haqq",
-                "url": "/ixtisaslar"
+                "label": "Keçid balları, yer sayı və təhsil haqqı",
+                "url": "/sehife/kecid-ballari"
               },
               {
                 "label": "Məzunların işlə təminatı",
@@ -388,7 +391,7 @@ const SEED = {
               },
               {
                 "label": "İngilis dilində tədris",
-                "url": "/ixtisaslar?dil=en"
+                "url": "/sehife/ingilis-dilinde-tedris"
               }
             ]
           },
@@ -396,12 +399,12 @@ const SEED = {
             "title": "Tanışlıq və əlaqə",
             "links": [
               {
-                "label": "Valideynlər",
-                "url": "/bunlar-ucun/valideynler"
+                "label": "Açıq qapı günləri",
+                "url": "/sehife/aciq-qapi-gunleri"
               },
               {
-                "label": "Əlaqə",
-                "url": "/elaqe"
+                "label": "Onlayn müraciət",
+                "url": "/sehife/onlayn-muraciet"
               }
             ]
           }
@@ -1125,12 +1128,12 @@ const SEED = {
             "url": "/sehife/magistratura"
           },
           {
-            "label": "Keçid balları, yer sayı və haqq",
-            "url": "/ixtisaslar"
+            "label": "Keçid balları, yer sayı və təhsil haqqı",
+            "url": "/sehife/kecid-ballari"
           },
           {
-            "label": "Əcnəbi vətəndaşlar",
-            "url": "/sehife/ecnebi-telebelerin-qebulu-qaydalari"
+            "label": "Onlayn müraciət",
+            "url": "/sehife/onlayn-muraciet"
           }
         ]
       },
@@ -2205,7 +2208,15 @@ export default {
       // düzəlişi və F5.40 da yazır — onlardan SONRA, eyni anda yox.
       .then(() => tehsilMenuDone)
       .then(() => applyQebulMenuV1(strapi))
-      .catch((e: Error) => strapi.log.error('[menu] F5.44: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[menu] F5.44: ' + e.message))
+      // F5.45 — «Qəbul» v2: keçidlər qəbul səhifələrinə; səhifələr sağ panelli
+      // şablonda (yaradılır / yenidən qurulur), BİR DƏFƏ, v1-dən SONRA.
+      .then(() => applyQebulMenuV2(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.45: ' + e.message))
+      .then(() => applyQebulPagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[qebul] F5.45: ' + e.message))
+      .then(() => placePageFields(strapi))
+      .catch((e: Error) => strapi.log.error('[qebul] F5.45 forma: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
@@ -2442,6 +2453,12 @@ export default {
         })) as { documentId: string } | null;
 
         if (existing && !force) {
+          skipped++;
+          continue;
+        }
+        // F5.45 — qəbul səhifələri (məs. «Məzunların işlə təminatı») sağ panelli
+        // şablondadır: PAGES_RESEED onları köhnə mətnə qaytarmasın.
+        if (existing && QEBUL_PAGE_SLUGS.includes(p.slug)) {
           skipped++;
           continue;
         }

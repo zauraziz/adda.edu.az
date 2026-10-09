@@ -130,6 +130,58 @@ export interface NavQuicklink extends Struct.ComponentSchema {
   };
 }
 
+export interface PageFact extends Struct.ComponentSchema {
+  collectionName: 'components_page_facts';
+  info: {
+    description: 'F5.45 \u2014 s\u0259hif\u0259nin ba\u015Fl\u0131\u011F\u0131 alt\u0131ndak\u0131 fakt zola\u011F\u0131: etiket + d\u0259y\u0259r (m\u0259s. \u00ABT\u0259hsil m\u00FCdd\u0259ti\u00BB \u2014 \u00AB4 il\u00BB).';
+    displayName: 'Fakt';
+    icon: 'star';
+  };
+  attributes: {
+    icon: Schema.Attribute.Enumeration<
+      [
+        'tarix',
+        'muddet',
+        'yer',
+        'haqq',
+        'bal',
+        'dil',
+        'forma',
+        'sened',
+        'imtahan',
+        'diplom',
+        'unvan',
+        'telefon',
+        'qrup',
+        'bina',
+        'qoruma',
+        'diger',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'diger'>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PageStep extends Struct.ComponentSchema {
+  collectionName: 'components_page_steps';
+  info: {
+    description: 'F5.45 \u2014 q\u0259bul trayektoriyas\u0131n\u0131n bir add\u0131m\u0131: n\u0259, n\u0259 vaxt, harada. \u00ABTrayektoriya\u00BB doldurulsa add\u0131mlar qruplara b\u00F6l\u00FCn\u00FCr (m\u0259s. \u00AB9 illik baza\u00BB).';
+    displayName: 'Trayektoriya add\u0131m\u0131';
+    icon: 'bulletList';
+  };
+  attributes: {
+    body: Schema.Attribute.Text;
+    linkLabel: Schema.Attribute.String;
+    linkUrl: Schema.Attribute.String;
+    period: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    track: Schema.Attribute.String;
+    who: Schema.Attribute.String;
+  };
+}
+
 export interface ProgramAdmissionScore extends Struct.ComponentSchema {
   collectionName: 'components_program_admission_scores';
   info: {
@@ -446,6 +498,8 @@ declare module '@strapi/strapi' {
       'nav.portal': NavPortal;
       'nav.portalcard': NavPortalcard;
       'nav.quicklink': NavQuicklink;
+      'page.fact': PageFact;
+      'page.step': PageStep;
       'program.admission-score': ProgramAdmissionScore;
       'program.admission-seats': ProgramAdmissionSeats;
       'program.course': ProgramCourse;

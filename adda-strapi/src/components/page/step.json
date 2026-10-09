@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_page_steps",
+  "info": {
+    "displayName": "Trayektoriya addımı",
+    "description": "F5.45 — qəbul trayektoriyasının bir addımı: nə, nə vaxt, harada. «Trayektoriya» doldurulsa addımlar qruplara bölünür (məs. «9 illik baza»).",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "track": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "period": {
+      "type": "string"
+    },
+    "who": {
+      "type": "string"
+    },
+    "body": {
+      "type": "text"
+    },
+    "linkLabel": {
+      "type": "string"
+    },
+    "linkUrl": {
+      "type": "string"
+    }
+  }
+}

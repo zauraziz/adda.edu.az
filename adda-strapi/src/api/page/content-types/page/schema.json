@@ -35,7 +35,105 @@
         }
       }
     },
+    "layout": {
+      "type": "enumeration",
+      "enum": [
+        "standart",
+        "bolmeli",
+        "qebul"
+      ],
+      "default": "standart",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "dataBlock": {
+      "type": "enumeration",
+      "enum": [
+        "yox",
+        "subbakalavr",
+        "bakalavr",
+        "magistr",
+        "doktorantura",
+        "tekrar_ali",
+        "ingilis",
+        "qebul_cedveli",
+        "aciq_qapi"
+      ],
+      "default": "yox",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "lead": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "body": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "stepsTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.step",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "facts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.fact",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "faq": {
+      "type": "component",
+      "repeatable": true,
+      "component": "unit.faq",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "sideLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "nav.link",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "contact": {
       "type": "richtext",
       "pluginOptions": {
         "i18n": {

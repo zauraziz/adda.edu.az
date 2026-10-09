@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_page_facts",
+  "info": {
+    "displayName": "Fakt",
+    "description": "F5.45 — səhifənin başlığı altındakı fakt zolağı: etiket + dəyər (məs. «Təhsil müddəti» — «4 il»).",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": ["tarix", "muddet", "yer", "haqq", "bal", "dil", "forma", "sened", "imtahan", "diplom", "unvan", "telefon", "qrup", "bina", "qoruma", "diger"],
+      "default": "diger"
+    }
+  }
+}

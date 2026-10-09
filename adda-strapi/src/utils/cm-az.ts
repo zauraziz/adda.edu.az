@@ -49,6 +49,27 @@ const CT: Record<string, Dict> = {
     slug: ['Ünvan (slug)', SLUG + ' Ünvan: /sehife/<slug>.'],
     body: ['Mətn', 'Səhifənin əsas mətni. ' + MD],
     seoDescription: ['Axtarış təsviri', 'Google nəticəsində başlığın altında görünən 1–2 cümlə (180 simvola qədər).'],
+    // F5.45 — sağ panelli şablon (cmAz:v4).
+    layout: [
+      'Şablon',
+      'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
+        'qebul — bolmeli + qəbul bələdçisinin keçidi və «Sual ver» düyməsi. Bütün dillərdə eynidir.',
+    ],
+    dataBlock: [
+      'Avtomatik blok',
+      'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
+        'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları; aciq_qapi — «Açıq qapı» tədbirləri. yox — blok yoxdur.',
+    ],
+    lead: ['Qısa giriş', 'Başlığın altında 1–2 cümlə: səhifə nə haqqındadır.'],
+    stepsTitle: ['Trayektoriya başlığı', 'Boş qalsa «Qəbul trayektoriyası». Məs.: «Karyera yolu».'],
+    steps: [
+      'Trayektoriya',
+      'Qəbulun addımları ardıcıllıqla: nə edilir, nə vaxt (ay), harada (DİM, ADDA…). Bir səhifədə iki yol varsa (məs. 9 və 11 illik baza) «Trayektoriya» sahəsini doldurun. Hər dildə ayrıca.',
+    ],
+    facts: ['Faktlar', 'Başlığın altındakı qısa faktlar: etiket + dəyər (məs. «Təhsil müddəti» — «4 il»). Hər dildə ayrıca.'],
+    faq: ['Suallar və cavablar', 'Səhifənin sonunda açılan suallar. Hər dildə ayrıca.'],
+    sideLinks: ['Faydalı keçidlər', 'Sağ paneldə: DİM, portal.edu.az, elan və s. Saytdaxili ünvan «/» ilə başlayır (məs. /sehife/yataqxana). Hər dildə ayrıca.'],
+    contact: ['Əlaqə', 'Sağ paneldə: ünvan, telefon, e-poçt. ' + MD],
   },
   'api::article.article': {
     title: ['Başlıq', 'Qısa və konkret, 60–90 simvol. Sonda nöqtə qoyulmur.'],
@@ -558,6 +579,23 @@ const COMP: Record<string, Dict> = {
     label: ['İzah', 'Məs.: «kredit».'],
   },
   'program.language': { code: ['Dil', 'az; ru; en.'] },
+  'page.fact': {
+    label: ['Etiket', 'Məs.: Təhsil müddəti'],
+    value: ['Dəyər', 'Məs.: 4 il'],
+    icon: [
+      'İkon',
+      'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, diger (ulduz).',
+    ],
+  },
+  'page.step': {
+    track: ['Trayektoriya', 'Boş qalsa addımlar bir siyahıdır. Doldurulsa eyni adlı addımlar bir qrupda göstərilir.', 'Məs.: 9 illik baza'],
+    title: ['Addım', 'Qısa: nə edilir.', 'Məs.: Elektron ərizə'],
+    period: ['Nə vaxt', 'Ay və ya mərhələ — dəqiq tarix hər il dəyişir.', 'Məs.: Fevral–mart'],
+    who: ['Harada / kim', 'Məs.: DİM, ADDA, portal.edu.az'],
+    body: ['İzah', '1–3 cümlə.'],
+    linkLabel: ['Keçidin adı', 'İstəyə bağlı.'],
+    linkUrl: ['Keçid', 'Tam ünvan (https://…), saytdaxili ünvan (/sehife/…) və ya bölmə (#senedler).'],
+  },
   'unit.faq': {
     question: ['Sual'],
     answer: ['Cavab'],
@@ -628,8 +666,9 @@ function merge(conf: Conf, dict: Dict): number {
 }
 
 // v2 (F5.42): unit.photo/gallery. v3 (F5.43): unit.blockSettings/extraBlocks + komponentləri.
+// v4 (F5.45): page.layout/dataBlock/lead/stepsTitle/steps/facts/faq/sideLinks/contact + page.fact, page.step.
 // Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
-const MARKER = 'cmAz:v3';
+const MARKER = 'cmAz:v4';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
