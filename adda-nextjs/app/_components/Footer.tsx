@@ -109,8 +109,9 @@ export default async function Footer({ menu, locale }: { menu: SiteMenu | null; 
               <div className="brand-emblem"><img src="/home/emblem.webp" alt={tr('ADDA logo', locale)} /></div>
               <div className="brand-divider" style={{ background: 'rgba(255,255,255,0.18)' }} />
               <div className="brand-text">
-                <span className="b-name" style={{ color: '#fff' }}>ADDA</span>
-                <span className="b-full" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                {/* Rəng 14-footer.css-dən (inline yox — yüksək kontrast onu dəyişə bilsin) */}
+                <span className="b-name">ADDA</span>
+                <span className="b-full">
                   {tr('Azərbaycan Dövlət Dəniz Akademiyası', locale)}
                 </span>
               </div>

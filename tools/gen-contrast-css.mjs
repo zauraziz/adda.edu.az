@@ -731,8 +731,29 @@ function fixFor(c, ctx) {
   if ((kind === 'dark' || (kind === 'mid' && !ctx.solid)) && Lc < 0.2) [kind, bg] = ['light', REF_LIGHT];
   else if ((kind === 'light' || (kind === 'mid' && !ctx.solid)) && Lc > 0.5) [kind, bg] = ['dark', REF_DARK];
   if (kind === 'mid' && ctx.stops) {
-    // qradiyent: tünd mətn üçün ən tünd, açıq mətn üçün ən açıq dayanacaq
-    bg = Lc < lum(ctx.rgb) ? ctx.stops[0] : ctx.stops[1];
+    // qradiyent (qızılı düymə): nəticə hər iki dayanacağa qarşı oxunmalıdır
+    const [s0, s1] = ctx.stops;
+    const minR = (x) => Math.min(ratio(x, s0), ratio(x, s1));
+    const solid0 = over(c, ctx.rgb);
+    const r00 = minR(solid0);
+    if (r00 >= TARGET) return null;
+    const cands = [];
+    for (const dir of [-1, +1]) {
+      const [h, sat, l0] = toHsl(solid0);
+      let l = l0;
+      let x = solid0.slice(0, 3);
+      while (minR(x) < TARGET && (dir < 0 ? l > 0 : l < 1)) {
+        l = Math.max(0, Math.min(1, l + dir * 0.01));
+        x = fromHsl([h, sat, l]);
+      }
+      if (minR(x) >= TARGET) cands.push(x);
+    }
+    const best = cands.length
+      ? cands.sort((p, q) => Math.abs(lum(p) - lum(solid0)) - Math.abs(lum(q) - lum(solid0)))[0]
+      : minR([0, 0, 0]) >= minR([255, 255, 255])
+        ? [0, 0, 0]
+        : [255, 255, 255];
+    return minR(best) > r00 + 0.05 ? fmt(best) : null;
   }
   let r0 = ratio(over(c, bg), bg);
   // elementin öz bərk fonu etibarlıdır (qızılı düymədə ağ mətn — real zəif kontrast)
