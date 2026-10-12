@@ -24,6 +24,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
+import { switchLocalePath } from '@/lib/locale-path';
 
 export interface MNavLink {
   label: string;
@@ -249,9 +250,12 @@ export default function MobileNav({ data }: { data: MNavData }) {
                   {data.languages.map((l) => (
                     <a
                       key={l.code}
-                      href={l.href}
+                      // F5.49 — eyni səhifənin digər dildəki ünvanı (əvvəl ana səhifə idi).
+                      href={l.active ? l.href : switchLocalePath(pathname, l.code as 'az' | 'en' | 'ru')}
                       className={l.active ? 'is-active' : undefined}
                       lang={l.code}
+                      hrefLang={l.code}
+                      aria-current={l.active ? 'true' : undefined}
                     >
                       {l.label}
                     </a>

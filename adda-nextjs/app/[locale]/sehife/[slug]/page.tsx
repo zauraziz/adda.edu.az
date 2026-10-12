@@ -29,11 +29,14 @@ import '../../../_styles/24-identity.css';
 import '../../../_styles/36-unit.css';
 import '../../../_styles/37-program.css';
 import '../../../_styles/42-qebul.css';
+import '../../../_styles/44-faq.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ContentPage from '../../../_components/ContentPage';
 import SectionPage, { type SectionPageData } from '../../../_components/SectionPage';
+import FaqPage from '../../../_components/FaqPage';
 import {
+  getFaqSources,
   getPageBySlug,
   getPageSlugs,
   getMenu,
@@ -139,6 +142,22 @@ export default async function Page({
     unconfigured: tr('Kimlik xidməti hazırda əlçatan deyil.', locale),
     mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
   };
+
+  // F5.49 — «Tez-tez verilən suallar»: səhifənin öz sualları + saytın bütün «Suallar» bölmələri.
+  if (doc.layout === 'faq') {
+    const sources = await getFaqSources(locale);
+    return (
+      <FaqPage
+        locale={locale}
+        menu={menu}
+        doc={doc}
+        slug={slug}
+        isFallback={isFallback}
+        sources={sources}
+        correctionLabels={correctionLabels}
+      />
+    );
+  }
 
   // `standart`-dan başqa hər şablon (F5.48: yeni şablon üçün bura toxunmaq lazım deyil — SectionPage.tsx → SECTION_CFG).
   if (doc.layout && doc.layout !== 'standart') {

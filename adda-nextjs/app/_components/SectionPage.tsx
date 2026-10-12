@@ -27,6 +27,8 @@ import { isTitleFeed, type Article, type EventItem, type MenuLink, type PageDoc,
 import { BLOCK_TAB, englishRows, rowsForTab, stats, type AdmissionRow } from '@/lib/admission';
 import { tr, fallbackNotice, type Locale } from '@/lib/i18n';
 import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
+import { FEED_TEXT } from '@/lib/feed-text';
+import { faqAnswerHtml } from '@/lib/faq-html';
 
 const PAGE_UID = 'api::page.page';
 
@@ -101,36 +103,20 @@ const SECTION_CFG: Record<SectionLayout, SectionCfg> = {
       href: '/vetendaslarin-muracieti?istiqamet=beynelxalq',
     },
   },
+  // F5.49 — «Akademiya» menyusunun səhifələri (ASCO və Akademiya).
+  akademiya: {
+    eyebrow: 'Akademiya',
+    crumb: { href: '/sehife/adda-dunen-ve-bugun', label: 'Akademiya', hubSlug: 'adda-dunen-ve-bugun' },
+    cta: { text: 'Akademiya barədə sualınızı onlayn göndərin — cavab e-poçtunuza gəlir.', href: '/vetendaslarin-muracieti' },
+  },
+  // F5.49 — FAQ öz komponentindədir (FaqPage); bura yalnız tip tamlığı üçün.
+  faq: {
+    eyebrow: 'Suallar və cavablar',
+    cta: { text: 'Cavab tapmadınızsa, sualınızı onlayn göndərin.', href: '/vetendaslarin-muracieti' },
+  },
 };
 
-/** Başlıq üzrə lentlərin blok başlığı və mətnləri (az; `tr()` ilə). */
-const FEED_TEXT: Record<TitleFeed, { title: string } & FeedText> = {
-  aciq_qapi: {
-    title: 'Növbəti açıq qapı günü',
-    empty: 'Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.',
-    past: 'Ötən açıq qapı günləri',
-    action: 'Qeydiyyatdan keç',
-    hash: '#qeydiyyat',
-  },
-  konfrans: {
-    title: 'Növbəti elmi tədbirlər',
-    empty: 'Hazırda elan olunmuş elmi tədbir yoxdur. Konfrans elan olunanda burada görünəcək.',
-    past: 'Ötən konfranslar və xəbərlər',
-    action: 'Ətraflı',
-    hash: '',
-  },
-  tedbirler: {
-    title: 'Növbəti tədbirlər',
-    empty: 'Hazırda elan olunmuş tədbir yoxdur. Yeni tədbir elan olunanda burada görünəcək.',
-    past: 'Tələbə həyatından xəbərlər',
-    action: 'Ətraflı',
-    hash: '',
-    pastEvents: 0,
-  },
-  idman: { title: 'İdman yarışları', empty: null, past: 'Son yarışlar və nəticələr', action: 'Ətraflı', hash: '' },
-  medeniyyet: { title: 'Mədəni tədbirlər', empty: null, past: 'Son tədbirlər', action: 'Ətraflı', hash: '' },
-  beynelxalq: { title: 'Beynəlxalq əməkdaşlıq xəbərləri', empty: null, past: 'Son xəbərlər', action: 'Ətraflı', hash: '' },
-};
+// Başlıq üzrə lentlərin mətnləri — lib/feed-text.ts (F5.49: auditoriya səhifələri də işlədir).
 
 // ── Mətn köməkçiləri ─────────────────────────────────────────────────────────
 const AZ_FOLD: Record<string, string> = { ə: 'e', ı: 'i', ö: 'o', ü: 'u', ş: 's', ç: 'c', ğ: 'g' };
@@ -454,9 +440,8 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                     <div className="un-expand-group">
                       {faq.map((q, i) => (
                         <ExpandBlock key={i} label={q.question}>
-                          <p className="prose" style={{ whiteSpace: 'pre-line' }}>
-                            {q.answer}
-                          </p>
+                          {/* F5.49 — cavabda «[mətn](/ünvan)» keçid olur (lib/faq-html.ts). */}
+                          <p className="prose" dangerouslySetInnerHTML={{ __html: faqAnswerHtml(q.answer, locale) }} />
                         </ExpandBlock>
                       ))}
                     </div>

@@ -12,27 +12,25 @@
 //   · initNewsletter() → NewsletterIsland.tsx (mesajlar burada tərcümə olunur).
 import { tr, type Locale } from '@/lib/i18n';
 import { menuHref } from '@/lib/menu-href';
-import type { SiteMenu } from '@/lib/strapi';
+import { getOrgBlock, getSocialBlock, mediaUrl, type SiteMenu, type SocialBlock } from '@/lib/strapi';
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
+import { orgName, visibleOrgs } from '@/lib/org-fallback';
 import NewsletterIsland, { type NewsletterMsgs } from './NewsletterIsland';
 import PageOwnerNote from './PageOwnerNote';
 
-const SOCIALS: { name: string; icon: string }[] = [
-  { name: 'Facebook', icon: 'ti-brand-facebook' },
-  { name: 'Instagram', icon: 'ti-brand-instagram' },
-  { name: 'LinkedIn', icon: 'ti-brand-linkedin' },
-  { name: 'YouTube', icon: 'ti-brand-youtube' },
+// F5.49 — sosial şəbəkə keçidləri «3. Sayt — Sosial blok»-dan (əvvəl hamısı
+// «#» idi). Ünvanı yazılmayan şəbəkə göstərilmir.
+const SOCIALS: { name: string; icon: string; key: keyof SocialBlock }[] = [
+  { name: 'Facebook', icon: 'ti-brand-facebook', key: 'facebookUrl' },
+  { name: 'Instagram', icon: 'ti-brand-instagram', key: 'instagramUrl' },
+  { name: 'LinkedIn', icon: 'ti-brand-linkedin', key: 'linkedinUrl' },
+  { name: 'YouTube', icon: 'ti-brand-youtube', key: 'youtubeUrl' },
+  { name: 'TikTok', icon: 'ti-brand-tiktok', key: 'tiktokUrl' },
 ];
 
-// Rəsmi qurumlar. mark = abbreviatura (⚠ Faza 12: rəsmi loqo SVG-ləri ilə əvəzlənməli).
-// name iki sətirdir (<br> ilə) — hər sətir T-də ayrıca açardır.
-const ORGS: { href: string; mark: string; l1: string; l2: string }[] = [
-  { href: 'https://mincom.gov.az', mark: 'RİNN', l1: 'Rəqəmsal İnkişaf və', l2: 'Nəqliyyat Nazirliyi' },
-  { href: 'https://edu.gov.az', mark: 'ETN', l1: 'Elm və Təhsil', l2: 'Nazirliyi' },
-  { href: 'https://ddla.gov.az', mark: 'DDLA', l1: 'Dövlət Dəniz və', l2: 'Liman Agentliyi' },
-  { href: 'https://azcon.gov.az', mark: 'AZCON', l1: 'Nəqliyyat və Kommunikasiya', l2: 'Holdinqi' },
-  { href: 'https://asco.az', mark: 'ASCO', l1: 'Azərbaycan Xəzər Dəniz', l2: 'Gəmiçiliyi QSC' },
-];
+// F5.49 — «Rəsmi qurumlar» admində idarə olunur («3. Sayt — Rəsmi qurumlar»:
+// ad üç dildə, sayt, loqo, sıra, gizlətmə). Strapi əlçatmazdırsa —
+// lib/org-fallback.ts. Loqo yoxdursa qısa ad nişan kimi görünür.
 
 // F5.30c — "Rektorla əlaqə" ölü `#` keçidi idi, /rehberlik-ə bağlanmışdı.
 // F5.36c — vətəndaş müraciəti formasına yönəlir, «Rektora müraciət»
@@ -56,8 +54,16 @@ const LEGAL: { label: string; href?: string }[] = [
  */
 export const SITE_PHONE = { display: '+994 12 404 33 40', href: 'tel:+994124043340' };
 
-export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale: Locale }) {
+export default async function Footer({ menu, locale }: { menu: SiteMenu | null; locale: Locale }) {
   const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;
+  const [orgItems, social] = await Promise.all([
+    getOrgBlock(),
+    getSocialBlock(locale).then((b) => b ?? (locale === 'az' ? null : getSocialBlock('az'))),
+  ]);
+  const orgs = visibleOrgs(orgItems);
+  const socials = SOCIALS.map((s) => ({ ...s, href: ((social?.[s.key] as string | null) ?? '').trim() })).filter((s) =>
+    /^https?:\/\//i.test(s.href),
+  );
 
   const msgs: NewsletterMsgs = {
     invalid: tr('Zəhmət olmasa düzgün e-poçt ünvanı daxil edin.', locale),
@@ -114,11 +120,15 @@ export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale
               <a href={SITE_PHONE.href}><i className="ti ti-phone" />{' ' + SITE_PHONE.display}</a>
               <a href="mailto:info@adda.edu.az"><i className="ti ti-mail" />{' info@adda.edu.az'}</a>
             </div>
-            <div className="ftx-social" aria-label={tr('Sosial şəbəkələr', locale)}>
-              {SOCIALS.map((s) => (
-                <a href="#" aria-label={s.name} key={s.name}><i className={`ti ${s.icon}`} /></a>
-              ))}
-            </div>
+            {socials.length ? (
+              <div className="ftx-social" aria-label={tr('Sosial şəbəkələr', locale)}>
+                {socials.map((s) => (
+                  <a href={s.href} aria-label={s.name} key={s.name} target="_blank" rel="noopener noreferrer">
+                    <i className={`ti ${s.icon}`} aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           {/* CMS-driven: menu.footerMenyusu, Strapi əlçatmazsa FALLBACK_MENU */}
@@ -137,14 +147,24 @@ export default function Footer({ menu, locale }: { menu: SiteMenu | null; locale
         <div className="ftx-orgs">
           <span className="ftx-orgs-label">{tr('Rəsmi qurumlar', locale)}</span>
           <ul className="ftx-org-list">
-            {ORGS.map((o) => (
-              <li key={o.mark}>
-                <a href={o.href} target="_blank" rel="noopener noreferrer">
-                  <span className="fo-mark">{o.mark}</span>
-                  <span className="fo-name">{tr(o.l1, locale)}<br />{tr(o.l2, locale)}</span>
-                </a>
-              </li>
-            ))}
+            {orgs.map((o, i) => {
+              const name = orgName(o, locale);
+              const logo = mediaUrl(o.logo);
+              return (
+                <li key={`${o.url}-${i}`}>
+                  <a href={o.url} target="_blank" rel="noopener noreferrer">
+                    {logo ? (
+                      <span className="fo-logo">
+                        <img src={logo} alt="" loading="lazy" decoding="async" />
+                      </span>
+                    ) : (
+                      <span className="fo-mark" aria-hidden="true">{(o.short ?? '').trim() || name.slice(0, 4).toUpperCase()}</span>
+                    )}
+                    <span className="fo-name">{name}</span>
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

@@ -11,11 +11,20 @@
 import { useEffect } from 'react';
 import { SEARCH_UI, searchHref } from '@/lib/search-ui';
 import type { Locale } from '@/lib/i18n';
+import { A11Y_KEY, FS_STEPS, readA11y, type A11yState } from '@/lib/a11y';
+
+/** Ekran oxuyucusu üçün elanlar (server-də tr() ilə). */
+export interface A11yText {
+  font: string;
+  contrastOn: string;
+  contrastOff: string;
+  reset: string;
+}
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-export default function HeaderIsland({ locale }: { locale: Locale }) {
+export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A11yText }) {
   // ── #siteHeader.scrolled (scrollY > 120) ──
   useEffect(() => {
     const header = document.getElementById('siteHeader');
@@ -26,28 +35,79 @@ export default function HeaderIsland({ locale }: { locale: Locale }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // ── A11y: şrift ölçüsü (--fs-scale 0.9–1.3) + kontrast ──
+  // ── A11y (F5.49): şrift ölçüsü (--fs-scale 90–130%) + yüksək kontrast ──
+  // Vəziyyət <html data-fs / data-contrast>-dadır və localStorage-da qalır:
+  // app/layout.tsx-dəki skript onu səhifə boyanmadan ƏVVƏL tətbiq edir, bu
+  // ada isə düymələri idarə edir. Əvvəlki variant body-yə `filter` qoyurdu
+  // (sabit başlıq və pəncərələr pozulurdu) və px şriftlər böyümürdü.
   useEffect(() => {
-    const up = document.getElementById('fontUpBtn');
-    const down = document.getElementById('fontDownBtn');
-    const contrast = document.getElementById('contrastBtn');
-    let scale = 1;
-    const apply = (v: number) => {
-      scale = Math.round(v * 10) / 10; // float artefaktının qarşısını alır
-      document.documentElement.style.setProperty('--fs-scale', String(scale));
+    const root = document.documentElement;
+    const up = document.getElementById('fontUpBtn') as HTMLButtonElement | null;
+    const down = document.getElementById('fontDownBtn') as HTMLButtonElement | null;
+    const contrast = document.getElementById('contrastBtn') as HTMLButtonElement | null;
+    const reset = document.getElementById('a11yResetBtn') as HTMLButtonElement | null;
+    const status = document.getElementById('a11yStatus');
+    let state: A11yState = readA11y(root);
+
+    const render = () => {
+      root.style.setProperty('--fs-scale', String(state.fs));
+      if (state.fs === 1) root.removeAttribute('data-fs');
+      else root.setAttribute('data-fs', String(state.fs));
+      if (state.contrast) root.setAttribute('data-contrast', 'high');
+      else root.removeAttribute('data-contrast');
+      contrast?.setAttribute('aria-pressed', String(state.contrast));
+      if (up) up.disabled = state.fs >= FS_STEPS[FS_STEPS.length - 1];
+      if (down) down.disabled = state.fs <= FS_STEPS[0];
+      const pct = `${Math.round(state.fs * 100)}%`;
+      up?.setAttribute('data-pct', pct);
+      down?.setAttribute('data-pct', pct);
     };
-    const onUp = () => apply(Math.min(1.3, scale + 0.1));
-    const onDown = () => apply(Math.max(0.9, scale - 0.1));
-    const onContrast = () => document.body.classList.toggle('high-contrast');
+    const save = () => {
+      try {
+        if (state.fs === 1 && !state.contrast) localStorage.removeItem(A11Y_KEY);
+        else localStorage.setItem(A11Y_KEY, JSON.stringify(state));
+      } catch {
+        // gizli rejim və s. — ayar yalnız bu səhifədə qalır
+      }
+    };
+    const say = (text: string) => {
+      if (status) status.textContent = text;
+    };
+    const step = (dir: 1 | -1) => {
+      const i = FS_STEPS.indexOf(state.fs);
+      const next = FS_STEPS[Math.min(FS_STEPS.length - 1, Math.max(0, (i < 0 ? FS_STEPS.indexOf(1) : i) + dir))];
+      state = { ...state, fs: next };
+      render();
+      save();
+      say(`${a11y.font}: ${Math.round(next * 100)}%`);
+    };
+    const onUp = () => step(1);
+    const onDown = () => step(-1);
+    const onContrast = () => {
+      state = { ...state, contrast: !state.contrast };
+      render();
+      save();
+      say(state.contrast ? a11y.contrastOn : a11y.contrastOff);
+    };
+    const onReset = () => {
+      state = { fs: 1, contrast: false };
+      render();
+      save();
+      say(a11y.reset);
+      up?.focus();
+    };
+    render();
     up?.addEventListener('click', onUp);
     down?.addEventListener('click', onDown);
     contrast?.addEventListener('click', onContrast);
+    reset?.addEventListener('click', onReset);
     return () => {
       up?.removeEventListener('click', onUp);
       down?.removeEventListener('click', onDown);
       contrast?.removeEventListener('click', onContrast);
+      reset?.removeEventListener('click', onReset);
     };
-  }, []);
+  }, [a11y]);
 
   // ── "Bunlar üçün" dropdown (.infofor.open) ──
   useEffect(() => {

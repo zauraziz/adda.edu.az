@@ -26,9 +26,10 @@
   --navy2:#0A2540;
   --slate:#F8FAFC;
 }
-html{font-size:calc(16px * var(--fs-scale));scroll-behavior:smooth}
+/* F5.49 — 100%: istifadəçinin brauzer ayarı da nəzərə alınır; --fs-scale əlçatanlıq düymələrindən (lib/a11y.ts). */
+html{font-size:calc(100% * var(--fs-scale));scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5}
-body.high-contrast{filter:contrast(1.3)}
+/* F5.49 — köhnə body.high-contrast{filter} silindi: sabit başlığı pozurdu; yüksək kontrast — 43-a11y.css. */
 .container{max-width:1240px;margin:0 auto;padding:0 40px}
 .serif{font-family:'Fraunces',Georgia,serif}
 /* ═══════════════════════════════════════════════════════════════

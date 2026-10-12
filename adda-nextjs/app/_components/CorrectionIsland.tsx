@@ -174,7 +174,7 @@ export default function CorrectionIsland({ targetType, targetSlug, title, locale
   if (!identity) {
     return (
       <section className="cx" aria-label={L("title")}>
-        <header className="cx-head">
+        <div className="cx-head">
           <span className="cx-head-ic">
             <i className="ti ti-pencil" aria-hidden="true" />
           </span>
@@ -185,7 +185,7 @@ export default function CorrectionIsland({ targetType, targetSlug, title, locale
           <button type="button" className="cx-x" aria-label={L("close")} onClick={() => setOpen(false)}>
             <i className="ti ti-x" aria-hidden="true" />
           </button>
-        </header>
+        </div>
         <div className="cx-body">
           <IdentityGate locale={locale} labels={labels} heading={L("gateCorrection")} />
         </div>
@@ -215,7 +215,7 @@ export default function CorrectionIsland({ targetType, targetSlug, title, locale
 
   return (
     <section className="cx" aria-label={L("title")}>
-      <header className="cx-head">
+      <div className="cx-head">
         <span className="cx-head-ic">
           <i className="ti ti-pencil" aria-hidden="true" />
         </span>
@@ -226,11 +226,11 @@ export default function CorrectionIsland({ targetType, targetSlug, title, locale
         <button type="button" className="cx-x" aria-label={L("close")} onClick={() => setOpen(false)}>
           <i className="ti ti-x" aria-hidden="true" />
         </button>
-      </header>
+      </div>
 
       <div className="cx-body">
         <div className="idn-chip">
-          <i className="ti ti-rosette-discount-check" aria-hidden="true" />
+          <i className="ti ti-discount-check" aria-hidden="true" />
           <span className="idn-chip-mail">{identityEmail}</span>
           <span className="idn-chip-tag">{L("verified")}</span>
         </div>

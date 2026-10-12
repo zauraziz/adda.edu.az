@@ -1,11 +1,12 @@
 // K30 — /[locale]/bunlar-ucun/[slug]
 //
-// Header-dəki «Bunlar üçün» menyusunun altı bəndi indi real səhifəyə gedir.
-// Hər səhifə saytın həmin auditoriya üçün kəsilmiş versiyasıdır: yeni məzmun
+// Header-dəki «Bunlar üçün» menyusunun bəndləri real səhifəyə gedir. Hər
+// səhifə saytın həmin auditoriya üçün kəsilmiş versiyasıdır: yeni məzmun
 // deyil, MÖVCUD səhifələrin auditoriyaya görə seçilmiş yığımı.
 //
-// Kuratorluq `lib/audiences.ts`-dədir (səbəb orada yazılıb). Bütün 99 link
-// mövcud marşrutlara işarə edir — `npm run check:audiences` bunu yoxlayır.
+// F5.49 — sağ panelli şablon (AudiencePage): addımlar, bölmələr, canlı lent,
+// mənbə səhifələrin sualları; yeddinci auditoriya «Tərəfdaşlar və işəgötürənlər».
+// Kuratorluq `lib/audiences.ts`-dədir — `npm run check:audiences` yoxlayır.
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -25,18 +26,20 @@ import '../../../_styles/16-footer-ftx.css';
 import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
+import '../../../_styles/23-correction.css';
 import '../../../_styles/33-audience.css';
+import '../../../_styles/36-unit.css';
+import '../../../_styles/37-program.css';
+import '../../../_styles/42-qebul.css';
+import '../../../_styles/44-faq.css';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import SiteHeaderStack from '../../../_components/SiteHeaderStack';
-import Footer from '../../../_components/Footer';
-import { getMenu, getHomeNews, type SiteMenu } from '@/lib/strapi';
+import AudiencePage from '../../../_components/AudiencePage';
+import { getFaqSources, getMenu, getTitleFeedEvents, getTitleFeedNews, type SiteMenu } from '@/lib/strapi';
 import { AUDIENCES, audienceBySlug } from '@/lib/audiences';
-import { fmtDate } from '@/lib/format';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 3600;
+export const revalidate = 300;
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -55,7 +58,7 @@ export async function generateMetadata({
   return { title: tr(aud.label, locale), description: tr(aud.lead, locale) };
 }
 
-export default async function AudiencePage({
+export default async function AudienceRoute({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
@@ -65,104 +68,14 @@ export default async function AudiencePage({
   const aud = audienceBySlug(slug);
   if (!aud) notFound();
 
-  const [menu, news] = await Promise.all([
+  const [menu, events, news, sources] = await Promise.all([
     getMenu(locale).catch(() => null as SiteMenu | null),
-    getHomeNews(locale, 3).catch(() => []),
+    aud.feed ? getTitleFeedEvents(aud.feed, locale) : Promise.resolve([]),
+    aud.feed ? getTitleFeedNews(aud.feed, locale) : Promise.resolve([]),
+    aud.faqFrom?.length ? getFaqSources(locale) : Promise.resolve([]),
   ]);
 
-  const href = (u: string) => `/${locale}${u}`;
-
   return (
-    <>
-      <SiteHeaderStack menu={menu} locale={locale} />
-      <main>
-        <section className="np-hero">
-          <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr('Bunlar üçün', locale)}</div>
-            <h1 className="np-h1">{tr(aud.label, locale)}</h1>
-            <p className="np-lead">{tr(aud.lead, locale)}</p>
-          </div>
-        </section>
-
-        <section className="aud-wrap">
-          <div className="container">
-            {/* Auditoriya dəyişdirici — altı bənd arasında yan keçid */}
-            <nav className="aud-switch" aria-label={tr('Bunlar üçün bölməsi', locale)}>
-              {AUDIENCES.map((a) => (
-                <Link
-                  key={a.slug}
-                  href={`/${locale}/bunlar-ucun/${a.slug}`}
-                  className={a.slug === aud.slug ? 'aud-chip is-active' : 'aud-chip'}
-                  aria-current={a.slug === aud.slug ? 'page' : undefined}
-                >
-                  <i className={`ti ${a.icon}`} aria-hidden="true" />
-                  {tr(a.label, locale)}
-                </Link>
-              ))}
-            </nav>
-
-            <h2 className="aud-h">{tr('İlk addımlar', locale)}</h2>
-            <ul className="aud-steps">
-              {aud.steps.map((s, i) => (
-                <li key={`s-${i}`}>
-                  <Link href={href(s.href)} className="aud-step">
-                    <span className="aud-step-n">{i + 1}</span>
-                    <span className="aud-step-b">
-                      <b>{tr(s.label, locale)}</b>
-                      <small>{tr(s.note, locale)}</small>
-                    </span>
-                    <i className="ti ti-arrow-right" aria-hidden="true" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <h2 className="aud-h">{tr('Bütün bölmələr', locale)}</h2>
-            <div className="aud-grid">
-              {aud.groups.map((g, gi) => (
-                <section className="aud-grp" key={`g-${gi}`}>
-                  <h3 className="aud-grp-h">{tr(g.title, locale)}</h3>
-                  <ul>
-                    {g.links.map((l, li) => (
-                      <li key={`g-${gi}-l-${li}`}>
-                        <Link href={href(l.href)}>{tr(l.label, locale)}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))}
-            </div>
-
-            {news.length ? (
-              <>
-                <h2 className="aud-h">{tr('Son xəbərlər', locale)}</h2>
-                <ul className="aud-news">
-                  {news.map((n) => (
-                    <li key={n.slug}>
-                      <Link href={`/${locale}/xeberler/${n.slug}`}>
-                        <time dateTime={n.date ?? undefined}>{fmtDate(n.date, locale)}</time>
-                        <span>{n.title}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
-
-            <aside className="aud-cta">
-              <div>
-                <b>{tr('Sualınız var?', locale)}</b>
-                <small>{tr('Akademiya ilə birbaşa əlaqə saxlayın.', locale)}</small>
-              </div>
-              <Link href={href('/elaqe')} className="aud-cta-btn">
-                {tr('Əlaqə', locale)}
-                <i className="ti ti-arrow-right" aria-hidden="true" />
-              </Link>
-            </aside>
-          </div>
-        </section>
-      </main>
-      <Footer menu={menu} locale={locale} />
-    </>
+    <AudiencePage locale={locale} menu={menu} aud={aud} events={events} news={news} sources={sources} now={Date.now()} />
   );
 }

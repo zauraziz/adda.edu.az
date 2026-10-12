@@ -145,12 +145,12 @@ export default function CopilotIsland({ locale, labels, samples }: CopilotIsland
 
   return (
     <section className="copilot" aria-labelledby="copilot-title">
-      <header className="copilot__head">
+      <div className="copilot__head">
         <h1 id="copilot-title" className="copilot__title">
           {L('title')}
         </h1>
         <p className="copilot__lede">{L('lede')}</p>
-      </header>
+      </div>
 
       <div className="copilot__bar">
         <input

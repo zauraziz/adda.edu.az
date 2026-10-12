@@ -15,6 +15,7 @@
     "check:unit-heads": "node ../tools/check-unit-heads.mjs",
     "check:heroes": "node ../tools/check-heroes.mjs",
     "plan:heads": "node ../tools/plan-unit-heads.mjs",
+    "gen:contrast": "node ../tools/gen-contrast-css.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

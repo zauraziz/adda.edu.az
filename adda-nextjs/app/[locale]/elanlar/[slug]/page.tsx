@@ -22,6 +22,8 @@ import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
 import '../../../_styles/22-reactions.css';
 import ReactionBar from '../../../_components/ReactionBar';
+import ShareBar, { type ShareLabels } from '../../../_components/ShareBar';
+import { absUrl, shareMetadata } from '@/lib/site';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -40,7 +42,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const item = await getAnnouncementBySlug(slug, locale);
   if (!item) return { title: tr('Elan', locale) };
-  return { title: item.title, description: item.excerpt ?? undefined };
+  return shareMetadata({
+    title: item.title,
+    description: item.excerpt,
+    path: `/${locale}/elanlar/${slug}`,
+    image: mediaUrl(item.cover),
+    locale,
+    published: item.publishedAt,
+  });
 }
 
 export default async function AnnouncementDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
@@ -54,6 +63,13 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
 
   const img = mediaUrl(item.cover);
   const bodyHtml = item.body ? await marked.parse(item.body) : '';
+  // F5.49 — sosial şəbəkələrdə paylaşım.
+  const shareLabels: ShareLabels = {
+    share: tr('Paylaş', locale),
+    copy: tr('Keçidi kopyala', locale),
+    copied: tr('Keçid kopyalandı', locale),
+    more: tr('Digər tətbiqlərlə paylaş', locale),
+  };
   const attachments = (item.attachments ?? []).filter((f) => mediaUrl(f));
   const impCls =
     item.importance === 'kritik' ? 'na-badge na-badge--kritik'
@@ -123,6 +139,9 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
             ) : null}
           </div>
         
+        <div className="container">
+          <ShareBar url={absUrl(`/${locale}/elanlar/${slug}`)} title={item.title} labels={shareLabels} />
+        </div>
         <div className="container" style={{ paddingBottom: '40px' }}>
           <ReactionBar targetType="announcement" targetSlug={slug} />
         </div>

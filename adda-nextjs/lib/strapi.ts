@@ -108,9 +108,10 @@ export interface Program {
 
 /**
  * F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`;
- * F5.47 — `elm`; F5.48 — `telebe`, `beynelxalq`.
+ * F5.47 — `elm`; F5.48 — `telebe`, `beynelxalq`; F5.49 — `akademiya`, `faq`
+ * (tez-tez verilən suallar: app/_components/FaqPage.tsx).
  */
-export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil' | 'elm' | 'telebe' | 'beynelxalq';
+export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil' | 'elm' | 'telebe' | 'beynelxalq' | 'akademiya' | 'faq';
 /** F5.45 — kataloqdan canlı blok (bax app/_components/AdmissionData.tsx). */
 export type PageDataBlock =
   | 'yox'
@@ -128,7 +129,9 @@ export type PageDataBlock =
   | 'tedbirler'
   | 'idman'
   | 'medeniyyet'
-  | 'beynelxalq';
+  | 'beynelxalq'
+  // F5.49 — adında «ASCO» olan xəbərlər («ASCO və Akademiya»).
+  | 'asco';
 export interface PageFact {
   label: string;
   value: string;
@@ -603,7 +606,20 @@ export const getUpcomingEvents = (locale: Locale = 'az', limit?: number) =>
  * hərfləri bükdüyü üçün Ü/Ş/Ç/İ ilə başlayan söz iki yazılışda). Cari dildə
  * yoxdursa `az`.
  */
-export type TitleFeed = 'aciq_qapi' | 'konfrans' | 'tedbirler' | 'idman' | 'medeniyyet' | 'beynelxalq';
+export type TitleFeed =
+  | 'aciq_qapi'
+  | 'konfrans'
+  | 'tedbirler'
+  | 'idman'
+  | 'medeniyyet'
+  | 'beynelxalq'
+  // F5.49 — «ASCO və Akademiya» (səhifə bloku) və «Bunlar üçün» auditoriya səhifələri
+  // (səhifənin `dataBlock` enum-unda yalnız `asco` var, qalanları kodda).
+  | 'asco'
+  | 'abituriyent'
+  | 'mezunlar'
+  | 'emekdaslar'
+  | 'terefdaslar';
 interface TitleFeedCfg {
   /** Tədbir başlığında açar sözlər; [] — Akademiyanın bütün tədbirləri; null — tədbir çəkilmir. */
   events: string[] | null;
@@ -640,6 +656,23 @@ const TITLE_FEEDS: Record<TitleFeed, TitleFeedCfg> = {
       'memorandum', 'nümayəndə heyəti', 'səfir', 'Səfir', 'Erasmus', 'qonaqlar', 'əcnəbi tələbə', 'Əcnəbi tələbə', 'beynəlxalq əməkdaşlıq',
       'Beynəlxalq əməkdaşlıq', 'delegation', 'делегац',
     ],
+  },
+  // F5.49
+  asco: { events: null, news: ['ASCO', 'Xəzər Dəniz Gəmiçiliyi'] },
+  // «qəbul» tək başına yoxdur — «nümayəndə heyətini qəbul edib» kimi başlıqlar düşərdi.
+  abituriyent: {
+    events: ['açıq qapı', 'Açıq qapı', 'abituriyent', 'Abituriyent'],
+    news: ['abituriyent', 'Abituriyent', 'açıq qapı', 'Açıq qapı', 'qəbul imtahan', 'Qəbul imtahan', 'tələbə qəbulu', 'applicant', 'абитуриент'],
+  },
+  mezunlar: { events: ['məzun', 'Məzun'], news: ['məzun', 'Məzun', 'graduate', 'alumni', 'выпускник'] },
+  emekdaslar: {
+    events: null,
+    news: ['Elmi Şura', 'müəllim', 'Müəllim', 'professor', 'Professor', 'attestasiya', 'seminar', 'Seminar', 'təlim kursu', 'Təlim kursu'],
+  },
+  // «əməkdaşları» (işçilər) düşməsin: yalnız «əməkdaşlıq/əməkdaşlığ…».
+  terefdaslar: {
+    events: null,
+    news: ['memorandum', 'əməkdaşlıq', 'Əməkdaşlıq', 'əməkdaşlığ', 'Əməkdaşlığ', 'şirkət', 'Şirkət', 'cooperation', 'сотрудничеств'],
   },
 };
 export const TITLE_FEED_KEYS = Object.keys(TITLE_FEEDS) as TitleFeed[];
@@ -977,6 +1010,62 @@ export async function getSocialPosts(limit = 12): Promise<SocialPost[]> {
     return json.data ?? [];
   } catch (err) {
     console.error('[social-posts] cekilmedi: ' + (err as Error).message);
+    return [];
+  }
+}
+
+/** ── F5.49: «Rəsmi qurumlar» (footer; ASCO — rəsmi zolaqda) ── */
+export interface OrgItem {
+  name: string;
+  nameEn: string | null;
+  nameRu: string | null;
+  /** Loqo yoxdursa nişan kimi. */
+  short: string | null;
+  url: string;
+  logo: StrapiMedia | null;
+  /** «Tabe olduğu qurum» — saytın ən yuxarısındakı zolaqda. */
+  parent: boolean | null;
+  hidden: boolean | null;
+}
+/** Admində idarə olunan siyahı; Strapi əlçatmazdırsa və ya tip hələ yoxdursa null (çağıran ehtiyata keçir). */
+export async function getOrgBlock(): Promise<OrgItem[] | null> {
+  try {
+    const json = await strapiFetch<{ data: { items?: OrgItem[] | null } | null }>(
+      '/org-block',
+      { 'populate[items][populate][logo]': true },
+      300,
+    );
+    const items = json.data?.items;
+    return Array.isArray(items) && items.length ? items : null;
+  } catch {
+    return null;
+  }
+}
+
+/** ── F5.49: FAQ — saytın səhifələrindəki «Suallar» ── */
+export interface FaqSource {
+  slug: string;
+  title: string;
+  layout: PageLayout | null;
+  faq: PageFaq[];
+}
+/** Sualı olan bütün səhifələr (həmin dildə). FAQ səhifəsi və «Bunlar üçün» səhifələri üçün. */
+export async function getFaqSources(locale: Locale = 'az'): Promise<FaqSource[]> {
+  try {
+    const rows = await fetchAllPages<{ slug: string; title: string; layout?: PageLayout | null; faq?: PageFaq[] }>(
+      '/pages',
+      { locale, 'fields[0]': 'slug', 'fields[1]': 'title', 'fields[2]': 'layout', 'populate[faq]': true },
+      600,
+    );
+    return rows
+      .map((r) => ({
+        slug: r.slug,
+        title: r.title,
+        layout: r.layout ?? null,
+        faq: (r.faq ?? []).filter((q) => q?.question && q?.answer),
+      }))
+      .filter((r) => r.faq.length && r.layout !== 'faq');
+  } catch {
     return [];
   }
 }

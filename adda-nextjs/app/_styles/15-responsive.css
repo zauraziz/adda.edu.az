@@ -10,7 +10,7 @@
 }
 @media(max-width:768px){
   .hero-nums{left:20px;bottom:96px;gap:18px;padding:12px 18px}
-  .numb{font-size:18px}.numb.active{font-size:28px}.nums-hint{display:none}
+  .numb{font-size:calc(18px * var(--fs-scale))}.numb.active{font-size:calc(28px * var(--fs-scale))}.nums-hint{display:none}
 }
 @media(max-width:600px){
   .ql-grid{grid-template-columns:repeat(2,1fr)}

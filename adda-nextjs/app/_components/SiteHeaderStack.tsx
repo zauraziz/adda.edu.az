@@ -3,14 +3,18 @@
 // <header id="siteHeader">) real JSX qarşılığı. buildMainNav/buildUstMenu/
 // buildInfofor/buildEacad*/buildLangSwitch → JSX. Bütün class/id/data-*/aria/SVG
 // eyni saxlanılır ki, ui.js + initSearch + initMegaNav dəyişmədən işləsin.
-import type {
-  SiteMenu, MenuCategory, MenuLink, MenuPortal, MenuPortalCard,
+import {
+  getOrgBlock, mediaUrl,
+  type SiteMenu, type MenuCategory, type MenuLink, type MenuPortal, type MenuPortalCard,
 } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
 import { menuHref } from '@/lib/menu-href';
 import { FALLBACK_MENU, FALLBACK_EACAD } from '@/lib/menu-fallback';
+import { orgName, parentHref, parentLabel, parentOrg } from '@/lib/org-fallback';
 import { SEARCH_UI } from '@/lib/search-ui';
-import HeaderIsland from './HeaderIsland';
+import { AUDIENCES } from '@/lib/audiences';
+import HeaderIsland, { type A11yText } from './HeaderIsland';
+import LangMenu, { type LangOption } from './LangMenu';
 import MobileNav, { type MNavData, type MNavSection } from './MobileNav';
 
 // ── Paylaşılan SVG-lər (orijinal markup ilə eyni) ──
@@ -93,12 +97,34 @@ function buildMobileNav(
 }
 
 // ── Gov Banner ──
-function GovBanner({ locale }: { locale: Locale }) {
+// F5.49 — sağda «tabe olduğu qurum» (admində «Rəsmi qurumlar» → «Tabe olduğu
+// qurum»; ASCO): loqo (yüklənməyibsə qısa ad) və «ASCO-nun tabeliyində».
+async function GovBanner({ locale }: { locale: Locale }) {
+  const parent = parentOrg(await getOrgBlock());
+  const logo = parent ? mediaUrl(parent.logo) : null;
+  const link = parent ? parentHref(parent, locale) : null;
   return (
     <div className="gov-banner">
       <div className="gov-banner-inner">
-        <i className="ti ti-shield-check" />
+        <i className="ti ti-shield-check" aria-hidden="true" />
         <p>{tr('Azərbaycan Dövlət Dəniz Akademiyasının rəsmi internet portalı. Portal dövlət informasiya resurslarına dair müəyyən edilmiş tələblərə uyğun olaraq fəaliyyət göstərir.', locale)}</p>
+        {parent && link ? (
+          <a
+            className="gov-parent"
+            href={link.href}
+            title={orgName(parent, locale)}
+            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            <span className="gov-parent-tx">{parentLabel(parent, locale)}</span>
+            {logo ? (
+              <span className="gov-parent-logo">
+                <img src={logo} alt={orgName(parent, locale)} decoding="async" />
+              </span>
+            ) : (
+              <span className="gov-parent-mark">{(parent.short ?? '').trim() || orgName(parent, locale)}</span>
+            )}
+          </a>
+        ) : null}
       </div>
     </div>
   );
@@ -142,7 +168,8 @@ function Infofor({ items, locale }: { items: MenuLink[]; locale: Locale }) {
     <>
       {items.map((l, i) => (
         <a key={`if-${i}`} href={menuHref(l.url, locale)}>
-          <span className="if-ic"><i className="ti ti-user" /></span>
+          {/* F5.49 — hər auditoriyanın öz ikonu (lib/audiences.ts). */}
+          <span className="if-ic"><i className={`ti ${AUDIENCES.find((a) => l.url === `/bunlar-ucun/${a.slug}`)?.icon ?? 'ti-user'}`} aria-hidden="true" /></span>
           <span className="if-tx"><b>{tr(l.label, locale)}</b></span>
         </a>
       ))}
@@ -150,17 +177,12 @@ function Infofor({ items, locale }: { items: MenuLink[]; locale: Locale }) {
   );
 }
 
-// ── Dil dəyişdirici ──
-function LangSwitch({ locale }: { locale: Locale }) {
-  const items: Array<[string, string]> = [['az', 'AZ'], ['en', 'EN'], ['ru', 'RU']];
-  return (
-    <>
-      {items.map(([l, label]) => (
-        <a key={l} href={`/${l}`} className={l === locale ? 'active' : undefined}>{label}</a>
-      ))}
-    </>
-  );
-}
+// ── Dil seçimi (F5.49: klikdə açılan siyahı, eyni səhifənin digər dili) ──
+const LANG_OPTIONS: LangOption[] = [
+  { code: 'az', short: 'AZ', name: 'Azərbaycanca' },
+  { code: 'en', short: 'EN', name: 'English' },
+  { code: 'ru', short: 'RU', name: 'Русский' },
+];
 
 // ── Əsas naviqasiya (mega drill-down) ──
 function MainNav({ cats, locale }: { cats: MenuCategory[]; locale: Locale }) {
@@ -247,12 +269,18 @@ function EacadMega({ eacad, locale }: { eacad: MenuPortal; locale: Locale }) {
 }
 
 // ── Ana Header stack ──
-export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | null; locale: Locale }) {
+export default async function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | null; locale: Locale }) {
   const esas = menu && menu.esasMenyu.length ? menu.esasMenyu : FALLBACK_MENU.esasMenyu;
   const ust = menu && menu.ustMenyu.length ? menu.ustMenyu : FALLBACK_MENU.ustMenyu;
   const eacad = (menu && menu.eAkademiya) || FALLBACK_EACAD;
   const qruplar = menu && menu.istifadeciQruplari.length ? menu.istifadeciQruplari : FALLBACK_MENU.istifadeciQruplari;
   const mobileNav = buildMobileNav(esas, ust, eacad, qruplar, locale);
+  const a11yText: A11yText = {
+    font: tr('Şrift ölçüsü', locale),
+    contrastOn: tr('Yüksək kontrast aktivdir', locale),
+    contrastOff: tr('Yüksək kontrast söndürüldü', locale),
+    reset: tr('Əlçatanlıq ayarları sıfırlandı', locale),
+  };
 
   return (
     <>
@@ -272,11 +300,16 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
               </button>
               <div className="infofor-menu"><Infofor items={qruplar} locale={locale} /></div>
             </div>
-            <div className="lang-group"><LangSwitch locale={locale} /></div>
-            <button className="util-icon" data-search-open="" aria-label="Axtarış"><i className="ti ti-search" /></button>
-            <button className="util-icon" id="contrastBtn" aria-label="Kontrast"><i className="ti ti-contrast" /></button>
-            <button className="util-icon" id="fontUpBtn" aria-label="Şrift böyüt"><i className="ti ti-text-plus" /></button>
-            <button className="util-icon" id="fontDownBtn" aria-label="Şrift kiçilt"><i className="ti ti-text-minus" /></button>
+            <div className="lang-group"><LangMenu locale={locale} options={LANG_OPTIONS} label={tr('Saytın dili', locale)} /></div>
+            <button type="button" className="util-icon" data-search-open="" aria-label={tr('Axtarış', locale)} title={tr('Axtarış', locale)}><i className="ti ti-search" aria-hidden="true" /></button>
+            {/* F5.49 — əlçatanlıq: seçim yadda qalır (localStorage), səhifə açılanda boyanmadan əvvəl tətbiq olunur (app/layout.tsx). */}
+            <div className="a11y-tools" role="group" aria-label={tr('Əlçatanlıq', locale)}>
+              <button type="button" className="util-icon" id="contrastBtn" aria-pressed="false" aria-label={tr('Yüksək kontrast', locale)} title={tr('Yüksək kontrast', locale)}><i className="ti ti-contrast" aria-hidden="true" /></button>
+              <button type="button" className="util-icon" id="fontDownBtn" aria-label={tr('Şrifti kiçilt', locale)} title={tr('Şrifti kiçilt', locale)}><i className="ti ti-text-decrease" aria-hidden="true" /></button>
+              <button type="button" className="util-icon" id="fontUpBtn" aria-label={tr('Şrifti böyüt', locale)} title={tr('Şrifti böyüt', locale)}><i className="ti ti-text-increase" aria-hidden="true" /></button>
+              <button type="button" className="util-icon a11y-reset" id="a11yResetBtn" aria-label={tr('Əlçatanlıq ayarlarını sıfırla', locale)} title={tr('Əlçatanlıq ayarlarını sıfırla', locale)}><i className="ti ti-zoom-reset" aria-hidden="true" /></button>
+              <span id="a11yStatus" className="vh" role="status" aria-live="polite" />
+            </div>
           </div>
         </div>
       </div>
@@ -284,11 +317,11 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
       {/* Search modal (statik markup — davranış initSearch-dən) */}
       <div className="search-modal" id="searchModal" aria-hidden="true">
         <div className="search-backdrop" data-search-close="" />
-        <div className="search-box" role="dialog" aria-label="Axtarış">
+        <div className="search-box" role="dialog" aria-label={tr('Axtarış', locale)}>
           <div className="search-field">
             <i className="ti ti-search" />
             <input type="text" id="searchInput" placeholder={SEARCH_UI[locale].ph} autoComplete="off" spellCheck={false} />
-            <button className="search-close" data-search-close="" aria-label="Bağla"><i className="ti ti-x" /></button>
+            <button type="button" className="search-close" data-search-close="" aria-label={tr('Bağla', locale)}><i className="ti ti-x" aria-hidden="true" /></button>
           </div>
           <div className="search-results" id="searchResults" />
         </div>
@@ -314,7 +347,7 @@ export default function SiteHeaderStack({ menu, locale }: { menu: SiteMenu | nul
       </header>
 
       {/* Davranış: scrolled · şrift · kontrast · infofor · burger · meganav · axtarış */}
-      <HeaderIsland locale={locale} />
+      <HeaderIsland locale={locale} a11y={a11yText} />
     </>
   );
 }

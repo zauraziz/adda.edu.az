@@ -5,7 +5,7 @@ import type { SiteMenu, MenuPortal } from './strapi';
 export const FALLBACK_MENU: SiteMenu = {
   esasMenyu: [
     { label: 'Akademiya', order: 1, url: '#', groups: [
-      { title: 'Akademik irs və missiya', links: [{label:'Akademiya haqqında',url:'#'},{label:'Akademiyanın tarixi',url:'#'},{label:'Sabiq rektorlarımız',url:'/sabiq-rektorlar'},{label:'ADDA Qəhrəmanları',url:'#'},{label:'Fəxri doktorlarımız',url:'#'},{label:'Fəxri məzunlar',url:'#'},{label:'ADDA reytinqlərdə',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
+      { title: 'Akademik irs və missiya', links: [{label:'Akademiya haqqında',url:'/sehife/adda-dunen-ve-bugun'},{label:'ASCO və Akademiya',url:'/sehife/asco-ve-akademiya'},{label:'Akademiyanın tarixi',url:'/tarix'},{label:'Sabiq rektorlarımız',url:'/sabiq-rektorlar'},{label:'ADDA Qəhrəmanları',url:'#'},{label:'Fəxri doktorlarımız',url:'#'},{label:'Fəxri məzunlar',url:'#'},{label:'ADDA reytinqlərdə',url:'#'},{label:'Rəqəmlər və faktlar',url:'#'}] },
       { title: 'Rəhbərlik və idarəetmə', links: [{label:'Rektor',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Elmi Şura',url:'#'},{label:'Himayəçilər Şurası',url:'#'},{label:'Təşkilati struktur',url:'#'},{label:'Fakültələr',url:'/fakulteler'},{label:'Kafedralar',url:'/kafedralar'}] },
       { title: 'Hüquqi baza və etika', links: [{label:'Nizamnamə və təsis sənədləri',url:'#'},{label:'Normativ-hüquqi sənədlər',url:'#'},{label:'Struktur bölmələrin əsasnamələri',url:'#'},{label:'Akademik dürüstlük bəyannaməsi',url:'#'},{label:'ADDA etika kodeksi',url:'#'},{label:'Müraciətlərə baxılma qaydası',url:'#'}] },
       { title: 'Keyfiyyət və hesabatlılıq', links: [{label:'Keyfiyyət siyasəti',url:'#'},{label:'Akkreditasiya və sertifikatlar',url:'#'},{label:'İllik fəaliyyət hesabatları',url:'#'},{label:'Özünüqiymətləndirmə nəticələri',url:'#'},{label:'Tələbə və məzun sorğuları',url:'#'},{label:'Məzunların məşğulluq göstəriciləri',url:'#'},{label:'Dayanıqlı inkişaf',url:'#'}] },
@@ -59,7 +59,8 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'Bacarıqların inkişafı', links: [{label:'Soft Skills təlimləri',url:'#'},{label:'Sertifikatlaşdırma dəstəyi',url:'#'},{label:'Master-klaslar',url:'#'}] },
     ]},
     { label: 'Kollec', order: 3, url: '#', groups: [ { title: 'Kollec', links: [{label:'Fakültələr',url:'#'},{label:'Əlavə təhsil',url:'#'},{label:'İnfrastruktur',url:'#'}] } ] },
-    { label: 'FAQ', order: 4, url: '#', groups: [] },
+    // F5.49 — «Tez-tez verilən suallar» (adda-strapi/src/utils/menu-f549.ts ilə eyni).
+    { label: 'FAQ', order: 4, url: '/sehife/faq', groups: [] },
     { label: 'Əlaqə', order: 5, url: '#', groups: [] },
   ],
   eAkademiya: { title: 'E-Akademiya platforması', subtitle: 'Rəqəmsal təhsil ekosistemi', cards: [
@@ -74,6 +75,8 @@ export const FALLBACK_MENU: SiteMenu = {
     { label: 'Abituriyentlər', url: '/bunlar-ucun/abituriyentler' }, { label: 'Tələbələr', url: '/bunlar-ucun/telebeler' },
     { label: 'Məzunlar', url: '/bunlar-ucun/mezunlar' }, { label: 'Əməkdaşlar', url: '/bunlar-ucun/emekdaslar' },
     { label: 'Beynəlxalq tələbələr', url: '/bunlar-ucun/beynelxalq-telebeler' }, { label: 'Valideynlər', url: '/bunlar-ucun/valideynler' },
+    // F5.49
+    { label: 'Tərəfdaşlar və işəgötürənlər', url: '/bunlar-ucun/terefdaslar' },
   ],
   suretliKecidler: [
     { label: 'Tələbə kabineti', url: '#', icon: 'device-laptop' }, { label: 'Elektron jurnal', url: '#', icon: 'notebook' },

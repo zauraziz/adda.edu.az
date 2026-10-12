@@ -159,7 +159,7 @@ export default function RsvpIsland({
 
       <form className="rsvp-body" onSubmit={handleSubmit}>
         <div className="idn-chip">
-          <i className="ti ti-rosette-discount-check" aria-hidden="true" />
+          <i className="ti ti-discount-check" aria-hidden="true" />
           <span className="idn-chip-mail">{identity.email}</span>
           <span className="idn-chip-tag">{L('verified')}</span>
         </div>

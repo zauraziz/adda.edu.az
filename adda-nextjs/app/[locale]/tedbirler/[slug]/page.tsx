@@ -33,6 +33,8 @@ import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
 import RsvpIsland from '../../../_components/RsvpIsland';
 import ReactionBar from '../../../_components/ReactionBar';
+import ShareBar, { type ShareLabels } from '../../../_components/ShareBar';
+import { absUrl, shareMetadata } from '@/lib/site';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import { getEventBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
@@ -46,7 +48,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const ev = await getEventBySlug(slug, locale);
   if (!ev) return { title: tr('Tədbir', locale) };
-  return { title: ev.title, description: ev.excerpt ?? undefined };
+  return shareMetadata({
+    title: ev.title,
+    description: ev.excerpt,
+    path: `/${locale}/tedbirler/${slug}`,
+    image: mediaUrl(ev.cover),
+    locale,
+    published: ev.publishedAt,
+  });
 }
 
 export default async function EventDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
@@ -60,6 +69,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
 
   const img = mediaUrl(ev.cover);
   const bodyHtml = ev.body ? await marked.parse(ev.body) : '';
+  // F5.49 — sosial şəbəkələrdə paylaşım.
+  const shareLabels: ShareLabels = {
+    share: tr('Paylaş', locale),
+    copy: tr('Keçidi kopyala', locale),
+    copied: tr('Keçid kopyalandı', locale),
+    more: tr('Digər tətbiqlərlə paylaş', locale),
+  };
   const speakers = ev.speakers ?? [];
   const isOnline = ev.format === 'onlayn' || ev.format === 'hibrid';
   const isPhysical = ev.format === 'fiziki' || ev.format === 'hibrid';
@@ -267,6 +283,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               locale={locale}
               labels={labels}
             />
+
+            <ShareBar url={absUrl(`/${locale}/tedbirler/${slug}`)} title={ev.title} labels={shareLabels} />
 
             <div className="na-reactions">
               <ReactionBar targetType="event" targetSlug={slug} />

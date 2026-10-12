@@ -1,0 +1,35 @@
+/* ═══ F5.49 — «Tez-tez verilən suallar» (FaqPage) və «Bunlar üçün» səhifələri ═══
+   Şablon SectionPage-in (36-unit.css, 37-program.css, 42-qebul.css) üstündədir;
+   burada yalnız yeni hissələr: axtarış, mövzu başlığı, mənbə səhifə keçidi. */
+
+/* ── Axtarış (hero-da, tünd fonda) ── */
+.faq-search{position:relative;max-width:640px;margin-top:24px}
+.faq-search > i{position:absolute;left:16px;top:16px;font-size:20px;color:var(--navy-600,#12608F);pointer-events:none}
+.faq-search input{width:100%;height:52px;padding:0 48px 0 48px;border:2px solid transparent;border-radius:12px;background:#fff;color:var(--navy-900,#071E2E);font-family:var(--font-body,'Manrope',sans-serif);font-size:calc(16px * var(--fs-scale));box-shadow:0 12px 32px -12px rgba(7,30,46,.45)}
+.faq-search input::placeholder{color:#5B7180}
+.faq-search input:focus{outline:none;border-color:var(--gold-500,#C9A961)}
+.faq-search input::-webkit-search-cancel-button{display:none}
+.faq-search-clear{position:absolute;right:8px;top:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:var(--navy-700,#0E4D73);cursor:pointer}
+.faq-search-clear:hover{background:var(--navy-100,#E8F4FD)}
+.faq-search-status{min-height:20px;margin-top:8px;color:rgba(255,255,255,.9);font-size:calc(14px * var(--fs-scale))}
+.faq-total{margin-top:4px;color:rgba(255,255,255,.75);font-size:calc(13px * var(--fs-scale))}
+.faq-total b{color:#fff;font-weight:700}
+
+/* ── Mövzu və mənbə ── */
+.faq-group-h{display:flex;align-items:center;gap:10px}
+.faq-group-h > i{font-size:22px;color:var(--gold-600,#A68942)}
+.faq-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:24px;padding:0 8px;border-radius:12px;background:var(--navy-100,#E8F4FD);color:var(--navy-800,#0B3D5C);font-family:var(--font-body,'Manrope',sans-serif);font-size:calc(13px * var(--fs-scale));font-weight:700}
+.faq-source + .faq-source{margin-top:24px}
+.faq-source-h{margin:0 0 8px;font-family:var(--font-body,'Manrope',sans-serif);font-size:calc(13px * var(--fs-scale));font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.faq-source-h a{color:var(--navy-600,#12608F);text-decoration:none}
+.faq-source-h a:hover{text-decoration:underline}
+.faq-more{margin-top:12px}
+.faq-more a{display:inline-flex;align-items:center;gap:6px;color:var(--navy-700,#0E4D73);font-weight:600;text-decoration:none}
+.faq-more a:hover{text-decoration:underline}
+.faq-page [hidden]{display:none!important}
+
+@media (max-width:640px){
+  .faq-search input{height:48px}
+  .faq-search > i{top:14px}
+  .faq-search-clear{top:6px}
+}

@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Fraunces, Manrope } from 'next/font/google';
 import '@/styles/globals.css';
+// F5.49 — yüksək kontrast rejimi (bütün səhifələr; <html data-contrast="high">).
+import './_styles/43-a11y.css';
+import { A11Y_INIT_SCRIPT } from '@/lib/a11y';
 
 const fraunces = Fraunces({
   // F5.18a — Ə/Ş/Ğ/Ç/Ö/Ü kimi Azərbaycan hərfləri "latin" alt çoxluğunda YOXDUR,
@@ -38,8 +42,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="az" className={`${fraunces.variable} ${manrope.variable}`}>
-      <body>{children}</body>
+    // suppressHydrationWarning: lang, data-fs və data-contrast-ı init skripti
+    // hidrasiyadan əvvəl dəyişir (dil yoldan, əlçatanlıq ayarı localStorage-dan).
+    <html lang="az" className={`${fraunces.variable} ${manrope.variable}`} suppressHydrationWarning>
+      <body>
+        <Script id="adda-a11y-init" strategy="beforeInteractive">
+          {A11Y_INIT_SCRIPT}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

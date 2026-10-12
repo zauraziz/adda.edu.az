@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════
    ADDA — F2.6c / Dənizçilik reaksiya barı
-   Məzmun altında yüngül panel: ⚓ 🚢 🧭 🌊 çipləri, optimist UI,
+   Məzmun altında yüngül panel: lövbər, gəmi, kompas, dalğa çipləri (Tabler ikonları, F5.49-dan emoji yox), optimist UI,
    gold təsdiq vəziyyəti, yüklənmədə sabit layout (CLS yox).
    Kontent sütunu ilə düzlənir (max 720px); events-də .na-reactions
    sarğısı ilə birgə. Tokenlər globals.css :root-dan.
@@ -80,7 +80,10 @@
 .na-rx-emoji {
   font-size: 1.3rem;
   line-height: 1;
+  display: inline-flex;
+  color: var(--navy-600);
 }
+.na-rx-btn.is-on .na-rx-emoji { color: var(--navy-900); }
 .na-rx-count {
   min-width: 0.9rem;
   text-align: center;

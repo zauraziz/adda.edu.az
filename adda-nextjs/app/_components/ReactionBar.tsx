@@ -11,11 +11,13 @@ interface ReactionBarProps {
 type EmojiType = "anchor" | "ship" | "compass" | "wave";
 type Locale = "az" | "ru" | "en";
 
+// F5.49: emoji yox (dizayn qaydası) — Tabler ikonları. Reaksiya növünün adı
+// (anchor/ship/compass/wave) Strapi-də saxlanılır, dəyişmir.
 const EMOJIS: { type: EmojiType; icon: string }[] = [
-  { type: "anchor", icon: "\u2693" },
-  { type: "ship", icon: "\uD83D\uDEA2" },
-  { type: "compass", icon: "\uD83E\uDDED" },
-  { type: "wave", icon: "\uD83C\uDF0A" },
+  { type: "anchor", icon: "ti-anchor" },
+  { type: "ship", icon: "ti-ship" },
+  { type: "compass", icon: "ti-compass" },
+  { type: "wave", icon: "ti-ripple" },
 ];
 
 // Kicik yerli luget — boyuk T lugeti DEYIL (islands qaydasi: ~55kB import yox).
@@ -148,7 +150,7 @@ export default function ReactionBar({ targetType, targetSlug }: ReactionBarProps
               aria-label={t.aria[e.type]}
             >
               <span className="na-rx-emoji" aria-hidden="true">
-                {e.icon}
+                <i className={`ti ${e.icon}`} />
               </span>
               <span className="na-rx-count">{counts[e.type]}</span>
             </button>

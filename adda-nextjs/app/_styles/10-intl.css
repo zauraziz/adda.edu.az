@@ -5,19 +5,19 @@
 .ix-grid{display:grid;grid-template-columns:1.02fr 1fr;gap:56px;align-items:center;position:relative;z-index:2}
 /* Mətn sütunu */
 .ix-tx{position:relative}
-.ix-eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--nav-font);font-size:12.5px;font-weight:800;letter-spacing:2.4px;color:var(--gold-400);text-transform:uppercase;margin-bottom:16px}
+.ix-eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--nav-font);font-size:calc(12.5px * var(--fs-scale));font-weight:800;letter-spacing:2.4px;color:var(--gold-400);text-transform:uppercase;margin-bottom:16px}
 .ix-eyebrow::before{content:'';width:26px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--gold-500),var(--gold-600))}
-.ix-title{font-family:'Fraunces',serif;font-size:clamp(28px,3vw,40px);font-weight:600;color:#fff;letter-spacing:-.5px;line-height:1.14;margin-bottom:16px}
+.ix-title{font-family:'Fraunces',serif;font-size:calc(clamp(28px,3vw,40px) * var(--fs-scale));font-weight:600;color:#fff;letter-spacing:-.5px;line-height:1.14;margin-bottom:16px}
 .ix-title em{font-style:italic;font-weight:500;color:var(--gold-400)}
-.ix-lead{font-family:var(--nav-font);font-size:14.5px;color:rgba(232,244,253,.72);line-height:1.85;margin-bottom:26px;max-width:520px}
+.ix-lead{font-family:var(--nav-font);font-size:calc(14.5px * var(--fs-scale));color:rgba(232,244,253,.72);line-height:1.85;margin-bottom:26px;max-width:520px}
 .ix-stats{display:flex;gap:0;margin-bottom:28px}
 .ix-stat{padding:2px 28px 2px 0;margin-right:28px;border-right:1px solid rgba(255,255,255,.12)}
 .ix-stat:last-child{border-right:none;margin-right:0;padding-right:0}
-.ix-stat b{display:block;font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:#fff;line-height:1;margin-bottom:6px}
+.ix-stat b{display:block;font-family:'Fraunces',serif;font-size:calc(30px * var(--fs-scale));font-weight:600;color:#fff;line-height:1;margin-bottom:6px}
 .ix-stat b::after{content:'';display:block;width:20px;height:2px;border-radius:2px;background:var(--gold-500);margin-top:8px}
-.ix-stat span{font-family:var(--nav-font);font-size:11px;font-weight:600;letter-spacing:.6px;color:rgba(232,244,253,.55);text-transform:uppercase}
+.ix-stat span{font-family:var(--nav-font);font-size:calc(11px * var(--fs-scale));font-weight:600;letter-spacing:.6px;color:rgba(232,244,253,.55);text-transform:uppercase}
 .ix-cta{display:flex;gap:12px;flex-wrap:wrap}
-.ix-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--nav-font);font-size:13.5px;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);box-shadow:var(--nav-sh-gold);transition:all var(--nav-dur) var(--nav-ease);white-space:nowrap}
+.ix-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--nav-font);font-size:calc(13.5px * var(--fs-scale));font-weight:700;text-decoration:none;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);box-shadow:var(--nav-sh-gold);transition:all var(--nav-dur) var(--nav-ease);white-space:nowrap}
 .ix-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,169,97,.4)}
 .ix-btn svg{transition:transform var(--nav-dur-fast) var(--nav-ease)}
 .ix-btn:hover svg{transform:translateX(3px)}
@@ -33,19 +33,19 @@
 .ix-stage.is-live canvas{opacity:1}
 .ix-stage.is-live .ix-static{opacity:0}
 .ix-hint{display:flex;align-items:center;gap:22px;margin-top:16px;flex-wrap:wrap;justify-content:center}
-.ix-drag{display:inline-flex;align-items:center;gap:7px;font-family:var(--nav-font);font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:rgba(232,244,253,.55)}
+.ix-drag{display:inline-flex;align-items:center;gap:7px;font-family:var(--nav-font);font-size:calc(11px * var(--fs-scale));font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:rgba(232,244,253,.55)}
 .ix-drag svg{color:var(--gold-400)}
-.ix-leg{display:inline-flex;align-items:center;gap:7px;font-family:var(--nav-font);font-size:11.5px;font-weight:500;color:rgba(232,244,253,.6)}
+.ix-leg{display:inline-flex;align-items:center;gap:7px;font-family:var(--nav-font);font-size:calc(11.5px * var(--fs-scale));font-weight:500;color:rgba(232,244,253,.6)}
 .ix-dot{width:8px;height:8px;border-radius:50%;background:#9FC3DF;box-shadow:0 0 8px rgba(159,195,223,.6)}
 .ix-dot--home{background:var(--gold-500);box-shadow:0 0 10px rgba(201,169,97,.75)}
-.ix-cities{font-family:var(--nav-font);font-size:11.5px;letter-spacing:.4px;color:rgba(232,244,253,.42);margin-top:12px;text-align:center;max-width:440px;line-height:1.7}
+.ix-cities{font-family:var(--nav-font);font-size:calc(11.5px * var(--fs-scale));letter-spacing:.4px;color:rgba(232,244,253,.42);margin-top:12px;text-align:center;max-width:440px;line-height:1.7}
 /* Etibar şəbəkəsi — təşkilat çipləri */
 .ix-orgs{position:relative;z-index:2;margin-top:56px;padding-top:30px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:26px;flex-wrap:wrap}
-.ix-orgs-label{font-family:var(--nav-font);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(232,244,253,.45);white-space:nowrap}
+.ix-orgs-label{font-family:var(--nav-font);font-size:calc(11px * var(--fs-scale));font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(232,244,253,.45);white-space:nowrap}
 .ix-chiprow{display:flex;gap:10px;flex-wrap:wrap}
-.ix-org{display:inline-flex;align-items:center;gap:9px;font-family:var(--nav-font);font-size:12.5px;font-weight:600;color:rgba(255,255,255,.85);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 16px;white-space:nowrap;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.ix-org{display:inline-flex;align-items:center;gap:9px;font-family:var(--nav-font);font-size:calc(12.5px * var(--fs-scale));font-weight:600;color:rgba(255,255,255,.85);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 16px;white-space:nowrap;transition:all var(--nav-dur-fast) var(--nav-ease)}
 .ix-org:hover{background:rgba(255,255,255,.11);border-color:rgba(201,169,97,.5);transform:translateY(-2px)}
-.ix-org i{color:var(--gold-400);font-size:15px}
+.ix-org i{color:var(--gold-400);font-size:calc(15px * var(--fs-scale))}
 /* Əlçatanlıq / responsive */
 .ix-btn:focus-visible{outline:2px solid var(--gold-400);outline-offset:3px}
 #ixGlobe:focus-visible{outline:2px solid var(--gold-400);outline-offset:6px;border-radius:50%}

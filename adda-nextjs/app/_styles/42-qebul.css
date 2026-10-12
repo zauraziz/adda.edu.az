@@ -11,6 +11,9 @@
     overflow-y: auto;
     scrollbar-width: thin;
   }
+  /* F5.49: panel öz içində sürüşür — bloklar sıxılmamalıdır. `overflow:hidden`
+     olan blok (düzəliş forması .cx) flex-də 0-a qədər sıxılıb görünmürdü. */
+  .qb-page .un-side > * { flex-shrink: 0; }
 }
 
 .qb-notice {

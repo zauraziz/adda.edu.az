@@ -30,7 +30,7 @@
   transition: border-color var(--nav-dur) var(--nav-ease),
               color var(--nav-dur) var(--nav-ease);
 }
-.aud-chip i { font-size: 17px; color: var(--navy-500); }
+.aud-chip i { font-size: calc(17px * var(--fs-scale)); color: var(--navy-500); }
 .aud-chip:hover { border-color: var(--gold-400); color: var(--navy-700); }
 .aud-chip.is-active {
   background: var(--navy-800);
@@ -110,7 +110,7 @@
 }
 .aud-step > i {
   flex-shrink: 0;
-  font-size: 18px;
+  font-size: calc(18px * var(--fs-scale));
   color: var(--navy-500);
   transition: transform var(--nav-dur) var(--nav-ease);
 }

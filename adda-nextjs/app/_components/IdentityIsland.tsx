@@ -42,7 +42,7 @@ export default function IdentityIsland({ locale, labels }: IdentityIslandProps) 
           <div className="idn-who-line">
             <span className="idn-who-name">{identity.name || identity.email}</span>
             <span className="idn-badge">
-              <i className="ti ti-rosette-discount-check" aria-hidden="true" />
+              <i className="ti ti-discount-check" aria-hidden="true" />
               {L("verified")}
             </span>
           </div>

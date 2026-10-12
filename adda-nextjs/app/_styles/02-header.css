@@ -3,6 +3,13 @@
 .gov-banner-inner{max-width:1240px;margin:0 auto;padding:0 40px;display:flex;align-items:center;gap:8px}
 .gov-banner i{font-size:13px;color:var(--gold-500);flex-shrink:0}
 .gov-banner p{font-size:11.5px;color:rgba(255,255,255,.72);font-weight:400;font-family:var(--nav-font)}
+/* F5.49 — tabe olduğu qurum (ASCO): zolağın sağında loqo + «… tabeliyində». */
+.gov-parent{margin-left:auto;display:inline-flex;align-items:center;gap:8px;flex-shrink:0;padding-left:16px;color:rgba(255,255,255,.78);text-decoration:none;font-size:11.5px;font-family:var(--nav-font);white-space:nowrap;transition:color var(--nav-dur-fast) var(--nav-ease)}
+.gov-parent:hover{color:#fff}
+.gov-parent:focus-visible{outline:2px solid var(--gold-500);outline-offset:3px;border-radius:4px}
+.gov-parent-logo{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:2px 6px;background:#fff;border-radius:4px}
+.gov-parent-logo img{display:block;max-height:18px;max-width:64px;width:auto;height:auto;object-fit:contain}
+.gov-parent-mark{display:inline-flex;align-items:center;height:20px;padding:0 7px;border:1px solid rgba(201,169,97,.55);border-radius:4px;color:var(--gold-400);font-weight:800;font-size:10.5px;letter-spacing:.08em}
 /* ── UTILITY ── */
 .utility{background:#F7FAFC;border-bottom:1px solid #E3ECF2;position:relative;z-index:95}
 .utility-inner{max-width:1240px;margin:0 auto;padding:0 40px;height:40px;display:flex;align-items:center;justify-content:space-between}
@@ -13,9 +20,28 @@
 .utility-left a:hover i{transform:translateY(-1px)}
 .utility-right{display:flex;align-items:center;gap:4px}
 .lang-group{display:flex;gap:2px;margin-right:12px}
-.lang-group a{font-size:11.5px;font-weight:700;color:#33566B;text-decoration:none;padding:3px 9px;border-radius:5px;font-family:var(--nav-font);letter-spacing:.04em;transition:all var(--nav-dur-fast) var(--nav-ease)}
-.lang-group a.active{color:var(--navy-900);background:linear-gradient(135deg,var(--gold-500),var(--gold-600));box-shadow:0 2px 8px rgba(201,169,97,.3)}
-.lang-group a:hover:not(.active){color:var(--navy-800);background:rgba(11,61,92,.08)}
+/* F5.49 — dil seçimi: düymə (cari dil) + klikdə açılan siyahı («Bunlar üçün» üslubunda). */
+.lang-dd{position:relative;display:flex;align-items:center}
+.lang-btn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 9px;border:1px solid #D5E2EA;border-radius:6px;background:#fff;color:var(--navy-800);font-family:var(--nav-font);font-size:11.5px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.lang-btn i{font-size:14px;color:var(--navy-600)}
+.lang-btn .lang-chev{font-size:12px;transition:transform var(--nav-dur) var(--nav-ease)}
+.lang-btn:hover{border-color:var(--gold-500);background:var(--gold-100)}
+.lang-btn:focus-visible{outline:2px solid var(--navy-500);outline-offset:2px}
+.lang-dd.open .lang-btn{border-color:var(--gold-500)}
+.lang-dd.open .lang-chev{transform:rotate(180deg)}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:120;min-width:178px;margin:0;padding:6px;list-style:none;background:var(--navy-800);border-radius:10px;box-shadow:var(--nav-sh-2xl)}
+.lang-menu::before{content:'';position:absolute;top:-5px;right:18px;width:10px;height:10px;background:var(--navy-800);transform:rotate(45deg)}
+.lang-menu a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;color:rgba(255,255,255,.88);text-decoration:none;font-family:var(--nav-font);font-size:13px;font-weight:500;transition:all var(--nav-dur-fast) var(--nav-ease)}
+.lang-menu a:hover,.lang-menu a:focus-visible{background:rgba(255,255,255,.1);color:#fff;outline:none}
+.lang-menu .lang-code{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;border-radius:4px;background:rgba(255,255,255,.1);font-size:10.5px;font-weight:700;letter-spacing:.06em}
+.lang-menu a:hover .lang-code,.lang-menu a:focus-visible .lang-code{background:var(--gold-500);color:var(--navy-900)}
+/* F5.49 — əlçatanlıq düymələri: aktiv kontrast, sərhəddə pillə, sıfırlama yalnız dəyişiklik olanda. */
+.a11y-tools{display:flex;align-items:center;gap:2px}
+.util-icon[aria-pressed="true"]{background:var(--navy-800);color:#fff}
+.util-icon:disabled{opacity:.38;cursor:default;transform:none;background:none}
+.util-icon.a11y-reset{display:none}
+html[data-fs] .util-icon.a11y-reset,html[data-contrast="high"] .util-icon.a11y-reset{display:flex}
+.vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .util-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#33566B;cursor:pointer;border-radius:6px;border:none;background:none;transition:all var(--nav-dur-fast) var(--nav-ease)}
 .util-icon:hover{color:var(--navy-800);background:rgba(11,61,92,.09);transform:translateY(-1px)}
 .util-icon i{font-size:16px}
@@ -401,4 +427,8 @@ header.scrolled{position:fixed;top:0;left:0;right:0;animation:navDown .35s var(-
   .infofor, .lang-group { display: none; }
   .util-icon { width: 40px; height: 40px; }
   .gov-banner-inner, .utility-inner, .header-inner { padding: 0 16px; }
+  .gov-parent { padding-left: 10px; }
+}
+@media (max-width: 900px) {
+  .gov-parent-tx { display: none; }
 }

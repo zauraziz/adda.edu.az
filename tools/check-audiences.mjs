@@ -7,6 +7,8 @@
 //   1. her etiket i18n lugetinde varmi (yoxsa ru/en-de az mətn qalir)
 //   2. her href-in ilk seqmenti REAL Next marsrutudurmu
 //   3. cox seqmentli her href Strapi SEED-inde varmi (yeni real sehife)
+//   4. F5.49: fakt, addim basligi, canli lent (TITLE_FEEDS), suallarin menbe
+//      sehifeleri (SEED-de /sehife/<slug>) ve muraciet istiqameti (APPEAL_DIRECTIONS)
 //
 //   node tools/check-audiences.mjs
 //
@@ -41,9 +43,25 @@ const problems = [];
 const keys = new Set();
 const links = [];
 
+const strapiTs = read(path.join(NEXT, 'lib', 'strapi.ts'));
+const feedBlock = strapiTs.slice(strapiTs.indexOf('const TITLE_FEEDS'), strapiTs.indexOf('export const TITLE_FEED_KEYS'));
+const feeds = new Set([...feedBlock.matchAll(/^\s{2}(\w+): \{/gm)].map((m) => m[1]));
+const appealTs = read(path.join(NEXT, 'app', '[locale]', 'vetendaslarin-muracieti', 'page.tsx'));
+const appeals = new Set([...appealTs.matchAll(/key: '([\w-]+)'/g)].map((m) => m[1]));
+
 for (const a of AUD) {
   keys.add(a.label);
   keys.add(a.lead);
+  if (a.stepsTitle) keys.add(a.stepsTitle);
+  for (const f of a.facts ?? []) {
+    keys.add(f.label);
+    if (/[^\d\s.,+%/–-]/.test(f.value)) keys.add(f.value);
+  }
+  if (a.feed && !feeds.has(a.feed)) problems.push(`[${a.slug}] canli lent yoxdur: ${a.feed} (lib/strapi.ts TITLE_FEEDS)`);
+  for (const slug of a.faqFrom ?? []) {
+    if (!seedUrls.has('/sehife/' + slug)) problems.push(`[${a.slug}] suallarin menbe sehifesi SEED-de yoxdur: /sehife/${slug}`);
+  }
+  if (a.appeal && !appeals.has(a.appeal)) problems.push(`[${a.slug}] muraciet istiqameti yoxdur: ${a.appeal}`);
   for (const s of a.steps) {
     keys.add(s.label);
     keys.add(s.note);

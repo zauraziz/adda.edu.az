@@ -22,36 +22,36 @@
 .hero-copy{max-width:640px;padding-bottom:30px}
 .gc-kicker{display:inline-flex;align-items:center;gap:12px;margin-bottom:22px}
 .gc-kicker .k-dot{width:8px;height:8px;border-radius:50%;background:var(--gold-500);box-shadow:0 0 0 3px rgba(201,169,97,.22),0 0 14px rgba(201,169,97,.5)}
-.gc-kicker span{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(232,244,253,.85);font-family:var(--nav-font)}
-.hero h1{font-family:'Fraunces',serif;font-size:clamp(46px,5.8vw,84px);font-weight:600;color:#fff;line-height:1.02;margin-bottom:20px;letter-spacing:-1.5px;text-shadow:0 4px 30px rgba(7,30,46,.45)}
+.gc-kicker span{font-size:calc(11px * var(--fs-scale));font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(232,244,253,.85);font-family:var(--nav-font)}
+.hero h1{font-family:'Fraunces',serif;font-size:calc(clamp(46px,5.8vw,84px) * var(--fs-scale));font-weight:600;color:#fff;line-height:1.02;margin-bottom:20px;letter-spacing:-1.5px;text-shadow:0 4px 30px rgba(7,30,46,.45)}
 .hero h1 em{font-style:italic;font-weight:500;color:var(--gold-400)}
-.hero p.lead{font-size:16.5px;color:rgba(232,244,253,.78);max-width:520px;line-height:1.75;font-weight:400;margin-bottom:34px;font-family:var(--nav-font)}
+.hero p.lead{font-size:calc(16.5px * var(--fs-scale));color:rgba(232,244,253,.78);max-width:520px;line-height:1.75;font-weight:400;margin-bottom:34px;font-family:var(--nav-font)}
 /* CTA — qızıl maqnit düymə */
 .cta-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.btn-mag{position:relative;display:inline-flex;align-items:center;gap:16px;background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);border-radius:100px;padding:12px 12px 12px 30px;font-family:var(--nav-font);font-size:15px;font-weight:700;text-decoration:none;letter-spacing:.2px;will-change:transform;box-shadow:0 10px 32px rgba(201,169,97,.32);transition:box-shadow var(--nav-dur-slow) var(--nav-ease),filter var(--nav-dur-slow) var(--nav-ease)}
+.btn-mag{position:relative;display:inline-flex;align-items:center;gap:16px;background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);border-radius:100px;padding:12px 12px 12px 30px;font-family:var(--nav-font);font-size:calc(15px * var(--fs-scale));font-weight:700;text-decoration:none;letter-spacing:.2px;will-change:transform;box-shadow:0 10px 32px rgba(201,169,97,.32);transition:box-shadow var(--nav-dur-slow) var(--nav-ease),filter var(--nav-dur-slow) var(--nav-ease)}
 .btn-mag .arr{width:46px;height:46px;border-radius:50%;background:var(--navy-900);display:flex;align-items:center;justify-content:center;color:var(--gold-400);will-change:transform;transition:background var(--nav-dur-slow) var(--nav-ease),color var(--nav-dur-slow) var(--nav-ease)}
 .btn-mag:hover{filter:brightness(1.05);box-shadow:0 16px 44px rgba(201,169,97,.44)}
 .btn-mag:hover .arr{background:#fff;color:var(--navy-900)}
-.link-quiet{font-size:14px;font-weight:600;color:rgba(255,255,255,.88);text-decoration:none;border-bottom:2px solid rgba(255,255,255,.28);padding-bottom:3px;font-family:var(--nav-font);transition:border-color var(--nav-dur) var(--nav-ease),color var(--nav-dur) var(--nav-ease)}
+.link-quiet{font-size:calc(14px * var(--fs-scale));font-weight:600;color:rgba(255,255,255,.88);text-decoration:none;border-bottom:2px solid rgba(255,255,255,.28);padding-bottom:3px;font-family:var(--nav-font);transition:border-color var(--nav-dur) var(--nav-ease),color var(--nav-dur) var(--nav-ease)}
 .link-quiet:hover{border-color:var(--gold-500);color:#fff}
 /* Meta sətri — EST nişanı + koordinatlar */
 .hero-meta{display:flex;align-items:center;gap:16px;margin-top:38px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14)}
-.hm-est{font-family:var(--nav-font);font-size:10.5px;font-weight:800;letter-spacing:2.2px;color:var(--gold-400);border:1px solid rgba(212,187,124,.45);border-radius:100px;padding:5px 13px}
+.hm-est{font-family:var(--nav-font);font-size:calc(10.5px * var(--fs-scale));font-weight:800;letter-spacing:2.2px;color:var(--gold-400);border:1px solid rgba(212,187,124,.45);border-radius:100px;padding:5px 13px}
 .hm-sep{width:26px;height:1px;background:rgba(212,187,124,.5)}
-.hm-coord{font-family:var(--nav-font);font-size:11px;font-weight:500;letter-spacing:1.6px;color:rgba(232,244,253,.5)}
+.hm-coord{font-family:var(--nav-font);font-size:calc(11px * var(--fs-scale));font-weight:500;letter-spacing:1.6px;color:rgba(232,244,253,.5)}
 /* Slayd nömrələri — minimal işarələr */
 .hero-nums{position:absolute;left:48px;bottom:56px;z-index:7;display:flex;align-items:flex-end;gap:26px}
-.numb{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:rgba(255,255,255,.38);cursor:pointer;position:relative;padding-bottom:12px;transition:color var(--nav-dur-slow) var(--nav-ease);background:none;border:none;line-height:1;letter-spacing:.5px}
+.numb{font-family:'Fraunces',serif;font-size:calc(15px * var(--fs-scale));font-weight:600;color:rgba(255,255,255,.38);cursor:pointer;position:relative;padding-bottom:12px;transition:color var(--nav-dur-slow) var(--nav-ease);background:none;border:none;line-height:1;letter-spacing:.5px}
 .numb:hover{color:rgba(255,255,255,.7)}
 .numb.active{color:#fff}
 .numb .pb{position:absolute;left:0;bottom:0;width:44px;height:2px;background:rgba(255,255,255,.16);border-radius:2px;overflow:hidden}
 .numb .pb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-400),var(--gold-500))}
 .numb.active .pb i{animation:pfill 5s linear forwards}
 @keyframes pfill{from{width:0}to{width:100%}}
-.nums-hint{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(232,244,253,.4);font-weight:600;padding-bottom:14px;font-family:var(--nav-font)}
+.nums-hint{font-size:calc(9.5px * var(--fs-scale));letter-spacing:1.8px;text-transform:uppercase;color:rgba(232,244,253,.4);font-weight:600;padding-bottom:14px;font-family:var(--nav-font)}
 /* Scroll göstəricisi */
 .scroll-ind{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);z-index:7;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;text-decoration:none}
-.scroll-ind span{font-size:9.5px;letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:600;font-family:var(--nav-font)}
+.scroll-ind span{font-size:calc(9.5px * var(--fs-scale));letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:600;font-family:var(--nav-font)}
 .scroll-ind .mouse{width:24px;height:38px;border:1.5px solid rgba(255,255,255,.42);border-radius:14px;position:relative}
 .scroll-ind .mouse::after{content:'';position:absolute;left:50%;top:7px;transform:translateX(-50%);width:3.5px;height:7px;background:var(--gold-400);border-radius:2px;animation:wheel 1.6s ease-in-out infinite}
 @keyframes wheel{0%{opacity:0;top:7px}30%{opacity:1}60%{opacity:1;top:18px}100%{opacity:0;top:18px}}

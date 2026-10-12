@@ -97,13 +97,13 @@ export default async function IdentityPage({ params }: { params: Promise<{ local
       <SiteHeaderStack menu={menu} locale={locale} />
       <main className="idn-page">
         <div className="container">
-          <header className="idn-page-head">
+          <div className="idn-page-head">
             <span className="idn-page-kicker">{tr('Kimlik', locale)}</span>
             <h1 className="idn-page-title">{tr('Parolsuz giriş', locale)}</h1>
             <p className="idn-page-sub">
               {tr('ADDA saytında qeydiyyat və düzəliş göndərmək üçün e-poçtunuzu bir dəfə təsdiqləyin.', locale)}
             </p>
-          </header>
+          </div>
           <IdentityIsland locale={locale} labels={labels} />
           <PushIsland locale={locale} labels={pushLabels} />
         </div>

@@ -24,6 +24,8 @@ import '../../../_styles/23-correction.css';
 import '../../../_styles/27-gallery.css';
 import '../../../_styles/24-identity.css';
 import ReactionBar from '../../../_components/ReactionBar';
+import ShareBar, { type ShareLabels } from '../../../_components/ShareBar';
+import { absUrl, shareMetadata } from '@/lib/site';
 import CorrectionIsland from '../../../_components/CorrectionIsland';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -44,7 +46,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const article = await getArticleBySlug(slug, locale);
   if (!article) return { title: tr('Xəbər', locale) };
-  return { title: article.title, description: article.excerpt ?? undefined };
+  return shareMetadata({
+    title: article.title,
+    description: article.excerpt,
+    path: `/${locale}/xeberler/${slug}`,
+    image: mediaUrl(article.cover),
+    locale,
+    published: article.newsDate ?? article.publishedAt,
+  });
 }
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
@@ -76,6 +85,13 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
     close: tr('Bağla', locale),
   };
   const bodyHtml = article.body ? await marked.parse(article.body) : '';
+  // F5.49 — sosial şəbəkələrdə paylaşım.
+  const shareLabels: ShareLabels = {
+    share: tr('Paylaş', locale),
+    copy: tr('Keçidi kopyala', locale),
+    copied: tr('Keçid kopyalandı', locale),
+    more: tr('Digər tətbiqlərlə paylaş', locale),
+  };
 
   const correctionLabels: Record<string, string> = {
     promptHint: tr('Bu səhifədə səhv gördünüz?', locale),
@@ -166,6 +182,9 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
           <GalleryIsland images={gallery} labels={galleryLabels} />
         </div>
 
+        <div className="container">
+          <ShareBar url={absUrl(`/${locale}/xeberler/${slug}`)} title={article.title} labels={shareLabels} />
+        </div>
         <div className="container" style={{ paddingBottom: '40px' }}>
           <ReactionBar targetType="article" targetSlug={slug} />
         </div>

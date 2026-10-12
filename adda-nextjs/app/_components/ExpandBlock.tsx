@@ -21,15 +21,22 @@ export default function ExpandBlock({
   label,
   children,
   href,
+  level = 2,
+  id,
 }: {
   label: string;
   children: React.ReactNode;
   href?: string;
+  /** F5.49 — FAQ səhifəsində suallar mövzu başlığının (h2) altındadır: h3. */
+  level?: 2 | 3;
+  /** F5.49 — FAQ axtarışı və lövbər (#sual-…). */
+  id?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const H = level === 3 ? 'h3' : 'h2';
   return (
-    <div className="un-expand">
-      <h2 className="un-expand-head">
+    <div className="un-expand" id={id}>
+      <H className="un-expand-head">
         {href ? (
           <div className="un-expand-toggle un-expand-toggle--split">
             <Link href={href} className="un-expand-link">
@@ -56,7 +63,7 @@ export default function ExpandBlock({
             <span className="un-expand-arrow" aria-hidden="true" />
           </button>
         )}
-      </h2>
+      </H>
       <div className="un-expand-body" hidden={!open}>
         {children}
       </div>
