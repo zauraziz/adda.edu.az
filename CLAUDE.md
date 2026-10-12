@@ -77,6 +77,8 @@ npx tsc --noEmit -p src/admin/tsconfig.json && npm run build
 
 # Next.js
 cd adda-nextjs && npx tsc --noEmit
+# CSS-də rəng/fon və ya komponentin sinfi dəyişibsə (F5.49, bax «Next.js» tələləri):
+npm run gen:contrast && npm run gen:contrast -- --check
 ```
 
 `npm run build` (Next.js) qumluqda `fonts.googleapis.com` bloklandığı üçün
@@ -191,8 +193,9 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `facilitySeed:v1`, `qebulMenu:v1`, `qebulMenu:v2`, `qebulPages:v1`,
 `pageLayout:v1`, `tehsilMenu:v3`, `tehsilPages:v1`, `cmAz:v6`, `elmMenu:v1`, `elmPages:v1`,
 `dedupe:v2`, `cmAz:v7`, `telebeMenu:v1`, `beynelxalqMenu:v1`, `telebePages:v1`,
-`beynelxalqPages:v1`, `dedupe:v3`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
-işləmir.
+`beynelxalqPages:v1`, `dedupe:v3`, `cmAz:v8`, `cmAz:v9`, `faqMenu:v1`, `ascoMenu:v1`,
+`audienceMenu:v1`, `faqPage:v1`, `ascoPage:v1`, `gizClean:v1`, `orgBlock:v1`) + mövcud
+vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
 Bayraq Render-də qalmışdı və hər deploy-da redaktorun adını dəyişdiyi obyekti
@@ -244,7 +247,23 @@ bilinmir.
 - **Məzmun komponentində `<header>` elementi işlətmə — `<div>` işlət.**
   `02-header.css`-dəki qlobal `header{}` seçicisi (saytın öz başlığı üçün) HƏR
   `<header>`-ə navy gradient, kölgə və `z-index: 90` verir. Öz fonu olmayan
-  başlıq göy fonda tünd/boz mətnlə qalır (F5.36: müraciət forması).
+  başlıq göy fonda tünd/boz mətnlə qalır (F5.36: müraciət forması; F5.49-da
+  düzəliş forması, kimlik və kopilot başlıqları — mətn görünmürdü).
+- **Yüksək kontrast faylı (`43-a11y.css`) GENERATORDUR** (`tools/gen-contrast-css.mjs`,
+  F5.49). BÜTÜN `color` qaydalarını `html[data-contrast="high"]` altında eyni
+  sıra ilə təkrarlayır (kaskad, :hover və aktiv hallar saxlanır), zəifləri
+  fona görə düzəldir (≥ 7:1). Fonu CSS-dən + JSX iç-içəliyindən (TypeScript
+  parseri) tapır. **CSS-də rəng dəyişib generator işlədilməsə, kontrast
+  rejimində KÖHNƏ rəng qalır** — `npm run gen:contrast`; qapı `-- --check`.
+  Foto fonlu yeni bölmə (rəngi CSS-də olmayan) → generatorda `DARK_EXTRA`.
+- **Şrift böyütmə** (F5.49): `html` font-size × `--fs-scale` (0.9–1.3), məzmun
+  CSS-də `font-size: calc(Npx * var(--fs-scale))`. Üst menyu zolağı
+  (`02-header.css`, `17-header-mega.css`, `.mainnav>.nav-mega>a`) BÖYÜMÜR — yer
+  yoxdur. `rem` özü böyüyür: `.container`-in px boşluğuna (40/24px) bağlı
+  mənfi kənar/boşluğu `rem` ilə yazma (130%-də üfüqi sürüşmə).
+- **`.container` + öz sinif:** öz sinifdə `padding: X 0 Y` konteynerin yan
+  boşluğunu sıfırlayır (mobildə mətn kənara yapışır, F5.49: `aud-wrap`,
+  `na-head`) — `padding-top`/`padding-bottom` yaz.
 
 ### Render / Neon
 
@@ -650,6 +669,43 @@ olunur. Çevirmə kimdə?
    - **Təkrarlar v3** (`dedupe:v3`): «Beynəlxalq əlaqələr qrupu» → şöbənin bölmə
      səhifəsi (SİNXRON: `moved-pages.ts`, `next.config.js`, `gen-redirects.mjs`);
      «Faydalı keçidlər» (nav.link) də yeni ünvana.
+20. **F5.49 — rəsmi qurumlar, GIZ, FAQ, ASCO, «Bunlar üçün», dil menyusu,
+   əlçatanlıq, paylaşım** (layihə sənədi `claude/f549-qurumlar-faq-asco-elcatanliq.md`).
+   - **Rəsmi qurumlar:** single type «3. Sayt — Rəsmi qurumlar»
+     (`api::org-block.org-block`, dilsiz; komponent `org.item`: ad az/en/ru, qısa
+     ad, sayt, loqo, «tabe olduğu qurum», gizlət). Sıra admində sürüşdürməklə,
+     əlavə/silmə orada. BİR DƏFƏ (`orgBlock:v1`, `src/utils/org-block.ts`) yalnız
+     boşdursa 5 qurum yazılır. Next: `getOrgBlock()`; Strapi əlçatmazdırsa
+     `lib/org-fallback.ts` (EYNİ siyahı — biri dəyişəndə o biri də). «Tabe olduğu
+     qurum» (ASCO) rəsmi zolaqda: «ASCO-nun tabeliyində» + loqo və ya qısa ad →
+     `/sehife/asco-ve-akademiya`. Loqoları admin yükləyir (kodda loqo yoxdur).
+     Footer sosial ikonları «Sosial blok»-dan (boşdursa görünmür).
+   - **GIZ** (`gizClean:v1`, `src/utils/giz-clean.ts`, dəyişikliklər
+     `giz-clean-data.ts`): GIZ EasTnT elm, beynəlxalq və təhsil səhifələrindən
+     sətir dəqiqliyi ilə çıxarılır; xəbərlərə toxunulmur. Admində redaktə olunub
+     dərc olunmamış (qaralama ≠ dərc) səhifədə yalnız qaralama yazılır + log.
+   - **FAQ** (`/sehife/faq`, layout `faq`, `faqPage:v1`, məzmun
+     `src/utils/info-pages-content.ts`; menyu `faqMenu:v1`): ümumi suallar + saytın
+     bütün səhifələrinin «Suallar»-ı mövzular üzrə AVTOMATİK (`getFaqSources`,
+     `FaqPage`) — sual öz səhifəsində yazılır, FAQ-da ikinci nüsxə yoxdur.
+     Axtarış (`FaqSearch`), schema.org FAQPage; cavabda `[mətn](/ünvan)` keçid olur
+     (`lib/faq-html.ts`).
+   - **ASCO** (`/sehife/asco-ve-akademiya`, layout `akademiya`, blok `asco`,
+     `ascoPage:v1`; menyu `ascoMenu:v1`: «Akademiya → Akademik irs və missiya»).
+     Tabelik mənbəyi: APA, 22.09.2022. Təsisçi səlahiyyətlərinin bölgüsü yazılmayıb.
+   - **«Bunlar üçün»** (`lib/audiences.ts` + `AudiencePage`): 7 auditoriya (YENİ
+     «Tərəfdaşlar və işəgötürənlər», `audienceMenu:v1`), SectionPage dizaynında:
+     faktlar, «… yolu» addımları, bütün bölmələr, canlı lent, mənbə səhifələrin
+     sualları, «Sual ver» auditoriyanın istiqaməti ilə. `npm run check:audiences`.
+   - **Dil menyusu** (`LangMenu`): klikdə açılır; eyni səhifənin digər dili
+     (`lib/locale-path.ts`; xəbər/elan/tədbir detalı → həmin dilin siyahısı).
+   - **Əlçatanlıq:** şrift 90–130%, yüksək kontrast, sıfırlama; seçim
+     `localStorage` `adda-a11y` (`lib/a11y.ts`), ilk boyamadan əvvəl
+     (beforeInteractive skript) — titrəmə yoxdur; `<html lang>` dildən.
+   - **Paylaşım** (`ShareBar`): xəbər, elan, tədbir — Facebook, X, LinkedIn,
+     WhatsApp, Telegram, keçidi kopyala, telefonda sistem paylaşımı; OG/Twitter
+     meta (`lib/site.ts`, `NEXT_PUBLIC_SITE_URL`, defolt `https://demo.adda.edu.az`).
+   - Admin: `cmAz:v8` (yeni tiplərin adları), `cmAz:v9` (şablon/blok qaydaları).
 
 ---
 
