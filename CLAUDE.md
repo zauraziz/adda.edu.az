@@ -190,7 +190,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `unitMedia:v1`, `facilitySlugs:v1`, `dedupe:v1`, `unitBlocks:v1`,
 `facilitySeed:v1`, `qebulMenu:v1`, `qebulMenu:v2`, `qebulPages:v1`,
 `pageLayout:v1`, `tehsilMenu:v3`, `tehsilPages:v1`, `cmAz:v6`, `elmMenu:v1`, `elmPages:v1`,
-`dedupe:v2`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
+`dedupe:v2`, `cmAz:v7`, `telebeMenu:v1`, `beynelxalqMenu:v1`, `telebePages:v1`,
+`beynelxalqPages:v1`, `dedupe:v3`) + mövcud vəziyyətin yoxlanması. Marker silinmədən təkrar
 işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -614,6 +615,41 @@ olunur. Çevirmə kimdə?
      (`PAGE_PAGE_MOVES`, SİNXRON: `next.config.js` `PAGE_PAGE_MAP`,
      `gen-redirects.mjs` `MOVED`); səhifələr dərcdən çıxır, «Məsul redaktor»
      yeni ünvana (yeni adla). Zəncir: menyu → səhifələr → təkrarlar.
+19. **F5.48 — «Tələbə həyatı» və «Beynəlxalq əlaqələr» menyuları və səhifələri**
+   (təhlil: layihə sənədi `claude/telebe-ve-beynelxalq-menyulari.md`).
+   - **Menyular v1** (`telebeMenu:v1`, `beynelxalqMenu:v1`,
+     `src/utils/menu-telebe-beynelxalq.ts`): yalnız kateqoriya köhnə quruluşdadırsa
+     (Tələbə 4 qrup / 15 keçid, Beynəlxalq 5 qrup / 14 keçid; əks halda logda
+     xəbərdarlıq, marker yazılmır). Hər biri 3 qrup / 9 keçid, hamısı işləyən
+     səhifəyə; başlıq `#` → `/sehife/telebe-heyati`, `/sehife/beynelxalq-emekdasliq`.
+     Footer «Universitet» → «Tələbə həyatı» yalnız hələ `/hazirlanir/...`-dırsa.
+     Psixoloji dəstək və tibb xidməti «Məsul redaktorlar»-da «Menyuda yoxdur».
+     Seed, fallback eyni; yeni etiketlər `MENU_T`-də.
+   - **Şablonlar `telebe`, `beynelxalq`:** SectionPage-də şablon fərqləri bir
+     yerdədir — `SECTION_CFG` (üst sətir, qırıntı, «Sual ver»); yeni şablon üçün
+     `page.tsx`-ə toxunmaq lazım deyil. «Sual ver»: tələbə — forma istiqamətsiz,
+     beynəlxalq — `?istiqamet=beynelxalq` (6-cı istiqamət, şöbə elm ilə eyni).
+   - **Canlı bloklar** (`lib/strapi.ts` → `TITLE_FEEDS`, mətnlər SectionPage →
+     `FEED_TEXT`): `tedbirler` (Akademiyanın növbəti tədbirləri + başlığında
+     «tələbə» olan xəbərlər), `idman`, `medeniyyet`, `beynelxalq` (yalnız xəbər;
+     boşdursa blok görünmür). Lentdə az-a qayıdan tədbir/xəbər öz dilinin ünvanında
+     açılır (`/az/xeberler/...` — əvvəl en/ru-da 404 verirdi). SectionPage-in
+     `<main lang>`-ı səhifənin dilidir (en/ru-da böyük hərf «İ» ilə çıxmasın).
+     Fakt ikonları: `idman`, `medeniyyet`. Admin: `cmAz:v7`.
+   - **Səhifələr** (`telebePages:v1`, `beynelxalqPages:v1`, ümumi köməkçi
+     `src/utils/section-pages.ts`, məzmun `telebe-pages-content.ts`,
+     `beynelxalq-pages-content.ts`, qayda F5.47 kimi, `REVIEWED_UNTIL`
+     12.10.2026, ehtiyat `<prefix>:backup:…`): 12 səhifə az/en/ru — tələbə
+     həyatının ana səhifəsi (YENİ), TGT, Həmkarlar İttifaqı, TEC, təqaüd və sosial
+     dəstək, idman, mədəniyyət (YENİ, köhnə «hazırlanır» ünvanı); beynəlxalq
+     əməkdaşlıq, tərəfdaşlar, mübadilə və Erasmus+ (YENİ), ikili diplom (YENİ),
+     əcnəbi tələbələr üçün bələdçi. Tələbələrin telefonları, qrup nömrələri,
+     köhnə idarə heyətləri və təqaüd məbləğləri yazılmayıb. «Erasmus+ və
+     Mevlana» təyinatı «Mübadilə və Erasmus+»-a keçir. `PAGES_RESEED` bu
+     səhifələrə toxunmur.
+   - **Təkrarlar v3** (`dedupe:v3`): «Beynəlxalq əlaqələr qrupu» → şöbənin bölmə
+     səhifəsi (SİNXRON: `moved-pages.ts`, `next.config.js`, `gen-redirects.mjs`);
+     «Faydalı keçidlər» (nav.link) də yeni ünvana.
 
 ---
 

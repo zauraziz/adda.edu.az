@@ -56,6 +56,8 @@ const MOVED = {
   // F5.47 (dedupe:v2)
   'sehife/elmi-tedqiqat-qrupu': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
   'sehife/elmi-jurnalimiz-onlayn-versiyada': 'sehife/elmi-jurnal',
+  // F5.48 (dedupe:v3)
+  'sehife/beynelxalq-elaqeler-qrupu': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
 };
 
 const OUT = join(ROOT, '..', '..', 'adda-nextjs', 'lib', 'legacy-redirects.ts');

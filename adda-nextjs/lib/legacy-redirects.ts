@@ -389,7 +389,7 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   'content/45': 'sehife/elmi-jurnal',
   'content/47': 'elaqe',
   'content/49': 'struktur/teserrufat-isleri-sobesi',
-  'content/5': 'sehife/beynelxalq-elaqeler-qrupu',
+  'content/5': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
   'content/50': 'sehife/h-x-esedovun-azerbaycan-dovlet-deniz-akademiyasinin-rektoru-teyin-edilmesi-haqqi',
   'content/52': 'sehife/ecnebi-telebelerin-qebulu-qaydalari',
   'content/55': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
