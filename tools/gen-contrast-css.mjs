@@ -840,7 +840,7 @@ for (const r of ALL) {
   if (opSels.length) {
     OUTLINES.push({ media: r.media.join(' && '), text: `${opSels.map(withPrefix).join(',')}{opacity:1}` });
     nOpacity += opSels.length;
-    if (REPORT) report.push(`${r.file}: ${opSels.join(', ')}  opacity → 1`);
+    if (REPORT) report.push(`${r.file}: ${opSels.join(', ')}  opacity -> 1`);
   }
   const colorDecls = r.decls.filter((d) => d.prop === 'color');
   if (!colorDecls.length) continue;
@@ -870,7 +870,7 @@ for (const r of ALL) {
         if (f) {
           value = f;
           nFix++;
-          if (REPORT) report.push(`${r.file}: ${sel}  ${orig} → ${f}  [${base.kind}${certain ? '' : '?'}]`);
+          if (REPORT) report.push(`${r.file}: ${sel}  ${orig} -> ${f}  [${base.kind}${certain ? '' : '?'}]`);
         } else nKeep++;
         for (const x of ctxs) {
           if (pool.includes(x) && x.kind === base.kind) continue;
@@ -882,7 +882,7 @@ for (const r of ALL) {
           if (extra.some((e) => e.sel === ss)) continue;
           extra.push({ sel: ss, value: fx });
           nScoped++;
-          if (REPORT) report.push(`${r.file}: ${ss}  ${orig} → ${fx}  [${x.kind}, əhatəli]`);
+          if (REPORT) report.push(`${r.file}: ${ss}  ${orig} -> ${fx}  [${x.kind}, ehateli]`);
         }
       } else nKeep++;
       if (!groups.has(value)) groups.set(value, []);
@@ -940,14 +940,14 @@ if (process.argv.includes('--check')) {
   // qapı: fayl generatorun indiki nəticəsi ilə eynidirmi (CSS dəyişib, generator işlədilməyib?)
   const cur = existsSync(OUT) ? readFileSync(OUT, 'utf8').replace(/\r\n/g, '\n') : '';
   if (cur !== result) {
-    console.error('43-a11y.css KÖHNƏDİR: üslub və ya komponent dəyişib — `npm run gen:contrast` işlət.');
+    console.error('43-a11y.css KOHNEDIR: uslub ve ya komponent deyisib -- `npm run gen:contrast` islet.');
     process.exit(1);
   }
-  console.log('43-a11y.css aktualdır.');
+  console.log('43-a11y.css aktualdir.');
   process.exit(0);
 }
 writeFileSync(OUT, result);
 console.log(
-  `43-a11y.css: düzəliş ${nFix}, əhatəli ${nScoped}, dəyişməz ${nKeep}; JSX elementi ${NODES.filter((n) => n.kind === 'el').length}, fon qaydası ${BG.length}`,
+  `43-a11y.css: duzelis ${nFix}, ehateli ${nScoped}, deyismez ${nKeep}; JSX elementi ${NODES.filter((n) => n.kind === 'el').length}, fon qaydasi ${BG.length}`,
 );
 if (REPORT) console.log(report.join('\n'));
