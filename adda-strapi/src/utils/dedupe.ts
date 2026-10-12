@@ -2,7 +2,8 @@
  * F5.43 — saytda eyni məlumatın iki yerdə olması (təkrarlar).
  *
  * Prod-da tapılanlar (8 oktyabr 2026) və burada BİR DƏFƏ (store `adda-admin` →
- * `dedupe:v1`; F5.47-nin yeni cütləri — `dedupe:v2`, faylın sonunda) görülən iş:
+ * `dedupe:v1`; F5.47-nin yeni cütləri — `dedupe:v2`, F5.48 — `dedupe:v3`, faylın
+ * sonunda) görülən iş:
  *   1. Səhifə ↔ struktur bölmə (src/utils/moved-pages.ts): rektor və Elmi Şura
  *      həm /sehife/x, həm /struktur/x idi; elmi katib, rektorun köməkçisi və iki
  *      prorektor üçün köhnə saytın ru/en tərcümeyi-halı səhifələri dərcdə
@@ -137,7 +138,7 @@ async function unpublishMoved(strapi: Core.Strapi, slugs: string[] = PAGE_UNIT_M
  * o qalır. `label` (F5.47) — yeni ünvanın adı («Menyuda yoxdur» siyahısında
  * köhnə ad qalmasın); verilməsə köhnə ad saxlanılır (v1 davranışı).
  */
-async function moveOwner(strapi: Core.Strapi, fromKey: string, key: string, path: string, label?: string): Promise<boolean> {
+export async function moveOwner(strapi: Core.Strapi, fromKey: string, key: string, path: string, label?: string): Promise<boolean> {
   const repo = q(strapi, OWNER_UID);
   const from = await repo.findOne({ where: { key: fromKey } });
   if (!from) return false;
@@ -330,4 +331,36 @@ export async function applyDedupeV2(strapi: Core.Strapi): Promise<void> {
   await store.set({ key: MARKER_V2, value: true });
   const list = (a: string[]): string => (a.length ? `${a.length} (${a.join('; ')})` : '0');
   strapi.log.info(`[tekrar] F5.47: dərcdən çıxan səhifə: ${list(unpublished)}; məsul redaktor: ${owners}; keçid: ${list(links)}.`);
+}
+
+// ── F5.48: dedupe:v3 ─────────────────────────────────────────────────────────
+const MARKER_V3 = 'dedupe:v3';
+/** v3-ün yeni «səhifə → bölmə» cütü (əvvəlki cütlərə yenidən toxunulmur). */
+const V3_UNIT_PAGES = ['beynelxalq-elaqeler-qrupu'];
+
+/**
+ * BİR DƏFƏ (`dedupe:v3`), «Beynəlxalq əlaqələr» menyusundan və səhifələrindən
+ * (F5.48 beynelxalqMenu:v1, beynelxalqPages:v1) SONRA: «Beynəlxalq əlaqələr
+ * qrupu» (şöbənin köhnə adı, köhnə otaq/telefon, qırıq e-poçt) →
+ * /struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi. Funksiyalar
+ * «Beynəlxalq əməkdaşlıq» və «Əcnəbi tələbələr üçün bələdçi» səhifələrindədir.
+ * Səhifə dərcdən çıxır (qaralama qalır), «Məsul redaktor» bölməyə (yeni adla),
+ * menyu və keçid komponentləri (o cümlədən «Faydalı keçidlər») yeni ünvana.
+ */
+export async function applyDedupeV3(strapi: Core.Strapi): Promise<void> {
+  const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
+  if ((await store.get({ key: MARKER_V3 })) === true) return;
+
+  const unitMoves = PAGE_UNIT_MOVES.filter((m) => V3_UNIT_PAGES.includes(m.page));
+  const unpublished = await unpublishMoved(strapi, unitMoves.map((m) => m.page));
+  let owners = 0;
+  for (const m of unitMoves) {
+    const row = await q(strapi, UNIT_UID).findOne({ where: { slug: m.unit, locale: 'az' }, select: ['name'] });
+    const label = str(row?.name).trim() || undefined;
+    if (await moveOwner(strapi, `page:${m.page}`, `unit:${m.unit}`, `/struktur/${m.unit}`, label)) owners++;
+  }
+  const links = await rewriteLinks(strapi);
+  await store.set({ key: MARKER_V3, value: true });
+  const list = (a: string[]): string => (a.length ? `${a.length} (${a.join('; ')})` : '0');
+  strapi.log.info(`[tekrar] F5.48: dərcdən çıxan səhifə: ${list(unpublished)}; məsul redaktor: ${owners}; keçid: ${list(links)}.`);
 }

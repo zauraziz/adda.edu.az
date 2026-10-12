@@ -1706,6 +1706,10 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'qebul_cedveli',
         'aciq_qapi',
         'konfrans',
+        'tedbirler',
+        'idman',
+        'medeniyyet',
+        'beynelxalq',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{
@@ -1727,7 +1731,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         };
       }>;
     layout: Schema.Attribute.Enumeration<
-      ['standart', 'bolmeli', 'qebul', 'tehsil', 'elm']
+      ['standart', 'bolmeli', 'qebul', 'tehsil', 'elm', 'telebe', 'beynelxalq']
     > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {

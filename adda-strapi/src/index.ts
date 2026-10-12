@@ -16,7 +16,7 @@ import { applyAdmissionScoresV1, registerScoreNormalizer } from './utils/admissi
 import { placeUnitMediaFields } from './utils/unit-media';
 // F5.43 — auditoriya ünvanları, saytdakı təkrarlar, bölmə blok başlıqları.
 import { applyFacilitySlugsV1, facilitySlug, registerFacilitySlugFill } from './utils/facility-slugs';
-import { applyDedupeV1, applyDedupeV2 } from './utils/dedupe';
+import { applyDedupeV1, applyDedupeV2, applyDedupeV3 } from './utils/dedupe';
 import { placeUnitBlockFields } from './utils/unit-blocks';
 // F5.44 — «Qəbul» menyusunun yeni quruluşu (bax src/utils/menu-qebul.ts).
 import { applyQebulMenuV1, applyQebulMenuV2 } from './utils/menu-qebul';
@@ -28,6 +28,10 @@ import { TEHSIL_PAGE_SLUGS } from './utils/tehsil-pages-content';
 // F5.47 — «Elm və innovasiya» menyusu və səhifələri (bax src/utils/menu-elm.ts, elm-pages.ts).
 import { applyElmMenuV1 } from './utils/menu-elm';
 import { applyElmPagesV1 } from './utils/elm-pages';
+import { applyTelebeMenuV1, applyBeynelxalqMenuV1 } from './utils/menu-telebe-beynelxalq';
+import { applyTelebePagesV1, applyBeynelxalqPagesV1 } from './utils/section-pages';
+import { TELEBE_PAGE_SLUGS } from './utils/telebe-pages-content';
+import { BEYNELXALQ_PAGE_SLUGS } from './utils/beynelxalq-pages-content';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -580,85 +584,56 @@ const SEED = {
       {
         "label": "Tələbə həyatı",
         "order": 5,
-        "url": "#",
+        "url": "/sehife/telebe-heyati",
         "groups": [
+          {
+            "title": "Tələbə üçün",
+            "links": [
+              {
+                "label": "Ümumi baxış",
+                "url": "/sehife/telebe-heyati"
+              },
+              {
+                "label": "Yataqxana",
+                "url": "/sehife/yataqxana"
+              },
+              {
+                "label": "Təqaüd və sosial dəstək",
+                "url": "/sehife/sosial-teminat-ve-maddi-yardim"
+              }
+            ]
+          },
           {
             "title": "Tələbə təşkilatları",
             "links": [
               {
-                "label": "Tələbə Gənclər Təşkilatı (TGK)",
+                "label": "Tələbə Gənclər Təşkilatı",
                 "url": "/sehife/telebe-gencler-teskilati"
               },
               {
-                "label": "Tələbə Həmkarlar İttifaqı (THİK)",
+                "label": "Tələbə Həmkarlar İttifaqı Komitəsi",
                 "url": "/sehife/telebe-hemkarlar-ittifaqi-komitesi"
               },
               {
-                "label": "Tələbə Elmi Cəmiyyəti (TEC)",
+                "label": "Tələbə Elmi Cəmiyyəti",
                 "url": "/sehife/telebe-elmi-cemiyyeti"
-              },
-              {
-                "label": "Könüllülük hərəkatı",
-                "url": "/hazirlanir/konulluluk-herekati"
               }
             ]
           },
           {
-            "title": "Yaşayış və rifah",
+            "title": "İdman, mədəniyyət və tədbirlər",
             "links": [
               {
-                "label": "Tələbə yataqxanası",
-                "url": "/sehife/yataqxana"
-              },
-              {
-                "label": "Onlayn müraciət və yerləşdirmə",
-                "url": "/hazirlanir/onlayn-muraciet-ve-yerlesdirme"
-              },
-              {
-                "label": "Sosial təminat və maddi yardım",
-                "url": "/sehife/sosial-teminat-ve-maddi-yardim"
-              },
-              {
-                "label": "Təqaüd proqramları",
-                "url": "/hazirlanir/teqaud-proqramlari"
-              },
-              {
-                "label": "Psixoloji dəstək xidməti",
-                "url": "/hazirlanir/psixoloji-destek-xidmeti"
-              },
-              {
-                "label": "Tibb xidməti",
-                "url": "/hazirlanir/tibb-xidmeti"
-              }
-            ]
-          },
-          {
-            "title": "Yaradıcılıq, idman və asudə vaxt",
-            "links": [
-              {
-                "label": "İdman klubları",
+                "label": "İdman",
                 "url": "/sehife/idman"
               },
               {
-                "label": "Mədəniyyət və yaradıcılıq dərnəkləri",
-                "url": "/hazirlanir/medeniyyet-ve-yaradiciliq-dernekleri"
-              },
-              {
-                "label": "İntellektual oyun klubları",
-                "url": "/hazirlanir/intellektual-oyun-klublari"
-              }
-            ]
-          },
-          {
-            "title": "Media və kommunikasiya",
-            "links": [
-              {
-                "label": "Sosial media elçiləri",
-                "url": "/hazirlanir/sosial-media-elcileri"
+                "label": "Mədəniyyət və yaradıcılıq",
+                "url": "/sehife/medeniyyet-ve-yaradiciliq-dernekleri"
               },
               {
                 "label": "Tədbirlər təqvimi",
-                "url": "/hazirlanir/tedbirler-teqvimi"
+                "url": "/tedbirler"
               }
             ]
           }
@@ -667,86 +642,56 @@ const SEED = {
       {
         "label": "Beynəlxalq əlaqələr",
         "order": 6,
-        "url": "#",
+        "url": "/sehife/beynelxalq-emekdasliq",
         "groups": [
           {
-            "title": "Akademik tərəfdaşlıq və ikili diplom",
+            "title": "Əməkdaşlıq",
             "links": [
               {
-                "label": "İkili diplom layihələri",
-                "url": "/hazirlanir/ikili-diplom-layiheleri"
+                "label": "Ümumi baxış",
+                "url": "/sehife/beynelxalq-emekdasliq"
               },
               {
                 "label": "Akademik tərəfdaşlar",
                 "url": "/sehife/akademik-terefdaslar"
               },
               {
-                "label": "Beynəlxalq əlaqələr qrupu",
-                "url": "/sehife/beynelxalq-elaqeler-qrupu"
+                "label": "Beynəlxalq əlaqələr şöbəsi",
+                "url": "/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi"
               }
             ]
           },
           {
-            "title": "Mobillik proqramları",
+            "title": "Mobillik və ikili diplom",
             "links": [
               {
-                "label": "Erasmus+ və Mevlana",
-                "url": "/hazirlanir/erasmus-ve-mevlana"
+                "label": "Mübadilə və Erasmus+",
+                "url": "/sehife/mobillik-ve-mubadile"
               },
               {
-                "label": "Müəllim mübadiləsi",
-                "url": "/hazirlanir/muellim-mubadilesi"
+                "label": "İkili diplom proqramları",
+                "url": "/sehife/ikili-diplom-layiheleri"
               },
               {
-                "label": "Yay məktəbləri",
-                "url": "/hazirlanir/yay-mektebleri"
+                "label": "İxtisasartırma və xaricdə təhsil",
+                "url": "/sehife/xaricde-tehsil-ve-ixtisasartirma"
               }
             ]
           },
           {
-            "title": "Beynəlxalq assosiasiyalar və təşkilatlar",
+            "title": "Əcnəbi tələbələr",
             "links": [
               {
-                "label": "IAMU",
-                "url": "/hazirlanir/iamu"
+                "label": "Qəbul qaydaları və təhsil haqqı",
+                "url": "/sehife/ecnebi-telebelerin-qebulu-qaydalari"
               },
               {
-                "label": "IMO",
-                "url": "/hazirlanir/imo"
+                "label": "Əcnəbi tələbələr üçün bələdçi",
+                "url": "/sehife/ecnebi-telebelerin-tehsili"
               },
               {
-                "label": "BSAMI",
-                "url": "/hazirlanir/bsami"
-              },
-              {
-                "label": "Digər təşkilatlar",
-                "url": "/hazirlanir/diger-teskilatlar"
-              }
-            ]
-          },
-          {
-            "title": "Xarici gəmiçilik şirkətləri",
-            "links": [
-              {
-                "label": "Kadet proqramları",
-                "url": "/hazirlanir/kadet-proqramlari"
-              },
-              {
-                "label": "Məzunların işlə təminatı",
-                "url": "/sehife/mezunlarin-isle-teminati"
-              }
-            ]
-          },
-          {
-            "title": "Beynəlxalq elmi araşdırmalar",
-            "links": [
-              {
-                "label": "Birgə elmi konfranslar",
-                "url": "/sehife/elmi-konfranslar"
-              },
-              {
-                "label": "Qrant layihələri",
-                "url": "/hazirlanir/qrant-layiheleri"
+                "label": "İngilis dilində tədris",
+                "url": "/sehife/ingilis-dilinde-tedris"
               }
             ]
           }
@@ -1135,7 +1080,7 @@ const SEED = {
           },
           {
             "label": "Tələbə həyatı",
-            "url": "/hazirlanir/telebe-heyati"
+            "url": "/sehife/telebe-heyati"
           },
           {
             "label": "Beynəlxalq əməkdaşlıq",
@@ -2198,7 +2143,21 @@ export default {
       .then(() => applyElmPagesV1(strapi))
       .catch((e: Error) => strapi.log.error('[elm] F5.47: ' + e.message))
       .then(() => applyDedupeV2(strapi))
-      .catch((e: Error) => strapi.log.error('[tekrar] F5.47: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[tekrar] F5.47: ' + e.message))
+      // F5.48 — «Tələbə həyatı» və «Beynəlxalq əlaqələr» v1 (3 qrup / 9 keçid),
+      // səhifələr layout=telebe/beynelxalq və təkrarlar v3 («Beynəlxalq əlaqələr
+      // qrupu» → şöbə), BİR DƏFƏ, bu ardıcıllıqla (bax menu-telebe-beynelxalq.ts,
+      // section-pages.ts, dedupe.ts).
+      .then(() => applyTelebeMenuV1(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.48 telebe: ' + e.message))
+      .then(() => applyBeynelxalqMenuV1(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.48 beynelxalq: ' + e.message))
+      .then(() => applyTelebePagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[telebe] F5.48: ' + e.message))
+      .then(() => applyBeynelxalqPagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[beynelxalq] F5.48: ' + e.message))
+      .then(() => applyDedupeV3(strapi))
+      .catch((e: Error) => strapi.log.error('[tekrar] F5.48: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
@@ -2440,8 +2399,10 @@ export default {
         }
         // F5.45 — qəbul səhifələri (məs. «Məzunların işlə təminatı») sağ panelli
         // şablondadır: PAGES_RESEED onları köhnə mətnə qaytarmasın.
-        // F5.46 — «Təhsil» səhifələri də (layout=tehsil).
-        if (existing && (QEBUL_PAGE_SLUGS.includes(p.slug) || TEHSIL_PAGE_SLUGS.includes(p.slug))) {
+        // F5.46 — «Təhsil» səhifələri də (layout=tehsil). F5.48 — «Tələbə həyatı»
+        // və «Beynəlxalq əlaqələr» səhifələri (layout=telebe/beynelxalq).
+        const sectionSlugs = [...QEBUL_PAGE_SLUGS, ...TEHSIL_PAGE_SLUGS, ...TELEBE_PAGE_SLUGS, ...BEYNELXALQ_PAGE_SLUGS];
+        if (existing && sectionSlugs.includes(p.slug)) {
           skipped++;
           continue;
         }

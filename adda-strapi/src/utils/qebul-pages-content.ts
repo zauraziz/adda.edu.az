@@ -49,6 +49,9 @@ export type FactIcon =
   | 'laboratoriya'
   | 'konfrans'
   | 'beynelxalq'
+  // F5.48: idman (ti-ball-football), mədəniyyət (ti-masks-theater).
+  | 'idman'
+  | 'medeniyyet'
   | 'diger';
 
 export type DataBlock =
@@ -62,7 +65,12 @@ export type DataBlock =
   | 'qebul_cedveli'
   | 'aciq_qapi'
   // F5.47: adında «konfrans» olan tədbir və xəbərlər (elmi konfranslar səhifəsi).
-  | 'konfrans';
+  | 'konfrans'
+  // F5.48: tədbirlər + tələbə xəbərləri, idman, mədəniyyət, beynəlxalq (yalnız xəbər).
+  | 'tedbirler'
+  | 'idman'
+  | 'medeniyyet'
+  | 'beynelxalq';
 
 export interface StepSeed {
   /** Bir səhifədə bir neçə trayektoriya varsa (məs. 9 və 11 illik baza). */
@@ -1180,7 +1188,7 @@ const ECNEBI: QebulPageSeed = {
       PORTAL,
       { label: 'İngilis dilində tədris', url: '/sehife/ingilis-dilinde-tedris' },
       DORM,
-      { label: 'Beynəlxalq əlaqələr qrupu', url: '/sehife/beynelxalq-elaqeler-qrupu' },
+      { label: 'Beynəlxalq əlaqələr şöbəsi', url: '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
     ],
     contact: FOREIGN_CONTACT_AZ,
   },
@@ -1320,7 +1328,7 @@ const ECNEBI: QebulPageSeed = {
       PORTAL,
       { label: 'English-taught programmes', url: '/sehife/ingilis-dilinde-tedris' },
       { label: 'Residence hall', url: '/sehife/yataqxana' },
-      { label: 'International Relations Group', url: '/sehife/beynelxalq-elaqeler-qrupu' },
+      { label: 'International Relations Department', url: '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
     ],
     contact: '**Address:** 18 Zarifa Aliyeva Street, Baku\n\n**Phone:** +994 12 493 36 44\n\n**E-mail:** akademiya@asco.az',
   },
@@ -1460,7 +1468,7 @@ const ECNEBI: QebulPageSeed = {
       PORTAL,
       { label: 'Обучение на английском языке', url: '/sehife/ingilis-dilinde-tedris' },
       { label: 'Общежитие', url: '/sehife/yataqxana' },
-      { label: 'Группа международных связей', url: '/sehife/beynelxalq-elaqeler-qrupu' },
+      { label: 'Отдел международных связей', url: '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
     ],
     contact: '**Адрес:** Баку, ул. Зарифы Алиевой, 18\n\n**Телефон:** +994 12 493 36 44\n\n**E-mail:** akademiya@asco.az',
   },

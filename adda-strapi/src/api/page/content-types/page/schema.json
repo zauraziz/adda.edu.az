@@ -42,7 +42,9 @@
         "bolmeli",
         "qebul",
         "tehsil",
-        "elm"
+        "elm",
+        "telebe",
+        "beynelxalq"
       ],
       "default": "standart",
       "pluginOptions": {
@@ -63,7 +65,11 @@
         "ingilis",
         "qebul_cedveli",
         "aciq_qapi",
-        "konfrans"
+        "konfrans",
+        "tedbirler",
+        "idman",
+        "medeniyyet",
+        "beynelxalq"
       ],
       "default": "yox",
       "pluginOptions": {

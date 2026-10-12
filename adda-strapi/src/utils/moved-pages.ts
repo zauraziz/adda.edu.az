@@ -13,6 +13,9 @@
  *                 prorektora aiddir) — mətn köçürülmür, şəxsin profili
  *                 /emekdas/<slug>-dədir. F5.47: «Elmi-tədqiqat qrupu» —
  *                 şöbənin köhnə adı və köhnə heyəti; bölmənin öz mətni var.
+ *                 F5.48: «Beynəlxalq əlaqələr qrupu» — şöbənin köhnə səhifəsi
+ *                 (köhnə otaq və telefon, qırıq e-poçt); funksiyalar
+ *                 «Beynəlxalq əməkdaşlıq» səhifəsindədir.
  *
  * F5.47 (dedupe:v2): PAGE_PAGE_MOVES — səhifə başqa səhifənin içinə köçüb
  * («Elmi jurnalımız onlayn versiyada» → «Elmi jurnal»).
@@ -38,6 +41,8 @@ export const PAGE_UNIT_MOVES: ReadonlyArray<{ page: string; unit: string; copy: 
   },
   // F5.47 (dedupe:v2)
   { page: 'elmi-tedqiqat-qrupu', unit: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi', copy: false },
+  // F5.48 (dedupe:v3)
+  { page: 'beynelxalq-elaqeler-qrupu', unit: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi', copy: false },
 ];
 
 /** F5.47 — köhnə səhifə yeni səhifənin içindədir: /sehife/<açar> → /sehife/<dəyər> 301, köhnəsi dərcdən çıxır. */

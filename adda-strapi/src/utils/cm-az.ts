@@ -71,6 +71,20 @@ const DATABLOCK_DESC_V6 =
   'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
   'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları; aciq_qapi — «Açıq qapı» tədbirləri; ' +
   'konfrans — adında «konfrans» olan tədbirlər və elmi konfrans xəbərləri. yox — blok yoxdur.';
+// F5.48 (v7).
+const LAYOUT_DESC_V7 =
+  'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
+  'qebul — bolmeli + «Qəbul» qırıntısı və «Sual ver» (qəbul məsələləri); tehsil — bolmeli + «Təhsil» qırıntısı və «Sual ver» (tədris prosesi); ' +
+  'elm — bolmeli + «Elm və innovasiya» qırıntısı və «Sual ver» (elmi işlər); telebe — bolmeli + «Tələbə həyatı» qırıntısı və «Sual ver»; ' +
+  'beynelxalq — bolmeli + «Beynəlxalq əlaqələr» qırıntısı və «Sual ver» (beynəlxalq əlaqələr və əcnəbi tələbələr). Bütün dillərdə eynidir.';
+const FACT_ICON_DESC_V7 =
+  'tarix, muddet (saat), yer (adamlar), haqq (pul), bal (qrafik), dil, forma, sened, imtahan, diplom, unvan, telefon, qrup, bina, qoruma, gemi (gəmi), kitab, ' +
+  'laboratoriya (kolba), konfrans (təqdimat), beynelxalq (qlobus), idman (top), medeniyyet (maska), diger (ulduz).';
+const DATABLOCK_DESC_V7 =
+  'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
+  'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları. Başlıq üzrə lent: aciq_qapi — «Açıq qapı» tədbirləri; ' +
+  'konfrans — elmi tədbirlər və konfrans xəbərləri; tedbirler — növbəti tədbirlər və tələbə həyatından xəbərlər; idman — idman yarışları; ' +
+  'medeniyyet — konsert, şənlik, intellektual yarışlar; beynelxalq — beynəlxalq əməkdaşlıq xəbərləri. yox — blok yoxdur.';
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -736,9 +750,9 @@ export const CM_AZ_SIZE = {
   fields: [...Object.values(CT), ...Object.values(COMP)].reduce((a, d) => a + Object.keys(d).length, 0),
 };
 
-// ── v5 (F5.46), v6 (F5.47): əvvəlki versiyalarda yazılmış qaydaların yenilənməsi ──
+// ── v5 (F5.46), v6 (F5.47), v7 (F5.48): əvvəlki versiyalarda yazılmış qaydaların yenilənməsi ──
 // Yalnız təsvir əvvəlki mətnlə EYNİDİRSƏ (admin dəyişməyibsə) əvəz olunur. Hər
-// dəst öz markeri ilə BİR DƏFƏ; sıra ilə (yeni bazada v4 → v5 → v6).
+// dəst öz markeri ilə BİR DƏFƏ; sıra ilə (yeni bazada v4 → v5 → v6 → v7).
 const UPGRADE_SETS: {
   marker: string;
   note: string;
@@ -759,6 +773,15 @@ const UPGRADE_SETS: {
       { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V5, to: LAYOUT_DESC_V6 },
       { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V4, to: DATABLOCK_DESC_V6 },
       { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V5, to: FACT_ICON_DESC_V6 },
+    ],
+  },
+  {
+    marker: 'cmAz:v7',
+    note: 'F5.48: sahə qaydaları yeniləndi: {n} (Şablon «telebe», «beynelxalq», bloklar «tedbirler», «idman», «medeniyyet», «beynelxalq», ikonlar «idman», «medeniyyet»).',
+    list: [
+      { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V6, to: LAYOUT_DESC_V7 },
+      { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V6, to: DATABLOCK_DESC_V7 },
+      { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V6, to: FACT_ICON_DESC_V7 },
     ],
   },
 ];
