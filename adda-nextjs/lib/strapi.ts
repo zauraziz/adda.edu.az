@@ -106,8 +106,11 @@ export interface Program {
   locale: Locale;
 }
 
-/** F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`; F5.47 — `elm`. */
-export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil' | 'elm';
+/**
+ * F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`;
+ * F5.47 — `elm`; F5.48 — `telebe`, `beynelxalq`.
+ */
+export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil' | 'elm' | 'telebe' | 'beynelxalq';
 /** F5.45 — kataloqdan canlı blok (bax app/_components/AdmissionData.tsx). */
 export type PageDataBlock =
   | 'yox'
@@ -120,7 +123,12 @@ export type PageDataBlock =
   | 'qebul_cedveli'
   | 'aciq_qapi'
   // F5.47 — elmi konfranslar (adında «konfrans» olan tədbir və xəbərlər).
-  | 'konfrans';
+  | 'konfrans'
+  // F5.48 — başlıq üzrə lentlər: tədbirlər + tələbə xəbərləri, idman, mədəniyyət, beynəlxalq.
+  | 'tedbirler'
+  | 'idman'
+  | 'medeniyyet'
+  | 'beynelxalq';
 export interface PageFact {
   label: string;
   value: string;
@@ -588,31 +596,71 @@ export const getUpcomingEvents = (locale: Locale = 'az', limit?: number) =>
 /**
  * F5.45 — «Açıq qapı günləri» səhifəsi: adında «açıq qapı» olan tədbirlər
  * (yeni → köhnə) və xəbərlər. F5.47 — eyni qayda «Elmi konfranslar» üçün
- * (`konfrans`). Açar sözlərdən HƏR HANSI biri başlıqdadırsa (hərf fərqi
- * nəzərə alınmır). Cari dildə yoxdursa `az`.
+ * (`konfrans`). F5.48 — «Tələbə həyatı» (`tedbirler`: Akademiyanın bütün
+ * tədbirləri + başlığında «tələbə» olan xəbərlər), «İdman», «Mədəniyyət və
+ * yaradıcılıq», «Beynəlxalq əməkdaşlıq» (yalnız xəbər). Açar sözlərdən HƏR
+ * HANSI biri başlıqdadırsa (hərf fərqi nəzərə alınmır; SQLite yalnız ASCII
+ * hərfləri bükdüyü üçün Ü/Ş/Ç/İ ilə başlayan söz iki yazılışda). Cari dildə
+ * yoxdursa `az`.
  */
-export type TitleFeed = 'aciq_qapi' | 'konfrans';
-const TITLE_FEEDS: Record<TitleFeed, { events: string[]; news: string[] }> = {
+export type TitleFeed = 'aciq_qapi' | 'konfrans' | 'tedbirler' | 'idman' | 'medeniyyet' | 'beynelxalq';
+interface TitleFeedCfg {
+  /** Tədbir başlığında açar sözlər; [] — Akademiyanın bütün tədbirləri; null — tədbir çəkilmir. */
+  events: string[] | null;
+  /** Xəbər başlığında açar sözlər. */
+  news: string[];
+}
+const TITLE_FEEDS: Record<TitleFeed, TitleFeedCfg> = {
   aciq_qapi: { events: ['açıq qapı'], news: ['açıq qapı'] },
   // Xəbərlərdə yalnız elmi konfranslar: «təlim-konfrans» kimi başlıqlar düşməsin.
   konfrans: {
     events: ['konfrans', 'conference', 'конференц'],
     news: ['elmi-texniki konfrans', 'elmi konfrans', 'beynəlxalq konfrans', 'risk konfrans', 'conference', 'конференц'],
   },
+  tedbirler: { events: [], news: ['tələbə', 'TGT', 'TEC', 'student', 'студент'] },
+  // «yarış» yoxdur — «intellektual yarış» düşərdi.
+  idman: {
+    events: ['futbol', 'üzgüçülük', 'Üzgüçülük', 'yelkən', 'Yelkən', 'şahmat', 'Şahmat', 'çempionat', 'Çempionat', 'idman', 'İdman', 'sport', 'спорт'],
+    news: [
+      'futbol', 'üzgüçülük', 'Üzgüçülük', 'yelkən', 'Yelkən', 'regat', 'voleybol', 'basketbol', 'şahmat', 'Şahmat', 'güləş', 'Güləş',
+      'spartakiada', 'çempion', 'Çempion', 'idman yarış', 'İdman yarış', 'sport', 'спорт',
+    ],
+  },
+  // «sərgi» yoxdur — karyera və texnika sərgiləri düşərdi.
+  medeniyyet: {
+    events: ['konsert', 'Novruz', 'tamaşa', 'intellektual', 'İntellektual', 'concert', 'концерт'],
+    news: [
+      'konsert', 'Novruz', 'teatr', 'tamaşa', 'intellektual', 'İntellektual', 'Kim? Nə? Harada', 'şeir', 'Şeir', 'musiqi', 'himn',
+      'concert', 'концерт',
+    ],
+  },
+  beynelxalq: {
+    events: null,
+    news: [
+      'memorandum', 'nümayəndə heyəti', 'səfir', 'Səfir', 'Erasmus', 'qonaqlar', 'əcnəbi tələbə', 'Əcnəbi tələbə', 'beynəlxalq əməkdaşlıq',
+      'Beynəlxalq əməkdaşlıq', 'delegation', 'делегац',
+    ],
+  },
 };
+export const TITLE_FEED_KEYS = Object.keys(TITLE_FEEDS) as TitleFeed[];
+export const isTitleFeed = (v: unknown): v is TitleFeed => typeof v === 'string' && (TITLE_FEED_KEYS as string[]).includes(v);
 
 function titleFilter(words: string[]): Record<string, string> {
+  if (!words.length) return {};
   if (words.length === 1) return { 'filters[title][$containsi]': words[0] };
   return Object.fromEntries(words.map((w, i) => [`filters[$or][${i}][title][$containsi]`, w]));
 }
 
 export async function getTitleFeedEvents(feed: TitleFeed, locale: Locale = 'az'): Promise<EventItem[]> {
+  const words = TITLE_FEEDS[feed].events;
+  if (words === null) return [];
   const load = (loc: Locale) =>
     strapiFetch<StrapiList<EventItem>>(
       '/events',
       {
         locale: loc,
-        ...titleFilter(TITLE_FEEDS[feed].events),
+        // Açar söz yoxdursa — yalnız Akademiya səviyyəli tədbirlər (fakültə tədbirləri öz səhifəsində).
+        ...(words.length ? titleFilter(words) : { 'filters[visibility][$eq]': 'academy' }),
         sort: 'startAt:desc',
         'pagination[pageSize]': 8,
       },

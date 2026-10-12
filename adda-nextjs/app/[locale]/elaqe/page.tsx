@@ -58,8 +58,8 @@ export const revalidate = 300;
  *   — Karyera: real məzmun YOXDUR, menyuda ARTIQ QEYDİYYATDAN keçmiş
  *     `/hazirlanir/karyera-merkezi-haqqinda` istifadə olunur (uydurma
  *     slug DEYİL — mövcud "Karyera Mərkəzi haqqında" keçidi).
- *   — Beynəlxalq: real `struktur` YOXDUR, AMMA `sehife` qeydi VAR
- *     (`beynelxalq-elaqeler-qrupu`) — ona bağlanır.
+ *   — Beynəlxalq: F5.48-dən bölmənin ana səhifəsi (`beynelxalq-emekdasliq`);
+ *     köhnə «Beynəlxalq əlaqələr qrupu» səhifəsi şöbəyə 301 ilə köçüb.
  *   — Kommunikasiya: heç bir real VƏ YA qeydiyyatdan keçmiş hazirlanir
  *     hədəfi YOXDUR — keçidsiz, sadəcə ad göstərilir.
  * Zaur müəllim struktur bölmələri yaradanda/adı dəqiqləşdirəndə bu
@@ -76,7 +76,7 @@ const ROUTING_TABLE: RouteRow[] = [
   { audience: 'Tələbə', target: 'Tədris proseslərinin təşkili şöbəsi', href: '/struktur/tedris-proseslerinin-teskili-sobesi' },
   { audience: 'Məzun', target: 'Karyera', href: '/hazirlanir/karyera-merkezi-haqqinda' },
   { audience: 'İşəgötürən', target: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi', href: '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
-  { audience: 'Beynəlxalq', target: 'Beynəlxalq əlaqələr qrupu', href: '/sehife/beynelxalq-elaqeler-qrupu' },
+  { audience: 'Beynəlxalq', target: 'Beynəlxalq əlaqələr', href: '/sehife/beynelxalq-emekdasliq' },
   { audience: 'Media', target: 'Kommunikasiya', href: null },
 ];
 

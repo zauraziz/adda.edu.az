@@ -11,6 +11,8 @@
 // prosesi və sənədlər». F5.47: `elm` — «Elm və innovasiya» qırıntısı (bölmənin
 // ana səhifəsi; ana səhifənin özündə yoxdur) və «Sual ver» → «Elmi işlər,
 // nəşr və qrantlar»; canlı blok `konfrans` — elmi tədbirlər və xəbərlər.
+// F5.48: `telebe` və `beynelxalq` — öz qırıntısı və «Sual ver»; şablonların
+// fərqi bir yerdədir (SECTION_CFG), başlıq üzrə lentlərin mətnləri — FEED_TEXT.
 import Link from 'next/link';
 import { marked } from 'marked';
 import SiteHeaderStack from './SiteHeaderStack';
@@ -20,8 +22,8 @@ import ExpandBlock from './ExpandBlock';
 import ProgramToc from './ProgramToc';
 import { AdminProvider } from './AdminGate';
 import { BlockTitle } from './AdminOnly';
-import { AllLevels, LevelTable, OpenDays, SideSummary } from './AdmissionData';
-import type { Article, EventItem, MenuLink, PageDoc, PageStep, SiteMenu } from '@/lib/strapi';
+import { AllLevels, LevelTable, OpenDays, SideSummary, type FeedText } from './AdmissionData';
+import { isTitleFeed, type Article, type EventItem, type MenuLink, type PageDoc, type PageLayout, type PageStep, type SiteMenu, type TitleFeed } from '@/lib/strapi';
 import { BLOCK_TAB, englishRows, rowsForTab, stats, type AdmissionRow } from '@/lib/admission';
 import { tr, fallbackNotice, type Locale } from '@/lib/i18n';
 import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
@@ -50,11 +52,85 @@ const FACT_ICON: Record<string, string> = {
   laboratoriya: 'ti-flask',
   konfrans: 'ti-presentation',
   beynelxalq: 'ti-world',
+  // F5.48
+  idman: 'ti-ball-football',
+  medeniyyet: 'ti-masks-theater',
   diger: 'ti-star',
 };
 
-/** F5.47 — «Elm və innovasiya» bölməsinin ana səhifəsi (qırıntının hədəfi). */
-const ELM_HUB = 'elmi-tedqiqat-fealiyyeti';
+/**
+ * Şablonlar arasındakı fərq: hero-nun üst sətri, qırıntı (bölmənin ana
+ * səhifəsinə; ana səhifənin özündə yoxdur) və yan paneldə «Sual ver».
+ * Mətnlər az dilindədir — `tr()` ilə tərcümə olunur.
+ */
+type SectionLayout = Exclude<PageLayout, 'standart'>;
+interface SectionCfg {
+  eyebrow: string;
+  crumb?: { href: string; label: string; hubSlug?: string };
+  cta?: { text: string; href: string };
+}
+const SECTION_CFG: Record<SectionLayout, SectionCfg> = {
+  bolmeli: { eyebrow: 'Səhifə' },
+  qebul: {
+    eyebrow: 'Qəbul',
+    crumb: { href: '/bunlar-ucun/abituriyentler', label: 'Qəbul' },
+    cta: { text: 'Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', href: '/vetendaslarin-muracieti?istiqamet=qebul' },
+  },
+  tehsil: {
+    eyebrow: 'Təhsil',
+    crumb: { href: '/ixtisaslar', label: 'Təhsil' },
+    cta: { text: 'Tədris prosesi, təcrübə və sənədlər üzrə Akademiyaya onlayn yazın.', href: '/vetendaslarin-muracieti?istiqamet=tedris' },
+  },
+  // F5.47
+  elm: {
+    eyebrow: 'Elm və innovasiya',
+    crumb: { href: '/sehife/elmi-tedqiqat-fealiyyeti', label: 'Elm və innovasiya', hubSlug: 'elmi-tedqiqat-fealiyyeti' },
+    cta: { text: 'Elmi işlər, nəşr, qrant və konfranslar üzrə Akademiyaya onlayn yazın.', href: '/vetendaslarin-muracieti?istiqamet=elm' },
+  },
+  // F5.48 — tələbə məsələlərinin ayrıca bölməsi yoxdur: forma istiqamətsiz açılır.
+  telebe: {
+    eyebrow: 'Tələbə həyatı',
+    crumb: { href: '/sehife/telebe-heyati', label: 'Tələbə həyatı', hubSlug: 'telebe-heyati' },
+    cta: { text: 'Tələbə həyatı, təqaüd və yataqxana barədə Akademiyaya onlayn yazın.', href: '/vetendaslarin-muracieti' },
+  },
+  beynelxalq: {
+    eyebrow: 'Beynəlxalq əlaqələr',
+    crumb: { href: '/sehife/beynelxalq-emekdasliq', label: 'Beynəlxalq əlaqələr', hubSlug: 'beynelxalq-emekdasliq' },
+    cta: {
+      text: 'Mübadilə, tərəfdaşlıq və əcnəbi tələbələrin təhsili barədə Akademiyaya onlayn yazın.',
+      href: '/vetendaslarin-muracieti?istiqamet=beynelxalq',
+    },
+  },
+};
+
+/** Başlıq üzrə lentlərin blok başlığı və mətnləri (az; `tr()` ilə). */
+const FEED_TEXT: Record<TitleFeed, { title: string } & FeedText> = {
+  aciq_qapi: {
+    title: 'Növbəti açıq qapı günü',
+    empty: 'Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.',
+    past: 'Ötən açıq qapı günləri',
+    action: 'Qeydiyyatdan keç',
+    hash: '#qeydiyyat',
+  },
+  konfrans: {
+    title: 'Növbəti elmi tədbirlər',
+    empty: 'Hazırda elan olunmuş elmi tədbir yoxdur. Konfrans elan olunanda burada görünəcək.',
+    past: 'Ötən konfranslar və xəbərlər',
+    action: 'Ətraflı',
+    hash: '',
+  },
+  tedbirler: {
+    title: 'Növbəti tədbirlər',
+    empty: 'Hazırda elan olunmuş tədbir yoxdur. Yeni tədbir elan olunanda burada görünəcək.',
+    past: 'Tələbə həyatından xəbərlər',
+    action: 'Ətraflı',
+    hash: '',
+    pastEvents: 0,
+  },
+  idman: { title: 'İdman yarışları', empty: null, past: 'Son yarışlar və nəticələr', action: 'Ətraflı', hash: '' },
+  medeniyyet: { title: 'Mədəni tədbirlər', empty: null, past: 'Son tədbirlər', action: 'Ətraflı', hash: '' },
+  beynelxalq: { title: 'Beynəlxalq əməkdaşlıq xəbərləri', empty: null, past: 'Son xəbərlər', action: 'Ətraflı', hash: '' },
+};
 
 // ── Mətn köməkçiləri ─────────────────────────────────────────────────────────
 const AZ_FOLD: Record<string, string> = { ə: 'e', ı: 'i', ö: 'o', ü: 'u', ş: 's', ç: 'c', ğ: 'g' };
@@ -221,8 +297,7 @@ export interface SectionPageProps {
 
 export default async function SectionPage({ locale, menu, doc, slug, isFallback, data, correctionLabels }: SectionPageProps) {
   const isQebul = doc.layout === 'qebul';
-  const isTehsil = doc.layout === 'tehsil';
-  const isElm = doc.layout === 'elm';
+  const cfg = SECTION_CFG[doc.layout as SectionLayout] ?? SECTION_CFG.bolmeli;
   const block = doc.dataBlock ?? 'yox';
   const facts = (doc.facts ?? []).filter((f) => f.label && f.value);
   const steps = (doc.steps ?? []).filter((s) => s.title);
@@ -246,26 +321,25 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const tab = BLOCK_TAB[block];
   const blockRows = tab ? rowsForTab(rows, tab) : block === 'ingilis' ? englishRows(rows) : block === 'qebul_cedveli' ? rows : [];
   const blockStats = blockRows.length ? stats(blockRows) : null;
-  // Başlıq üzrə lent: açıq qapı günləri (F5.45), elmi konfranslar (F5.47).
-  const feed = block === 'aciq_qapi' || block === 'konfrans' ? block : null;
-  const openDays = feed !== null;
-  const feedText =
-    feed === 'konfrans'
-      ? {
-          empty: tr('Hazırda elan olunmuş elmi tədbir yoxdur. Konfrans elan olunanda burada görünəcək.', locale),
-          past: tr('Ötən konfranslar və xəbərlər', locale),
-          action: tr('Ətraflı', locale),
-          hash: '',
-        }
-      : {
-          empty: tr('Hazırda planlaşdırılmış açıq qapı günü yoxdur. Tarix elan olunanda burada görünəcək.', locale),
-          past: tr('Ötən açıq qapı günləri', locale),
-          action: tr('Qeydiyyatdan keç', locale),
-          hash: '#qeydiyyat',
-        };
-  const blockHas = openDays || blockRows.length > 0;
-  const blockTitle = openDays
-    ? tr(feed === 'konfrans' ? 'Növbəti elmi tədbirlər' : 'Növbəti açıq qapı günü', locale)
+  // Başlıq üzrə lent: açıq qapı günləri (F5.45), elmi konfranslar (F5.47),
+  // tələbə həyatı, idman, mədəniyyət, beynəlxalq (F5.48).
+  const feed = isTitleFeed(block) ? block : null;
+  const feedCfg = feed ? FEED_TEXT[feed] : null;
+  const feedText: FeedText | undefined = feedCfg
+    ? {
+        empty: feedCfg.empty === null ? null : tr(feedCfg.empty, locale),
+        past: tr(feedCfg.past, locale),
+        action: tr(feedCfg.action, locale),
+        hash: feedCfg.hash,
+        pastEvents: feedCfg.pastEvents,
+      }
+    : undefined;
+  // Yalnız xəbər lenti (növbəti tədbir mətni yoxdur) boşdursa blok göstərilmir.
+  const feedHas =
+    feedCfg !== null && ((data.events ?? []).length > 0 || (data.news ?? []).length > 0 || feedCfg.empty !== null);
+  const blockHas = feedHas || blockRows.length > 0;
+  const blockTitle = feedCfg
+    ? tr(feedCfg.title, locale)
     : block === 'qebul_cedveli'
       ? tr('İxtisaslar üzrə cədvəl', locale)
       : tr('İxtisaslar, yer sayı və haqq', locale);
@@ -287,37 +361,20 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const nextTint = () => (tint++ % 2 === 1 ? ' un-block--tint' : '');
 
   const notice = isFallback ? fallbackNotice(locale) : null;
-  // Qırıntı və «Sual ver»: qəbul → abituriyent bələdçisi; təhsil → kataloq;
-  // elm → bölmənin ana səhifəsi (ana səhifənin özündə qırıntı yoxdur).
-  const crumb = isQebul
-    ? { href: `/${locale}/bunlar-ucun/abituriyentler`, label: tr('Qəbul', locale) }
-    : isTehsil
-      ? { href: `/${locale}/ixtisaslar`, label: tr('Təhsil', locale) }
-      : isElm && slug !== ELM_HUB
-        ? { href: `/${locale}/sehife/${ELM_HUB}`, label: tr('Elm və innovasiya', locale) }
-        : null;
-  const cta = isQebul
-    ? { text: tr('Qəbul məsələləri üzrə Akademiyaya onlayn yazın.', locale), href: `/${locale}/vetendaslarin-muracieti?istiqamet=qebul` }
-    : isTehsil
-      ? {
-          text: tr('Tədris prosesi, təcrübə və sənədlər üzrə Akademiyaya onlayn yazın.', locale),
-          href: `/${locale}/vetendaslarin-muracieti?istiqamet=tedris`,
-        }
-      : isElm
-        ? {
-            text: tr('Elmi işlər, nəşr, qrant və konfranslar üzrə Akademiyaya onlayn yazın.', locale),
-            href: `/${locale}/vetendaslarin-muracieti?istiqamet=elm`,
-          }
-        : null;
+  // Qırıntı və «Sual ver» — SECTION_CFG (bölmənin ana səhifəsinin özündə qırıntı yoxdur).
+  const crumb =
+    cfg.crumb && slug !== cfg.crumb.hubSlug ? { href: `/${locale}${cfg.crumb.href}`, label: tr(cfg.crumb.label, locale) } : null;
+  const cta = cfg.cta ? { text: tr(cfg.cta.text, locale), href: `/${locale}${cfg.cta.href}` } : null;
   const sideHas = Boolean(toc.length || sideLinks.length || contactHtml || cta || blockStats);
 
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
-      <main className="qb-page">
+      {/* lang — kök <html lang="az">-dır; en/ru-da böyük hərf (eyebrow, cədvəl başlığı) «İ» ilə çıxmasın. */}
+      <main className="qb-page" lang={locale}>
         <section className="np-hero">
           <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr(isQebul ? 'Qəbul' : isTehsil ? 'Təhsil' : isElm ? 'Elm və innovasiya' : 'Səhifə', locale)}</div>
+            <div className="np-eyebrow">{tr(cfg.eyebrow, locale)}</div>
             <h1 className="np-h1">{doc.title}</h1>
             {doc.lead ? <p className="np-lead">{doc.lead}</p> : null}
             {crumb ? (
@@ -368,7 +425,7 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                 {blockHas ? (
                   <section id="ixtisaslar" className={'un-block pr-anchor' + nextTint()}>
                     <h2 className="un-block-title">{blockTitle}</h2>
-                    {openDays ? (
+                    {feedHas ? (
                       <OpenDays
                         events={data.events ?? []}
                         news={data.news ?? []}

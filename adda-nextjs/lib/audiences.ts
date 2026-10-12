@@ -94,8 +94,11 @@ export const AUDIENCES: Audience[] = [
         ],
       },
       {
+        // F5.48 — «Tələbə həyatı» menyusu (adda-strapi/src/utils/menu-telebe-beynelxalq.ts).
         title: 'Tələbə həyatı',
         links: [
+          { label: 'Tələbə həyatı', href: '/sehife/telebe-heyati' },
+          { label: 'Təqaüd və sosial dəstək', href: '/sehife/sosial-teminat-ve-maddi-yardim' },
           { label: 'İdman', href: '/sehife/idman' },
           { label: 'Tələbə Gənclər Təşkilatı', href: '/sehife/telebe-gencler-teskilati' },
         ],
@@ -140,8 +143,11 @@ export const AUDIENCES: Audience[] = [
       {
         title: 'Kampus',
         links: [
+          { label: 'Tələbə həyatı', href: '/sehife/telebe-heyati' },
           { label: 'Yataqxana', href: '/sehife/yataqxana' },
+          { label: 'Təqaüd və sosial dəstək', href: '/sehife/sosial-teminat-ve-maddi-yardim' },
           { label: 'İdman', href: '/sehife/idman' },
+          { label: 'Mədəniyyət və yaradıcılıq', href: '/sehife/medeniyyet-ve-yaradiciliq-dernekleri' },
           { label: 'Muzey', href: '/sehife/muzey' },
         ],
       },
@@ -244,6 +250,7 @@ export const AUDIENCES: Audience[] = [
         title: 'Beynəlxalq',
         links: [
           { label: 'Beynəlxalq əməkdaşlıq', href: '/sehife/beynelxalq-emekdasliq' },
+          { label: 'Mübadilə və Erasmus+', href: '/sehife/mobillik-ve-mubadile' },
           { label: 'Xaricdə təhsil və ixtisasartırma', href: '/sehife/xaricde-tehsil-ve-ixtisasartirma' },
         ],
       },
@@ -256,8 +263,9 @@ export const AUDIENCES: Audience[] = [
     lead: 'Əcnəbi vətəndaşlar üçün qəbul qaydaları, təhsil şəraiti və yaşayış.',
     steps: [
       { label: 'Əcnəbi tələbələrin qəbulu qaydaları', href: '/sehife/ecnebi-telebelerin-qebulu-qaydalari', note: 'Sənədlər və müraciət ardıcıllığı' },
+      // F5.48 — qəbuldan sonrası: gəliş, miqrasiya qeydiyyatı, yataqxana.
+      { label: 'Əcnəbi tələbələr üçün bələdçi', href: '/sehife/ecnebi-telebelerin-tehsili', note: 'Gəliş, qeydiyyat, yaşayış və dəstək' },
       { label: 'İngilis dilində tədris', href: '/sehife/ingilis-dilinde-tedris', note: 'Tədris dili və proqramlar' },
-      { label: 'Yataqxana', href: '/sehife/yataqxana', note: 'Yaşayış şəraiti' },
     ],
     groups: [
       {
@@ -270,10 +278,13 @@ export const AUDIENCES: Audience[] = [
         ],
       },
       {
+        // F5.48 — «Beynəlxalq əlaqələr» menyusu; köhnə «qrup» səhifəsi şöbəyə köçüb (dedupe:v3).
         title: 'Beynəlxalq əlaqələr',
         links: [
-          { label: 'Beynəlxalq əlaqələr qrupu', href: '/sehife/beynelxalq-elaqeler-qrupu' },
           { label: 'Beynəlxalq əməkdaşlıq', href: '/sehife/beynelxalq-emekdasliq' },
+          { label: 'Akademik tərəfdaşlar', href: '/sehife/akademik-terefdaslar' },
+          { label: 'Mübadilə və Erasmus+', href: '/sehife/mobillik-ve-mubadile' },
+          { label: 'İkili diplom proqramları', href: '/sehife/ikili-diplom-layiheleri' },
           { label: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi', href: '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi' },
         ],
       },
@@ -288,8 +299,9 @@ export const AUDIENCES: Audience[] = [
       {
         title: 'Yaşayış',
         links: [
+          { label: 'Əcnəbi tələbələr üçün bələdçi', href: '/sehife/ecnebi-telebelerin-tehsili' },
           { label: 'Yataqxana', href: '/sehife/yataqxana' },
-          { label: 'İdman', href: '/sehife/idman' },
+          { label: 'Tələbə həyatı', href: '/sehife/telebe-heyati' },
           { label: 'Əlaqə', href: '/elaqe' },
         ],
       },
@@ -327,6 +339,8 @@ export const AUDIENCES: Audience[] = [
         title: 'Şərait və qayğı',
         links: [
           { label: 'Yataqxana', href: '/sehife/yataqxana' },
+          { label: 'Təqaüd və sosial dəstək', href: '/sehife/sosial-teminat-ve-maddi-yardim' },
+          { label: 'Tələbə həyatı', href: '/sehife/telebe-heyati' },
           { label: 'İdman', href: '/sehife/idman' },
           { label: 'Qəhrəmanlarımız', href: '/qehremanlarimiz' },
         ],

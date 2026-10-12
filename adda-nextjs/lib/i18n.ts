@@ -997,6 +997,20 @@ const T: Array<[string, string, string]> = [
   ['Ötən konfranslar və xəbərlər', 'Прошедшие конференции и новости', 'Past Conferences and News'],
   ['Elmi işlər, nəşr və qrantlar', 'Наука, публикации и гранты', 'Research, publications and grants'],
   ['Tədqiqat, jurnal, konfrans, qrant', 'Исследования, журнал, конференции, гранты', 'Research, journal, conferences, grants'],
+  // F5.48 — «Tələbə həyatı» (layout=telebe) və «Beynəlxalq əlaqələr» (layout=beynelxalq): lentlər, «Sual ver», müraciət istiqaməti, auditoriyalar.
+  ['Növbəti tədbirlər', 'Ближайшие мероприятия', 'Upcoming Events'],
+  ['Hazırda elan olunmuş tədbir yoxdur. Yeni tədbir elan olunanda burada görünəcək.', 'Сейчас объявленных мероприятий нет. Новое мероприятие появится здесь, когда его объявят.', 'No events are announced at the moment. A new event will appear here once announced.'],
+  ['Tələbə həyatından xəbərlər', 'Новости студенческой жизни', 'Student Life News'],
+  ['İdman yarışları', 'Спортивные соревнования', 'Sports Competitions'],
+  ['Son yarışlar və nəticələr', 'Последние соревнования и результаты', 'Recent Competitions and Results'],
+  ['Mədəni tədbirlər', 'Культурные мероприятия', 'Cultural Events'],
+  ['Son tədbirlər', 'Последние мероприятия', 'Recent Events'],
+  ['Beynəlxalq əməkdaşlıq xəbərləri', 'Новости международного сотрудничества', 'International Cooperation News'],
+  ['Tələbə həyatı, təqaüd və yataqxana barədə Akademiyaya onlayn yazın.', 'Напишите в Академию онлайн о студенческой жизни, стипендиях и общежитии.', 'Write to the Academy online about student life, scholarships and the residence hall.'],
+  ['Mübadilə, tərəfdaşlıq və əcnəbi tələbələrin təhsili barədə Akademiyaya onlayn yazın.', 'Напишите в Академию онлайн об обмене, партнёрстве и обучении иностранных студентов.', 'Write to the Academy online about exchanges, partnerships and international students.'],
+  ['Beynəlxalq əlaqələr və əcnəbi tələbələr', 'Международные связи и иностранные студенты', 'International relations and international students'],
+  ['Mübadilə, tərəfdaşlıq, əcnəbi tələbələr', 'Обмен, партнёрство, иностранные студенты', 'Exchange, partnerships, international students'],
+  ['Gəliş, qeydiyyat, yaşayış və dəstək', 'Приезд, регистрация, проживание и поддержка', 'Arrival, registration, accommodation and support'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1281,7 +1295,7 @@ const MENU_T: Array<[string, string, string]> = [
   ['Media və kommunikasiya', 'Медиа и коммуникации', 'Media & Communication'],
   ['Sosial media elçiləri', 'Амбассадоры социальных сетей', 'Student Social Media Ambassadors'],
   ['Tədbirlər təqvimi', 'Календарь мероприятий', 'Events Calendar'],
-  ['Beynəlxalq əlaqələr', 'Международное сотрудничество', 'International Relations'],
+  ['Beynəlxalq əlaqələr', 'Международные связи', 'International Relations'],
   ['Akademik tərəfdaşlıq və ikili diplom', 'Академическое партнёрство и программы двойного диплома', 'Academic Partnerships & Dual Degrees'],
   ['İkili diplom layihələri', 'Программы двойного диплома', 'Dual Degree Programs'],
   ['Akademik tərəfdaşlar', 'Академические партнёры', 'Academic Partners'],
@@ -1494,6 +1508,17 @@ const MENU_T: Array<[string, string, string]> = [
   ['Gənc alimlər və tədqiqatçılar', 'Молодые учёные и исследователи', 'Young Scientists and Researchers'],
   ['Konfranslar və qrantlar', 'Конференции и гранты', 'Conferences and Grants'],
   ['Qrantlar və müsabiqələr', 'Гранты и конкурсы', 'Grants and Competitions'],
+  // F5.48 — «Tələbə həyatı» və «Beynəlxalq əlaqələr» v1 (adda-strapi/src/utils/menu-telebe-beynelxalq.ts).
+  ['Tələbə üçün', 'Студенту', 'For Students'],
+  ['Təqaüd və sosial dəstək', 'Стипендии и социальная поддержка', 'Scholarships and Student Support'],
+  ['İdman, mədəniyyət və tədbirlər', 'Спорт, культура и мероприятия', 'Sport, Culture and Events'],
+  ['Mədəniyyət və yaradıcılıq', 'Культура и творчество', 'Culture and Creativity'],
+  ['Əməkdaşlıq', 'Сотрудничество', 'Cooperation'],
+  ['Beynəlxalq əlaqələr şöbəsi', 'Отдел международных связей', 'International Relations Department'],
+  ['Mobillik və ikili diplom', 'Мобильность и двойной диплом', 'Mobility and Double Degrees'],
+  ['Mübadilə və Erasmus+', 'Обмен и Erasmus+', 'Exchange and Erasmus+'],
+  ['İkili diplom proqramları', 'Программы двойного диплома', 'Double Degree Programmes'],
+  ['Əcnəbi tələbələr üçün bələdçi', 'Путеводитель иностранного студента', 'Guide for International Students'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

@@ -87,6 +87,14 @@ const APPEAL_DIRECTIONS: { key: string; unitSlug: string; label: string; hint: s
     label: 'Elmi işlər, nəşr və qrantlar',
     hint: 'Tədqiqat, jurnal, konfrans, qrant',
   },
+  // F5.48 — «Beynəlxalq əlaqələr» səhifələrinin «Sual ver» düyməsi (`?istiqamet=beynelxalq`);
+  // eyni şöbəyə gedir, tələbə və tərəfdaş istiqaməti ayrıca seçsin deyə.
+  {
+    key: 'beynelxalq',
+    unitSlug: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
+    label: 'Beynəlxalq əlaqələr və əcnəbi tələbələr',
+    hint: 'Mübadilə, tərəfdaşlıq, əcnəbi tələbələr',
+  },
 ];
 
 /**

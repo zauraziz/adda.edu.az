@@ -2,7 +2,7 @@
 //
 // Miqrasiyadan gələn məzmun burada görünür. Layout `ContentPage`-dədir,
 // bu fayl yalnız məlumat çəkir və etiketləri hazırlayır.
-// F5.45 — `layout` bolmeli/qebul (F5.46 tehsil, F5.47 elm) olan səhifə sağ panelli şablonda
+// F5.45 — `layout` bolmeli/qebul (F5.46 tehsil, F5.47 elm, F5.48 telebe, beynelxalq) olan səhifə sağ panelli şablonda
 // (`SectionPage`, ixtisas səhifəsinin dizaynı); `dataBlock` üçün canlı
 // məlumat (kataloq, açıq qapı tədbirləri) burada çəkilir.
 import '../../../_styles/01-base.css';
@@ -40,6 +40,7 @@ import {
   getPrograms,
   getTitleFeedEvents,
   getTitleFeedNews,
+  isTitleFeed,
   withAzFallback,
   type PageDoc,
   type Program,
@@ -74,8 +75,8 @@ export async function generateMetadata({
 async function loadSectionData(doc: PageDoc, locale: Locale): Promise<SectionPageData> {
   const block = doc.dataBlock ?? 'yox';
   if (block === 'yox') return {};
-  // F5.47 — `konfrans` də başlıq üzrə lentdir (elmi konfranslar).
-  if (block === 'aciq_qapi' || block === 'konfrans') {
+  // F5.47 — `konfrans`, F5.48 — `tedbirler`, `idman`, `medeniyyet`, `beynelxalq` də başlıq üzrə lentdir.
+  if (isTitleFeed(block)) {
     const [events, news] = await Promise.all([getTitleFeedEvents(block, locale), getTitleFeedNews(block, locale)]);
     return { events, news, now: Date.now() };
   }
@@ -139,7 +140,8 @@ export default async function Page({
     mailFailed: tr('E-poçt göndərilə bilmədi. Bir az sonra yenidən cəhd edin və ya kadrlar şöbəsinə müraciət edin.', locale),
   };
 
-  if (doc.layout === 'bolmeli' || doc.layout === 'qebul' || doc.layout === 'tehsil' || doc.layout === 'elm') {
+  // `standart`-dan başqa hər şablon (F5.48: yeni şablon üçün bura toxunmaq lazım deyil — SectionPage.tsx → SECTION_CFG).
+  if (doc.layout && doc.layout !== 'standart') {
     const data = await loadSectionData(doc, locale);
     return (
       <SectionPage

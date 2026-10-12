@@ -34,18 +34,16 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'Doktorantura və gənc alimlər', links: [{label:'Doktorantura',url:'/sehife/doktorantura'},{label:'Gənc alimlər və tədqiqatçılar',url:'/sehife/genc-alimler-surasi'}] },
       { title: 'Konfranslar və qrantlar', links: [{label:'Elmi konfranslar',url:'/sehife/elmi-konfranslar'},{label:'Qrantlar və müsabiqələr',url:'/sehife/qrantlar'}] },
     ]},
-    { label: 'Tələbə həyatı', order: 5, url: '#', groups: [
-      { title: 'Tələbə təşkilatları', links: [{label:'Tələbə Gənclər Təşkilatı (TGK)',url:'#'},{label:'Tələbə Həmkarlar İttifaqı (THİK)',url:'#'},{label:'Tələbə Elmi Cəmiyyəti (TEC)',url:'#'},{label:'Könüllülük hərəkatı',url:'#'}] },
-      { title: 'Yaşayış və rifah', links: [{label:'Tələbə yataqxanası',url:'#'},{label:'Onlayn müraciət və yerləşdirmə',url:'#'},{label:'Sosial təminat və maddi yardım',url:'#'},{label:'Təqaüd proqramları',url:'#'},{label:'Psixoloji dəstək xidməti',url:'#'},{label:'Tibb xidməti',url:'#'}] },
-      { title: 'Yaradıcılıq, idman və asudə vaxt', links: [{label:'İdman klubları',url:'#'},{label:'Mədəniyyət və yaradıcılıq dərnəkləri',url:'#'},{label:'İntellektual oyun klubları',url:'#'}] },
-      { title: 'Media və kommunikasiya', links: [{label:'Sosial media elçiləri',url:'#'},{label:'Tədbirlər təqvimi',url:'#'}] },
+    // F5.48 — «Tələbə həyatı» və «Beynəlxalq əlaqələr» v1 (adda-strapi/src/utils/menu-telebe-beynelxalq.ts ilə eyni).
+    { label: 'Tələbə həyatı', order: 5, url: '/sehife/telebe-heyati', groups: [
+      { title: 'Tələbə üçün', links: [{label:'Ümumi baxış',url:'/sehife/telebe-heyati'},{label:'Yataqxana',url:'/sehife/yataqxana'},{label:'Təqaüd və sosial dəstək',url:'/sehife/sosial-teminat-ve-maddi-yardim'}] },
+      { title: 'Tələbə təşkilatları', links: [{label:'Tələbə Gənclər Təşkilatı',url:'/sehife/telebe-gencler-teskilati'},{label:'Tələbə Həmkarlar İttifaqı Komitəsi',url:'/sehife/telebe-hemkarlar-ittifaqi-komitesi'},{label:'Tələbə Elmi Cəmiyyəti',url:'/sehife/telebe-elmi-cemiyyeti'}] },
+      { title: 'İdman, mədəniyyət və tədbirlər', links: [{label:'İdman',url:'/sehife/idman'},{label:'Mədəniyyət və yaradıcılıq',url:'/sehife/medeniyyet-ve-yaradiciliq-dernekleri'},{label:'Tədbirlər təqvimi',url:'/tedbirler'}] },
     ]},
-    { label: 'Beynəlxalq əlaqələr', order: 6, url: '#', groups: [
-      { title: 'Akademik tərəfdaşlıq və ikili diplom', links: [{label:'İkili diplom layihələri',url:'#'},{label:'Akademik tərəfdaşlar',url:'#'}] },
-      { title: 'Mobillik proqramları', links: [{label:'Erasmus+ və Mevlana',url:'#'},{label:'Müəllim mübadiləsi',url:'#'},{label:'Yay məktəbləri',url:'#'}] },
-      { title: 'Beynəlxalq assosiasiyalar və təşkilatlar', links: [{label:'IAMU',url:'#'},{label:'IMO',url:'#'},{label:'BSAMI',url:'#'},{label:'Digər təşkilatlar',url:'#'}] },
-      { title: 'Xarici gəmiçilik şirkətləri', links: [{label:'Kadet proqramları',url:'#'},{label:'Məzunların işlə təminatı',url:'#'}] },
-      { title: 'Beynəlxalq elmi araşdırmalar', links: [{label:'Birgə elmi konfranslar',url:'#'},{label:'Qrant layihələri',url:'#'}] },
+    { label: 'Beynəlxalq əlaqələr', order: 6, url: '/sehife/beynelxalq-emekdasliq', groups: [
+      { title: 'Əməkdaşlıq', links: [{label:'Ümumi baxış',url:'/sehife/beynelxalq-emekdasliq'},{label:'Akademik tərəfdaşlar',url:'/sehife/akademik-terefdaslar'},{label:'Beynəlxalq əlaqələr şöbəsi',url:'/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi'}] },
+      { title: 'Mobillik və ikili diplom', links: [{label:'Mübadilə və Erasmus+',url:'/sehife/mobillik-ve-mubadile'},{label:'İkili diplom proqramları',url:'/sehife/ikili-diplom-layiheleri'},{label:'İxtisasartırma və xaricdə təhsil',url:'/sehife/xaricde-tehsil-ve-ixtisasartirma'}] },
+      { title: 'Əcnəbi tələbələr', links: [{label:'Qəbul qaydaları və təhsil haqqı',url:'/sehife/ecnebi-telebelerin-qebulu-qaydalari'},{label:'Əcnəbi tələbələr üçün bələdçi',url:'/sehife/ecnebi-telebelerin-tehsili'},{label:'İngilis dilində tədris',url:'/sehife/ingilis-dilinde-tedris'}] },
     ]},
   ],
   ustMenyu: [
@@ -86,7 +84,7 @@ export const FALLBACK_MENU: SiteMenu = {
     { title: 'Akademiya', links: [{label:'Haqqımızda',url:'#'},{label:'Rəhbərlik',url:'#'},{label:'Struktur',url:'#'},{label:'Tarix',url:'#'},{label:'Akkreditasiya',url:'#'}] },
     { title: 'Qəbul', links: [{label:'Bakalavr qəbulu',url:'/sehife/bakalavriat'},{label:'Magistratura qəbulu',url:'/sehife/magistratura'},{label:'Keçid balları, yer sayı və təhsil haqqı',url:'/sehife/kecid-ballari'},{label:'Onlayn müraciət',url:'/sehife/onlayn-muraciet'}] },
     { title: 'Təhsil', links: [{label:'İxtisaslar',url:'/ixtisaslar'},{label:'Bakalavriat',url:'/ixtisaslar?tab=bakalavr'},{label:'Magistratura',url:'/ixtisaslar?tab=magistr'},{label:'Qiyabi və təkrar ali təhsil',url:'/ixtisaslar?tab=tekrar_ali'},{label:'Təcrübə (praktika)',url:'/sehife/tecrube-haqqinda'}] },
-    { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'/sehife/elmi-tedqiqat-fealiyyeti'},{label:'Tələbə həyatı',url:'#'},{label:'Beynəlxalq əməkdaşlıq',url:'#'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
+    { title: 'Universitet', links: [{label:'Elm və innovasiya',url:'/sehife/elmi-tedqiqat-fealiyyeti'},{label:'Tələbə həyatı',url:'/sehife/telebe-heyati'},{label:'Beynəlxalq əməkdaşlıq',url:'/sehife/beynelxalq-emekdasliq'},{label:'Xəbərlər',url:'#'},{label:'Kampus',url:'#'}] },
   ],
 };
 

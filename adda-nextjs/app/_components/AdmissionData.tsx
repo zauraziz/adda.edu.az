@@ -218,11 +218,15 @@ export function SideSummary({ s, locale }: { s: AdmissionStats; locale: Locale }
 /** Açıq qapı günləri: növbəti tədbir(lər) + ötənlər (tədbir və xəbər). */
 /** F5.47 — lentin mətnləri (açıq qapı / elmi konfrans); verilməsə açıq qapı. */
 export interface FeedText {
-  empty: string;
+  /** Növbəti tədbir yoxdursa mətn; null — «növbəti» hissəsi heç göstərilmir (F5.48: yalnız xəbər lentləri). */
+  empty: string | null;
+  /** Ötənlər və xəbərlərin alt başlığı — yalnız yuxarıda «növbəti» hissəsi göstəriləndə. */
   past: string;
   action: string;
   /** Tədbir keçidinin lövbəri: açıq qapı — `#qeydiyyat`, konfrans — boş. */
   hash: string;
+  /** Göstərilən ötən tədbir sayı (defolt 3; F5.48 «Tələbə həyatı» — 0, yalnız xəbər). */
+  pastEvents?: number;
 }
 
 export function OpenDays({
@@ -246,10 +250,14 @@ export function OpenDays({
   };
   const time = (e: EventItem) => (e.endAt || e.startAt ? new Date((e.endAt || e.startAt) as string).getTime() : 0);
   const upcoming = events.filter((e) => time(e) >= now).sort((a, b) => time(a) - time(b));
-  const past = events.filter((e) => time(e) < now).slice(0, 3);
+  const past = events.filter((e) => time(e) < now).slice(0, t.pastEvents ?? 3);
+  // Cari dildə olmayan (az-a qayıdan) tədbir və xəbər öz dilinin ünvanında açılır:
+  // detal səhifələri dilə görə az-a qayıtmır.
+  const loc = (item: { locale?: Locale | null }): Locale => item.locale ?? locale;
+  const showUpcoming = upcoming.length > 0 || t.empty !== null;
   return (
     <>
-      {upcoming.length ? (
+      {!showUpcoming ? null : upcoming.length ? (
         <ul className="qb-events">
           {upcoming.map((e) => (
             <li key={e.documentId} className="qb-event">
@@ -265,7 +273,7 @@ export function OpenDays({
                 </p>
               ) : null}
               {e.excerpt ? <p className="qb-event-text">{e.excerpt}</p> : null}
-              <Link href={`/${locale}/tedbirler/${e.slug}${t.hash}`} className="qb-btn">
+              <Link href={`/${loc(e)}/tedbirler/${e.slug}${t.hash}`} className="qb-btn">
                 {t.action}
                 <i className="ti ti-arrow-right" aria-hidden="true" />
               </Link>
@@ -280,12 +288,12 @@ export function OpenDays({
       )}
       {past.length || news.length ? (
         <>
-          <h3 className="un-sub-title">{t.past}</h3>
+          {showUpcoming ? <h3 className="un-sub-title">{t.past}</h3> : null}
           <ul className="un-row-list">
             {past.map((e) => (
               <li className="un-row" key={'e-' + e.documentId}>
                 <span className="un-row-date">{fmtDate(e.startAt, locale)}</span>
-                <Link href={`/${locale}/tedbirler/${e.slug}`} className="un-row-title">
+                <Link href={`/${loc(e)}/tedbirler/${e.slug}`} className="un-row-title">
                   {e.title}
                 </Link>
               </li>
@@ -293,7 +301,7 @@ export function OpenDays({
             {news.map((a) => (
               <li className="un-row" key={'a-' + a.documentId}>
                 <span className="un-row-date">{fmtDate(a.newsDate ?? a.publishedAt, locale)}</span>
-                <Link href={`/${locale}/xeberler/${a.slug}`} className="un-row-title">
+                <Link href={`/${loc(a)}/xeberler/${a.slug}`} className="un-row-title">
                   {a.title}
                 </Link>
               </li>

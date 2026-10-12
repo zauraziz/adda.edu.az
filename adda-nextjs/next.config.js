@@ -27,6 +27,8 @@ const PAGE_UNIT_MAP = {
   'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektor': 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq',
   // F5.47 (dedupe:v2): şöbənin köhnə adı və köhnə heyəti.
   'elmi-tedqiqat-qrupu': 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
+  // F5.48 (dedupe:v3): şöbənin köhnə «Beynəlxalq əlaqələr qrupu» səhifəsi.
+  'beynelxalq-elaqeler-qrupu': 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
 };
 
 // F5.47: köhnə səhifə yeni səhifənin içindədir (dedupe:v2, Strapi-də dərcdən
