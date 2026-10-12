@@ -18,7 +18,8 @@
  *   - ADDA xəbərləri: XII (04.05.2017), XVII (2022) və XX (02.05.2025)
  *     beynəlxalq konfrans; Elm Fondu qrantı (14.10.2024); Brandenburq TU
  *     (13.11.2025); tələbə konfransı (09.04.2026); «Akademik yazı və etika»
- *     (08.04.2026); TEC tədbirləri; Türk Loydu və GIZ EasTnT;
+ *     (08.04.2026); TEC tədbirləri; Türk Loydu. F5.49: GIZ EasTnT səhifələrdən
+ *     çıxarılıb (xəbər qalır) — src/utils/giz-clean.ts.
  *   - aef.gov.az/az/grant/view/54 (2024-cü il «Əsas qrant müsabiqəsi»);
  *   - ADDA Elm Portalı: cris.adda.edu.az.
  * Yoxlanılmayan və köhnələ bilən məlumat YAZILMAYIB: əməkdaş sayları (köhnə
@@ -54,7 +55,6 @@ const NEWS = {
   tecAi: '/xeberler/denizcilikde-suni-intellektin-huquqi-aspektleri-muzakire-olunub',
   tecAsa: '/xeberler/adda-ve-asa-telebe-elmi-cemiyyetleri-arasinda-emekdasliq',
   turkLoydu: '/xeberler/adda-ve-turk-loydu-emekdasliq-imkanlarini-muzakire-edib',
-  giz: '/xeberler/adda-ve-giz-eastnt-arasinda-emekdasliga-dair-anlasma-memorandumu-imzalandi',
 };
 /** ru/en səhifəsindən az xəbərə: xəbər səhifəsi dilə görə az-a qayıtmır, prefiks açıq yazılır. */
 const AZ_NEWS = (path: string): string => `/az${path}`;
@@ -195,7 +195,6 @@ Akademiyanın alimləri dissertasiya müdafiələrində aparıcı təşkilat, op
 - **Brandenburq Texniki Universiteti (Almaniya)** — Azərbaycan Elm Fondunun qrant layihəsi çərçivəsində birgə tədqiqat və eksperimentlər; noyabr 2025 ([xəbər](${NEWS.btu2025})).
 - **Azərbaycan Texniki Universiteti** — Elm Fondunun 2024-cü il qrant layihəsində tərəfdaş ([Qrantlar və müsabiqələr](/sehife/qrantlar)).
 - **AMEA Riyaziyyat və Mexanika İnstitutu** — əməkdaşlıq müqaviləsi əsasında birgə dissertasiya işləri.
-- **GIZ EasTnT** — anlaşma memorandumu: gənc tədqiqatçılar üçün təqaüd və qrant imkanları, xarici mütəxəssislərin mühazirələri ([xəbər](${NEWS.giz})).
 - **Türk Loydu** — elmi-tədqiqat və innovasiya layihələrində, beynəlxalq qrant proqramlarında əməkdaşlıq imkanları müzakirə olunub ([xəbər](${NEWS.turkLoydu})).
 
 Beynəlxalq konfransımızda Türkiyə, Rusiya, ABŞ, Ukrayna, Gürcüstan, Latviya, Polşa, Qazaxıstan və digər ölkələrin alimləri iştirak edir — [Elmi konfranslar](/sehife/elmi-konfranslar). Bütün tərəfdaşlar: [Beynəlxalq əməkdaşlıq](/sehife/beynelxalq-emekdasliq).
@@ -341,7 +340,6 @@ The Academy’s scientists act as leading organisation, opponents and reviewers 
 - **Brandenburg University of Technology (Germany)** — joint research and experiments under an Azerbaijan Science Foundation grant; November 2025 ([news in Azerbaijani](${AZ_NEWS(NEWS.btu2025)})).
 - **Azerbaijan Technical University** — partner in the 2024 Science Foundation grant project ([Grants and competitions](/sehife/qrantlar)).
 - **ANAS Institute of Mathematics and Mechanics** — joint dissertation work under a cooperation agreement.
-- **GIZ EasTnT** — memorandum of understanding: scholarships and grants for young researchers, lectures by foreign experts.
 - **Türk Loydu** — opportunities for joint research and innovation projects and international grant programmes have been discussed.
 
 Scientists from Türkiye, Russia, the USA, Ukraine, Georgia, Latvia, Poland, Kazakhstan and other countries take part in our international conference — [Scientific conferences](/sehife/elmi-konfranslar). All partners: [International cooperation](/sehife/beynelxalq-emekdasliq).
@@ -481,7 +479,6 @@ Students join research through the [Student Research Society](/sehife/telebe-elm
 - **Бранденбургский технический университет (Германия)** — совместные исследования и эксперименты в рамках гранта Научного фонда Азербайджана; ноябрь 2025 года.
 - **Азербайджанский технический университет** — партнёр по грантовому проекту Научного фонда 2024 года ([Гранты и конкурсы](/sehife/qrantlar)).
 - **Институт математики и механики НАНА** — совместные диссертационные работы по договору о сотрудничестве.
-- **GIZ EasTnT** — меморандум о взаимопонимании: стипендии и гранты для молодых исследователей, лекции зарубежных специалистов.
 - **Türk Loydu** — обсуждены возможности совместных научных и инновационных проектов и международных грантовых программ.
 
 В международной конференции Академии участвуют учёные Турции, России, США, Украины, Грузии, Латвии, Польши, Казахстана и других стран — [Научные конференции](/sehife/elmi-konfranslar). Все партнёры: [Международное сотрудничество](/sehife/beynelxalq-emekdasliq).
@@ -1134,7 +1131,7 @@ const YOUNG_PAGE: ElmPageSeed = {
       {
         title: 'Qrant və mübadilə imkanlarına baxın',
         who: 'Elm Fondu və tərəfdaşlar',
-        body: 'Azərbaycan Elm Fondunun müsabiqələri; GIZ EasTnT ilə memorandum gənc tədqiqatçılar üçün təqaüd və qrant imkanlarını nəzərdə tutur.',
+        body: 'Azərbaycan Elm Fondunun müsabiqələri, tərəfdaş universitetlərlə mübadilə və xaricdə təhsil proqramları.',
         linkLabel: 'Qrantlar və müsabiqələr',
         linkUrl: '/sehife/qrantlar',
       },
@@ -1171,7 +1168,6 @@ Məruzələr «Tezislər toplusu»nda dərc olunur, bölmələr üzrə ilk üç 
 ## Qrant və mübadilə imkanları
 
 - Azərbaycan Elm Fondunun müsabiqələri — [Qrantlar və müsabiqələr](/sehife/qrantlar);
-- GIZ EasTnT ilə anlaşma memorandumu — gənc tədqiqatçılar üçün təqaüd və qrant imkanlarının artırılması, Almaniya və digər ölkələrdən mütəxəssislərin mühazirələri ([xəbər](${NEWS.giz}));
 - xaricdə təhsil və ixtisasartırma — [ətraflı](/sehife/xaricde-tehsil-ve-ixtisasartirma).`,
     faq: [
       {
@@ -1247,7 +1243,7 @@ Məruzələr «Tezislər toplusu»nda dərc olunur, bölmələr üzrə ilk üç 
       {
         title: 'Look at grants and exchanges',
         who: 'Science Foundation and partners',
-        body: 'Azerbaijan Science Foundation competitions; the memorandum with GIZ EasTnT provides for scholarships and grants for young researchers.',
+        body: 'Azerbaijan Science Foundation competitions, exchanges with partner universities and study-abroad programmes.',
         linkLabel: 'Grants and competitions',
         linkUrl: '/sehife/qrantlar',
       },
@@ -1278,7 +1274,6 @@ In spring 2026, 43 of the Academy’s lecturers and young researchers took the o
 ## Grants and exchanges
 
 - Azerbaijan Science Foundation competitions — [Grants and competitions](/sehife/qrantlar);
-- the memorandum of understanding with GIZ EasTnT — more scholarships and grants for young researchers, lectures by experts from Germany and other countries;
 - study abroad and professional development — [more](/sehife/xaricde-tehsil-ve-ixtisasartirma).`,
     faq: [
       {
@@ -1349,7 +1344,7 @@ In spring 2026, 43 of the Academy’s lecturers and young researchers took the o
       {
         title: 'Изучите гранты и обмены',
         who: 'Научный фонд и партнёры',
-        body: 'Конкурсы Научного фонда Азербайджана; меморандум с GIZ EasTnT предусматривает стипендии и гранты для молодых исследователей.',
+        body: 'Конкурсы Научного фонда Азербайджана, обмен с университетами-партнёрами и программы обучения за рубежом.',
         linkLabel: 'Гранты и конкурсы',
         linkUrl: '/sehife/qrantlar',
       },
@@ -1380,7 +1375,6 @@ In spring 2026, 43 of the Academy’s lecturers and young researchers took the o
 ## Гранты и обмены
 
 - конкурсы Научного фонда Азербайджана — [Гранты и конкурсы](/sehife/qrantlar);
-- меморандум о взаимопонимании с GIZ EasTnT — расширение стипендий и грантов для молодых исследователей, лекции специалистов из Германии и других стран;
 - обучение за рубежом и повышение квалификации — [подробнее](/sehife/xaricde-tehsil-ve-ixtisasartirma).`,
     faq: [
       {
@@ -1836,7 +1830,6 @@ Azərbaycan Elm Fondu elmi-tədqiqat layihələrini müsabiqə əsasında maliyy
 
 ## Beynəlxalq proqramlar və tərəfdaşlar
 
-- **GIZ EasTnT** — anlaşma memorandumu: gənc tədqiqatçılar üçün təqaüd və qrant imkanlarının artırılması, Almaniya və digər ölkələrdən mütəxəssislərin mühazirələri ([xəbər](${NEWS.giz})).
 - **Türk Loydu** — elmi-tədqiqat və innovasiya layihələrində, beynəlxalq qrant proqramlarında birgə iştirak imkanları müzakirə olunub ([xəbər](${NEWS.turkLoydu})).
 - Xarici universitetlərlə əməkdaşlıq — [Beynəlxalq əməkdaşlıq](/sehife/beynelxalq-emekdasliq).
 
@@ -1858,7 +1851,7 @@ Azərbaycan Elm Fondu elmi-tədqiqat layihələrini müsabiqə əsasında maliyy
       {
         question: 'Gənc tədqiqatçılar üçün imkan varmı?',
         answer:
-          'GIZ EasTnT ilə memorandum gənc tədqiqatçılar üçün təqaüd və qrant imkanlarının artırılmasını nəzərdə tutur. Elanları izləyin və şöbə ilə əlaqə saxlayın.',
+          'Bəli: tələbə və gənc tədqiqatçıların elmi-texniki konfransı, akademik yazı təlimi, mübadilə və xaricdə təhsil proqramları — «Gənc alimlər və tədqiqatçılar» səhifəsində. Elanları izləyin və şöbə ilə əlaqə saxlayın.',
       },
     ],
     sideLinks: [
@@ -1932,7 +1925,6 @@ The Azerbaijan Science Foundation funds research projects through competitions a
 
 ## International programmes and partners
 
-- **GIZ EasTnT** — memorandum of understanding: more scholarships and grants for young researchers, lectures by experts from Germany and other countries.
 - **Türk Loydu** — opportunities for joint research and innovation projects and international grant programmes have been discussed.
 - Cooperation with foreign universities — [International cooperation](/sehife/beynelxalq-emekdasliq).
 
@@ -2023,7 +2015,6 @@ The Azerbaijan Science Foundation funds research projects through competitions a
 
 ## Международные программы и партнёры
 
-- **GIZ EasTnT** — меморандум о взаимопонимании: расширение стипендий и грантов для молодых исследователей, лекции специалистов из Германии и других стран.
 - **Türk Loydu** — обсуждены возможности совместного участия в научных и инновационных проектах и международных грантовых программах.
 - Сотрудничество с зарубежными университетами — [Международное сотрудничество](/sehife/beynelxalq-emekdasliq).
 

@@ -44,7 +44,9 @@
         "tehsil",
         "elm",
         "telebe",
-        "beynelxalq"
+        "beynelxalq",
+        "akademiya",
+        "faq"
       ],
       "default": "standart",
       "pluginOptions": {
@@ -69,7 +71,8 @@
         "tedbirler",
         "idman",
         "medeniyyet",
-        "beynelxalq"
+        "beynelxalq",
+        "asco"
       ],
       "default": "yox",
       "pluginOptions": {

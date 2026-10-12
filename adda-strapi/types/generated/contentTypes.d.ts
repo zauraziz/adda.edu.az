@@ -1604,6 +1604,40 @@ export interface ApiMilestoneMilestone extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiOrgBlockOrgBlock extends Struct.SingleTypeSchema {
+  collectionName: 'org_blocks';
+  info: {
+    description: 'Footer-d\u0259ki \u00ABR\u0259smi qurumlar\u00BB siyah\u0131s\u0131: ad (az/en/ru), sayt, loqo, s\u0131ra. \u00ABTabe oldu\u011Fu qurum\u00BB i\u015Far\u0259lisi sayt\u0131n \u0259n yuxar\u0131s\u0131ndak\u0131 zolaqda da g\u00F6r\u00FCn\u00FCr.';
+    displayName: '3. Sayt \u2014 R\u0259smi qurumlar';
+    pluralName: 'org-blocks';
+    singularName: 'org-block';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    items: Schema.Attribute.Component<'org.item', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::org-block.org-block'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPageOwnerPageOwner extends Struct.CollectionTypeSchema {
   collectionName: 'page_owners';
   info: {
@@ -1710,6 +1744,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'idman',
         'medeniyyet',
         'beynelxalq',
+        'asco',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{
@@ -1731,7 +1766,17 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         };
       }>;
     layout: Schema.Attribute.Enumeration<
-      ['standart', 'bolmeli', 'qebul', 'tehsil', 'elm', 'telebe', 'beynelxalq']
+      [
+        'standart',
+        'bolmeli',
+        'qebul',
+        'tehsil',
+        'elm',
+        'telebe',
+        'beynelxalq',
+        'akademiya',
+        'faq',
+      ]
     > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -3571,6 +3616,7 @@ declare module '@strapi/strapi' {
       'api::identity.identity-token': ApiIdentityIdentityToken;
       'api::menu.menu': ApiMenuMenu;
       'api::milestone.milestone': ApiMilestoneMilestone;
+      'api::org-block.org-block': ApiOrgBlockOrgBlock;
       'api::page-owner.page-owner': ApiPageOwnerPageOwner;
       'api::page.page': ApiPagePage;
       'api::person.person': ApiPersonPerson;

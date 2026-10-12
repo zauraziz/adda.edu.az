@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "org_blocks",
+  "info": {
+    "singularName": "org-block",
+    "pluralName": "org-blocks",
+    "displayName": "3. Sayt — Rəsmi qurumlar",
+    "description": "Footer-dəki «Rəsmi qurumlar» siyahısı: ad (az/en/ru), sayt, loqo, sıra. «Tabe olduğu qurum» işarəlisi saytın ən yuxarısındakı zolaqda da görünür."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "org.item"
+    }
+  }
+}

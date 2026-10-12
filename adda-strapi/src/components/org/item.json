@@ -1,0 +1,46 @@
+{
+  "collectionName": "components_org_items",
+  "info": {
+    "displayName": "Rəsmi qurum",
+    "description": "Footer-dəki «Rəsmi qurumlar» siyahısının bir qurumu.",
+    "icon": "globe"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 160
+    },
+    "nameEn": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "nameRu": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "short": {
+      "type": "string",
+      "maxLength": 16
+    },
+    "url": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "parent": {
+      "type": "boolean",
+      "default": false
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

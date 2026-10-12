@@ -18,7 +18,7 @@
  *   - ADDA xəbərləri: IAMU (07.09 və 01.11.2016), Yesenov Universiteti (2017,
  *     2022, 2023), Erasmus+ — Liyepaya (24.05 və 11.08.2023), Qazi Universiteti
  *     (28.09.2023), əcnəbi tələbələr (25.11.2022, 15.11.2023, 30.12.2025),
- *     GIZ EasTnT (25.11.2025), GN Group (01.02, 31.03, 22.05.2026), Piri Reis
+ *     GN Group (01.02, 31.03, 22.05.2026), Piri Reis
  *     (10.02, 22.05.2026), İÜ-Cerrahpaşa (21.05.2026), Yıldız TU (24.05.2026),
  *     Ukraynanın Milli Nəqliyyat Universiteti (03.07.2026), Səudiyyə
  *     Ərəbistanı (05.11.2025, 28.04.2026), KOICA (23.12.2025), TİKA
@@ -59,7 +59,6 @@ const ADMISSION_2026 = '/elanlar/elan-2026';
 
 const NEWS = {
   iamu2016: '/xeberler/adda-deniz-universitetlerinin-beynelxalq-assosiasiyasina-uzv-qebul-edildi',
-  giz: '/xeberler/adda-ve-giz-eastnt-arasinda-emekdasliga-dair-anlasma-memorandumu-imzalandi',
   gnMou: '/xeberler/azerbaycan-dovlet-deniz-akademiyasi-adda-ile-gn-group-corporation-arasinda-emekd',
   gnVisit: '/xeberler/adda-numayende-heyeti-gn-group-corporation-da-gorus-kecirib',
   gnPractice: '/xeberler/adda-telebeleri-turkiyede-tecrube-kecir',
@@ -139,12 +138,12 @@ const HUB_PAGE: BeynelxalqPageSeed = {
       'Akademiyanın diplomu 170-dən çox ölkədə tanınır. ADDA Beynəlxalq Dəniz Universitetləri Assosiasiyasının (IAMU) üzvüdür, 11 ölkənin universitetləri ilə ' +
       'ikitərəfli əməkdaşlıq edir, Erasmus+ və ikili diplom proqramlarında iştirak edir, əcnəbi tələbələr qəbul edir.',
     seoDescription:
-      'ADDA-nın beynəlxalq əməkdaşlığı: IAMU üzvlüyü, 11 ölkənin tərəfdaş universitetləri, 2025–2026 memorandumları, Erasmus+, ikili diplom, əcnəbi tələbələr.',
+      'ADDA-nın beynəlxalq əməkdaşlığı: IAMU üzvlüyü, 11 ölkənin tərəfdaş universitetləri, 2026 memorandumları, Erasmus+, ikili diplom, əcnəbi tələbələr.',
     stepsTitle: 'Tərəfdaşlıq necə qurulur',
     facts: [
       { label: 'Diplom tanınır', value: '170-dən çox ölkədə', icon: 'diplom' },
       { label: 'IAMU üzvü', value: '2016-cı ildən', icon: 'beynelxalq' },
-      { label: 'Memorandum (noyabr 2025 – iyul 2026)', value: '6', icon: 'sened' },
+      { label: 'Memorandum (yanvar–iyul 2026)', value: '5', icon: 'sened' },
       { label: 'Əcnəbi tələbə (2023/2024)', value: '43', icon: 'qrup' },
     ],
     steps: [
@@ -199,11 +198,10 @@ Akademiya ilk gündən təhsili Beynəlxalq Dənizçilik Təşkilatının (IMO) 
 - **Xəzəryanı dövlətlərin Ali Məktəbləri Assosiasiyası** — fəal iştirakçı.
 - **Xüsusi Gəmilər və İntellektual Sistemlər Beynəlxalq Alyansı** — Harbin Mühəndislik Universitetinin təşəbbüsü; ADDA 2026-cı ilin avqustunda institusional üzv qəbul olunub.
 
-## 2025–2026: yeni anlaşmalar
+## 2026: yeni anlaşmalar
 
 | Tarix | Tərəfdaş | Əsas istiqamətlər |
 |---|---|---|
-| 25.11.2025 | GIZ EasTnT (Almaniya) | tələbə və əməkdaş mübadiləsi, beynəlxalq təcrübə, birgə tədqiqat, gənc tədqiqatçılara qrantlar ([xəbər](${NEWS.giz})) |
 | 2026, yanvar–fevral | GN Group Corporation (Türkiyə) | gəmilərdə və tərsanələrdə təcrübə, təlimlər, qış və yay məktəbləri, məzunların işə qəbulu ([xəbər](${NEWS.gnMou})) |
 | 10.02.2026 | Piri Reis Universiteti (Türkiyə) | strateji əməkdaşlıq: akademik mübadilə, birgə tədris proqramları, elmi layihələr ([xəbər](${NEWS.piriMou})) |
 | 18.05.2026 | İstanbul Universiteti-Cerrahpaşa (Türkiyə) | mobillik, ikili diplom, rəqəmsallaşma, birgə layihələr ([xəbər](${NEWS.cerrahpasa})) |
@@ -259,12 +257,12 @@ Beynəlxalq əlaqələri [Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi](
       'The Academy’s diploma is recognised in more than 170 countries. ADDA is a member of the International Association of Maritime Universities (IAMU), cooperates ' +
       'with universities in 11 countries, takes part in Erasmus+ and double degree programmes and admits international students.',
     seoDescription:
-      'International cooperation at ADDA: IAMU membership, partner universities in 11 countries, 2025–2026 agreements, Erasmus+, double degrees, international students.',
+      'International cooperation at ADDA: IAMU membership, partner universities in 11 countries, 2026 agreements, Erasmus+, double degrees, international students.',
     stepsTitle: 'How a partnership is built',
     facts: [
       { label: 'Diploma recognised', value: 'In 170+ countries', icon: 'diplom' },
       { label: 'IAMU member', value: 'Since 2016', icon: 'beynelxalq' },
-      { label: 'Agreements (Nov 2025 – Jul 2026)', value: '6', icon: 'sened' },
+      { label: 'Agreements (Jan–Jul 2026)', value: '5', icon: 'sened' },
       { label: 'International students (2023/2024)', value: '43', icon: 'qrup' },
     ],
     steps: [
@@ -319,11 +317,10 @@ From its first day the Academy has built its programmes around the requirements 
 - **Association of Universities of the Caspian States** — active participant.
 - **Special Ships and Intelligent Systems International Alliance** — initiated by Harbin Engineering University; ADDA became an institutional member in August 2026.
 
-## New agreements, 2025–2026
+## New agreements, 2026
 
 | Date | Partner | Main areas |
 |---|---|---|
-| 25.11.2025 | GIZ EasTnT (Germany) | student and staff exchange, international internships, joint research, grants for young researchers ([news](${AZ(NEWS.giz)})) |
 | Jan–Feb 2026 | GN Group Corporation (Türkiye) | training on ships and in shipyards, courses, winter and summer schools, graduate recruitment ([news](${AZ(NEWS.gnMou)})) |
 | 10.02.2026 | Piri Reis University (Türkiye) | strategic cooperation: academic exchange, joint programmes, research projects ([news](${AZ(NEWS.piriMou)})) |
 | 18.05.2026 | Istanbul University-Cerrahpaşa (Türkiye) | mobility, double degrees, digitalisation, joint projects ([news](${AZ(NEWS.cerrahpasa)})) |
@@ -379,12 +376,12 @@ International relations are handled by the [Research and International Relations
       'Диплом Академии признаётся более чем в 170 странах. АГМА — член Международной ассоциации морских университетов (IAMU), сотрудничает ' +
       'с университетами 11 стран, участвует в Erasmus+ и программах двойного диплома, принимает иностранных студентов.',
     seoDescription:
-      'Международное сотрудничество АГМА: членство в IAMU, вузы-партнёры из 11 стран, соглашения 2025–2026 годов, Erasmus+, двойной диплом, иностранные студенты.',
+      'Международное сотрудничество АГМА: членство в IAMU, вузы-партнёры из 11 стран, соглашения 2026 года, Erasmus+, двойной диплом, иностранные студенты.',
     stepsTitle: 'Как строится партнёрство',
     facts: [
       { label: 'Диплом признаётся', value: 'Более чем в 170 странах', icon: 'diplom' },
       { label: 'Член IAMU', value: 'С 2016 года', icon: 'beynelxalq' },
-      { label: 'Меморандумы (ноябрь 2025 – июль 2026)', value: '6', icon: 'sened' },
+      { label: 'Меморандумы (январь–июль 2026)', value: '5', icon: 'sened' },
       { label: 'Иностранные студенты (2023/2024)', value: '43', icon: 'qrup' },
     ],
     steps: [
@@ -439,11 +436,10 @@ International relations are handled by the [Research and International Relations
 - **Ассоциация вузов прикаспийских государств** — активный участник.
 - **Международный альянс специальных судов и интеллектуальных систем** — по инициативе Харбинского инженерного университета; АГМА принята институциональным членом в августе 2026 года.
 
-## Новые соглашения 2025–2026 годов
+## Новые соглашения 2026 года
 
 | Дата | Партнёр | Основные направления |
 |---|---|---|
-| 25.11.2025 | GIZ EasTnT (Германия) | обмен студентами и сотрудниками, международные стажировки, совместные исследования, гранты молодым исследователям ([новость](${AZ(NEWS.giz)})) |
 | 2026, январь–февраль | GN Group Corporation (Турция) | практика на судах и верфях, тренинги, зимние и летние школы, трудоустройство выпускников ([новость](${AZ(NEWS.gnMou)})) |
 | 10.02.2026 | Университет Пири Реис (Турция) | стратегическое сотрудничество: академический обмен, совместные программы, научные проекты ([новость](${AZ(NEWS.piriMou)})) |
 | 18.05.2026 | Стамбульский университет — Джеррахпаша (Турция) | мобильность, двойной диплом, цифровизация, совместные проекты ([новость](${AZ(NEWS.cerrahpasa)})) |
@@ -531,7 +527,6 @@ const PARTNERS_PAGE: BeynelxalqPageSeed = {
 ## Şirkətlər və təşkilatlar
 
 - **GN Group Corporation (Türkiyə)** — tələbələrin şirkətin gəmilərində və tərsanələrində təcrübəsi, təlimlər, məzunların işə qəbulu ([xəbər](${NEWS.gnMou})).
-- **GIZ EasTnT (Almaniya)** — mübadilə, beynəlxalq təcrübə, birgə tədqiqat, gənc tədqiqatçılara qrantlar ([xəbər](${NEWS.giz})).
 - **Informacinė Raida (Litva)** və **Turksen Eğitim (Türkiyə)** — uzunmüddətli əməkdaşlıq.
 - **TİKA** — Türkiyə universitetləri və şirkətləri ilə əlaqələrin qurulmasına dəstək; 2026-cı ilin mayında İstanbuldakı görüşləri təşkil edib ([xəbər](${NEWS.cerrahpasa})).
 
@@ -588,7 +583,6 @@ By country; in brackets — the latest agreement or form of cooperation.
 ## Companies and organisations
 
 - **GN Group Corporation (Türkiye)** — training for students on the company’s ships and in its shipyards, courses, graduate recruitment ([news](${AZ(NEWS.gnMou)})).
-- **GIZ EasTnT (Germany)** — exchanges, international internships, joint research, grants for young researchers ([news](${AZ(NEWS.giz)})).
 - **Informacinė Raida (Lithuania)** and **Turksen Eğitim (Türkiye)** — long-standing cooperation.
 - **TİKA** — support in building links with Turkish universities and companies; organised the Istanbul meetings in May 2026 ([news](${AZ(NEWS.cerrahpasa)})).
 
@@ -645,7 +639,6 @@ Send your proposal to the [Research and International Relations Department](${OF
 ## Компании и организации
 
 - **GN Group Corporation (Турция)** — практика студентов на судах и верфях компании, тренинги, трудоустройство выпускников ([новость](${AZ(NEWS.gnMou)})).
-- **GIZ EasTnT (Германия)** — обмены, международные стажировки, совместные исследования, гранты молодым исследователям ([новость](${AZ(NEWS.giz)})).
 - **Informacinė Raida (Литва)** и **Turksen Eğitim (Турция)** — многолетнее сотрудничество.
 - **TİKA** — содействие в установлении связей с турецкими вузами и компаниями; организовало встречи в Стамбуле в мае 2026 года ([новость](${AZ(NEWS.cerrahpasa)})).
 
@@ -744,7 +737,6 @@ const MOBILITY_PAGE: BeynelxalqPageSeed = {
 
 - Erasmus+ çərçivəsində müəllim mübadiləsi (Liyepaya, 2023).
 - Yıldız Texniki Universitetinin müəllimlərinin Akademiyada tədrisi və birgə elmi rəhbərlik (2026 memorandumu).
-- GIZ EasTnT — Almaniya və digər ölkələrin universitetləri ilə tələbə və əməkdaş mübadiləsi, beynəlxalq təcrübə, gənc tədqiqatçılara qrantlar ([xəbər](${NEWS.giz})).
 - Brandenburq Texniki Universiteti (Almaniya) — Elm Fondunun qrantı ilə birgə tədqiqat ([xəbər](${NEWS.btu2025})).
 
 ## Yay və qış məktəbləri
@@ -844,7 +836,6 @@ ASCO-nun Gəmiçilikdə Təqaüd Proqramı məzunlara xaricdə magistr təhsili 
 
 - Staff exchange under Erasmus+ (Liepāja, 2023).
 - Teaching stays and joint supervision with Yıldız Technical University (2026 memorandum).
-- GIZ EasTnT — student and staff exchange with universities in Germany and other countries, international internships, grants for young researchers ([news](${AZ(NEWS.giz)})).
 - Brandenburg University of Technology (Germany) — joint research funded by the Science Foundation ([news](${AZ(NEWS.btu2025)})).
 
 ## Summer and winter schools
@@ -944,7 +935,6 @@ ASCO’s Shipping Scholarship Programme gives graduates the opportunity to take 
 
 - Обмен преподавателями по Erasmus+ (Лиепая, 2023).
 - Преподавание и совместное научное руководство с Техническим университетом Йылдыз (меморандум 2026 года).
-- GIZ EasTnT — обмен студентами и сотрудниками с университетами Германии и других стран, международные стажировки, гранты молодым исследователям ([новость](${AZ(NEWS.giz)})).
 - Бранденбургский технический университет (Германия) — совместные исследования по гранту Научного фонда ([новость](${AZ(NEWS.btu2025)})).
 
 ## Летние и зимние школы

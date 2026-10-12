@@ -32,6 +32,13 @@ import { applyTelebeMenuV1, applyBeynelxalqMenuV1 } from './utils/menu-telebe-be
 import { applyTelebePagesV1, applyBeynelxalqPagesV1 } from './utils/section-pages';
 import { TELEBE_PAGE_SLUGS } from './utils/telebe-pages-content';
 import { BEYNELXALQ_PAGE_SLUGS } from './utils/beynelxalq-pages-content';
+// F5.49 — menyu (FAQ, ASCO, «Bunlar üçün»), FAQ və ASCO səhifələri, GIZ-in
+// səhifələrdən çıxarılması, «Rəsmi qurumlar» admində.
+import { applyMenuF549 } from './utils/menu-f549';
+import { applyInfoPagesV1 } from './utils/section-pages';
+import { INFO_PAGE_SLUGS } from './utils/info-pages-content';
+import { applyGizClean } from './utils/giz-clean';
+import { applyOrgBlockV1 } from './utils/org-block';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -60,6 +67,8 @@ const PUBLIC_READ_UIDS = [
   'api::rector.rector',
   'api::social-block.social-block',
   'api::social-post.social-post',
+  // F5.49 — footer «Rəsmi qurumlar» (tək tip).
+  'api::org-block.org-block',
   'api::reaction.reaction',
   'api::tag.tag',
   'api::unit.unit',
@@ -116,6 +125,10 @@ const SEED = {
               {
                 "label": "Akademiya haqqında",
                 "url": "/sehife/adda-dunen-ve-bugun"
+              },
+              {
+                "label": "ASCO və Akademiya",
+                "url": "/sehife/asco-ve-akademiya"
               },
               {
                 "label": "Akademiyanın tarixi",
@@ -883,7 +896,7 @@ const SEED = {
       {
         "label": "FAQ",
         "order": 4,
-        "url": "/hazirlanir/faq",
+        "url": "/sehife/faq",
         "groups": []
       },
       {
@@ -965,6 +978,10 @@ const SEED = {
       {
         "label": "Valideynlər",
         "url": "/bunlar-ucun/valideynler"
+      },
+      {
+        "label": "Tərəfdaşlar və işəgötürənlər",
+        "url": "/bunlar-ucun/terefdaslar"
       }
     ],
     "suretliKecidler": [
@@ -2157,7 +2174,18 @@ export default {
       .then(() => applyBeynelxalqPagesV1(strapi))
       .catch((e: Error) => strapi.log.error('[beynelxalq] F5.48: ' + e.message))
       .then(() => applyDedupeV3(strapi))
-      .catch((e: Error) => strapi.log.error('[tekrar] F5.48: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[tekrar] F5.48: ' + e.message))
+      // F5.49 — menyu (FAQ → /sehife/faq, «ASCO və Akademiya», «Tərəfdaşlar və
+      // işəgötürənlər»), FAQ və ASCO səhifələri, GIZ səhifələrdən, «Rəsmi
+      // qurumlar» (boşdursa), BİR DƏFƏ, bu ardıcıllıqla.
+      .then(() => applyMenuF549(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.49: ' + e.message))
+      .then(() => applyInfoPagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[faq/asco] F5.49: ' + e.message))
+      .then(() => applyGizClean(strapi))
+      .catch((e: Error) => strapi.log.error('[giz] F5.49: ' + e.message))
+      .then(() => applyOrgBlockV1(strapi))
+      .catch((e: Error) => strapi.log.error('[org] F5.49: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
@@ -2401,7 +2429,7 @@ export default {
         // şablondadır: PAGES_RESEED onları köhnə mətnə qaytarmasın.
         // F5.46 — «Təhsil» səhifələri də (layout=tehsil). F5.48 — «Tələbə həyatı»
         // və «Beynəlxalq əlaqələr» səhifələri (layout=telebe/beynelxalq).
-        const sectionSlugs = [...QEBUL_PAGE_SLUGS, ...TEHSIL_PAGE_SLUGS, ...TELEBE_PAGE_SLUGS, ...BEYNELXALQ_PAGE_SLUGS];
+        const sectionSlugs = [...QEBUL_PAGE_SLUGS, ...TEHSIL_PAGE_SLUGS, ...TELEBE_PAGE_SLUGS, ...BEYNELXALQ_PAGE_SLUGS, ...INFO_PAGE_SLUGS];
         if (existing && sectionSlugs.includes(p.slug)) {
           skipped++;
           continue;

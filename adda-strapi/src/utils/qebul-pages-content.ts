@@ -70,7 +70,9 @@ export type DataBlock =
   | 'tedbirler'
   | 'idman'
   | 'medeniyyet'
-  | 'beynelxalq';
+  | 'beynelxalq'
+  // F5.49: adında «ASCO» olan xəbərlər («ASCO və Akademiya» səhifəsi).
+  | 'asco';
 
 export interface StepSeed {
   /** Bir səhifədə bir neçə trayektoriya varsa (məs. 9 və 11 illik baza). */

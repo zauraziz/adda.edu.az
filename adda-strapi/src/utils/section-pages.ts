@@ -20,11 +20,16 @@
  * BİR DƏFƏ (store `adda-admin` → `telebePages:v1`, `beynelxalqPages:v1`),
  * bootstrap-da, portu bloklamadan — menyulardan SONRA, təkrarlardan
  * (`dedupe:v3`) ƏVVƏL.
+ *
+ * F5.49: eyni köməkçi ilə iki yeni səhifə (məzmun info-pages-content.ts):
+ * «Tez-tez verilən suallar» (`faq`, layout=faq, `faqPage:v1`) və «ASCO və
+ * Akademiya» (`asco-ve-akademiya`, layout=akademiya, `ascoPage:v1`).
  */
 import type { Core } from '@strapi/strapi';
 import type { PageLocaleSeed, QebulPageSeed } from './qebul-pages-content';
 import { TELEBE_PAGES } from './telebe-pages-content';
 import { BEYNELXALQ_PAGES } from './beynelxalq-pages-content';
+import { ASCO_PAGES, FAQ_PAGES } from './info-pages-content';
 import { moveOwner } from './dedupe';
 
 type Row = Record<string, unknown>;
@@ -247,5 +252,27 @@ export async function applyBeynelxalqPagesV1(strapi: Core.Strapi): Promise<void>
     dropIfUnassigned: BEYNELXALQ_DROP,
     ownerMoves: [{ from: 'page:erasmus-ve-mevlana', slug: 'mobillik-ve-mubadile', label: 'Mübadilə və Erasmus+' }],
     source: 'src/utils/beynelxalq-pages-content.ts',
+  });
+}
+
+// ── F5.49: FAQ və ASCO ───────────────────────────────────────────────────────
+export async function applyInfoPagesV1(strapi: Core.Strapi): Promise<void> {
+  await applySectionPages(strapi, {
+    marker: 'faqPage:v1',
+    tag: '[faq] F5.49',
+    layout: 'faq',
+    backupPrefix: 'faqPage',
+    pages: FAQ_PAGES,
+    dropIfUnassigned: [],
+    source: 'src/utils/info-pages-content.ts',
+  });
+  await applySectionPages(strapi, {
+    marker: 'ascoPage:v1',
+    tag: '[asco] F5.49',
+    layout: 'akademiya',
+    backupPrefix: 'ascoPage',
+    pages: ASCO_PAGES,
+    dropIfUnassigned: [],
+    source: 'src/utils/info-pages-content.ts',
   });
 }

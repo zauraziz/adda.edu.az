@@ -85,6 +85,20 @@ const DATABLOCK_DESC_V7 =
   'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları. Başlıq üzrə lent: aciq_qapi — «Açıq qapı» tədbirləri; ' +
   'konfrans — elmi tədbirlər və konfrans xəbərləri; tedbirler — növbəti tədbirlər və tələbə həyatından xəbərlər; idman — idman yarışları; ' +
   'medeniyyet — konsert, şənlik, intellektual yarışlar; beynelxalq — beynəlxalq əməkdaşlıq xəbərləri. yox — blok yoxdur.';
+// F5.49 (v9).
+const LAYOUT_DESC_V8 =
+  'standart — başlıq + mətn; bolmeli — mətndəki hər «## » başlıq ayrıca bölmə, sağda mündəricat; ' +
+  'qebul — bolmeli + «Qəbul» qırıntısı və «Sual ver» (qəbul məsələləri); tehsil — bolmeli + «Təhsil» qırıntısı və «Sual ver» (tədris prosesi); ' +
+  'elm — bolmeli + «Elm və innovasiya» qırıntısı və «Sual ver» (elmi işlər); telebe — bolmeli + «Tələbə həyatı» qırıntısı və «Sual ver»; ' +
+  'beynelxalq — bolmeli + «Beynəlxalq əlaqələr» qırıntısı və «Sual ver» (beynəlxalq əlaqələr və əcnəbi tələbələr); ' +
+  'akademiya — bolmeli + «Akademiya» qırıntısı və «Sual ver»; faq — tez-tez verilən suallar: bu səhifənin «Suallar»-ı (ümumi) və ' +
+  'digər səhifələrin sualları mövzular üzrə avtomatik, axtarışla. Bütün dillərdə eynidir.';
+const DATABLOCK_DESC_V8 =
+  'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
+  'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları. Başlıq üzrə lent: aciq_qapi — «Açıq qapı» tədbirləri; ' +
+  'konfrans — elmi tədbirlər və konfrans xəbərləri; tedbirler — növbəti tədbirlər və tələbə həyatından xəbərlər; idman — idman yarışları; ' +
+  'medeniyyet — konsert, şənlik, intellektual yarışlar; beynelxalq — beynəlxalq əməkdaşlıq xəbərləri; asco — adında «ASCO» olan xəbərlər. ' +
+  'yox — blok yoxdur.';
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -381,6 +395,10 @@ const CT: Record<string, Dict> = {
     suretliKecidler: ['Sürətli keçidlər'],
     footerMenyusu: ['Footer menyusu', 'Saytın altındakı sütunlar.'],
   },
+  // F5.49 — footer «Rəsmi qurumlar» (cmAz:v8).
+  'api::org-block.org-block': {
+    items: ['Qurumlar', 'Footer-dəki «Rəsmi qurumlar» siyahısı. Sıranı sürüşdürərək dəyişin, «+» ilə qurum əlavə edin, lazımsızı silin və ya gizlədin.'],
+  },
   'api::social-block.social-block': {
     eyebrow: ['Üst yazı', 'Başlığın üstündəki kiçik yazı.'],
     title: ['Başlıq'],
@@ -546,6 +564,17 @@ const COMP: Record<string, Dict> = {
     position: ['Vəzifə'],
     note: ['Qeyd', 'Tələblər, əlaqə və s.'],
   },
+  // F5.49 — «Rəsmi qurumlar»ın bir qurumu (cmAz:v8).
+  'org.item': {
+    name: ['Ad (az)', 'Qurumun tam adı Azərbaycan dilində. Məs.: «Elm və Təhsil Nazirliyi».'],
+    nameEn: ['Ad (en)', EN + ' Boş qalsa az adı göstərilir.'],
+    nameRu: ['Ad (ru)', RU + ' Boş qalsa az adı göstərilir.'],
+    short: ['Qısa ad', 'Loqo yüklənməyibsə onun yerində görünür (16 simvola qədər). Məs.: «ETN».'],
+    url: ['Sayt', URL_RULE + ' Məs.: https://edu.gov.az'],
+    logo: ['Loqo', 'Rəsmi loqo: SVG və ya şəffaf fonlu PNG, hündürlüyü ən azı 80 px. Saytda ağ lövhənin üstündə göstərilir.'],
+    parent: ['Tabe olduğu qurum', 'Aktivdirsə qurum saytın ən yuxarısındakı rəsmi zolaqda loqo ilə görünür («… tabeliyində»). Yalnız bir qurum seçin.'],
+    hidden: ['Gizlət', 'Aktivdirsə qurum saytda göstərilmir (silinmədən).'],
+  },
   'nav.link': {
     label: ['Ad', 'Menyuda görünən mətn.'],
     url: ['Keçid', 'Daxili səhifə «/sehife/…» kimi (dilsiz), xarici sayt https:// ilə. Hazır olmayan səhifə: «/hazirlanir/<slug>».'],
@@ -700,7 +729,8 @@ function merge(conf: Conf, dict: Dict): number {
 // v2 (F5.42): unit.photo/gallery. v3 (F5.43): unit.blockSettings/extraBlocks + komponentləri.
 // v4 (F5.45): page.layout/dataBlock/lead/stepsTitle/steps/facts/faq/sideLinks/contact + page.fact, page.step.
 // Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
-const MARKER = 'cmAz:v4';
+// v8 (F5.49): «Rəsmi qurumlar» (api::org-block.org-block, org.item).
+const MARKER = 'cmAz:v8';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
@@ -782,6 +812,15 @@ const UPGRADE_SETS: {
       { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V6, to: LAYOUT_DESC_V7 },
       { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V6, to: DATABLOCK_DESC_V7 },
       { kind: 'comp', uid: 'page.fact', field: 'icon', from: FACT_ICON_DESC_V6, to: FACT_ICON_DESC_V7 },
+    ],
+  },
+  {
+    // v8 sahə adlarının markeridir (applyAzFieldLabels) — qaydaların yenilənməsi v9.
+    marker: 'cmAz:v9',
+    note: 'F5.49: sahə qaydaları yeniləndi: {n} (Şablon «akademiya», «faq», blok «asco»).',
+    list: [
+      { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V7, to: LAYOUT_DESC_V8 },
+      { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V7, to: DATABLOCK_DESC_V8 },
     ],
   },
 ];

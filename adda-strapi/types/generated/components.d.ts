@@ -130,6 +130,42 @@ export interface NavQuicklink extends Struct.ComponentSchema {
   };
 }
 
+export interface OrgItem extends Struct.ComponentSchema {
+  collectionName: 'components_org_items';
+  info: {
+    description: 'Footer-d\u0259ki \u00ABR\u0259smi qurumlar\u00BB siyah\u0131s\u0131n\u0131n bir qurumu.';
+    displayName: 'R\u0259smi qurum';
+    icon: 'globe';
+  };
+  attributes: {
+    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    logo: Schema.Attribute.Media<'images'>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    nameEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    nameRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    parent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    short: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 16;
+      }>;
+    url: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+  };
+}
+
 export interface PageFact extends Struct.ComponentSchema {
   collectionName: 'components_page_facts';
   info: {
@@ -505,6 +541,7 @@ declare module '@strapi/strapi' {
       'nav.portal': NavPortal;
       'nav.portalcard': NavPortalcard;
       'nav.quicklink': NavQuicklink;
+      'org.item': OrgItem;
       'page.fact': PageFact;
       'page.step': PageStep;
       'program.admission-score': ProgramAdmissionScore;

@@ -815,7 +815,6 @@ ADDA xarici universitet və təşkilatlarla əməkdaşlıq memorandumları imzal
 - [Qazaxıstanlı tərəfdaşlar — tələbə və müəllim mobilliyi](/xeberler/qazaxistanli-terefdaslarla-yeni-memorandum-imzalanib)
 - [İstanbul Universiteti-Cerrahpaşa](/xeberler/adda-numayende-heyeti-istanbul-universiteti-cerrahpasada-seferde-olub)
 - [Harbin Mühəndislik Universiteti (Çin)](/xeberler/harbin-muhendislik-universitetinin-numayende-heyeti-adda-da-seferde-olub) — 2026
-- [GIZ EasTnT](/xeberler/adda-ve-giz-eastnt-arasinda-emekdasliga-dair-anlasma-memorandumu-imzalandi)
 
 Bütün istiqamətlər: [Beynəlxalq əməkdaşlıq](/sehife/beynelxalq-emekdasliq).`,
     faq: [
