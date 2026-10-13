@@ -194,7 +194,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `pageLayout:v1`, `tehsilMenu:v3`, `tehsilPages:v1`, `cmAz:v6`, `elmMenu:v1`, `elmPages:v1`,
 `dedupe:v2`, `cmAz:v7`, `telebeMenu:v1`, `beynelxalqMenu:v1`, `telebePages:v1`,
 `beynelxalqPages:v1`, `dedupe:v3`, `cmAz:v8`, `cmAz:v9`, `faqMenu:v1`, `ascoMenu:v1`,
-`audienceMenu:v1`, `faqPage:v1`, `ascoPage:v1`, `gizClean:v1`, `orgBlock:v1`) + mövcud
+`audienceMenu:v1`, `faqPage:v1`, `ascoPage:v1`, `gizClean:v1`, `orgBlock:v1`,
+`cmAz:v10`, `homeLayout:v1`, `homePage:v1`) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -706,6 +707,42 @@ olunur. Çevirmə kimdə?
      WhatsApp, Telegram, keçidi kopyala, telefonda sistem paylaşımı; OG/Twitter
      meta (`lib/site.ts`, `NEXT_PUBLIC_SITE_URL`, defolt `https://demo.adda.edu.az`).
    - Admin: `cmAz:v8` (yeni tiplərin adları), `cmAz:v9` (şablon/blok qaydaları).
+21. **F5.50 — ana səhifə** (layihə sənədi `claude/f550-ana-sehife.md`).
+   - **Sıra:** Hero → Sürətli keçidlər → Xəbərlər, elanlar, tədbirlər →
+     «Niyə məhz ADDA» → Kampus həyatı → Beynəlxalq → Sosial → Sitat + video → Footer.
+   - **Admin: single type «3. Sayt — Ana səhifə»** (`api::home-page.home-page`,
+     dilsiz; hər mətn az + `…En`/`…Ru`): `heroSlides` (`home.slide`: şəkil, üst yazı,
+     başlıq — vurğu `*ulduzla*`, mətn, düymə + keçid, gizlət), `facts`
+     (`home.fact`: rəqəm, vahid, başlıq, cümlə, **mənbə səhifəsi**), `campusCards`
+     (`home.photo`, 3 kart), `quote*`, `videos` (`home.video`: YouTube ünvanı/ID),
+     `videoChannel`. Seed BİR DƏFƏ, yalnız boşdursa (`homePage:v1`,
+     `src/utils/home-page.ts`, məzmun `home-page-content.ts`); şəkilləri media
+     kitabxanasında URL ilə tapıb bağlayır (prod-da xəbər arxivinin faylları),
+     tapmasa boş qalır. Forma düzümü az/en/ru üçlüyü (`homeLayout:v1`).
+   - **Next:** `getHomePage()` + `lib/home.ts` (`homeView`: dil seçimi, `*vurğu*` →
+     `<em>` qaçırılmış HTML, Cloudinary kiçiltmə `c_limit,w_…,q_auto,f_auto`, boş
+     sahə/şəkil → ehtiyat). Ehtiyat `lib/home-fallback.ts` = Strapi
+     `home-page-content.ts` (EYNİ; yoxlama `same50`).
+   - **Rəqəmlər yalnız mənbəli:** hər fakt kartı sübut səhifəsinə aparır. Köhnə
+     «Rəqəmlərlə ADDA» (12000+, 8000+, 47+, 100%) və kampusdakı «30+ klub»,
+     «200+ tədbir», «2031 →» SİLİNİB; Beynəlxalq blokunda «47+ / 5 qitə / 20+»
+     əvəzinə 11 ölkə, 5 memorandum (2026), Erasmus+ və tərəfdaş şəhərləri.
+     Yeni rəqəm yalnız saytın səhifəsində mənbəsi olanda.
+   - **Hero** (`HeroSlider`): slayd sayı 1–6, düymənin mətni İLƏ keçidi dəyişir,
+     hər şəklin öz nisbəti (əvvəl hamısı 16:9 sayılırdı → 3:2, 4:3 dartılırdı),
+     ilk şəkil server-də `#slices` fonu + `preload`. WCAG 2.2.2: «Dayandır»
+     düyməsi; mətn blokunda kursor/fokus, gizli vərəq, ekrandan kənar → dayanır;
+     ← → yalnız hero görünəndə. Mobil `≤640px` `.hero-meta` gizlidir.
+   - **«Niyə məhz ADDA»** (`WhyAdda`, `06-spotlight.css`): köhnə Spotlight +
+     Stats bir blokda, 3×2 kart; mobildə üfüqi sürüşən sıra. `07-stats.css`,
+     `Spotlight/Stats/StatsIsland/VQuote.tsx`, `lib/hero-slides.ts` silinib.
+   - **Video** (`VideoSea` + `VideoSeaIsland`, `12-vquote.css`): YouTube yalnız
+     kliklə (`youtube-nocookie.com`, autoplay), əvvəl yalnız önizləmə
+     (`i.ytimg.com` hq → mümkünsə maxres). JS-siz keçid YouTube-a aparır.
+     Videolar ASCO-nun rəsmi kanalından; iframe-in `referrerPolicy`-si
+     `no-referrer` OLMAMALIDIR (YouTube «153» pleyer xətası verir).
+   - **Footer qurumları:** bərabər xanalar 3/2/1 sütun, natamam sətir mərkəzdə,
+     loqo/nişan 64×44.
 
 ---
 
