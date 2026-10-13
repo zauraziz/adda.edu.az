@@ -1,0 +1,72 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_pages",
+  "info": {
+    "singularName": "home-page",
+    "pluralName": "home-pages",
+    "displayName": "3. Sayt — Ana səhifə",
+    "description": "Ana səhifənin admində idarə olunan blokları: hero slaydları, «Niyə məhz ADDA» fakt kartları, kampus foto kartları, sitat və video slayder (az/en/ru)."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "heroSlides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.slide",
+      "max": 6
+    },
+    "facts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.fact",
+      "max": 6
+    },
+    "campusCards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.photo",
+      "max": 3
+    },
+    "quote": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "quoteEn": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "quoteRu": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "quoteAttr": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "quoteAttrEn": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "quoteAttrRu": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "videos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.video",
+      "max": 12
+    },
+    "videoChannel": {
+      "type": "string",
+      "maxLength": 300
+    }
+  }
+}

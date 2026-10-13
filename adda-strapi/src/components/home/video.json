@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_home_videos",
+  "info": {
+    "displayName": "Video",
+    "description": "Ana səhifənin video slayderinin bir videosu (YouTube) (F5.50).",
+    "icon": "play"
+  },
+  "options": {},
+  "attributes": {
+    "youtube": {
+      "type": "string",
+      "maxLength": 200,
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "titleEn": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "titleRu": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

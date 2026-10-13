@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_home_facts",
+  "info": {
+    "displayName": "Fakt kartı",
+    "description": "«Niyə məhz ADDA» blokunun sübut kartı: rəqəm, başlıq, cümlə, mənbə səhifəsi (F5.50).",
+    "icon": "chartBubble"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "string",
+      "maxLength": 16,
+      "required": true
+    },
+    "unit": {
+      "type": "string",
+      "maxLength": 24
+    },
+    "unitEn": {
+      "type": "string",
+      "maxLength": 24
+    },
+    "unitRu": {
+      "type": "string",
+      "maxLength": 24
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 70
+    },
+    "titleEn": {
+      "type": "string",
+      "maxLength": 70
+    },
+    "titleRu": {
+      "type": "string",
+      "maxLength": 70
+    },
+    "desc": {
+      "type": "text",
+      "maxLength": 260
+    },
+    "descEn": {
+      "type": "text",
+      "maxLength": 260
+    },
+    "descRu": {
+      "type": "text",
+      "maxLength": 260
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

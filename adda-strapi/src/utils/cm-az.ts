@@ -399,6 +399,20 @@ const CT: Record<string, Dict> = {
   'api::org-block.org-block': {
     items: ['Qurumlar', 'Footer-dəki «Rəsmi qurumlar» siyahısı. Sıranı sürüşdürərək dəyişin, «+» ilə qurum əlavə edin, lazımsızı silin və ya gizlədin.'],
   },
+  // F5.50 — ana səhifə (cmAz:v10).
+  'api::home-page.home-page': {
+    heroSlides: ['Hero slaydları', 'Ən yuxarıdakı slayder (2–6 slayd). Sıranı sürüşdürərək dəyişin; birinci slayd ilk görünəndir. Şəkil: üfüqi, ən azı 1600 px en.'],
+    facts: ['«Niyə məhz ADDA» kartları', 'Rəqəmli sübut kartları (6-ya qədər). Yalnız mənbəsi olan rəqəm yazın və kartı həmin mənbə səhifəsinə bağlayın.'],
+    campusCards: ['Kampus foto kartları', '«Kampus həyatı» blokunun 3 foto kartı: 1 — böyük, 2 — sağda, 3 — aşağıda. Şəkil yüklənməyibsə arxiv şəkli göstərilir.'],
+    quote: ['Sitat (az)', 'Video blokunun başındakı sitat, dırnaqsız (dırnağı sayt qoyur).'],
+    quoteEn: ['Sitat (en)', EN + ' Boş qalsa az mətni göstərilir.'],
+    quoteRu: ['Sitat (ru)', RU + ' Boş qalsa az mətni göstərilir.'],
+    quoteAttr: ['Sitatın müəllifi (az)', 'Məs.: «Azərbaycan Dövlət Dəniz Akademiyası · 1996».'],
+    quoteAttrEn: ['Sitatın müəllifi (en)', EN],
+    quoteAttrRu: ['Sitatın müəllifi (ru)', RU],
+    videos: ['Videolar', 'Video slayder (12-yə qədər). Birinci video böyük pleyerdə açılır; sıranı sürüşdürərək dəyişin.'],
+    videoChannel: ['Kanalın keçidi', URL_RULE + ' Slayderin yanında «Kanala keç» kimi görünür.'],
+  },
   'api::social-block.social-block': {
     eyebrow: ['Üst yazı', 'Başlığın üstündəki kiçik yazı.'],
     title: ['Başlıq'],
@@ -575,6 +589,58 @@ const COMP: Record<string, Dict> = {
     parent: ['Tabe olduğu qurum', 'Aktivdirsə qurum saytın ən yuxarısındakı rəsmi zolaqda loqo ilə görünür («… tabeliyində»). Yalnız bir qurum seçin.'],
     hidden: ['Gizlət', 'Aktivdirsə qurum saytda göstərilmir (silinmədən).'],
   },
+  // F5.50 — ana səhifənin komponentləri (cmAz:v10).
+  'home.slide': {
+    image: ['Şəkil', 'Üfüqi foto (16:9 və ya 3:2), ən azı 1600 px en. Mətn solda tünd fonda oxunur — sol tərəfi sakit kadr seçin.'],
+    hidden: ['Gizlət', 'Aktivdirsə slayd göstərilmir (silinmədən).'],
+    kicker: ['Üst yazı (az)', 'Başlığın üstündəki kiçik yazı (80 simvola qədər). Məs.: «Qəbul».'],
+    kickerEn: ['Üst yazı (en)', EN],
+    kickerRu: ['Üst yazı (ru)', RU],
+    title: ['Başlıq (az)', 'Vurğulanan söz(lər)i ulduz arasına alın: «Dənizçilik təhsili *1881-ci ildən*» — qızılı kursivlə görünür.'],
+    titleEn: ['Başlıq (en)', EN + ' Vurğu da *ulduzla*.'],
+    titleRu: ['Başlıq (ru)', RU + ' Vurğu da *ulduzla*.'],
+    lead: ['Mətn (az)', '1–2 cümlə (320 simvola qədər). Yalnız yoxlanmış fakt.'],
+    leadEn: ['Mətn (en)', EN],
+    leadRu: ['Mətn (ru)', RU],
+    ctaLabel: ['Düymə (az)', 'Məs.: «Abituriyentlər üçün».'],
+    ctaLabelEn: ['Düymə (en)', EN],
+    ctaLabelRu: ['Düymə (ru)', RU],
+    ctaUrl: ['Düymənin keçidi', 'Daxili səhifə «/sehife/…» kimi (dilsiz), xarici sayt https:// ilə.'],
+  },
+  'home.fact': {
+    value: ['Rəqəm', 'Kartın böyük yazısı (16 simvola qədər). Məs.: «170+», «52», «ISO 9001».'],
+    url: ['Mənbə səhifəsi', 'Rəqəmi təsdiqləyən səhifə: «/sehife/…» kimi (dilsiz). Kart bu səhifəyə aparır.'],
+    unit: ['Vahid (az)', 'Rəqəmin yanındakı kiçik söz (istəyə bağlı). Məs.: «ölkə», «həftə».'],
+    unitEn: ['Vahid (en)', EN],
+    unitRu: ['Vahid (ru)', RU],
+    title: ['Başlıq (az)', 'Məs.: «Tanınan diplom».'],
+    titleEn: ['Başlıq (en)', EN],
+    titleRu: ['Başlıq (ru)', RU],
+    desc: ['Cümlə (az)', 'Rəqəmi izah edən bir cümlə (260 simvola qədər).'],
+    descEn: ['Cümlə (en)', EN],
+    descRu: ['Cümlə (ru)', RU],
+    hidden: ['Gizlət', 'Aktivdirsə kart göstərilmir (silinmədən).'],
+  },
+  'home.photo': {
+    image: ['Şəkil', 'Foto (üfüqi və ya kvadrat), ən azı 1000 px en. Boş qalsa arxiv şəkli göstərilir.'],
+    url: ['Keçid', 'Kartın apardığı səhifə: «/sehife/…» kimi (dilsiz).'],
+    chip: ['Nişan (az)', 'Şəklin üstündəki kiçik nişan. Məs.: «İdman · Dəniz».'],
+    chipEn: ['Nişan (en)', EN],
+    chipRu: ['Nişan (ru)', RU],
+    title: ['Başlıq (az)', 'Məs.: «Yataqxana».'],
+    titleEn: ['Başlıq (en)', EN],
+    titleRu: ['Başlıq (ru)', RU],
+    note: ['Qeyd (az)', 'Bir qısa cümlə (200 simvola qədər).'],
+    noteEn: ['Qeyd (en)', EN],
+    noteRu: ['Qeyd (ru)', RU],
+  },
+  'home.video': {
+    youtube: ['YouTube', 'Videonun ünvanı (https://www.youtube.com/watch?v=…, youtu.be/…) və ya 11 simvollu ID. Video yerləşdirməyə (embed) açıq olmalıdır.'],
+    hidden: ['Gizlət', 'Aktivdirsə video göstərilmir (silinmədən).'],
+    title: ['Ad (az)', 'Slayderdə görünən ad (160 simvola qədər).'],
+    titleEn: ['Ad (en)', EN],
+    titleRu: ['Ad (ru)', RU],
+  },
   'nav.link': {
     label: ['Ad', 'Menyuda görünən mətn.'],
     url: ['Keçid', 'Daxili səhifə «/sehife/…» kimi (dilsiz), xarici sayt https:// ilə. Hazır olmayan səhifə: «/hazirlanir/<slug>».'],
@@ -730,7 +796,9 @@ function merge(conf: Conf, dict: Dict): number {
 // v4 (F5.45): page.layout/dataBlock/lead/stepsTitle/steps/facts/faq/sideLinks/contact + page.fact, page.step.
 // Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
 // v8 (F5.49): «Rəsmi qurumlar» (api::org-block.org-block, org.item).
-const MARKER = 'cmAz:v8';
+// v10 (F5.50): «Ana səhifə» (api::home-page.home-page, home.slide/fact/photo/video).
+// (v9 qaydaların yenilənməsinin markeridir — aşağıda UPGRADE_SETS.)
+const MARKER = 'cmAz:v10';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });

@@ -1,0 +1,58 @@
+{
+  "collectionName": "components_home_photos",
+  "info": {
+    "displayName": "Kampus foto kartı",
+    "description": "«Kampus həyatı» blokunun foto kartı (F5.50).",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "chip": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "chipEn": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "chipRu": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "titleEn": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "titleRu": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "note": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "noteEn": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "noteRu": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 300
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "collectionName": "components_home_slides",
+  "info": {
+    "displayName": "Hero slaydı",
+    "description": "Ana səhifənin ən yuxarısındakı slayderin bir slaydı (F5.50).",
+    "icon": "picture"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "kicker": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "kickerEn": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "kickerRu": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "titleEn": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "titleRu": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "lead": {
+      "type": "text",
+      "maxLength": 320
+    },
+    "leadEn": {
+      "type": "text",
+      "maxLength": 320
+    },
+    "leadRu": {
+      "type": "text",
+      "maxLength": 320
+    },
+    "ctaLabel": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "ctaLabelEn": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "ctaLabelRu": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "ctaUrl": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

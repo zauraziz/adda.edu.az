@@ -39,6 +39,8 @@ import { applyInfoPagesV1 } from './utils/section-pages';
 import { INFO_PAGE_SLUGS } from './utils/info-pages-content';
 import { applyGizClean } from './utils/giz-clean';
 import { applyOrgBlockV1 } from './utils/org-block';
+// F5.50 — ana səhifə admində («3. Sayt — Ana səhifə»): slaydlar, fakt kartları, kampus, sitat, video.
+import { applyHomePageV1, placeHomeFields } from './utils/home-page';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -69,6 +71,8 @@ const PUBLIC_READ_UIDS = [
   'api::social-post.social-post',
   // F5.49 — footer «Rəsmi qurumlar» (tək tip).
   'api::org-block.org-block',
+  // F5.50 — ana səhifənin admində idarə olunan blokları (tək tip).
+  'api::home-page.home-page',
   'api::reaction.reaction',
   'api::tag.tag',
   'api::unit.unit',
@@ -2185,7 +2189,13 @@ export default {
       .then(() => applyGizClean(strapi))
       .catch((e: Error) => strapi.log.error('[giz] F5.49: ' + e.message))
       .then(() => applyOrgBlockV1(strapi))
-      .catch((e: Error) => strapi.log.error('[org] F5.49: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[org] F5.49: ' + e.message))
+      // F5.50 — «3. Sayt — Ana səhifə»: komponent formaları və defolt məzmun
+      // (boşdursa), BİR DƏFƏ.
+      .then(() => placeHomeFields(strapi))
+      .catch((e: Error) => strapi.log.error('[home] F5.50 forma: ' + e.message))
+      .then(() => applyHomePageV1(strapi))
+      .catch((e: Error) => strapi.log.error('[home] F5.50: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

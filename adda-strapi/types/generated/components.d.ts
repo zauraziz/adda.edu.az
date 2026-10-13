@@ -40,6 +40,209 @@ export interface HeroHonor extends Struct.ComponentSchema {
   };
 }
 
+export interface HomeFact extends Struct.ComponentSchema {
+  collectionName: 'components_home_facts';
+  info: {
+    description: '\u00ABNiy\u0259 m\u0259hz ADDA\u00BB blokunun s\u00FCbut kart\u0131: r\u0259q\u0259m, ba\u015Fl\u0131q, c\u00FCml\u0259, m\u0259nb\u0259 s\u0259hif\u0259si (F5.50).';
+    displayName: 'Fakt kart\u0131';
+    icon: 'chartBubble';
+  };
+  attributes: {
+    desc: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 260;
+      }>;
+    descEn: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 260;
+      }>;
+    descRu: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 260;
+      }>;
+    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+      }>;
+    titleEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+      }>;
+    titleRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+      }>;
+    unit: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 24;
+      }>;
+    unitEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 24;
+      }>;
+    unitRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 24;
+      }>;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    value: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 16;
+      }>;
+  };
+}
+
+export interface HomePhoto extends Struct.ComponentSchema {
+  collectionName: 'components_home_photos';
+  info: {
+    description: '\u00ABKampus h\u0259yat\u0131\u00BB blokunun foto kart\u0131 (F5.50).';
+    displayName: 'Kampus foto kart\u0131';
+    icon: 'landscape';
+  };
+  attributes: {
+    chip: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }>;
+    chipEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }>;
+    chipRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }>;
+    image: Schema.Attribute.Media<'images'>;
+    note: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    noteEn: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    noteRu: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    titleEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    titleRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+  };
+}
+
+export interface HomeSlide extends Struct.ComponentSchema {
+  collectionName: 'components_home_slides';
+  info: {
+    description: 'Ana s\u0259hif\u0259nin \u0259n yuxar\u0131s\u0131ndak\u0131 slayderin bir slayd\u0131 (F5.50).';
+    displayName: 'Hero slayd\u0131';
+    icon: 'picture';
+  };
+  attributes: {
+    ctaLabel: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
+    ctaLabelEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
+    ctaLabelRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
+    ctaUrl: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    image: Schema.Attribute.Media<'images'>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    kickerEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    kickerRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    lead: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 320;
+      }>;
+    leadEn: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 320;
+      }>;
+    leadRu: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 320;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    titleEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    titleRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+  };
+}
+
+export interface HomeVideo extends Struct.ComponentSchema {
+  collectionName: 'components_home_videos';
+  info: {
+    description: 'Ana s\u0259hif\u0259nin video slayderinin bir videosu (YouTube) (F5.50).';
+    displayName: 'Video';
+    icon: 'play';
+  };
+  attributes: {
+    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    titleEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    titleRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    youtube: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+  };
+}
+
 export interface NavCategory extends Struct.ComponentSchema {
   collectionName: 'components_nav_categorys';
   info: {
@@ -534,6 +737,10 @@ declare module '@strapi/strapi' {
       'event.speaker': EventSpeaker;
       'facility.inventory': FacilityInventory;
       'hero.honor': HeroHonor;
+      'home.fact': HomeFact;
+      'home.photo': HomePhoto;
+      'home.slide': HomeSlide;
+      'home.video': HomeVideo;
       'nav.category': NavCategory;
       'nav.footercol': NavFootercol;
       'nav.group': NavGroup;

@@ -1391,6 +1391,95 @@ export interface ApiHeroHero extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
+  collectionName: 'home_pages';
+  info: {
+    description: 'Ana s\u0259hif\u0259nin admind\u0259 idar\u0259 olunan bloklar\u0131: hero slaydlar\u0131, \u00ABNiy\u0259 m\u0259hz ADDA\u00BB fakt kartlar\u0131, kampus foto kartlar\u0131, sitat v\u0259 video slayder (az/en/ru).';
+    displayName: '3. Sayt \u2014 Ana s\u0259hif\u0259';
+    pluralName: 'home-pages';
+    singularName: 'home-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    campusCards: Schema.Attribute.Component<'home.photo', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3;
+        },
+        number
+      >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    facts: Schema.Attribute.Component<'home.fact', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+        },
+        number
+      >;
+    heroSlides: Schema.Attribute.Component<'home.slide', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+        },
+        number
+      >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::home-page.home-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    quote: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    quoteAttr: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    quoteAttrEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    quoteAttrRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    quoteEn: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    quoteRu: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    videoChannel: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    videos: Schema.Attribute.Component<'home.video', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+        },
+        number
+      >;
+  };
+}
+
 export interface ApiIdentityIdentity extends Struct.CollectionTypeSchema {
   collectionName: 'identities';
   info: {
@@ -3612,6 +3701,7 @@ declare module '@strapi/strapi' {
       'api::facility.facility': ApiFacilityFacility;
       'api::faculty.faculty': ApiFacultyFaculty;
       'api::hero.hero': ApiHeroHero;
+      'api::home-page.home-page': ApiHomePageHomePage;
       'api::identity.identity': ApiIdentityIdentity;
       'api::identity.identity-token': ApiIdentityIdentityToken;
       'api::menu.menu': ApiMenuMenu;
