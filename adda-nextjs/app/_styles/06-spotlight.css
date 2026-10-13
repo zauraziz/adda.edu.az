@@ -1,31 +1,53 @@
-/* ════ AARRON WALTER PASS — yumşaq künclü yeni bloklar ════ */
-/* Spotlight — Niyə məhz ADDA? (DESIGN.md restyle) */
-.spotlight{padding:88px 0;background:#fff;position:relative;overflow:hidden}
-.spot-wm{position:absolute;right:-70px;top:50%;transform:translateY(-50%);font-size:calc(380px * var(--fs-scale));color:rgba(11,61,92,.04);pointer-events:none;line-height:1;z-index:0}
-.spot-rule{display:flex;align-items:center;gap:18px;margin-bottom:34px;position:relative;z-index:2}
-.spot-rule h2{font-family:var(--nav-font);font-size:calc(14px * var(--fs-scale));font-weight:800;letter-spacing:2.5px;color:var(--gold-600);text-transform:uppercase;white-space:nowrap;display:flex;align-items:center;gap:12px}
-.spot-rule h2::before{content:'';width:26px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--gold-500),var(--gold-600))}
-.spot-rule::after{content:'';flex:1;height:1px;background:var(--line)}
-.spot-head{max-width:760px;margin-bottom:46px;position:relative;z-index:2}
-.spot-title{font-family:'Fraunces',serif;font-size:calc(clamp(30px,3.4vw,44px) * var(--fs-scale));font-weight:600;color:var(--navy-800);line-height:1.12;letter-spacing:-.5px;margin-bottom:16px}
-.spot-title em{font-style:italic;font-weight:500;color:var(--gold-600)}
-.spot-lead{font-size:calc(15.5px * var(--fs-scale));color:#3C5665;line-height:1.8;font-family:var(--nav-font);max-width:680px}
-.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;position:relative;z-index:2;margin-bottom:44px}
-.why-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 22px;transition:transform var(--nav-dur) var(--nav-ease),box-shadow var(--nav-dur) var(--nav-ease),border-color var(--nav-dur) var(--nav-ease)}
-.why-card:hover{transform:translateY(-4px);box-shadow:var(--nav-sh-lg);border-color:var(--navy-100)}
-.why-card .wc-ic{width:44px;height:44px;border-radius:11px;background:var(--gold-100);color:var(--gold-600);display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all var(--nav-dur-fast) var(--nav-ease)}
-.why-card:hover .wc-ic{background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);box-shadow:var(--nav-sh-gold)}
-.why-card b{display:block;font-family:var(--nav-font);font-size:calc(15.5px * var(--fs-scale));font-weight:700;color:var(--navy-800);margin-bottom:8px;letter-spacing:.1px}
-.why-card p{font-size:calc(13.5px * var(--fs-scale));color:#4A6472;line-height:1.7;font-family:var(--nav-font)}
-.spot-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;z-index:2;padding-top:6px}
-.spot-cta-note{font-family:'Fraunces',serif;font-size:calc(17px * var(--fs-scale));font-style:italic;color:var(--navy-700);margin-right:6px}
+/* ════ «NİYƏ MƏHZ ADDA» — üstünlük + sübut (F5.50) ════
+   Əvvəlki iki blok — «Niyə məhz ADDA?» (spotlight) və «Rəqəmlərlə ADDA»
+   (statsec, 07-stats.css silindi) — bir yığcam blokda: hər kart = rəqəm +
+   başlıq + bir cümlə + mənbə səhifəsi. Masaüstündə 3×2, hündürlük ~700px
+   (əvvəl iki blok ~1800px idi).                                            */
+.whyx{position:relative;overflow:hidden;padding:72px 0 64px;background:linear-gradient(160deg,var(--navy-900) 0%,var(--navy-800) 58%,#0D4166 100%)}
+.whyx::before{content:'';position:absolute;inset:0;background:radial-gradient(560px 340px at 88% 6%,rgba(201,169,97,.10),transparent 65%),radial-gradient(640px 420px at 6% 96%,rgba(61,154,212,.12),transparent 62%);pointer-events:none}
+.whyx::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-500) 50%,transparent);opacity:.7}
+.whyx-wm{position:absolute;right:-60px;bottom:-96px;font-size:calc(320px * var(--fs-scale));color:rgba(255,255,255,.03);pointer-events:none;line-height:1;z-index:0}
+.whyx-in{position:relative;z-index:1}
+.wx-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 24px;flex-wrap:wrap;margin-bottom:32px}
+.wx-eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--nav-font);font-size:calc(13px * var(--fs-scale));font-weight:800;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold-400);margin-bottom:12px}
+.wx-eyebrow::before{content:'';width:26px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--gold-500),var(--gold-600))}
+.wx-title{font-family:'Fraunces',serif;font-size:calc(clamp(26px,2.8vw,36px) * var(--fs-scale));font-weight:600;color:#fff;letter-spacing:-.4px;line-height:1.14;margin:0}
+.wx-title em{font-style:italic;font-weight:500;color:var(--gold-400)}
+.wx-more{display:inline-flex;align-items:center;gap:8px;font-family:var(--nav-font);font-size:calc(13.5px * var(--fs-scale));font-weight:700;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;border:1.5px solid rgba(255,255,255,.28);background:rgba(255,255,255,.04);white-space:nowrap;transition:border-color var(--nav-dur) var(--nav-ease),background var(--nav-dur) var(--nav-ease)}
+.wx-more:hover{border-color:var(--gold-400);background:rgba(255,255,255,.08)}
+.wx-more i{transition:transform var(--nav-dur-fast) var(--nav-ease)}
+.wx-more:hover i{transform:translateX(3px)}
+/* Kartlar */
+.wx-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.wx-grid>li{display:flex;min-width:0}
+.wx-card{position:relative;display:flex;flex-direction:column;gap:8px;width:100%;padding:22px 22px 20px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);text-decoration:none;color:#fff;transition:transform var(--nav-dur) var(--nav-ease),border-color var(--nav-dur) var(--nav-ease),background var(--nav-dur) var(--nav-ease)}
+a.wx-card:hover{transform:translateY(-3px);border-color:rgba(212,187,124,.55);background:rgba(255,255,255,.07)}
+.wx-num{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin-bottom:2px;padding-right:44px}
+.wx-num b{font-family:'Fraunces',serif;font-size:calc(40px * var(--fs-scale));font-weight:600;line-height:1;letter-spacing:-1px;color:var(--gold-400);font-variant-numeric:tabular-nums}
+.wx-num small{font-family:var(--nav-font);font-size:calc(13px * var(--fs-scale));font-weight:700;color:rgba(255,255,255,.78);letter-spacing:.3px}
+.wx-t{font-family:var(--nav-font);font-size:calc(15px * var(--fs-scale));font-weight:700;color:#fff;letter-spacing:.1px;line-height:1.35}
+.wx-p{font-family:var(--nav-font);font-size:calc(13px * var(--fs-scale));line-height:1.6;color:rgba(255,255,255,.7)}
+.wx-go{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--gold-400);border:1px solid rgba(212,187,124,.4);font-size:calc(15px * var(--fs-scale));transition:background var(--nav-dur) var(--nav-ease),color var(--nav-dur) var(--nav-ease),border-color var(--nav-dur) var(--nav-ease)}
+a.wx-card:hover .wx-go{background:var(--gold-500);color:var(--navy-900);border-color:var(--gold-500)}
+/* Çağırış */
+.wx-cta{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap;margin-top:28px}
 .btn-adm{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--gold-500),var(--gold-600));color:var(--navy-900);font-family:var(--nav-font);font-size:calc(14px * var(--fs-scale));font-weight:700;text-decoration:none;padding:13px 24px;border-radius:10px;box-shadow:var(--nav-sh-gold);letter-spacing:.1px;transition:transform var(--nav-dur) var(--nav-ease),box-shadow var(--nav-dur) var(--nav-ease)}
 .btn-adm:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,169,97,.4)}
-.btn-adm svg{transition:transform var(--nav-dur-fast) var(--nav-ease)}
-.btn-adm:hover svg{transform:translateX(3px)}
-.btn-intl{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--navy-800);border:1.5px solid rgba(11,61,92,.3);font-family:var(--nav-font);font-size:calc(14px * var(--fs-scale));font-weight:600;text-decoration:none;padding:12px 22px;border-radius:10px;transition:all var(--nav-dur) var(--nav-ease)}
-.btn-intl:hover{background:var(--navy-800);color:#fff;border-color:var(--navy-800);transform:translateY(-2px);box-shadow:var(--nav-sh-lg)}
-.btn-adm:focus-visible,.btn-intl:focus-visible,.why-card:focus-visible{outline:2px solid var(--navy-500);outline-offset:3px}
-@media(max-width:1024px){.why-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.why-grid{grid-template-columns:1fr}.spot-cta{align-items:stretch;flex-direction:column}.spot-cta-note{margin-right:0}.btn-adm,.btn-intl{justify-content:center}}
-/* Stats standalone */
+.btn-adm i{transition:transform var(--nav-dur-fast) var(--nav-ease)}
+.btn-adm:hover i{transform:translateX(3px)}
+.btn-intl{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);color:#fff;border:1.5px solid rgba(255,255,255,.3);font-family:var(--nav-font);font-size:calc(14px * var(--fs-scale));font-weight:600;text-decoration:none;padding:12px 22px;border-radius:10px;transition:background var(--nav-dur) var(--nav-ease),border-color var(--nav-dur) var(--nav-ease),transform var(--nav-dur) var(--nav-ease)}
+.btn-intl:hover{background:rgba(255,255,255,.12);border-color:var(--gold-400);transform:translateY(-2px)}
+.btn-adm:focus-visible,.btn-intl:focus-visible,.wx-card:focus-visible,.wx-more:focus-visible{outline:2px solid var(--gold-400);outline-offset:3px}
+@media(max-width:1024px){.wx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){
+  .whyx{padding:56px 0 48px}
+  /* Mobil: 6 kart alt-alta ~1300px idi → üfüqi sürüşən sıra (növbəti kart görünür) */
+  .wx-grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;margin:0 -24px;padding:2px 24px 6px;scroll-padding:0 24px}
+  .wx-grid::-webkit-scrollbar{display:none}
+  .wx-grid>li{scroll-snap-align:start}
+  .wx-card{padding:18px}
+  .wx-num b{font-size:calc(34px * var(--fs-scale))}
+  .wx-cta{flex-direction:column;align-items:stretch}
+  .btn-adm,.btn-intl{justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){.wx-card,.wx-more i,.btn-adm,.btn-intl{transition:none!important}}

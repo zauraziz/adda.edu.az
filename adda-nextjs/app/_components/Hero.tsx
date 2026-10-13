@@ -1,46 +1,47 @@
-// ── Faza 1 / Hero (server component) ─────────────────────────────────
-// MARKUP string-inin hero hissəsinin JSX qarşılığı. Bütün class/id eyni:
-// ui.js (fluid canvas · jaluzi slices · magnetic btn) həmin ID-lərə bağlanır:
+// ── Hero (server component) ──────────────────────────────────────────
+// JS kontraktları (HeroSlider/HeroFluid bunlara bağlanır):
 //   #hero · #fluidCanvas · #slices · #gcKicker · #gcTitle · #gcLead · #gcCta
-//   #btnMag · #magArr · .numb[data-n] · .gc-anim
-// Mətn tr() (exact-match) ilə — alt-sətir mangling yoxdur.
+//   #btnMag · #magArr · #heroPause · .numb[data-n] · .gc-anim
+// F5.50: slaydlar admindən («3. Sayt — Ana səhifə», lib/home.ts) — mətn,
+// real foto və düymənin keçidi slaydla birgə dəyişir. İlk slaydın şəkli
+// server-də #slices fonudur (JS-siz də görünür), ön yükləmə ilə.
+import { preload } from 'react-dom';
 import { tr, type Locale } from '@/lib/i18n';
-import { heroSlides } from '@/lib/hero-slides';
+import type { HeroSlide } from '@/lib/home';
 import HeroSlider from './HeroSlider';
 import HeroFluid from './HeroFluid';
 
-export default function Hero({ locale }: { locale: Locale }) {
+export default function Hero({ slides, locale }: { slides: HeroSlide[]; locale: Locale }) {
+  const first = slides[0];
+  if (first?.img) preload(first.img, { as: 'image', fetchPriority: 'high' });
   return (
     <div className="hero-wrap">
-      <section className="hero" id="hero">
+      <section className="hero" id="hero" aria-roledescription={tr('slayder', locale)}>
         <canvas id="fluidCanvas" />
-        <div className="slices" id="slices" />
+        <div className="slices" id="slices" style={first?.img ? { backgroundImage: `url('${first.img}')` } : undefined} />
         <div className="hero-veil" />
         <div className="hero-chart" aria-hidden="true" />
 
         <div className="hero-content">
-          <div className="hero-copy">
-            <div className="gc-kicker gc-anim">
+          {/* Avtomatik keçiddə «off» (hər 5 san. oxunmasın), dayandırılanda HeroSlider «polite» edir */}
+          <div className="hero-copy" aria-live="off">
+            <div className="gc-kicker gc-anim" hidden={!first?.kicker}>
               <span className="k-dot" />
-              <span id="gcKicker">{tr('Azərbaycan Dövlət Dəniz Akademiyası', locale)}</span>
+              <span id="gcKicker">{first?.kicker}</span>
             </div>
-            {/* Başlıq <em> saxlayır → tr() nəticəsi olduğu kimi yerləşdirilir */}
-            <h1
-              className="gc-anim"
-              id="gcTitle"
-              dangerouslySetInnerHTML={{ __html: tr('Gələcəyin <em>dənizçiliyi</em>', locale) }}
-            />
-            <p className="lead gc-anim" id="gcLead">
-              {tr('Firuzəyi üfüqlərə açılan rəqəmsal təhsil. Beynəlxalq STCW standartları, canlı simulyasiya mühiti və qlobal karyera trayektoriyası.', locale)}
+            {/* Başlıq lib/home.ts-də qaçırılıb, yalnız <em> saxlayır */}
+            <h1 className="gc-anim" id="gcTitle" dangerouslySetInnerHTML={{ __html: first?.title ?? '' }} />
+            <p className="lead gc-anim" id="gcLead" hidden={!first?.lead}>
+              {first?.lead}
             </p>
             <div className="cta-row gc-anim">
-              <a href="#" className="btn-mag" id="btnMag">
-                <span id="gcCta">{tr('Daxil ol', locale)}</span>
+              <a href={first?.href || '#'} className="btn-mag" id="btnMag" hidden={!first?.cta}>
+                <span id="gcCta">{first?.cta}</span>
                 <span className="arr" id="magArr">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                 </span>
               </a>
-              <a href="#" className="link-quiet">{tr('Qəbul — 2026', locale)}</a>
+              <a href={`/${locale}/sehife/kecid-ballari`} className="link-quiet">{tr('Keçid balları və yer sayı', locale)}</a>
             </div>
             <div className="hero-meta">
               <span className="hm-est">EST · 1996</span>
@@ -50,21 +51,35 @@ export default function Hero({ locale }: { locale: Locale }) {
           </div>
         </div>
 
-        <div className="hero-nums" id="heroNums">
-          <button className="numb active" data-n="0">01<span className="pb"><i /></span></button>
-          <button className="numb" data-n="1">02<span className="pb"><i /></span></button>
-          <button className="numb" data-n="2">03<span className="pb"><i /></span></button>
-          <span className="nums-hint">{tr('hover → keçid', locale)}</span>
-        </div>
+        {slides.length > 1 ? (
+          <div className="hero-nums" id="heroNums">
+            {slides.map((s, i) => (
+              <button
+                type="button"
+                className={'numb' + (i === 0 ? ' active' : '')}
+                data-n={i}
+                key={i}
+                aria-label={`${tr('Slayd', locale)} ${i + 1}`}
+                aria-current={i === 0 ? 'true' : undefined}
+              >
+                {String(i + 1).padStart(2, '0')}
+                <span className="pb"><i /></span>
+              </button>
+            ))}
+            <button type="button" className="hero-pause" id="heroPause" aria-pressed="false" aria-label={tr('Slaydları dayandır', locale)}>
+              <i className="ti ti-player-pause" aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
 
-        <a href="#spotlight" className="scroll-ind" aria-label={tr('Aşağı sürüşdür', locale)}>
+        <a href="#xeberler" className="scroll-ind" aria-label={tr('Aşağı sürüşdür', locale)}>
           <span>{tr('Aşağı', locale)}</span>
           <div className="mouse" />
-          <svg className="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+          <svg className="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
         </a>
 
         <div className="hero-waves">
-          <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
+          <svg viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
             <g className="wlayer w3" fill="#90E0EF" opacity="0.45">
               <path d="M0,50 C180,80 360,20 720,42 C1080,64 1260,28 1440,50 L1440,90 L0,90 Z" />
               <path d="M1440,50 C1620,80 1800,20 2160,42 C2520,64 2700,28 2880,50 L2880,90 L1440,90 Z" />
@@ -83,7 +98,7 @@ export default function Hero({ locale }: { locale: Locale }) {
 
       {/* Davranış: WebGL maye fon + jaluzi slayder + mətn keçidi + magnit düymə */}
       <HeroFluid />
-      <HeroSlider slides={heroSlides(locale)} />
+      <HeroSlider slides={slides} labels={{ pause: tr('Slaydları dayandır', locale), play: tr('Slaydları davam etdir', locale) }} />
     </div>
   );
 }

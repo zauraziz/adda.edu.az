@@ -1042,6 +1042,67 @@ export async function getOrgBlock(): Promise<OrgItem[] | null> {
   }
 }
 
+/** ── F5.50: Ana səhifə (admində «3. Sayt — Ana səhifə») ──
+ * Dilsiz tək tip: hər mətn sahəsinin az əsası + En/Ru variantı. Görünüş
+ * modeli və ehtiyatla birləşmə lib/home.ts-dədir. */
+type Txt = string | null;
+export interface HomeSlideRaw {
+  image: StrapiMedia | null;
+  kicker: Txt; kickerEn: Txt; kickerRu: Txt;
+  title: Txt; titleEn: Txt; titleRu: Txt;
+  lead: Txt; leadEn: Txt; leadRu: Txt;
+  ctaLabel: Txt; ctaLabelEn: Txt; ctaLabelRu: Txt;
+  ctaUrl: Txt;
+  hidden: boolean | null;
+}
+export interface HomeFactRaw {
+  value: Txt;
+  unit: Txt; unitEn: Txt; unitRu: Txt;
+  title: Txt; titleEn: Txt; titleRu: Txt;
+  desc: Txt; descEn: Txt; descRu: Txt;
+  url: Txt;
+  hidden: boolean | null;
+}
+export interface HomePhotoRaw {
+  image: StrapiMedia | null;
+  chip: Txt; chipEn: Txt; chipRu: Txt;
+  title: Txt; titleEn: Txt; titleRu: Txt;
+  note: Txt; noteEn: Txt; noteRu: Txt;
+  url: Txt;
+}
+export interface HomeVideoRaw {
+  youtube: Txt;
+  title: Txt; titleEn: Txt; titleRu: Txt;
+  hidden: boolean | null;
+}
+export interface HomePageRaw {
+  heroSlides?: HomeSlideRaw[] | null;
+  facts?: HomeFactRaw[] | null;
+  campusCards?: HomePhotoRaw[] | null;
+  quote?: Txt; quoteEn?: Txt; quoteRu?: Txt;
+  quoteAttr?: Txt; quoteAttrEn?: Txt; quoteAttrRu?: Txt;
+  videos?: HomeVideoRaw[] | null;
+  videoChannel?: Txt;
+}
+/** Strapi əlçatmazdırsa və ya tip/qeyd hələ yoxdursa null (çağıran ehtiyata keçir). */
+export async function getHomePage(): Promise<HomePageRaw | null> {
+  try {
+    const json = await strapiFetch<{ data: HomePageRaw | null }>(
+      '/home-page',
+      {
+        'populate[heroSlides][populate][image]': true,
+        'populate[campusCards][populate][image]': true,
+        'populate[facts]': true,
+        'populate[videos]': true,
+      },
+      120,
+    );
+    return json.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** ── F5.49: FAQ — saytın səhifələrindəki «Suallar» ── */
 export interface FaqSource {
   slug: string;

@@ -6,7 +6,6 @@ import '../_styles/03-hero.css';
 import '../_styles/04-quicknav.css';
 import '../_styles/05-legacy.css';
 import '../_styles/06-spotlight.css';
-import '../_styles/07-stats.css';
 import '../_styles/08-news.css';
 import '../_styles/09-campus.css';
 import '../_styles/10-intl.css';
@@ -21,17 +20,17 @@ import '../_styles/18-search.css';
 import SiteHeaderStack from '../_components/SiteHeaderStack';
 import Hero from '../_components/Hero';
 import Quicknav from '../_components/Quicknav';
-import Spotlight from '../_components/Spotlight';
-import Stats from '../_components/Stats';
+import WhyAdda from '../_components/WhyAdda';
 import News from '../_components/News';
 import Campus from '../_components/Campus';
 import Intl from '../_components/Intl';
 import Social from '../_components/Social';
-import VQuote from '../_components/VQuote';
+import VideoSea from '../_components/VideoSea';
 import Footer from '../_components/Footer';
 import {
   getAcademyAnnouncements,
   getHomeNews,
+  getHomePage,
   getMenu,
   getUpcomingEvents,
   type Announcement,
@@ -39,6 +38,7 @@ import {
   type NewsItem,
   type SiteMenu,
 } from '@/lib/strapi';
+import { homeView } from '@/lib/home';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 60;
@@ -50,26 +50,31 @@ export function generateStaticParams() {
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const [news, announcements, events, menu] = await Promise.all([
+  const [news, announcements, events, menu, home] = await Promise.all([
     getHomeNews(locale, 4).catch(() => [] as NewsItem[]),
     // 5 çəkilir; `News` şəkilli birinci karta görə 4-ə və ya 5-ə kəsir.
     getAcademyAnnouncements(locale, 5).catch(() => [] as Announcement[]),
     // Yalnız yaxınlaşan tədbirlər (startAt >= indi), tarixə görə artan.
     getUpcomingEvents(locale, 5).catch(() => [] as EventItem[]),
     getMenu(locale).catch(() => null as SiteMenu | null),
+    // F5.50 — admində «3. Sayt — Ana səhifə»; əlçatmazdırsa null → ehtiyat.
+    getHomePage(),
   ]);
+  const view = homeView(home, locale);
+  // F5.50 — sıra: gündəlik istifadə üçün əvvəl Gündəm (xəbər/elan/tədbir),
+  // sonra «Niyə məhz ADDA» (əvvəlki iki blok birləşib), kampus, beynəlxalq,
+  // sosial, sitat + video.
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
-      <Hero locale={locale} />
+      <Hero slides={view.slides} locale={locale} />
       <Quicknav menu={menu} locale={locale} />
-      <Spotlight locale={locale} />
-      <Stats locale={locale} />
       <News news={news} announcements={announcements} events={events} locale={locale} />
-      <Campus locale={locale} />
+      <WhyAdda facts={view.facts} locale={locale} />
+      <Campus photos={view.campus} locale={locale} />
       <Intl locale={locale} />
       <Social locale={locale} />
-      <VQuote locale={locale} />
+      <VideoSea quote={view.quote} videos={view.videos} channel={view.channel} locale={locale} />
       <Footer menu={menu} locale={locale} />
     </>
   );

@@ -11,7 +11,6 @@ import '../../../_styles/03-hero.css';
 import '../../../_styles/04-quicknav.css';
 import '../../../_styles/05-legacy.css';
 import '../../../_styles/06-spotlight.css';
-import '../../../_styles/07-stats.css';
 import '../../../_styles/08-news.css';
 import '../../../_styles/09-campus.css';
 import '../../../_styles/10-intl.css';

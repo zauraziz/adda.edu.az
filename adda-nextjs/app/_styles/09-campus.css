@@ -18,6 +18,8 @@
 .cl-btn--ghost:hover svg{transform:none}
 /* Kartlar */
 .cl-card{position:relative;border-radius:20px;overflow:hidden;text-decoration:none;transition:transform var(--nav-dur) var(--nav-ease),box-shadow var(--nav-dur) var(--nav-ease)}
+a.cl-card{color:inherit} /* F5.50: bütün kartlar keçiddir (klublar, TEC, mini kartlar da) */
+.cl-btn--ghost i{font-size:calc(16px * var(--fs-scale))}
 .cl-card:hover{transform:translateY(-5px);box-shadow:var(--nav-sh-xl)}
 .cl-photo{background-size:cover;background-position:center;display:flex;align-items:flex-end;min-height:250px}
 .cl-ov{position:absolute;inset:0;background:linear-gradient(186deg,rgba(7,30,46,.04) 34%,rgba(7,30,46,.9) 97%);transition:box-shadow var(--nav-dur) var(--nav-ease);border-radius:inherit}

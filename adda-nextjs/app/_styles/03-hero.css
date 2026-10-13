@@ -6,7 +6,7 @@
 .hero{position:relative;height:calc(100vh - 82px);min-height:660px;overflow:hidden;background:linear-gradient(150deg,#071E2E 0%,#0B3D5C 100%)}
 .hero.no-webgl{background:linear-gradient(150deg,#071E2E 0%,#0B3D5C 100%)}
 /* JS foto-slayder — 3D struktur olduğu kimi */
-.slices{position:absolute;inset:0;z-index:1;display:flex;perspective:1600px;pointer-events:none}
+.slices{position:absolute;inset:0;z-index:1;display:flex;perspective:1600px;pointer-events:none;background-size:cover;background-position:center} /* F5.50: fon — ilk slaydın şəkli (server), dilimlər qurulanda söndürülür */
 .slice{position:relative;flex:1;transform-style:preserve-3d}
 .flipper{position:absolute;inset:-1px 0;transform-style:preserve-3d;will-change:transform}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background-repeat:no-repeat}
@@ -48,7 +48,11 @@
 .numb .pb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-400),var(--gold-500))}
 .numb.active .pb i{animation:pfill 5s linear forwards}
 @keyframes pfill{from{width:0}to{width:100%}}
-.nums-hint{font-size:calc(9.5px * var(--fs-scale));letter-spacing:1.8px;text-transform:uppercase;color:rgba(232,244,253,.4);font-weight:600;padding-bottom:14px;font-family:var(--nav-font)}
+/* F5.50 — avtomatik keçidi dayandırma (WCAG 2.2.2); dayananda proqres zolağı da dayanır */
+.hero-pause{width:34px;height:34px;margin-left:4px;margin-bottom:2px;border-radius:50%;border:1.5px solid rgba(255,255,255,.34);background:rgba(7,30,46,.35);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:calc(15px * var(--fs-scale));transition:border-color var(--nav-dur) var(--nav-ease),color var(--nav-dur) var(--nav-ease)}
+.hero-pause:hover{border-color:var(--gold-400);color:var(--gold-400)}
+.hero.is-paused .numb.active .pb i{animation-play-state:paused}
+.hero [hidden]{display:none!important}
 /* Scroll göstəricisi */
 .scroll-ind{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);z-index:7;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;text-decoration:none}
 .scroll-ind span{font-size:calc(9.5px * var(--fs-scale));letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:600;font-family:var(--nav-font)}
@@ -78,9 +82,11 @@
   .hero-nums{left:24px;bottom:44px}
   .hero-content{padding:0 24px}
   .hm-coord{letter-spacing:1px}
+  .hero-meta{display:none} /* F5.50: dekorativ sətir mobil ekranda slayd nömrələri ilə üst-üstə düşürdü */
 }
 /* Əlçatanlıq */
 .numb:focus-visible,.btn-mag:focus-visible,.link-quiet:focus-visible,.scroll-ind:focus-visible{outline:2px solid var(--gold-400);outline-offset:3px;border-radius:8px}
+.hero-pause:focus-visible{outline:2px solid var(--gold-400);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){
   .scroll-ind .mouse::after,.scroll-ind .chev,.numb.active .pb i{animation:none!important}
   #fluidCanvas{opacity:.18}

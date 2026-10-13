@@ -1,70 +1,46 @@
-// ── Faza 1 / Campus (server component) ───────────────────────────────
-// "ADDA-da yaşam" (campusx · bento) bölməsi. Əvvəl HomeClient MARKUP-ında idi.
-// Mətnlər tr() (exact-match) ilə — 39/39 sətir T-də mövcuddur, tərcümələr
-// dəyişməyib. Başlıq <em> saxladığı üçün tam-sətir girişi ilə verilir.
+// ── Kampus həyatı (server component) ─────────────────────────────────
+// Bento (campusx) — dizayn və quruluş dəyişməyib. F5.50: bütün kartlar real
+// səhifələrə aparır, mətnlər saytın mənbəli səhifələrindəndir (Tələbə həyatı,
+// İdman, Mədəniyyət və yaradıcılıq, Yataqxana, TGT, TEC, Təqaüd, Əcnəbi
+// tələbələr); mənbəsiz rəqəmlər («30+ klub», «200+ tədbir», «2031 →») və
+// olmayan xidmətlər (360° tur, AI laboratoriyası, psixoloji xidmət) çıxarıldı.
+// 3 foto kartı admindən («3. Sayt — Ana səhifə» → «Kampus foto kartları»),
+// ehtiyat — Akademiyanın xəbər arxivindən real foto (lib/home-fallback.ts).
 //
-// CLIENT JS YOXDUR. public/home/ui.js-dəki təqvim kodu (.cal-d / .cal-ev) bu
-// bölməyə AİD DEYİLDİ — uyğun markup repoda heç yerdə yox idi (ölü kod), ona
-// görə island yaradılmadı, ui.js tamamilə silindi. .cal-* CSS (home.css)
-// da ölüdür → Faza 1 yekununda təmizlənəcək.
+// CLIENT JS YOXDUR.
 import { Fragment, type ReactNode } from 'react';
 import { tr, type Locale } from '@/lib/i18n';
+import type { CampusPhoto } from '@/lib/home';
 
 // Atribut sırası orijinal markup ilə eynidir (fill → stroke → width → linecap → linejoin)
 const sw = (w: string) =>
   ({ fill: 'none', stroke: 'currentColor', strokeWidth: w, strokeLinecap: 'round', strokeLinejoin: 'round' } as const);
 
-// ── Foto kartlar (cl-feat, cl-sport, cl-living) ──────────────────────
-type Photo = { cls: string; img: string; chip: string; name: string; note: string };
+const SLOTS = ['cl-feat', 'cl-sport', 'cl-living'] as const;
 
-const PH: Record<'feat' | 'sport' | 'living', Photo> = {
-  feat: {
-    cls: 'cl-feat',
-    img: 'https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=80&w=1600&auto=format&fit=crop',
-    chip: 'İdman · Dəniz',
-    name: 'Dəniz klubu',
-    note: 'Yelkən, avarçəkmə və sualtı üzgüçülük — Xəzər sənin məşq meydanındır.',
-  },
-  sport: {
-    cls: 'cl-sport',
-    img: 'https://images.unsplash.com/photo-1641467613990-b74163e280e3?fm=jpg&q=80&w=1200&h=980&fit=crop',
-    chip: 'İdman',
-    name: 'İdman kompleksi',
-    note: 'Hovuz, döyüş idmanları, fitness və tələbə liqaları.',
-  },
-  living: {
-    cls: 'cl-living',
-    img: 'https://images.unsplash.com/photo-1751779057940-43cc385452f7?fm=jpg&q=80&w=1200&auto=format&fit=crop',
-    chip: 'Yaşayış',
-    name: 'Kampusda yaşam',
-    note: 'Yataqxana, coworking guşələri və 24/7 oxu zonaları.',
-  },
-};
-
-// Faza 2: href="#" → real marşrut (kampus turu · foto kartlar)
-function PhotoCard({ p, locale }: { p: Photo; locale: Locale }) {
+function PhotoCard({ p, cls }: { p: CampusPhoto; cls: string }) {
   return (
-    <a href="#" className={`cl-card cl-photo ${p.cls}`} style={{ backgroundImage: `url('${p.img}')` }}>
+    <a href={p.href} className={`cl-card cl-photo ${cls}`} style={{ backgroundImage: `url('${p.img}')` }}>
       <span className="cl-ov" />
       <span className="cl-tx">
-        <span className="cl-chip">{tr(p.chip, locale)}</span>
-        <b className="cl-name">{tr(p.name, locale)}</b>
-        <span className="cl-note">{tr(p.note, locale)}</span>
+        {p.chip ? <span className="cl-chip">{p.chip}</span> : null}
+        <b className="cl-name">{p.title}</b>
+        {p.note ? <span className="cl-note">{p.note}</span> : null}
       </span>
     </a>
   );
 }
 
-// ── Klub tickeri (aria-hidden — dekorativ, iki dəfə təkrarlanır) ─────
+// ── Təşkilat və dərnək tickeri (aria-hidden — dekorativ, iki dəfə təkrarlanır) ──
 const CLUBS = [
-  'Media klubu',
-  'Robototexnika',
-  'Debat cəmiyyəti',
-  'Şahmat',
-  'Dəniz tarixi dərnəyi',
-  'Musiqi qrupu',
-  'Könüllülər hərəkatı',
-  'Foto-video studiya',
+  'Tələbə Gənclər Təşkilatı',
+  'Tələbə Həmkarlar İttifaqı Komitəsi',
+  'Tələbə Elmi Cəmiyyəti',
+  'Bədii özfəaliyyət dərnəkləri',
+  '«Kim? Nə? Harada?»',
+  'Könüllülük',
+  'Akademiyanın muzeyi',
+  'İdman seksiyaları',
 ];
 
 // ── Mini kartlar (cl-well, cl-events, cl-global) ─────────────────────
@@ -96,25 +72,28 @@ function Mini({
   cls,
   icon,
   name,
+  href,
   locale,
   children,
 }: {
   cls: string;
   icon: ReactNode;
   name: string;
+  href: string;
   locale: Locale;
   children: ReactNode;
 }) {
   return (
-    <div className={`cl-card cl-mini ${cls}`}>
-      <span className="cl-mic">{icon}</span>
+    <a href={`/${locale}${href}`} className={`cl-card cl-mini ${cls}`}>
+      <span className="cl-mic" aria-hidden="true">{icon}</span>
       <b className="cl-name cl-name--ink">{tr(name, locale)}</b>
       <span className="cl-mini-p">{children}</span>
-    </div>
+    </a>
   );
 }
 
-export default function Campus({ locale }: { locale: Locale }) {
+export default function Campus({ photos, locale }: { photos: CampusPhoto[]; locale: Locale }) {
+  const [feat, sport, living] = SLOTS.map((cls, i) => (photos[i] ? <PhotoCard p={photos[i]} cls={cls} /> : null));
   return (
     <section className="campusx" id="kampus">
       <div className="container">
@@ -128,38 +107,34 @@ export default function Campus({ locale }: { locale: Locale }) {
             />
             <p className="cl-lead">
               {tr(
-                'Dərs cədvəli bitəndə ADDA bitmir. Dəniz klubundan innovasiya məkanına, idman liqalarından festival səhnəsinə — burada bacarıq, dostluq və maraqların üçün ayrıca bir ekosistem var.',
+                'Dərs bitəndə Akademiya həyatı davam edir: hovuz və idman seksiyaları, üç tələbə təşkilatı, konsertlər və intellektual yarışlar, 311 yerlik yataqxana.',
                 locale
               )}
             </p>
             <div className="cl-cta">
-              <a href="#" className="cl-btn">
-                {tr('Kampus turuna qoşul', locale) + ' '}
-                <svg width="15" height="15" viewBox="0 0 24 24" {...sw('2.3')}>
+              <a href={`/${locale}/sehife/telebe-heyati`} className="cl-btn">
+                {tr('Tələbə həyatı', locale) + ' '}
+                <svg width="15" height="15" viewBox="0 0 24 24" {...sw('2.3')} aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
               </a>
-              <a href="#" className="cl-btn cl-btn--ghost">
-                <svg width="15" height="15" viewBox="0 0 24 24" {...sw('1.9')}>
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 3a15.3 15.3 0 0 1 4 9 15.3 15.3 0 0 1-4 9 15.3 15.3 0 0 1-4-9 15.3 15.3 0 0 1 4-9z" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                </svg>
-                {' ' + tr('360° virtual tur', locale)}
+              <a href={`/${locale}/bunlar-ucun/telebeler`} className="cl-btn cl-btn--ghost">
+                <i className="ti ti-users" aria-hidden="true" />
+                {' ' + tr('Tələbələr üçün', locale)}
               </a>
             </div>
           </div>
 
-          <PhotoCard p={PH.feat} locale={locale} />
-          <PhotoCard p={PH.sport} locale={locale} />
+          {feat}
+          {sport}
 
-          <div className="cl-card cl-clubs">
+          <a href={`/${locale}/sehife/telebe-gencler-teskilati`} className="cl-card cl-clubs">
             <div className="cl-clubs-head">
               <span className="cl-chip cl-chip--gold">{tr('İcma', locale)}</span>
-              <span className="cl-stat">{tr('30+ klub', locale)}</span>
+              <span className="cl-stat">{tr('3 təşkilat', locale)}</span>
             </div>
-            <b className="cl-name cl-name--ink">{tr('Klublar və dərnəklər', locale)}</b>
+            <b className="cl-name cl-name--ink">{tr('Tələbə təşkilatları və dərnəklər', locale)}</b>
             <div className="cl-ticker" aria-hidden="true">
               <div className="cl-track">
                 {[...CLUBS, ...CLUBS].map((c, i) => (
@@ -170,38 +145,33 @@ export default function Campus({ locale }: { locale: Locale }) {
                 ))}
               </div>
             </div>
-          </div>
+          </a>
 
-          <PhotoCard p={PH.living} locale={locale} />
+          {living}
 
-          <div className="cl-card cl-innov">
-            {/* rəqəm + ox — üç dildə eynidir, tərcümə olunmur */}
-            <span className="cl-chip cl-chip--future">2031 →</span>
-            <b className="cl-name">{tr('İnnovasiya məkanı', locale)}</b>
+          <a href={`/${locale}/sehife/telebe-elmi-cemiyyeti`} className="cl-card cl-innov">
+            <span className="cl-chip cl-chip--future">{tr('2002-ci ildən', locale)}</span>
+            <b className="cl-name">{tr('Tələbə Elmi Cəmiyyəti', locale)}</b>
             <p className="cl-innov-p">
-              {tr(
-                'Simulyasiya mərkəzinin açıq saatları, AI laboratoriyası və maker-space — ideyanı prototipə çevir.',
-                locale
-              )}
+              {tr('Tələbələri elmi işə cəlb edir: kafedrada elmi rəhbər, müsabiqələr və konfrans çıxışları.', locale)}
             </p>
             <ul className="cl-il">
-              <li>{tr('VR körpü sessiyaları', locale)}</li>
-              <li>{tr('AI & data klinikaları', locale)}</li>
-              <li>{tr('3D emalatxana', locale)}</li>
+              <li>{tr('Elmi seminarlar', locale)}</li>
+              <li>{tr('Olimpiadalar və debatlar', locale)}</li>
+              <li>{tr('Hər yaz tələbə konfransı', locale)}</li>
             </ul>
-          </div>
+          </a>
 
-          <Mini cls="cl-well" icon={IC.well} name="Rifah və dəstək" locale={locale}>
-            {tr('Psixoloji xidmət, tibb məntəqəsi və mentorluq — özünü yaxşı hiss etməyin sistemi.', locale)}
+          <Mini cls="cl-well" icon={IC.well} name="Təqaüd və sosial dəstək" href="/sehife/sosial-teminat-ve-maddi-yardim" locale={locale}>
+            {tr('Forma, dərslik və yemək ödənişsizdir; fərqlənənlərə ASCO təqaüdü.', locale)}
           </Mini>
 
-          <Mini cls="cl-events" icon={IC.events} name="Tədbir təqvimi" locale={locale}>
-            {tr('Dənizçi günü, festivallar, konsertlər və idman turnirləri — il boyu', locale)}{' '}
-            <b className="cl-b">{tr('200+ tədbir', locale)}</b>.
+          <Mini cls="cl-events" icon={IC.events} name="Tədbirlər təqvimi" href="/tedbirler" locale={locale}>
+            {tr('Konsertlər, yarışlar və seminarlar: hamısı bir təqvimdə.', locale)}
           </Mini>
 
-          <Mini cls="cl-global" icon={IC.global} name="Qlobal icma" locale={locale}>
-            {tr('Beynəlxalq tələbə klubu, dil tandemləri və mədəniyyət axşamları.', locale)}
+          <Mini cls="cl-global" icon={IC.global} name="Əcnəbi tələbələr" href="/sehife/ecnebi-telebelerin-tehsili" locale={locale}>
+            {tr('İngilis dilində tədris, qəbul qaydaları və gəliş bələdçisi.', locale)}
           </Mini>
         </div>
       </div>

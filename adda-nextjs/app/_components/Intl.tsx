@@ -14,20 +14,24 @@ const sw = (w: string) =>
   ({ fill: 'none', stroke: 'currentColor', strokeWidth: w, strokeLinecap: 'round', strokeLinejoin: 'round' } as const);
 
 // Rəqəm dildən asılı deyil, etiket tərcümə olunur.
+// F5.50: yalnız mənbəli göstəricilər («Akademik tərəfdaşlar», «Beynəlxalq
+// əməkdaşlıq» səhifələri) — əvvəlki «47+ qurum, 5 qitə, 20+ istiqamət»
+// heç bir səhifədə təsdiqlənmirdi və «Niyə məhz ADDA» kartları ilə ziddiyyət yaradırdı.
 const STATS: { n: string; label: string }[] = [
-  { n: '47+', label: 'Tərəfdaş qurum' },
-  { n: '5', label: 'Qitə' },
-  { n: '20+', label: 'Mübadilə istiqaməti' },
+  { n: '11', label: 'Tərəfdaş ölkə' },
+  { n: '5', label: 'Memorandum, 2026' },
+  { n: 'Erasmus+', label: 'Mobillik proqramı' },
 ];
 
-// Beynəlxalq abbreviaturalar — üç dildə eynidir, tərcümə olunmur.
+// Beynəlxalq adlar — üç dildə eynidir, tərcümə olunmur. F5.50: yalnız
+// Akademiyanın real üzvlük, standart və sertifikatları (EMSA, TURMARIN çıxarıldı).
 const ORGS: { icon: string; name: string }[] = [
   { icon: 'ti-anchor', name: 'IMO' },
-  { icon: 'ti-world', name: 'IAMU' },
-  { icon: 'ti-shield-check', name: 'EMSA' },
   { icon: 'ti-certificate', name: 'STCW' },
+  { icon: 'ti-world', name: 'IAMU' },
   { icon: 'ti-school', name: 'Erasmus+' },
-  { icon: 'ti-ship', name: 'TURMARIN' },
+  { icon: 'ti-ship', name: 'The Nautical Institute' },
+  { icon: 'ti-shield-check', name: 'Bureau Veritas' },
   { icon: 'ti-building-bank', name: 'ASCO' },
 ];
 
@@ -45,7 +49,7 @@ export default function Intl({ locale }: { locale: Locale }) {
             />
             <p className="ix-lead">
               {tr(
-                'ADDA 5 qitədə 47-dən çox universitet, dənizçilik akademiyası və beynəlxalq qurumla əməkdaşlıq edir. IAMU üzvlüyü, Erasmus+ mobillik proqramları və TURMARIN regional şəbəkəsi tələbələrimizə qlobal təhsil trayektoriyası açır — məzunlarımız dünya donanmalarında, beynəlxalq limanlarda və IMO strukturlarında çalışırlar.',
+                'Akademiyanın diplomu 170-dən çox ölkədə tanınır. ADDA 2016-cı ildən Beynəlxalq Dəniz Universitetləri Assosiasiyasının (IAMU) üzvüdür, 11 ölkənin dənizçilik və texniki universitetləri ilə tələbə və müəllim mübadiləsi, ikili diplom və birgə tədqiqat aparır.',
                 locale
               )}
             </p>
@@ -58,15 +62,15 @@ export default function Intl({ locale }: { locale: Locale }) {
               ))}
             </div>
             <div className="ix-cta">
-              {/* Faza 2: href="#" → real marşrut */}
-              <a href="#" className="ix-btn">
+              {/* F5.50: real səhifələr — tərəfdaşlıq (təklif necə göndərilir) və mübadilə */}
+              <a href={`/${locale}/sehife/akademik-terefdaslar`} className="ix-btn">
                 {tr('Partnyorluq təklifi', locale) + ' '}
                 <svg width="15" height="15" viewBox="0 0 24 24" {...sw('2.3')}>
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
               </a>
-              <a href="#" className="ix-btn ix-btn--ghost">{tr('Mübadilə proqramları', locale)}</a>
+              <a href={`/${locale}/sehife/mobillik-ve-mubadile`} className="ix-btn ix-btn--ghost">{tr('Mübadilə proqramları', locale)}</a>
             </div>
           </div>
 
@@ -87,7 +91,7 @@ export default function Intl({ locale }: { locale: Locale }) {
               <span className="ix-leg"><i className="ix-dot" />{' ' + tr('Tərəfdaş şəhər', locale)}</span>
             </div>
             <p className="ix-cities">
-              {tr('İstanbul · Varna · Gdynia · Rotterdam · Sautgempton · Tokio · Şanxay · İsgəndəriyyə · Konstansa', locale)}
+              {tr('İstanbul · Kiyev · Aktau · Batumi · Riqa · Tallin · Klaypeda · Şetsin · Varna · Podqoritsa · Sankt-Peterburq', locale)}
             </p>
           </div>
         </div>
