@@ -1,13 +1,13 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 363, əhatəli: 2, dəyişməz: 497,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 364, əhatəli: 2, dəyişməz: 494,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
 html[data-contrast="high"]{color-scheme:light}
 html[data-contrast="high"] :focus-visible{outline:3px solid #000!important;outline-offset:2px!important;box-shadow:0 0 0 5px #fff!important}
-html[data-contrast="high"] :is(#siteHeader,.ap-done-ic,.ap-sec-num,.ap-status-tag--formal,.ap-submit,.aud-cta,.cl-innov,.cl-ov,.cl-photo,.cmp,.copilot__go,.dg-ic,.gal-lb,.gov-banner,.hero,.hero-veil,.hero-wrap,.idn-avatar,.idn-gate-btn,.idn-verify-btn,.infofor-btn,.infofor-menu,.intlx,.ix-static,.lang-menu,.ld-plate,.mc-card,.mega-cta,.mnav-backdrop,.mnav-panel,.na-badge--kritik,.na-cover,.na-hero,.na-sp-photo,.np-card-media,.np-chip--kritik,.np-hero,.nx-btn,.nx-card,.nx-ov,.pe-btn--primary,.pr-chart-swatch--free,.psh-btn,.qb-cta,.qb-step-n,.rector-photo,.rk-plate,.rsvp-head,.rsvp-submit,.search-backdrop,.stats-panel,.sx-card,.sx-card--cta,.sx-dur,.sx-fbtn,.un-head-plate,.un-staff-mini-pic,.un-staff-mono,.vquote,.vs-play,.vs-stage,.vs-th,.vs-th-play,.vsea,.whyx,footer,header) :focus-visible{outline-color:#fff!important;box-shadow:0 0 0 5px #000!important}
+html[data-contrast="high"] :is(#siteHeader,.ap-done-ic,.ap-sec-num,.ap-status-tag--formal,.ap-submit,.aud-cta,.cert-zoom,.cl-innov,.cl-ov,.cl-photo,.cmp,.copilot__go,.dg-ic,.gal-lb,.gov-banner,.hero,.hero-veil,.hero-wrap,.idn-avatar,.idn-gate-btn,.idn-verify-btn,.infofor-btn,.infofor-menu,.intlx,.ix-static,.lang-menu,.ld-plate,.mc-card,.mega-cta,.mnav-backdrop,.mnav-panel,.na-badge--kritik,.na-cover,.na-hero,.na-sp-photo,.np-card-media,.np-chip--kritik,.np-hero,.nx-btn,.nx-card,.nx-ov,.pe-btn--primary,.pr-chart-swatch--free,.psh-btn,.qb-cta,.qb-step-n,.rector-photo,.rk-plate,.rsvp-head,.rsvp-submit,.search-backdrop,.stats-panel,.sx-card,.sx-card--cta,.sx-dur,.sx-fbtn,.un-head-plate,.un-staff-mini-pic,.un-staff-mono,.vq-frame,.vq-modal,.vq-ov,.vq-x,.vquote,.whyx,footer,header) :focus-visible{outline-color:#fff!important;box-shadow:0 0 0 5px #000!important}
 html[data-contrast="high"] :is(.prose,.na-body,.un-main,.aud-wrap,.faq-wrap) a:not([class]){text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 html[data-contrast="high"] :is(input,select,textarea){border-color:#4A5A63!important}
 html[data-contrast="high"] ::placeholder{color:#3F4A50;opacity:1}
@@ -240,28 +240,12 @@ html[data-contrast="high"] .sx-cta-t em{color:#e2d1a6}
 html[data-contrast="high"] .sx-cta-icons a{color:#fff}
 html[data-contrast="high"] .sx-cta-icons a:hover{color:#000000}
 html[data-contrast="high"] .sx-cta-tag{color:#e2d1a6}
-html[data-contrast="high"] .vsea{color:#fff}
-html[data-contrast="high"] .vsea-wm{color:rgba(255,255,255,.03)}
-html[data-contrast="high"] .vs-eyebrow{color:#ddc997}
-html[data-contrast="high"] .vs-quote blockquote{color:#fff}
-html[data-contrast="high"] .vs-quote figcaption{color:rgba(255,255,255,.74)}
-html[data-contrast="high"] .vs-h{color:#fff}
-html[data-contrast="high"] .vs-lead{color:rgba(255,255,255,.74)}
-html[data-contrast="high"] .vs-chan{color:#ddc997}
-html[data-contrast="high"] .vs-chan:hover{color:#fff}
-html[data-contrast="high"] .vs-poster{color:#fff}
-html[data-contrast="high"] .vs-play{color:#fff}
-html[data-contrast="high"] .vs-poster:hover .vs-play{color:var(--navy-900)}
-html[data-contrast="high"] .vs-cap-src{color:var(--gold-400)}
-html[data-contrast="high"] .vs-cap-t{color:#fff}
-html[data-contrast="high"] .vs-rail-label{color:rgba(255,255,255,.74)}
-html[data-contrast="high"] .vs-arr{color:#fff}
-html[data-contrast="high"] .vs-arr:hover:not(:disabled){color:var(--gold-400)}
-html[data-contrast="high"] .vs-item a{color:#fff}
-html[data-contrast="high"] .vs-th-play{color:#fff}
-html[data-contrast="high"] .vs-item a[aria-current="true"] .vs-th-play{color:var(--navy-900)}
-html[data-contrast="high"] .vs-it-t{color:rgba(255,255,255,.84)}
-html[data-contrast="high"] .vs-item a[aria-current="true"] .vs-it-t{color:#fff}
+html[data-contrast="high"] .vq-in{color:#fff}
+html[data-contrast="high"] .vq-attr{color:rgba(255,255,255,0.72)}
+html[data-contrast="high"] .vq-play{color:#fff}
+html[data-contrast="high"] .vq-modal{color:#fff}
+html[data-contrast="high"] .vq-x{color:#fff}
+html[data-contrast="high"] .vq-x:hover{color:var(--gold-400)}
 html[data-contrast="high"] .prog-num{color:#005875}
 html[data-contrast="high"] .prog-card .p-icon i{color:#bcebf5}
 html[data-contrast="high"] .prog-card h3{color:var(--teal-ink)}
@@ -297,6 +281,13 @@ html[data-contrast="high"] .ftx-form input::placeholder{color:rgba(255,255,255,.
 html[data-contrast="high"] .ftx-form button{color:#0B1B2B}
 html[data-contrast="high"] .ftx-social a{color:rgba(255,255,255,.71)}
 html[data-contrast="high"] .ftx-social a:hover{color:#0B1B2B}
+html[data-contrast="high"] .ftx-certs-head .ftx-certs-label{color:rgba(255,255,255,.64)}
+html[data-contrast="high"] .ftx-certs-label .ti{color:#caab65}
+html[data-contrast="high"] .ftx-certs-all{color:#caab65}
+html[data-contrast="high"] .ftx-certs-all:hover{color:#fff}
+html[data-contrast="high"] .ftx-cert-list .fct-doc{color:#0B3D5C}
+html[data-contrast="high"] .ftx-cert-list .fct-org{color:#fff}
+html[data-contrast="high"] .ftx-cert-list .fct-name{color:rgba(255,255,255,.68)}
 html[data-contrast="high"] .ftx-orgs-label{color:rgba(255,255,255,.64)}
 html[data-contrast="high"] .ftx-org-list a{opacity:1}
 html[data-contrast="high"] .ftx-org-list .fo-mark{color:#fff}
@@ -860,3 +851,10 @@ html[data-contrast="high"] .faq-group-h > i{color:#615026}
 html[data-contrast="high"] .faq-count{color:var(--navy-800,#0B3D5C)}
 html[data-contrast="high"] .faq-source-h a{color:#105781}
 html[data-contrast="high"] .faq-more a{color:var(--navy-700,#0E4D73)}
+html[data-contrast="high"] .cert-zoom{color:var(--white)}
+html[data-contrast="high"] .cert-doc:hover .cert-zoom{color:var(--navy-900)}
+html[data-contrast="high"] .cert-doc--empty{color:var(--navy-700)}
+html[data-contrast="high"] .cert-org{color:#615026}
+html[data-contrast="high"] .cert-title{color:var(--navy-900)}
+html[data-contrast="high"] .cert-open{color:var(--navy-700)}
+html[data-contrast="high"] .cert-open:hover{color:#615026}

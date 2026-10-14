@@ -15,7 +15,7 @@ export const MONTHS: Record<Locale, string[]> = {
  * isə bir gün əvvələ düşürdü. Sabit sürüşmə — server saat qurşağından asılı deyil.
  */
 const BAKU_OFFSET_MS = 4 * 60 * 60 * 1000;
-function bakuTime(iso: string): Date | null {
+export function bakuTime(iso: string): Date | null {
   const t = new Date(iso).getTime();
   return Number.isNaN(t) ? null : new Date(t + BAKU_OFFSET_MS);
 }

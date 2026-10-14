@@ -91,6 +91,13 @@ const nextConfig = {
         destination: '/:locale/struktur/:slug',
         permanent: true,
       },
+      // F5.51: köhnə saytın «Sertifikatlarımız» səhifəsi (adda.edu.az/az/certificates)
+      // və menyunun əvvəlki «hazırlanır» keçidləri → /sertifikatlar.
+      ...['certificates', 'hazirlanir/akkreditasiya-ve-sertifikatlar', 'hazirlanir/akkreditasiya'].map((from) => ({
+        source: '/:locale(az|ru|en)/' + from,
+        destination: '/:locale/sertifikatlar',
+        permanent: true,
+      })),
     ];
   },
 };

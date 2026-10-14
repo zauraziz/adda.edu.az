@@ -9,6 +9,9 @@
 //   - Siyahı boşdursa ehtiyat; elementlər VAR, amma hamısı gizlədilibsə —
 //     slaydlar istisna olmaqla (hero boş qala bilməz) heç nə göstərilmir.
 //   - Cloudinary şəkilləri ölçüyə görə kiçildilir (c_limit, q_auto, f_auto).
+//   - Sitat bloku (F5.51): video — yüklənmiş fayl, yoxdursa YouTube; admində
+//     ikisi də boşdursa düymə yoxdur. Strapi hələ köhnə sxemdədirsə (sahə
+//     cavabda yoxdur) və ya əlçatmazdırsa — defolt video.
 import type { Locale } from './i18n';
 import { menuHref } from './menu-href';
 import { mediaUrl, type HomePageRaw, type StrapiMedia } from './strapi';
@@ -16,9 +19,10 @@ import {
   HOME_CAMPUS,
   HOME_FACTS,
   HOME_QUOTE,
+  HOME_QUOTE_BG,
+  HOME_QUOTE_CTA,
+  HOME_QUOTE_VIDEO,
   HOME_SLIDES,
-  HOME_VIDEO_CHANNEL,
-  HOME_VIDEOS,
   type L3,
 } from './home-fallback';
 
@@ -33,14 +37,23 @@ export type HeroSlide = {
 };
 export type FactCard = { value: string; unit: string; title: string; desc: string; href: string };
 export type CampusPhoto = { img: string; chip: string; title: string; note: string; href: string };
-export type VideoItem = { id: string; title: string };
+/** Sitat blokunun videosu: YouTube (kliklə, youtube-nocookie) və ya yüklənmiş fayl. `href` — JS-siz keçid. */
+export type QuoteVideo =
+  | { kind: 'youtube'; id: string; href: string }
+  | { kind: 'file'; src: string; mime: string; href: string };
+export interface QuoteView {
+  text: string;
+  attr: string;
+  /** Fon şəkli (admin → yoxdursa əvvəlki dizaynın fotosu). */
+  bg: string;
+  cta: string;
+  video: QuoteVideo | null;
+}
 export interface HomeView {
   slides: HeroSlide[];
   facts: FactCard[];
   campus: CampusPhoto[];
-  quote: { text: string; attr: string };
-  videos: VideoItem[];
-  channel: string;
+  quote: QuoteView;
 }
 
 type Row = Record<string, unknown>;
@@ -144,30 +157,31 @@ function campusFrom(raw: HomePageRaw | null, locale: Locale): CampusPhoto[] {
   });
 }
 
-function videosFrom(raw: HomePageRaw | null, locale: Locale): VideoItem[] {
-  const list = raw?.videos ?? [];
-  if (!list.length) return HOME_VIDEOS.map((v) => ({ id: v.youtube, title: l3(v.title, locale) }));
-  const out: VideoItem[] = [];
-  for (const v of list) {
-    if (!v || v.hidden) continue;
-    const id = youtubeId(str(v.youtube));
-    if (!id || out.some((x) => x.id === id)) continue;
-    out.push({ id, title: pick(v, 'title', locale) || 'YouTube' });
+function quoteFrom(raw: HomePageRaw | null, locale: Locale): QuoteView {
+  let video: QuoteVideo | null = null;
+  const file = mediaUrl(raw?.quoteVideoFile);
+  if (file) {
+    video = { kind: 'file', src: file, mime: str(raw?.quoteVideoFile?.mime) || 'video/mp4', href: file };
+  } else {
+    // Sahə cavabda yoxdursa (Strapi köhnə sxemdə / əlçatmaz) — defolt; boşdursa — video yoxdur.
+    const yt = raw && 'quoteVideo' in raw ? str(raw.quoteVideo) : HOME_QUOTE_VIDEO;
+    const id = youtubeId(yt);
+    if (id) video = { kind: 'youtube', id, href: `https://www.youtube.com/watch?v=${id}` };
   }
-  return out;
+  return {
+    text: pick(raw, 'quote', locale) || l3(HOME_QUOTE.text, locale),
+    attr: pick(raw, 'quoteAttr', locale) || l3(HOME_QUOTE.attr, locale),
+    bg: img(raw?.quoteImage, HOME_QUOTE_BG, 2000),
+    cta: pick(raw, 'quoteCta', locale) || l3(HOME_QUOTE_CTA, locale),
+    video,
+  };
 }
 
 export function homeView(raw: HomePageRaw | null, locale: Locale): HomeView {
-  const channel = str(raw?.videoChannel);
   return {
     slides: slidesFrom(raw, locale),
     facts: factsFrom(raw, locale),
     campus: campusFrom(raw, locale),
-    quote: {
-      text: pick(raw, 'quote', locale) || l3(HOME_QUOTE.text, locale),
-      attr: pick(raw, 'quoteAttr', locale) || l3(HOME_QUOTE.attr, locale),
-    },
-    videos: videosFrom(raw, locale),
-    channel: /^https:\/\//.test(channel) ? channel : HOME_VIDEO_CHANNEL,
+    quote: quoteFrom(raw, locale),
   };
 }

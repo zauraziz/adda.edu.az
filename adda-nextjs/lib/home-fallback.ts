@@ -7,8 +7,9 @@
  * Birini dəyişəndə o birini də dəyiş (ardıcıllıq yoxlaması: same50).
  *
  * Rəqəm və iddialar yalnız saytın mənbəli səhifələrindəndir; şəkillər
- * Akademiyanın xəbər arxivindən (Cloudinary), videolar ASCO-nun rəsmi
- * YouTube kanalındandır.
+ * Akademiyanın xəbər arxivindən (Cloudinary). Sitat blokunun videosu (F5.51)
+ * Akademiyanın rəsmi YouTube kanalındandır; fon şəkli boşdursa əvvəlki
+ * dizaynın fotosu (HOME_QUOTE_BG).
  */
 
 export interface L3 {
@@ -42,12 +43,6 @@ export interface HomePhotoSeed {
   title: L3;
   note: L3;
   url: string;
-}
-
-export interface HomeVideoSeed {
-  /** YouTube video ID-si (11 simvol). */
-  youtube: string;
-  title: L3;
 }
 
 const CLD = 'https://res.cloudinary.com/xpjtibwa/image/upload/';
@@ -236,7 +231,7 @@ export const HOME_CAMPUS: HomePhotoSeed[] = [
   },
 ];
 
-/** Video blokunun sitatı — mətn dəyişməyib (rəsmi formul sifarişçidən gözlənilir), indi admində redaktə olunur. */
+/** Sitat bloku (F5.51 — əvvəlki dizayn qaytarıldı): mətn və müəllif admində redaktə olunur. */
 export const HOME_QUOTE: { text: L3; attr: L3 } = {
   text: {
     az: 'Dəniz insana üfüqün arxasında daha böyük bir dünyanın olduğunu öyrədir — biz o dünyaya gedən yolu öyrədirik.',
@@ -250,80 +245,11 @@ export const HOME_QUOTE: { text: L3; attr: L3 } = {
   },
 };
 
-export const HOME_VIDEO_CHANNEL = 'https://www.youtube.com/@azerbaijanshippingcompany1858';
+/** «ADDA-nı yaşa» düyməsinin videosu: Akademiyanın rəsmi kanalı, «Azərbaycan Dövlət Dəniz Akademiyası 2026». */
+export const HOME_QUOTE_VIDEO = 'https://www.youtube.com/watch?v=o1xEKQgUqJA';
 
-/** ASCO-nun rəsmi kanalı: donanma, səfərlər, dənizçilər. Sıra admində dəyişir. */
-export const HOME_VIDEOS: HomeVideoSeed[] = [
-  {
-    youtube: 'TIQMiZyV2Rk',
-    title: { az: 'ASCO: korporativ film', en: 'ASCO: corporate film', ru: 'ASCO: корпоративный фильм' },
-  },
-  {
-    youtube: 'rBIp0S0WuQc',
-    title: {
-      az: '«Xocalı» gəmisi Yeni Zelandiyadan Çinə 18 günlük səfərə çıxıb',
-      en: 'The ship Khojaly sets off on an 18-day voyage from New Zealand to China',
-      ru: 'Судно «Ходжалы» отправилось в 18-дневный рейс из Новой Зеландии в Китай',
-    },
-  },
-  {
-    youtube: 'qezcetuBFts',
-    title: {
-      az: 'Qitələri və sahilləri birləşdirən qəhrəmanlar – dənizçilər!',
-      en: 'Seafarers: the heroes who connect continents and shores',
-      ru: 'Моряки — герои, соединяющие континенты и берега',
-    },
-  },
-  {
-    youtube: 'Z5Xvxe_MrIY',
-    title: { az: '«Babək» tankeri təmir olunub', en: 'The tanker Babek has been repaired', ru: 'Танкер «Бабек» отремонтирован' },
-  },
-  {
-    youtube: 'tcQ6lAriogg',
-    title: {
-      az: 'Dünya Dəniz Günündə ASCO qlobal «mavi işıqlandırma» kampaniyasına qoşulub',
-      en: 'On World Maritime Day ASCO joined the global “blue lighting” campaign',
-      ru: 'Во Всемирный день моря ASCO присоединилось к глобальной акции «синей подсветки»',
-    },
-  },
-  {
-    youtube: '5Lxm7yg4qYc',
-    title: {
-      az: '«Suraxanı» gəmi-muzeyindən reportaj',
-      en: 'A report from the Surakhani ship museum',
-      ru: 'Репортаж с корабля-музея «Сураханы»',
-    },
-  },
-  {
-    youtube: 'iMJkqwYU0sQ',
-    title: {
-      az: 'Gəmi xilasetmə vasitələrinin təmiri sahəsi: təhlükəsizliyin əsas dayağı',
-      en: 'Repairing ships’ life-saving appliances: a cornerstone of safety',
-      ru: 'Ремонт судовых спасательных средств: основа безопасности',
-    },
-  },
-  {
-    youtube: 'bfdbJQxYIq0',
-    title: {
-      az: 'Azərbaycanda mexanik sertifikatlı ilk qadın – İradə Astanova',
-      en: 'Irada Astanova, the first woman in Azerbaijan with a marine engineer’s certificate',
-      ru: 'Ирада Астанова — первая в Азербайджане женщина с сертификатом механика',
-    },
-  },
-  {
-    youtube: '8Ufpc_dhIwE',
-    title: {
-      az: 'Növbəti iş mövsümünə belə başladıq',
-      en: 'Back to business: how we started the new season',
-      ru: 'Так мы начали новый рабочий сезон',
-    },
-  },
-  {
-    youtube: 'prhmNTL9CNM',
-    title: {
-      az: 'Azərbaycan Xəzər Dəniz Gəmiçiliyi',
-      en: 'Azerbaijan Caspian Shipping Company',
-      ru: 'Азербайджанское Каспийское морское пароходство',
-    },
-  },
-];
+/** Düymənin mətni (boşdursa sayt bunu göstərir). */
+export const HOME_QUOTE_CTA: L3 = { az: 'ADDA-nı yaşa', en: 'Live ADDA', ru: 'Живи ADDA' };
+
+/** Fon şəkli admində yüklənməyibsə — əvvəlki «video sitat» dizaynının fotosu (F5.50-yə qədər). */
+export const HOME_QUOTE_BG = 'https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e?fm=jpg&q=80&w=2000&auto=format&fit=crop';

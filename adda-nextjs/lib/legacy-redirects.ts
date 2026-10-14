@@ -2,7 +2,7 @@
 // Mənbə: tools/migration/data/redirects.json
 // Yeniləmək: cd tools/migration && node gen-redirects.mjs
 //
-// Köhnə saytın URL-ləri (1316 sətir, 1206 sənəd) Google
+// Köhnə saytın URL-ləri (1316 sətir, 1217 sənəd) Google
 // indeksindədir. Yönləndirmə olmasa hamısı 404 verər.
 //
 // Açar dilsizdir: ru/en eyni slug-ı paylaşır (K2 qərarı), ona görə dil
@@ -353,6 +353,11 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   'announce/517': 'elanlar/elan-2026',
   'announce/518': 'elanlar/elan-2026-2',
   'announce/519': 'elanlar/akademiyaya-berpa-olunmaq-isteyen-telebelerin-nezerine-2026',
+  'announce/520': 'elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2026',
+  'announce/521': 'elanlar/adda-nin-doktorant-magistrant-ve-genc-tedqiqatcilarinin-nezerine',
+  'announce/522': 'elanlar/azerbaycan-dovlet-deniz-akademiyasina-adda-qebul-olan-abituriyentlerin-nezerine',
+  'announce/523': 'elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2026',
+  'announce/524': 'elanlar/heyder-eliyev-ve-azerbaycan-tarixi-x-umumrespublika-bilik-yarisi',
   'content/1': 'sehife/adda-dunen-ve-bugun',
   'content/10': 'sehife/muzey',
   'content/11': 'sehife/xaricde-tehsil-ve-ixtisasartirma',
@@ -1214,6 +1219,12 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   'news/1982': 'xeberler/tovuz-doyuslerinde-helak-olan-sehidlerimizi-derin-ehtiramla-aniriq',
   'news/1983': 'xeberler/azerbaycan-dovlet-deniz-akademiyasinin-adda-elmi-surasi-2025-2026-ci-tedris-ilin',
   'news/1984': 'xeberler/bu-gun-azerbaycan-dovlet-deniz-akademiyasinin-30-illik-yubileyidir',
+  'news/1985': 'xeberler/adda-numayende-heyeti-cin-xalq-respublikasinda-isguzar-seferde-olub',
+  'news/1986': 'xeberler/2026-ci-ilde-adda-ya-qebul-neticeleri-aciqlanib',
+  'news/1987': 'xeberler/azerbaycan-dovlet-deniz-akademiyasinda-bilik-gunu-ve-yeni-tedris-ilinin-baslanma',
+  'news/1988': 'xeberler/20-sentyabr-dovlet-suverenliyi-gunu',
+  'news/1989': 'xeberler/azerbaycan-dovlet-deniz-akademiyasinda-27-sentyabr-anim-gunu-qeyd-olunub',
+  'news/1990': 'xeberler/5-oktyabr-beynelxalq-muellimler-gunudur',
 };
 
 /** Köhnə saytın bölmə adları — middleware naxışı bunlarla məhdudlaşır. */

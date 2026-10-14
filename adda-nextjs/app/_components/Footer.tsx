@@ -12,9 +12,10 @@
 //   · initNewsletter() → NewsletterIsland.tsx (mesajlar burada tərcümə olunur).
 import { tr, type Locale } from '@/lib/i18n';
 import { menuHref } from '@/lib/menu-href';
-import { getOrgBlock, getSocialBlock, mediaUrl, type SiteMenu, type SocialBlock } from '@/lib/strapi';
+import { getCertBlock, getOrgBlock, getSocialBlock, mediaUrl, type SiteMenu, type SocialBlock } from '@/lib/strapi';
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
 import { orgName, visibleOrgs } from '@/lib/org-fallback';
+import { certView } from '@/lib/cert';
 import NewsletterIsland, { type NewsletterMsgs } from './NewsletterIsland';
 import PageOwnerNote from './PageOwnerNote';
 
@@ -31,6 +32,11 @@ const SOCIALS: { name: string; icon: string; key: keyof SocialBlock }[] = [
 // F5.49 — «Rəsmi qurumlar» admində idarə olunur («3. Sayt — Rəsmi qurumlar»:
 // ad üç dildə, sayt, loqo, sıra, gizlətmə). Strapi əlçatmazdırsa —
 // lib/org-fallback.ts. Loqo yoxdursa qısa ad nişan kimi görünür.
+
+// F5.51 — «Akkreditasiya və sertifikatlar» zolağı: «3. Sayt — Sertifikatlar»-da
+// «Footer-də göstər» işarəli sənədlər (skanın kiçik önizləməsi + qurum və sənəd);
+// hər kart /sertifikatlar səhifəsində həmin sənədə aparır. Strapi əlçatmazdırsa —
+// lib/cert-fallback.ts (skan yerində ikon).
 
 // F5.30c — "Rektorla əlaqə" ölü `#` keçidi idi, /rehberlik-ə bağlanmışdı.
 // F5.36c — vətəndaş müraciəti formasına yönəlir, «Rektora müraciət»
@@ -56,11 +62,13 @@ export const SITE_PHONE = { display: '+994 12 404 33 40', href: 'tel:+9941240433
 
 export default async function Footer({ menu, locale }: { menu: SiteMenu | null; locale: Locale }) {
   const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;
-  const [orgItems, social] = await Promise.all([
+  const [orgItems, social, certItems] = await Promise.all([
     getOrgBlock(),
     getSocialBlock(locale).then((b) => b ?? (locale === 'az' ? null : getSocialBlock('az'))),
+    getCertBlock(),
   ]);
   const orgs = visibleOrgs(orgItems);
+  const certs = certView(certItems, locale).filter((c) => c.footer);
   const socials = SOCIALS.map((s) => ({ ...s, href: ((social?.[s.key] as string | null) ?? '').trim() })).filter((s) =>
     /^https?:\/\//i.test(s.href),
   );
@@ -144,6 +152,36 @@ export default async function Footer({ menu, locale }: { menu: SiteMenu | null; 
             ))}
           </nav>
         </div>
+
+        {certs.length ? (
+          <div className="ftx-certs">
+            <div className="ftx-certs-head">
+              <span className="ftx-orgs-label ftx-certs-label">
+                <i className="ti ti-certificate" aria-hidden="true" />
+                {' ' + tr('Akkreditasiya və sertifikatlar', locale)}
+              </span>
+              <a className="ftx-certs-all" href={`/${locale}/sertifikatlar`}>
+                {tr('Bütün sənədlər', locale) + ' '}
+                <i className="ti ti-arrow-right" aria-hidden="true" />
+              </a>
+            </div>
+            <ul className="ftx-cert-list">
+              {certs.map((c) => (
+                <li key={c.anchor}>
+                  <a href={`/${locale}/sertifikatlar#${c.anchor}`}>
+                    <span className="fct-doc" aria-hidden="true">
+                      {c.thumb ? <img src={c.thumb} alt="" loading="lazy" decoding="async" /> : <i className="ti ti-certificate" />}
+                    </span>
+                    <span className="fct-tx">
+                      <span className="fct-org">{c.org}</span>
+                      {c.doc ? <span className="fct-name">{c.doc}</span> : null}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         <div className="ftx-orgs">
           <span className="ftx-orgs-label">{tr('Rəsmi qurumlar', locale)}</span>

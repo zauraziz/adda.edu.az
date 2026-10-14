@@ -25,7 +25,7 @@ import News from '../_components/News';
 import Campus from '../_components/Campus';
 import Intl from '../_components/Intl';
 import Social from '../_components/Social';
-import VideoSea from '../_components/VideoSea';
+import VQuote from '../_components/VQuote';
 import Footer from '../_components/Footer';
 import {
   getAcademyAnnouncements,
@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const view = homeView(home, locale);
   // F5.50 — sıra: gündəlik istifadə üçün əvvəl Gündəm (xəbər/elan/tədbir),
   // sonra «Niyə məhz ADDA» (əvvəlki iki blok birləşib), kampus, beynəlxalq,
-  // sosial, sitat + video.
+  // sosial, sitat (F5.51: əvvəlki dizayn, video admindən).
   return (
     <>
       <SiteHeaderStack menu={menu} locale={locale} />
@@ -74,7 +74,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <Campus photos={view.campus} locale={locale} />
       <Intl locale={locale} />
       <Social locale={locale} />
-      <VideoSea quote={view.quote} videos={view.videos} channel={view.channel} locale={locale} />
+      <VQuote quote={view.quote} locale={locale} />
       <Footer menu={menu} locale={locale} />
     </>
   );

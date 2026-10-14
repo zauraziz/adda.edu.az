@@ -16,6 +16,8 @@ export interface StrapiMedia {
   alternativeText: string | null;
   width: number | null;
   height: number | null;
+  /** F5.51 — video faylı (sitat bloku) və PDF üçün. */
+  mime?: string | null;
 }
 
 /** ── F2.4: Görünürlük & əlaqə referansları ── */
@@ -1070,19 +1072,17 @@ export interface HomePhotoRaw {
   note: Txt; noteEn: Txt; noteRu: Txt;
   url: Txt;
 }
-export interface HomeVideoRaw {
-  youtube: Txt;
-  title: Txt; titleEn: Txt; titleRu: Txt;
-  hidden: boolean | null;
-}
 export interface HomePageRaw {
   heroSlides?: HomeSlideRaw[] | null;
   facts?: HomeFactRaw[] | null;
   campusCards?: HomePhotoRaw[] | null;
   quote?: Txt; quoteEn?: Txt; quoteRu?: Txt;
   quoteAttr?: Txt; quoteAttrEn?: Txt; quoteAttrRu?: Txt;
-  videos?: HomeVideoRaw[] | null;
-  videoChannel?: Txt;
+  // F5.51 — sitat bloku: fon şəkli, video (YouTube və ya fayl), düymə.
+  quoteImage?: StrapiMedia | null;
+  quoteVideo?: Txt;
+  quoteVideoFile?: StrapiMedia | null;
+  quoteCta?: Txt; quoteCtaEn?: Txt; quoteCtaRu?: Txt;
 }
 /** Strapi əlçatmazdırsa və ya tip/qeyd hələ yoxdursa null (çağıran ehtiyata keçir). */
 export async function getHomePage(): Promise<HomePageRaw | null> {
@@ -1093,11 +1093,37 @@ export async function getHomePage(): Promise<HomePageRaw | null> {
         'populate[heroSlides][populate][image]': true,
         'populate[campusCards][populate][image]': true,
         'populate[facts]': true,
-        'populate[videos]': true,
+        'populate[quoteImage]': true,
+        'populate[quoteVideoFile]': true,
       },
       120,
     );
     return json.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** ── F5.51: Sertifikatlar (admində «3. Sayt — Sertifikatlar») ──
+ * Dilsiz tək tip: ad və qısa ad az + En/Ru. Görünüş modeli lib/cert.ts-dədir. */
+export interface CertItemRaw {
+  title: Txt; titleEn: Txt; titleRu: Txt;
+  short: Txt; shortEn: Txt; shortRu: Txt;
+  image: StrapiMedia | null;
+  file: StrapiMedia | null;
+  footer: boolean | null;
+  hidden: boolean | null;
+}
+/** Admində idarə olunan siyahı; Strapi əlçatmazdırsa və ya tip hələ yoxdursa null (çağıran ehtiyata keçir). */
+export async function getCertBlock(): Promise<CertItemRaw[] | null> {
+  try {
+    const json = await strapiFetch<{ data: { items?: CertItemRaw[] | null } | null }>(
+      '/cert-block',
+      { 'populate[items][populate][image]': true, 'populate[items][populate][file]': true },
+      300,
+    );
+    const items = json.data?.items;
+    return Array.isArray(items) && items.length ? items : null;
   } catch {
     return null;
   }

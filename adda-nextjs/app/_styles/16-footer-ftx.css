@@ -16,6 +16,25 @@
 .ftx-social{margin-top:22px;display:flex;gap:10px}
 .ftx-social a{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.65);font-size:calc(17px * var(--fs-scale));text-decoration:none;transition:background .2s,color .2s,transform .15s}
 .ftx-social a:hover{background:#C9A961;color:#0B1B2B;transform:translateY(-2px)}
+/* F5.51 — «Akkreditasiya və sertifikatlar»: sənədin kağız önizləməsi (ağ, qızılı
+   haşiyə) + qurum və sənəd; qurumlardan fərqli olaraq qızılı çərçivə — zolaq
+   seçilir, palitra eyni qalır. Bərabər xanalar 4 / 2 / 1, natamam sətir mərkəzdə. */
+.ftx-certs{padding:28px 0 30px;border-top:1px solid rgba(255,255,255,0.08)}
+.ftx-certs-head{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:18px}
+.ftx-certs-head .ftx-certs-label{display:inline-flex;align-items:center;gap:8px;margin:0;color:rgba(255,255,255,0.62)}
+.ftx-certs-label .ti{font-size:calc(16px * var(--fs-scale));color:#C9A961}
+.ftx-certs-all{display:inline-flex;align-items:center;gap:6px;font-size:calc(12.5px * var(--fs-scale));font-weight:700;color:#C9A961;text-decoration:none;transition:color .2s}
+.ftx-certs-all:hover{color:#fff}
+.ftx-cert-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:14px 16px}
+.ftx-cert-list>li{flex:0 0 calc((100% - 48px) / 4);min-width:0;display:flex}
+.ftx-cert-list a{display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;border-radius:14px;border:1px solid rgba(201,169,97,0.3);background:linear-gradient(160deg,rgba(201,169,97,0.11),rgba(255,255,255,0.02) 62%);text-decoration:none;transition:border-color .2s,background .2s,transform .2s}
+.ftx-cert-list a:hover{border-color:rgba(201,169,97,0.75);background:linear-gradient(160deg,rgba(201,169,97,0.16),rgba(255,255,255,0.04) 62%);transform:translateY(-2px)}
+.ftx-cert-list .fct-doc{display:grid;place-items:center;flex-shrink:0;width:52px;height:68px;overflow:hidden;border-radius:4px;background:#fff;color:#0B3D5C;font-size:calc(24px * var(--fs-scale));box-shadow:0 6px 16px rgba(0,0,0,0.35),0 0 0 1px rgba(201,169,97,0.65)}
+.ftx-cert-list .fct-doc img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+.ftx-cert-list .fct-tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ftx-cert-list .fct-org{font-family:'Fraunces',serif;font-size:calc(14px * var(--fs-scale));font-weight:600;line-height:1.3;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ftx-cert-list .fct-name{font-size:calc(11.5px * var(--fs-scale));line-height:1.35;color:rgba(255,255,255,0.66);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media(prefers-reduced-motion:reduce){.ftx-cert-list a{transition:none}.ftx-cert-list a:hover{transform:none}}
 .ftx-orgs{padding:26px 0;border-top:1px solid rgba(255,255,255,0.08)}
 .ftx-orgs-label{display:block;font-size:calc(11px * var(--fs-scale));font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:18px}
 /* F5.50 — simmetriya (qurum sayı 5-dən 9-a çıxanda sətirlər «qırıq» qalırdı):
@@ -41,12 +60,14 @@
   .ftx-grid{grid-template-columns:1fr;gap:36px;padding:38px 0}
   .ftx-cols{grid-template-columns:repeat(2,1fr)}
   .ftx-org-list>li{flex-basis:calc((100% - 16px) / 2)}
+  .ftx-cert-list>li{flex-basis:calc((100% - 16px) / 2)}
 }
 @media(max-width:560px){
   .ftx-form{flex-direction:column}
   .ftx-form input{flex:0 0 auto} /* F5.49: sütunda flex:1 (əsas 0%) hündürlüyü sıfırlayırdı */
   .ftx-form button{justify-content:center}
   .ftx-org-list>li{flex-basis:100%}
+  .ftx-cert-list>li{flex-basis:100%}
 }
 /* ═══════ Mega naviqasiya — drill-down (HSE üslubu · ADDA dizaynı) ═══════ */
 #siteHeader{position:relative}

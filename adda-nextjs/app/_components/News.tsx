@@ -4,6 +4,7 @@
 import { mediaUrl, type Announcement, type EventItem, type NewsItem } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
 import { FALLBACK_NEWS } from '@/lib/news-fallback';
+import { bakuTime } from '@/lib/format';
 
 const CAT_LABELS: Record<Locale, Record<string, string>> = {
   az: { xeber: 'Xəbər', elan: 'Elan', tedbir: 'Tədbir', elm: 'Elm' },
@@ -16,10 +17,12 @@ const MONTHS: Record<Locale, string[]> = {
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 };
 
+// F5.51 — tarix və saat Bakı vaxtı ilə (lib/format.ts → bakuTime): Strapi UTC
+// saxlayır; saat 10:00-da olan tədbir zolaqda 06:00, gecə yarısından sonra dərc
+// olunan elan isə bir gün əvvəl görünürdü.
 function fmtDate(iso: string | null, locale: Locale): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
+  const d = iso ? bakuTime(iso) : null;
+  if (!d) return '';
   return `${String(d.getUTCDate()).padStart(2, '0')} ${MONTHS[locale][d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
@@ -37,9 +40,8 @@ const RAIL_IMP: Record<Locale, Record<Announcement['importance'], string>> = {
 
 /** Rail-da qısa tarix: "09 İyun" */
 function fmtShort(iso: string | null, locale: Locale): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
+  const d = iso ? bakuTime(iso) : null;
+  if (!d) return '';
   return String(d.getUTCDate()).padStart(2, '0') + ' ' + MONTHS[locale][d.getUTCMonth()];
 }
 
@@ -84,9 +86,8 @@ function venueOf(e: EventItem, locale: Locale): string {
 }
 
 function timeOf(iso: string | null): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
+  const d = iso ? bakuTime(iso) : null;
+  if (!d) return '';
   return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0');
 }
 
@@ -184,17 +185,17 @@ export default function News({
         {evs.length ? (
           <>
             <div className="nx-sub nx-sub--ev"><i className="ti ti-calendar-event" />{' ' + tr('Tədbirlər', locale)}</div>
-            <div className="nx-events">
+            {/* F5.51 — 5-dən az tədbir olanda masaüstündə sütun sayı = tədbir sayı (boş xana qalmır). */}
+            <div className={'nx-events nx-events--' + evs.length}>
               {evs.map((e) => {
-                const d = e.startAt ? new Date(e.startAt) : null;
-                const valid = d && !Number.isNaN(d.getTime());
+                const d = e.startAt ? bakuTime(e.startAt) : null;
                 const place = venueOf(e, locale);
                 const time = timeOf(e.startAt);
                 return (
                   <a href={'/' + locale + '/tedbirler/' + e.slug} className="evx" key={e.documentId}>
                     <span className="evx-date">
-                      <b>{valid ? String(d.getUTCDate()).padStart(2, '0') : '—'}</b>
-                      <span>{valid ? MONTHS_SHORT[locale][d.getUTCMonth()] : ''}</span>
+                      <b>{d ? String(d.getUTCDate()).padStart(2, '0') : ''}</b>
+                      <span>{d ? MONTHS_SHORT[locale][d.getUTCMonth()] : ''}</span>
                     </span>
                     <span className="evx-body">
                       <span className="evx-chip">{EV_FORMAT[locale][e.format] ?? EV_FORMAT[locale].fiziki}</span>

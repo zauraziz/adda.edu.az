@@ -53,6 +53,13 @@
 /* Tədbirlər zolağı */
 .nx-sub--ev{margin-top:36px}
 .nx-events{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+/* F5.51 — tədbir 5-dən azdırsa masaüstündə sıra boş xanasız: sütun sayı = tədbir sayı. */
+@media(min-width:1025px){
+  .nx-events.nx-events--4{grid-template-columns:repeat(4,1fr)}
+  .nx-events.nx-events--3{grid-template-columns:repeat(3,1fr)}
+  .nx-events.nx-events--2{grid-template-columns:repeat(2,1fr)}
+  .nx-events.nx-events--1{grid-template-columns:minmax(0,1fr)}
+}
 .evx{display:flex;gap:13px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 15px;text-decoration:none;transition:all var(--nav-dur-fast) var(--nav-ease)}
 .evx:hover{transform:translateY(-3px);border-color:var(--gold-300);box-shadow:var(--nav-sh-lg)}
 .evx-date{width:50px;flex-shrink:0;text-align:center;border-radius:10px;overflow:hidden;border:1px solid var(--navy-100)}

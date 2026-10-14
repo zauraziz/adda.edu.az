@@ -1145,16 +1145,6 @@ const T: Array<[string, string, string]> = [
   ['Forma, dərslik və yemək ödənişsizdir; fərqlənənlərə ASCO təqaüdü.', 'Форма, учебники и питание бесплатны; лучшим студентам стипендия ASCO.', 'Free uniforms, textbooks and meals; ASCO scholarships for top students.'],
   ['Konsertlər, yarışlar və seminarlar: hamısı bir təqvimdə.', 'Концерты, соревнования и семинары: всё в одном календаре.', 'Concerts, competitions and seminars, all in one calendar.'],
   ['İngilis dilində tədris, qəbul qaydaları və gəliş bələdçisi.', 'Обучение на английском, правила приёма и путеводитель.', 'English-taught programmes, admission rules and an arrival guide.'],
-  ['Dəniz həyatı', 'Жизнь на море', 'Life at sea'],
-  ['ASCO gəmilərindən videolar', 'Видео с судов ASCO', 'Videos from ASCO ships'],
-  ['Tələbələrimizin təcrübə keçdiyi və məzunlarımızın çalışdığı donanma: səfərlər, gəmilər və dənizçilər.',
-   'Флот, где проходят практику наши студенты и работают выпускники: рейсы, суда и моряки.',
-   'The fleet where our students train and our graduates work: voyages, ships and seafarers.'],
-  ['ASCO-nun YouTube kanalı', 'YouTube-канал ASCO', 'ASCO on YouTube'],
-  ['Videonu izlə', 'Смотреть видео', 'Watch the video'],
-  ['Bütün videolar', 'Все видео', 'All videos'],
-  ['Əvvəlki videolar', 'Предыдущие видео', 'Previous videos'],
-  ['Sonrakı videolar', 'Следующие видео', 'Next videos'],
   ['Akademiyanın diplomu 170-dən çox ölkədə tanınır. ADDA 2016-cı ildən Beynəlxalq Dəniz Universitetləri Assosiasiyasının (IAMU) üzvüdür, 11 ölkənin dənizçilik və texniki universitetləri ilə tələbə və müəllim mübadiləsi, ikili diplom və birgə tədqiqat aparır.',
    'Диплом Академии признаётся более чем в 170 странах. С 2016 года АГМА — член Международной ассоциации морских университетов (IAMU); с морскими и техническими вузами 11 стран Академия ведёт обмен студентами и преподавателями, программы двойного диплома и совместные исследования.',
    'The Academy’s diploma is recognised in more than 170 countries. Since 2016 ADDA has been a member of the International Association of Maritime Universities (IAMU), and it works with maritime and technical universities in 11 countries on student and staff exchange, double degrees and joint research.'],
@@ -1179,6 +1169,15 @@ const T: Array<[string, string, string]> = [
   ['Həştərxan', 'Астрахань', 'Astrakhan'],
   ['Novorossiysk', 'Новороссийск', 'Novorossiysk'],
   ['Vladivostok', 'Владивосток', 'Vladivostok'],
+  // ── F5.51 — sertifikatlar (/sertifikatlar, footer zolağı) ──
+  ['Bütün sənədlər', 'Все документы', 'All documents'],
+  ['Akademiyanın tanınmasını, akkreditasiyasını, beynəlxalq üzvlüyünü və keyfiyyət idarəetmə sistemini təsdiq edən sənədlər.',
+   'Документы, подтверждающие признание, аккредитацию, международное членство и систему менеджмента качества Академии.',
+   'Documents confirming the Academy’s recognition, accreditation, international membership and quality management system.'],
+  ['Böyüt', 'Увеличить', 'Enlarge'],
+  ['Tam ölçüdə aç', 'Открыть в полном размере', 'Open full size'],
+  ['PDF faylını aç', 'Открыть PDF-файл', 'Open the PDF file'],
+  ['Hələlik sənəd yoxdur.', 'Пока документов нет.', 'No documents yet.'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
