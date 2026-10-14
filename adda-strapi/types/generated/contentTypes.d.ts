@@ -757,6 +757,40 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCertBlockCertBlock extends Struct.SingleTypeSchema {
+  collectionName: 'cert_blocks';
+  info: {
+    description: 'Akademiyan\u0131n sertifikatlar\u0131 (tan\u0131nma, akkreditasiya, IAMU, ISO 9001): ad (az/en/ru), q\u0131sa ad, \u015F\u0259kil, fayl, s\u0131ra. \u00AB/sertifikatlar\u00BB s\u0259hif\u0259si v\u0259 footer zola\u011F\u0131 buradan.';
+    displayName: '3. Sayt \u2014 Sertifikatlar';
+    pluralName: 'cert-blocks';
+    singularName: 'cert-block';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    items: Schema.Attribute.Component<'cert.item', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cert-block.cert-block'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCorrectionCorrection extends Struct.CollectionTypeSchema {
   collectionName: 'corrections';
   info: {
@@ -1394,7 +1428,7 @@ export interface ApiHeroHero extends Struct.CollectionTypeSchema {
 export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
   collectionName: 'home_pages';
   info: {
-    description: 'Ana s\u0259hif\u0259nin admind\u0259 idar\u0259 olunan bloklar\u0131: hero slaydlar\u0131, \u00ABNiy\u0259 m\u0259hz ADDA\u00BB fakt kartlar\u0131, kampus foto kartlar\u0131, sitat v\u0259 video slayder (az/en/ru).';
+    description: 'Ana s\u0259hif\u0259nin admind\u0259 idar\u0259 olunan bloklar\u0131: hero slaydlar\u0131, \u00ABNiy\u0259 m\u0259hz ADDA\u00BB fakt kartlar\u0131, kampus foto kartlar\u0131, sitat bloku (m\u0259tn, m\u00FC\u0259llif, fon \u015F\u0259kli, video, d\u00FCym\u0259) (az/en/ru).';
     displayName: '3. Sayt \u2014 Ana s\u0259hif\u0259';
     pluralName: 'home-pages';
     singularName: 'home-page';
@@ -1455,28 +1489,35 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;
       }>;
+    quoteCta: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
+    quoteCtaEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
+    quoteCtaRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
     quoteEn: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 400;
       }>;
+    quoteImage: Schema.Attribute.Media<'images'>;
     quoteRu: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 400;
       }>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    videoChannel: Schema.Attribute.String &
+    quoteVideo: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 300;
       }>;
-    videos: Schema.Attribute.Component<'home.video', true> &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 12;
-        },
-        number
-      >;
+    quoteVideoFile: Schema.Attribute.Media<'videos'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -3694,6 +3735,7 @@ declare module '@strapi/strapi' {
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
       'api::appeal.appeal': ApiAppealAppeal;
       'api::article.article': ApiArticleArticle;
+      'api::cert-block.cert-block': ApiCertBlockCertBlock;
       'api::correction.correction': ApiCorrectionCorrection;
       'api::department.department': ApiDepartmentDepartment;
       'api::document.document': ApiDocumentDocument;

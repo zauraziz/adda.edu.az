@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "cert_blocks",
+  "info": {
+    "singularName": "cert-block",
+    "pluralName": "cert-blocks",
+    "displayName": "3. Sayt — Sertifikatlar",
+    "description": "Akademiyanın sertifikatları (tanınma, akkreditasiya, IAMU, ISO 9001): ad (az/en/ru), qısa ad, şəkil, fayl, sıra. «/sertifikatlar» səhifəsi və footer zolağı buradan."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "cert.item"
+    }
+  }
+}

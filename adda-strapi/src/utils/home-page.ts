@@ -6,8 +6,10 @@
  *   heroSlides  — hero slaydları (şəkil, üst yazı, başlıq «*vurğu*», mətn, düymə);
  *   facts       — «Niyə məhz ADDA» sübut kartları (rəqəm, vahid, başlıq, cümlə, mənbə səhifəsi);
  *   campusCards — «Kampus həyatı» blokunun 3 foto kartı;
- *   quote*      — video blokunun sitatı;
- *   videos      — video slayder (YouTube ünvanı və ya ID), videoChannel — kanal keçidi.
+ *   quote*      — sitat bloku (F5.51: əvvəlki dizayn qaytarıldı, video slayder
+ *                 silindi): mətn, müəllif, fon şəkli (`quoteImage`), video
+ *                 (`quoteVideo` — YouTube, və ya `quoteVideoFile` — yüklənmiş mp4),
+ *                 düymənin mətni (`quoteCta`).
  *
  * applyHomePageV1: BİR DƏFƏ (store `adda-admin` → `homePage:v1`), qeyd boşdursa
  * home-page-content.ts-dəki defoltları yazır. Şəkillər media kitabxanasında
@@ -15,18 +17,21 @@
  * tapılmayan boş qalır və Next.js eyni URL-i ehtiyatdan götürür. Admin artıq
  * nəsə yazıbsa toxunulmur.
  *
- * placeHomeFields: BİR DƏFƏ (`homeLayout:v1`) komponent formalarını az/en/ru
- * üçlüyü bir sətirdə olacaq şəkildə düzür və bağlı sətrin adını başlıq edir.
- * Admin düzümü dəyişibsə (sahə sırası defolt deyil) toxunulmur.
+ * applyHomeQuoteV1 (F5.51): BİR DƏFƏ (`homeQuote:v1`) — video və fayl boşdursa
+ * Akademiyanın rəsmi filmini, düymənin mətni boşdursa «ADDA-nı yaşa» yazır.
+ *
+ * placeHomeFields: komponent formaları (`homeLayout:v1`) və tipin forması
+ * (`homeLayout:v2`, F5.51 sahələri) az/en/ru üçlüyü bir sətirdə olacaq şəkildə;
+ * bağlı sətrin adı başlıqdır. Admin sahə dəstini dəyişibsə toxunulmur.
  */
 import type { Core } from '@strapi/strapi';
 import {
   HOME_CAMPUS,
   HOME_FACTS,
   HOME_QUOTE,
+  HOME_QUOTE_CTA,
+  HOME_QUOTE_VIDEO,
   HOME_SLIDES,
-  HOME_VIDEO_CHANNEL,
-  HOME_VIDEOS,
   type L3,
 } from './home-page-content';
 
@@ -36,9 +41,11 @@ type Conf = { settings: Row; metadatas: Row; layouts: { edit: Cell[][] } & Row }
 
 const UID = 'api::home-page.home-page';
 const MARKER = 'homePage:v1';
+const QUOTE_MARKER = 'homeQuote:v1';
 const LAYOUT_MARKER = 'homeLayout:v1';
-const LISTS = ['heroSlides', 'facts', 'campusCards', 'videos'] as const;
-const TEXTS = ['quote', 'quoteAttr', 'videoChannel'] as const;
+const LAYOUT_MARKER_V2 = 'homeLayout:v2';
+const LISTS = ['heroSlides', 'facts', 'campusCards'] as const;
+const TEXTS = ['quote', 'quoteAttr', 'quoteVideo'] as const;
 
 interface SingleDocs {
   findFirst: (a?: Row) => Promise<Row | null>;
@@ -50,6 +57,8 @@ interface SingleDocs {
 function l3(name: string, v: L3): Row {
   return { [name]: v.az, [name + 'En']: v.en, [name + 'Ru']: v.ru };
 }
+
+const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
 
 export async function applyHomePageV1(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
@@ -105,8 +114,8 @@ export async function applyHomePageV1(strapi: Core.Strapi): Promise<void> {
     campusCards,
     ...l3('quote', HOME_QUOTE.text),
     ...l3('quoteAttr', HOME_QUOTE.attr),
-    videos: HOME_VIDEOS.map((v) => ({ youtube: 'https://www.youtube.com/watch?v=' + v.youtube, ...l3('title', v.title), hidden: false })),
-    videoChannel: HOME_VIDEO_CHANNEL,
+    quoteVideo: HOME_QUOTE_VIDEO,
+    ...l3('quoteCta', HOME_QUOTE_CTA),
   };
 
   if (cur?.documentId) await docs.update({ documentId: cur.documentId, data });
@@ -115,9 +124,35 @@ export async function applyHomePageV1(strapi: Core.Strapi): Promise<void> {
   await store.set({ key: MARKER, value: true });
   strapi.log.info(
     `[home] F5.50: «3. Sayt — Ana səhifə» yazıldı: ${heroSlides.length} slayd, ${HOME_FACTS.length} fakt, ` +
-      `${campusCards.length} kampus kartı, ${HOME_VIDEOS.length} video; arxiv şəkli bağlandı: ${linked}/${wanted}` +
+      `${campusCards.length} kampus kartı, sitat + video; arxiv şəkli bağlandı: ${linked}/${wanted}` +
       (linked < wanted ? ' (tapılmayanları sayt ehtiyatdan göstərir — admində yükləyə bilərsiniz).' : '.'),
   );
+}
+
+/** F5.51 — F5.50-də yazılmış qeyddə video slayder idi; sitat blokunun videosu və düyməsi boşdursa defolt. */
+export async function applyHomeQuoteV1(strapi: Core.Strapi): Promise<void> {
+  const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
+  if ((await store.get({ key: QUOTE_MARKER })) === true) return;
+  const docs = strapi.documents(UID as never) as unknown as SingleDocs;
+  const cur = await docs.findFirst({ populate: ['quoteVideoFile'] });
+  if (!cur?.documentId) {
+    // Qeyd yoxdursa applyHomePageV1 onsuz da defoltla yaradır.
+    await store.set({ key: QUOTE_MARKER, value: true });
+    return;
+  }
+  const data: Row = {};
+  const notes: string[] = [];
+  if (!str(cur.quoteVideo) && !cur.quoteVideoFile) {
+    data.quoteVideo = HOME_QUOTE_VIDEO;
+    notes.push('video: Akademiyanın filmi');
+  }
+  if (!str(cur.quoteCta) && !str(cur.quoteCtaEn) && !str(cur.quoteCtaRu)) {
+    Object.assign(data, l3('quoteCta', HOME_QUOTE_CTA));
+    notes.push('düymə: «ADDA-nı yaşa»');
+  }
+  if (Object.keys(data).length) await docs.update({ documentId: cur.documentId, data });
+  await store.set({ key: QUOTE_MARKER, value: true });
+  strapi.log.info(`[home] F5.51: sitat bloku — ${notes.length ? notes.join(', ') : 'admində artıq doludur, toxunulmadı'}.`);
 }
 
 // ── Admin formasının düzümü ─────────────────────────────────────────────────
@@ -140,38 +175,52 @@ const COMP_LAYOUTS: Record<string, { main: string; edit: Cell[][] }> = {
     main: 'title',
     edit: [[{ name: 'image', size: 6 }, { name: 'url', size: 6 }], tri('chip'), tri('title'), tri('note')],
   },
-  'home.video': {
-    main: 'title',
-    edit: [[{ name: 'youtube', size: 8 }, { name: 'hidden', size: 4 }], tri('title')],
-  },
 };
+
+/** Tipin forması (F5.51): sitat bloku öz sahələri ilə bir yerdə. */
+const CT_LAYOUT: Cell[][] = [
+  [{ name: 'heroSlides', size: 12 }],
+  [{ name: 'facts', size: 12 }],
+  [{ name: 'campusCards', size: 12 }],
+  tri('quote'),
+  tri('quoteAttr'),
+  [{ name: 'quoteImage', size: 6 }, { name: 'quoteVideoFile', size: 6 }],
+  [{ name: 'quoteVideo', size: 8 }],
+  tri('quoteCta'),
+];
 
 export async function placeHomeFields(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
-  if ((await store.get({ key: LAYOUT_MARKER })) === true) return;
-  const comps = strapi.plugin('content-manager').service('components') as unknown as {
-    findComponent: (uid: string) => { uid: string } | null | undefined;
-    findConfiguration: (c: { uid: string }) => Promise<Conf>;
-    updateConfiguration: (c: { uid: string }, conf: Conf) => Promise<unknown>;
-  };
+  const v1 = (await store.get({ key: LAYOUT_MARKER })) === true;
+  const v2 = (await store.get({ key: LAYOUT_MARKER_V2 })) === true;
+  if (v1 && v2) return;
   const done: string[] = [];
-  for (const [uid, want] of Object.entries(COMP_LAYOUTS)) {
-    const c = comps.findComponent(uid);
-    if (!c) continue;
-    const conf = await comps.findConfiguration(c);
-    const have = (conf.layouts?.edit ?? []).flat().map((x) => x.name);
-    const need = want.edit.flat().map((x) => x.name);
-    // Yalnız eyni sahə dəsti (yeni komponent) — admin sahə əlavə edib/silibsə toxunulmur.
-    if (have.length !== need.length || need.some((n) => !have.includes(n))) continue;
-    conf.layouts.edit = want.edit;
-    // Bağlı sətrin adı: Strapi defoltu ilk mətn sahəsidir (kicker, value, chip, youtube) — başlıq daha aydındır.
-    const attrs = (strapi.components as unknown as Record<string, { attributes?: Record<string, { type?: string }> }>)[uid]?.attributes ?? {};
-    const firstText = Object.keys(attrs).find((k) => attrs[k]?.type === 'string');
-    const main = conf.settings?.mainField;
-    if (!main || main === 'id' || main === firstText) conf.settings = { ...conf.settings, mainField: want.main };
-    await comps.updateConfiguration(c, { settings: conf.settings, metadatas: conf.metadatas, layouts: conf.layouts });
-    done.push(uid);
+
+  if (!v1) {
+    const comps = strapi.plugin('content-manager').service('components') as unknown as {
+      findComponent: (uid: string) => { uid: string } | null | undefined;
+      findConfiguration: (c: { uid: string }) => Promise<Conf>;
+      updateConfiguration: (c: { uid: string }, conf: Conf) => Promise<unknown>;
+    };
+    for (const [uid, want] of Object.entries(COMP_LAYOUTS)) {
+      const c = comps.findComponent(uid);
+      if (!c) continue;
+      const conf = await comps.findConfiguration(c);
+      const have = (conf.layouts?.edit ?? []).flat().map((x) => x.name);
+      const need = want.edit.flat().map((x) => x.name);
+      // Yalnız eyni sahə dəsti (yeni komponent) — admin sahə əlavə edib/silibsə toxunulmur.
+      if (have.length !== need.length || need.some((n) => !have.includes(n))) continue;
+      conf.layouts.edit = want.edit;
+      // Bağlı sətrin adı: Strapi defoltu ilk mətn sahəsidir (kicker, value, chip) — başlıq daha aydındır.
+      const attrs = (strapi.components as unknown as Record<string, { attributes?: Record<string, { type?: string }> }>)[uid]?.attributes ?? {};
+      const firstText = Object.keys(attrs).find((k) => attrs[k]?.type === 'string');
+      const main = conf.settings?.mainField;
+      if (!main || main === 'id' || main === firstText) conf.settings = { ...conf.settings, mainField: want.main };
+      await comps.updateConfiguration(c, { settings: conf.settings, metadatas: conf.metadatas, layouts: conf.layouts });
+      done.push(uid);
+    }
   }
+
   // Formanın başlığı: Strapi defoltu ilk mətn sahəsidir (sitatın müəllifi) — «id»
   // olanda tək tipin adı («3. Sayt — Ana səhifə») göstərilir.
   const cts = strapi.plugin('content-manager').service('content-types') as unknown as {
@@ -188,20 +237,11 @@ export async function placeHomeFields(strapi: Core.Strapi): Promise<void> {
       conf.settings = { ...conf.settings, mainField: 'id' };
       changed = true;
     }
-    // Sitat sahələri də az/en/ru üçlüyü ilə (yalnız defolt sahə dəsti olanda).
-    const want: Cell[][] = [
-      [{ name: 'heroSlides', size: 12 }],
-      [{ name: 'facts', size: 12 }],
-      [{ name: 'campusCards', size: 12 }],
-      tri('quote'),
-      tri('quoteAttr'),
-      [{ name: 'videos', size: 12 }],
-      [{ name: 'videoChannel', size: 8 }],
-    ];
+    // Yalnız defolt sahə dəsti olanda (admin sahə əlavə edib/silməyibsə).
     const have = (conf.layouts?.edit ?? []).flat().map((x) => x.name);
-    const need = want.flat().map((x) => x.name);
+    const need = CT_LAYOUT.flat().map((x) => x.name);
     if (have.length === need.length && need.every((n) => have.includes(n))) {
-      conf.layouts.edit = want;
+      conf.layouts.edit = CT_LAYOUT;
       changed = true;
     }
     if (changed) {
@@ -209,6 +249,7 @@ export async function placeHomeFields(strapi: Core.Strapi): Promise<void> {
       done.push(UID);
     }
   }
-  await store.set({ key: LAYOUT_MARKER, value: true });
-  strapi.log.info(`[home] F5.50: «Ana səhifə» komponent formaları düzüldü: ${done.length ? done.join(', ') : 'toxunulmadı'}.`);
+  if (!v1) await store.set({ key: LAYOUT_MARKER, value: true });
+  await store.set({ key: LAYOUT_MARKER_V2, value: true });
+  strapi.log.info(`[home] F5.50/F5.51: «Ana səhifə» formaları düzüldü: ${done.length ? done.join(', ') : 'toxunulmadı'}.`);
 }

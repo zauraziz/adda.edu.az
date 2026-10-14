@@ -40,7 +40,11 @@ import { INFO_PAGE_SLUGS } from './utils/info-pages-content';
 import { applyGizClean } from './utils/giz-clean';
 import { applyOrgBlockV1 } from './utils/org-block';
 // F5.50 — ana səhifə admində («3. Sayt — Ana səhifə»): slaydlar, fakt kartları, kampus, sitat, video.
-import { applyHomePageV1, placeHomeFields } from './utils/home-page';
+// F5.51 — sitat bloku əvvəlki dizaynda + admindən video (applyHomeQuoteV1).
+import { applyHomePageV1, applyHomeQuoteV1, placeHomeFields } from './utils/home-page';
+// F5.51 — «3. Sayt — Sertifikatlar», menyu keçidləri; köhnə saytdan xəbər/elan idxalı və 3 tədbir (arxa planda).
+import { applyCertBlockV1, applyCertMenuV1, placeCertFields } from './utils/cert-block';
+import { startLegacyImportF551 } from './utils/news-import';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -73,6 +77,8 @@ const PUBLIC_READ_UIDS = [
   'api::org-block.org-block',
   // F5.50 — ana səhifənin admində idarə olunan blokları (tək tip).
   'api::home-page.home-page',
+  // F5.51 — sertifikatlar (/sertifikatlar, footer zolağı; tək tip).
+  'api::cert-block.cert-block',
   'api::reaction.reaction',
   'api::tag.tag',
   'api::unit.unit',
@@ -231,11 +237,11 @@ const SEED = {
             "links": [
               {
                 "label": "Keyfiyyət siyasəti",
-                "url": "/hazirlanir/keyfiyyet-siyaseti"
+                "url": "/sertifikatlar#keyfiyyet-sahesinde-siyaset"
               },
               {
                 "label": "Akkreditasiya və sertifikatlar",
-                "url": "/hazirlanir/akkreditasiya-ve-sertifikatlar"
+                "url": "/sertifikatlar"
               },
               {
                 "label": "İllik fəaliyyət hesabatları",
@@ -1042,7 +1048,7 @@ const SEED = {
           },
           {
             "label": "Akkreditasiya",
-            "url": "/hazirlanir/akkreditasiya"
+            "url": "/sertifikatlar"
           }
         ]
       },
@@ -2195,7 +2201,22 @@ export default {
       .then(() => placeHomeFields(strapi))
       .catch((e: Error) => strapi.log.error('[home] F5.50 forma: ' + e.message))
       .then(() => applyHomePageV1(strapi))
-      .catch((e: Error) => strapi.log.error('[home] F5.50: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[home] F5.50: ' + e.message))
+      // F5.51 — sitat bloku: video slayder silindi; video/düymə boşdursa defolt, BİR DƏFƏ.
+      .then(() => applyHomeQuoteV1(strapi))
+      .catch((e: Error) => strapi.log.error('[home] F5.51: ' + e.message))
+      // F5.51 — «3. Sayt — Sertifikatlar» (boşdursa) və menyuda «Akkreditasiya və
+      // sertifikatlar», «Keyfiyyət siyasəti», footer «Akkreditasiya» → /sertifikatlar, BİR DƏFƏ.
+      .then(() => applyCertBlockV1(strapi))
+      .catch((e: Error) => strapi.log.error('[cert] F5.51: ' + e.message))
+      .then(() => placeCertFields(strapi))
+      .catch((e: Error) => strapi.log.error('[cert] F5.51 forma: ' + e.message))
+      .then(() => applyCertMenuV1(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.51: ' + e.message))
+      // F5.51 — köhnə saytdan sertifikat skanları, 15.07–14.10.2026 xəbər və
+      // elanları, 3 tədbir — ARXA PLANDA (bax src/utils/news-import.ts).
+      .then(() => startLegacyImportF551(strapi))
+      .catch((e: Error) => strapi.log.error('[news] F5.51: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

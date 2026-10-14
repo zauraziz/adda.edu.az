@@ -1,5 +1,45 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface CertItem extends Struct.ComponentSchema {
+  collectionName: 'components_cert_items';
+  info: {
+    description: 'Akademiyan\u0131n bir sertifikat\u0131 v\u0259 ya keyfiyy\u0259t s\u0259n\u0259di (F5.51).';
+    displayName: 'Sertifikat';
+    icon: 'shield';
+  };
+  attributes: {
+    file: Schema.Attribute.Media<'files' | 'images'>;
+    footer: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    image: Schema.Attribute.Media<'images'>;
+    short: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 90;
+      }>;
+    shortEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 90;
+      }>;
+    shortRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 90;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    titleEn: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    titleRu: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+  };
+}
+
 export interface EventSpeaker extends Struct.ComponentSchema {
   collectionName: 'components_event_speakers';
   info: {
@@ -210,35 +250,6 @@ export interface HomeSlide extends Struct.ComponentSchema {
     titleRu: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;
-      }>;
-  };
-}
-
-export interface HomeVideo extends Struct.ComponentSchema {
-  collectionName: 'components_home_videos';
-  info: {
-    description: 'Ana s\u0259hif\u0259nin video slayderinin bir videosu (YouTube) (F5.50).';
-    displayName: 'Video';
-    icon: 'play';
-  };
-  attributes: {
-    hidden: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    title: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    titleEn: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    titleRu: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    youtube: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 200;
       }>;
   };
 }
@@ -734,13 +745,13 @@ export interface UnitReceptionSlot extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'cert.item': CertItem;
       'event.speaker': EventSpeaker;
       'facility.inventory': FacilityInventory;
       'hero.honor': HeroHonor;
       'home.fact': HomeFact;
       'home.photo': HomePhoto;
       'home.slide': HomeSlide;
-      'home.video': HomeVideo;
       'nav.category': NavCategory;
       'nav.footercol': NavFootercol;
       'nav.group': NavGroup;

@@ -1,0 +1,208 @@
+/**
+ * F5.51 — köhnə saytın (adda.edu.az) 15.07–14.10.2026 xəbər və elanları.
+ * AVTOMATİK YARADILIB — ƏL İLƏ DƏYİŞDİRMƏ: tools/migration/f551-news.mjs
+ * (mənbə tools/migration/data/f551-oldsite.json, redaktələr orada sadalanıb).
+ *
+ * Seed: src/utils/news-import.ts (`newsImport:v1`). Şəkil və PDF yolları köhnə
+ * saytdakı yoldur — seed endirib media kitabxanasına yükləyir; mətndəki
+ * {{file:N}} yüklənən PDF-in ünvanı ilə əvəz olunur. Köhnə URL-lər
+ * (news/1985 …) adda-nextjs/lib/legacy-redirects.ts-dədir (gen-redirects.mjs → IMPORTED).
+ */
+
+export interface ImportArticle {
+  legacy: string;
+  slug: string;
+  title: string;
+  /** Köhnə saytdakı dərc vaxtı (Bakı). */
+  date: string;
+  hero: string;
+  gallery: string[];
+  body: string;
+}
+
+export interface ImportFile {
+  path: string;
+  /** Media kitabxanasında fayl adı (uzantısız). */
+  name: string;
+  /** Saytda «Sənədlər» siyahısında görünən ad. */
+  label: string;
+}
+
+export interface ImportAnnouncement {
+  legacy: string;
+  slug: string;
+  title: string;
+  date: string;
+  files: ImportFile[];
+  body: string;
+}
+
+export const IMPORT_ARTICLES: ImportArticle[] = [
+  {
+    "legacy": "news/1985",
+    "slug": "adda-numayende-heyeti-cin-xalq-respublikasinda-isguzar-seferde-olub",
+    "title": "ADDA nümayəndə heyəti Çin Xalq Respublikasında işgüzar səfərdə olub",
+    "date": "2026-08-31T10:00:00+04:00",
+    "hero": "/uploads/news/1788174058_WhatsApp_Image_2026_08_29_at_12.45.13s.jpeg",
+    "gallery": [
+      "/uploads/news/news_in/e824f89fa8fcf8844ab536f909054cd1.jpeg",
+      "/uploads/news/news_in/2c7712cec2c3dbfc7732a61fcd697756.jpeg",
+      "/uploads/news/news_in/a14e3ed20f0ff7cbd935fa49000e4ddd.jpeg",
+      "/uploads/news/news_in/a9d4e0c9b53baab416d80600e02e45fa.jpeg",
+      "/uploads/news/news_in/e4fc864d078b73f086e73260a09e8274.jpeg",
+      "/uploads/news/news_in/838d8b5339b0287480526c2bb3156b39.jpeg",
+      "/uploads/news/news_in/8c3218ec89ff133b661142e91047665a.jpeg",
+      "/uploads/news/news_in/9c64c0755185e48323a1b0c53c2461d9.jpeg",
+      "/uploads/news/news_in/cb8ecdfdb5f3da05b9f916951e291001.jpeg",
+      "/uploads/news/news_in/958f0c878a038480105ff494fba7dcff.jpeg"
+    ],
+    "body": "Azərbaycan Dövlət Dəniz Akademiyasının (ADDA) nümayəndə heyəti 2026-cı il avqustun 22–28-i tarixlərində Çin Xalq Respublikasında işgüzar səfərdə olub. Səfər Harbin və Çindao şəhərlərində “Ağıllı Avrasiya, Ortaq Rifah” devizi altında keçirilən Qərbi Asiya və Şərqi Avropa Kadr Mübadiləsi Forumu çərçivəsində baş tutub. Harbin Mühəndislik Universiteti və onun Çindao İnnovasiya və İnkişaf Bazası tərəfindən təşkil edilən mötəbər forumda ölkəmiz Azərbaycan Dövlət Dəniz Akademiyası (ADDA), “ASCO Engineering” və Elm və Təhsil Nazirliyinin Riyaziyyat və Mexanika İnstitutunun təmsilçilərindən ibarət heyətlə təmsil olunub.\n\nForumda Azərbaycan ilə yanaşı Çin, Böyük Britaniya, Ukrayna, Moldova, Belarus, Gürcüstan, Qazaxıstan, Rumıniya, Bolqarıstan və Xorvatiyanı təmsil edən aparıcı universitetlər, elmi-tədqiqat institutları və dənizçilik sənayesinin aparıcı şirkətləri iştirak ediblər.\n\nSəfər proqramı çərçivəsində avqustun 23-də ADDA nümayəndə heyəti Harbin Mühəndislik Universitetinin ev sahibliyi etdiyi “Təsvirlərin Tanınması və Maşın Görməsi üzrə IX Çin Konfransı”nda (PRCV 2026) iştirak edib. Həmçinin heyət universitetin İntellektual Sistemlər Elmi və Mühəndisliyi Kollecinin müasir laboratoriyaları və Gəmiçilik Muzeyi ilə tanış olub.\n\nMəlumat verilib ki, sözügedən kollecdə milli və nazirlik səviyyəli 15 tədris-elmi platforma, eləcə də beynəlxalq şirkətlərlə birgə yaradılmış 10-dan çox laboratoriya fəaliyyət göstərir. Çinin ilk DP3 səviyyəli dinamik mövqeləndirmə sisteminin hazırlandığı bu mərkəzdə ADDA heyəti robototexnika, Sənaye 4.0 və intellektual nəqliyyat vasitələri üzrə laboratoriyaların iş prinsipi və tələbə innovasiya komandalarının fəaliyyət modeli ilə yaxından tanış olublar.\n\nSəfərin Harbin mərhələsi avqustun 25-də sənaye müəssisələrinə - qaz turbini istehsalı müəssisəsinə və müasir hesablama mərkəzinə başçəkmə ilə yekunlaşıb.\n\nAvqustun 26-da forum Çindao şəhərində işini davam etdirib. Dəvətli məruzələr bölməsində Akademiyanın *“Xəzər regionu intellektual gəmiçilik yolunda: texnologiyalar, kadr hazırlığı və beynəlxalq akademik əməkdaşlıq”* mövzusunda geniş təqdimatı dinlənilib.\n\nÇıxış zamanı Xəzər dənizinin unikal əməliyyat mühiti — qapalı hövzə dinamikası, mövsümi buzlaşma, dayaz sahələr və həssas ekologiya — və bu şəraitin xüsusi gəmiçilik həlləri tələb etməsi əsaslandırılıb. Eyni zamanda, Akademiyanın \"Azərbaycan Xəzər Dəniz Gəmiçiliyi\" QSC (ASCO) strukturunda fəaliyyəti, tədris prosesinin Beynəlxalq Dəniz Təşkilatının (IMO) və STCW Konvensiyasının tələblərinə uyğunluğu, modern trenajor bazası və Təlim-Tədris Mərkəzinin geniş imkanları diqqətə çatdırılıb. Böyük maraqla qarşılanan təqdimatdan sonra həm xarici universitet, həm də sənaye nümayəndələri tərəfindən Akademiyaya konkret əməkdaşlıq təklifləri olunub.\n\nAlyans üzvlüyü Azərbaycan Dövlət Dəniz Akademiyası üçün bir sıra strateji istiqamətlərdə geniş imkanlar açır:\n\n- **Birgə təlim və ixtisaslaşma:** ADDA-nın Trenajor bazası və Təlim-Tədris Mərkəzinin imkanları əsasında beynəlxalq sertifikatlı birgə təlim modullarının və qısamüddətli ixtisas kurslarının təşkili;\n- **Prioritet elmi tədqiqatlar:** Qapalı və dayaz hövzələr üçün xüsusi gəmilərin layihələndirilməsi, məhdud şəraitdə avtonom naviqasiya, hidrodinamika və enerji səmərəliliyi, dəniz mühitinin ekoloji monitorinqi və intellektual gəmiçilik üçün yüksəkixtisaslı kadr təminatı üzrə birgə tədqiqatlar;\n- **Elmi inteqrasiya və laboratoriya konsepsiyası:** Akademiyanın elmi fəaliyyət uçotu sisteminin Alyansın birgə elmi nəticələrinin izlənməsi platforması kimi tətbiqi və “Xəzərin intellektual dəniz sistemləri” birgə laboratoriya konsepsiyasının işlənməsi;\n- **Akademik mübadilə:** Müəllim və tələbə mübadiləsinin həyata keçirilməsi, birgə elmi nəşrlərin hazırlanması və beynəlxalq simpozium və konfransların təşkili.\n\nQeyd olunub ki, əldə olunan bu tarixi razılaşmalar və beynəlxalq Alyansa üzvlük Akademiyanın qlobal elmi şəbəkələrə inteqrasiyasına, dənizçilik təhsilində süni intellekt və rəqəmsal texnologiyaların geniş tətbiqinə, eləcə də Xəzər regionunun dəniz kadr potensialının gücləndirilməsinə mühüm töhfə verəcəkdir."
+  },
+  {
+    "legacy": "news/1986",
+    "slug": "2026-ci-ilde-adda-ya-qebul-neticeleri-aciqlanib",
+    "title": "2026-cı ildə ADDA-ya qəbul nəticələri açıqlanıb",
+    "date": "2026-09-02T10:00:00+04:00",
+    "hero": "/uploads/news/1788347623_721281788264320.jpg",
+    "gallery": [],
+    "body": "2026/2027-ci tədris ili üzrə “Azərbaycan Xəzər Dəniz Gəmiçiliyi” QSC-nin (ASCO) Azərbaycan Dövlət Dəniz Akademiyasına (ADDA) qəbulun nəticələri açıqlanıb.\n\nBakalavr pilləsində 2 nəfər 600 baldan yuxarı nəticə göstərib və hər ikisi akademiyanın Dəniz naviqasiyası mühəndisliyi ixtisasını seçib. 612,4 balla qəbul olan tələbə ingilis dili, 608,8 bal toplayan tələbə isə Azərbaycan dili bölməsində təhsil alacaq.\n\nÜmumilikdə bakalavriat üzrə 500-dən yuxarı bal toplayan 19 tələbə, 400-dən yuxarı nəticə göstərən isə 50 tələbə var. Onlar da Dəniz naviqasiyası mühəndisliyi, eləcə də Gəmi energetik qurğularının istismarı mühəndisliyi ixtisaslarına üstünlük veriblər.\n\nMagistratura səviyyəsində ən yüksək göstərici 69,5 bal olub. Bu nəticəni əldə edən tələbə Gəmiçiliyin idarə edilməsi ixtisasını seçib.\n\nYeni tədris ilində ümumilikdə 383 tələbə bakalavriat, 37 tələbə isə magistratura səviyyəsində təhsil almaq hüququ qazanıb.\n\n2026-cı ildə 30 illik yubileyini qeyd edən Dəniz Akademiyası Azərbaycanda ali təhsilli dənizçi kadrlar hazırlayan yeganə ixtisaslaşmış ali təhsil müəssisəsidir. Beynəlxalq Dənizçilik Ali Məktəbləri Assosiasiyasının üzvü olan ADDA dünyanın 11 ölkəsinin 18 universiteti ilə əməkdaşlıq edir.\n\nADDA-nın diplomu 170-dən çox ölkədə tanınır. Bu, Akademiyanın məzunlarına həm Azərbaycan, həm də beynəlxalq əmək bazarında geniş karyera imkanları yaradır.\n\n[Videoreportaj (YouTube)](https://www.youtube.com/watch?v=OOw6doVwa_o)"
+  },
+  {
+    "legacy": "news/1987",
+    "slug": "azerbaycan-dovlet-deniz-akademiyasinda-bilik-gunu-ve-yeni-tedris-ilinin-baslanma",
+    "title": "Azərbaycan Dövlət Dəniz Akademiyasında Bilik Günü və yeni tədris ilinin başlanması münasibətilə tədbir keçirilib",
+    "date": "2026-09-15T11:00:00+04:00",
+    "hero": "/uploads/news/1789462711_yti_2026_6.jpg",
+    "gallery": [
+      "/uploads/news/news_in/b19633c5d0af796cba6c36e56870a7f0.jpg",
+      "/uploads/news/news_in/050b4c60c7dd6fa18765dc08505aa38d.jpg",
+      "/uploads/news/news_in/ae4823d1840f834ef321b245aab40909.jpg",
+      "/uploads/news/news_in/4534bc35e4c3853930e7812913f19462.jpg",
+      "/uploads/news/news_in/3b1efa6979687329c14ca5846e7d5376.jpg",
+      "/uploads/news/news_in/6619faa1c25a84897e2dd65cbd60abfe.jpg",
+      "/uploads/news/news_in/82bd5149da58ab4cb0d7f826f2537a08.jpg",
+      "/uploads/news/news_in/d087128a1f07ee9a2356834dca2d10fc.jpg",
+      "/uploads/news/news_in/d91697ff06fd02bea7f903cce91f4808.jpg"
+    ],
+    "body": "**15 sentyabr 2026-cı il** - Azərbaycan Dövlət Dəniz Akademiyasında (ADDA) 15 sentyabr - Bilik Günü və 2026/2027-ci tədris ilinin başlanmasına həsr olunmuş tədbir təşkil edilib. Tədbirdə Akademiyanın rəhbərliyi, professor-müəllim heyəti, yüksək balla qəbul olunmuş tələbələr, valideynlər və dəvət olunmuş qonaqlar iştirak ediblər.\n\nTədbir Azərbaycan Respublikasının Dövlət Himninin səsləndirilməsi ilə açıq elan olunub.\n\nMərasimdə çıxış edən ADDA-nın Tədrisin təşkili və idarəedilməsi üzrə prorektoru, dosent İradə Süleymanova professor-müəllim heyətini və akademik mühitə yeni qədəm qoyan tələbələri yeni tədris ili münasibətilə təbrik edib. Prorektor öz nitqində Akademiyanın yeni tədris ili üzrə strateji hədəflərini və prioritet istiqamətlərini diqqətə çatdıraraq, tələbələrə gələcək peşəkar fəaliyyətlərində müvəffəqiyyətlər arzulayıb.\n\nTədris prosesinin təşkili şöbəsinin müdiri, dosent Əsədullah Süleymanov ali təhsil müəssisəsinin zəngin tarixi ənənələri və milli dənizçilik kadrlarının hazırlanmasında oynadığı müstəsna rol barədə ətraflı məlumat verib. O, tələbələrə dənizçilik peşəsinin strateji əhəmiyyətini və yüksək məsuliyyətini xatırladaraq, bu ənənələri layiqincə davam etdirməyi tövsiyə edib.\n\nFakültə dekanları çıxışlarında dənizçilik və mühəndislik təhsilinin müasir dövrdəki əhəmiyyətini vurğulayıblar. Qeyd olunub ki, rəqabətədavamlı kadr hazırlığında nəzəri biliklərlə yanaşı, praktiki bacarıqlar, intizam və peşə məsuliyyəti həlledici amillərdəndir. Dekanlar yeni qəbul olan tələbələrin akademik mühitə adaptasiyası üçün lazımi tövsiyələr verərək, onları tədris prosesində fəal olmağa çağırıblar.\n\nBirinci kurs tələbələri adından “Dəniz naviqasiyası mühəndisliyi” ixtisasının ingilis bölməsinə 612 bal toplayaraq qəbul olunmuş Mirzəhüseyn Nəsirov çıxış edib. O, yüksək akademik göstəricilərlə Akademiyanın tələbəsi adını qazanmasından qürur duyduğunu bildirib, gələcək peşəkar hədəfləri və gözləntiləri barədə təəssüratlarını bölüşüb.\n\nValideynlər adından söz alan Əlvan Əsgərov ADDA-nın təhsil keyfiyyətinə və pedaqoji heyətinə olan yüksək etimadı ifadə edərək, tələbələrə yeni tədris ilində müvəffəqiyyətlər arzulayıb.\n\nTədbir Akademiyanın rəsmi Himninin səsləndirilməsi və rəhbərlik, müəllim heyəti, tələbələr və valideynlərin iştirakı ilə xatirə fotosunun çəkdirilməsi ilə yekunlaşıb."
+  },
+  {
+    "legacy": "news/1988",
+    "slug": "20-sentyabr-dovlet-suverenliyi-gunu",
+    "title": "20 sentyabr - Dövlət Suverenliyi Günü",
+    "date": "2026-09-20T07:00:00+04:00",
+    "hero": "/uploads/news/1789887425_dovsuv_1.jpg",
+    "gallery": [],
+    "body": "20 sentyabr Azərbaycan tarixində dövlət suverenliyinin tam bərpa olunması ilə bağlı xüsusi məna daşıyan gündür. Prezident **İlham Əliyevin** 2024-cü il 19 sentyabr tarixində imzaladığı sərəncamla 20 sentyabr Azərbaycan Respublikasında Dövlət Suverenliyi Günü elan edilib. Bu tarixə gətirib çıxaran proses isə bir günün və ya bir ilin hadisəsi deyil. Onun kökləri Birinci Qarabağ müharibəsinə, Azərbaycanın ərazilərinin işğalına, etnik təmizləmə və ağır humanitar faciələrə, daha sonra isə 2020-ci il Vətən müharibəsi və 2023-cü ilin sentyabrında həyata keçirilmiş antiterror əməliyyatına gedib çıxır."
+  },
+  {
+    "legacy": "news/1989",
+    "slug": "azerbaycan-dovlet-deniz-akademiyasinda-27-sentyabr-anim-gunu-qeyd-olunub",
+    "title": "Azərbaycan Dövlət Dəniz Akademiyasında 27 Sentyabr – Anım Günü qeyd olunub",
+    "date": "2026-09-25T15:00:00+04:00",
+    "hero": "/uploads/news/1790341004_WhatsApp_Image_2026_09_25_at_13.15.23.jpeg",
+    "gallery": [
+      "/uploads/news/news_in/3beac36f8acef9e4f2ded22d9acef945.jpeg",
+      "/uploads/news/news_in/feda78de84c6fed1112b5763e42a3944.jpeg",
+      "/uploads/news/news_in/bc60004851976fef3fb8edd2783d431d.jpeg",
+      "/uploads/news/news_in/85c641315b7fdc51629dddd8efd286dd.jpeg",
+      "/uploads/news/news_in/f3c7c37da210d0f3ef720c0c1f432c6e.jpeg",
+      "/uploads/news/news_in/02aa93ff3037c8da7df3e0845342dd70.jpeg",
+      "/uploads/news/news_in/f49d1a073262031c8c0efd8524c7f20b.jpeg",
+      "/uploads/news/news_in/a0fb4bf0dbbd52f5ef32b2854a4b0692.jpeg",
+      "/uploads/news/news_in/80316922e7466bc9ad2f75939ea4a2c9.jpeg",
+      "/uploads/news/news_in/76a5786a8c27049b46399c5139035cfd.jpeg",
+      "/uploads/news/news_in/a6f385dcb6d50ef6dc6fd5ea9dd76708.jpeg",
+      "/uploads/news/news_in/52839769e50a382a7f88205c5913318a.jpeg",
+      "/uploads/news/news_in/be920ef67dd59d1817f8d0d22ef36a20.jpeg",
+      "/uploads/news/news_in/433ca370b980d5231ee6dde5c52d13be.jpeg"
+    ],
+    "body": "Azərbaycan Dövlət Dəniz Akademiyasında (ADDA) 27 Sentyabr – Anım Gününə həsr olunmuş tədbir keçirilib.\n\nTədbirdə Akademiyanın rəhbərliyi, professor-müəllim heyəti, əməkdaşları, Vətən müharibəsi iştirakçıları və qaziləri, eləcə də tələbələr iştirak ediblər.\n\nTədbirin əvvəlində Azərbaycan Respublikasının ərazi bütövlüyü və suverenliyi uğrunda canlarından keçmiş Vətən övladlarının əziz xatirəsi bir dəqiqəlik sükutla yad edilib.\n\nTədbiri giriş sözü ilə açan Humanitar fənlər kafedrasının müdiri, dosent İlqar Abdullayev 27 Sentyabr – Anım Gününün Azərbaycan xalqının tarixində və milli yaddaşında xüsusi yer tutduğunu bildirib. O, Vətən uğrunda şəhidlik zirvəsinə ucalmış qəhrəmanlarımızın xatirəsinin daim ehtiramla yad ediləcəyini, onların göstərdiyi şücaət və vətənpərvərlik nümunəsinin gənc nəslin milli ruhda yetişdirilməsində mühüm əhəmiyyət daşıdığını vurğulayıb.\n\nAkademiyanın tədrisin təşkili və idarə edilməsi üzrə prorektoru İradə Süleymanova çıxış edərək 27 Sentyabr – Anım Gününün xalqımızın yaddaşında qəhrəmanlıq, birlik və Vətənə sədaqət rəmzi kimi əbədi yaşayacağını qeyd edib. O, Azərbaycanın ərazi bütövlüyü və suverenliyi uğrunda şəhid olmuş hərbi qulluqçularımızın xatirəsinin daim uca tutulduğunu, qazilərimizin və müharibə iştirakçılarının keçdiyi döyüş yolunun gənc nəslin vətənpərvərlik tərbiyəsində mühüm nümunə olduğunu bildirib. İradə Süleymanova Akademiyada gənclərin milli-mənəvi dəyərlərə, dövlətçilik ənənələrinə və Vətənə sədaqət ruhunda yetişdirilməsinin daim diqqət mərkəzində saxlanıldığını vurğulayıb.\n\nTədbirdə I və II Qarabağ müharibələrinin iştirakçısı, müharibə veteranı, hüquq elmləri doktoru, professor, polkovnik Nəsir Hüseynov çıxış edərək keçdiyi döyüş yolu, Azərbaycan hərbçilərinin göstərdiyi qəhrəmanlıq və Vətən qarşısında xidmətin mənəvi məsuliyyəti barədə danışıb.\n\n“Gəmi elektroavtomatikası” kafedrasının müəllimi, Vətən müharibəsi iştirakçısı Ruslan Əlicanov çıxışında 44 günlük Vətən müharibəsi zamanı Azərbaycan Ordusunun göstərdiyi qəhrəmanlıqdan, döyüş yoldaşlarının şücaətindən və xatirələrindən söz açıb. Ruslan Əlicanovun Füzuli, Zəngilan, Qubadlı və Xocəvənd istiqamətlərində gedən döyüşlərdə iştirak etdiyi və göstərdiyi xidmətlərə görə bir sıra medallarla təltif olunduğu qeyd edilib.\n\nAzərbaycan Dövlət Dəniz Akademiyasının “Dəniz naviqasiyası mühəndisliyi” ixtisası üzrə V kurs tələbəsi, Vətən müharibəsi qazisi Cavid Məhərrəmli də tədbirdə çıxış edib. O, döyüşlərdə iştirakından, Suqovuşan döyüşləri zamanı yaralanmasından və döyüş yoldaşları ilə bağlı xatirələrindən danışıb. Cavid Məhərrəmli gəncləri dövlətə, Vətənə və milli dəyərlərə daim sədaqətli olmağa çağırıb.\n\nAkademiyanın məzunu, Vətən müharibəsi qazisi Yaqub Kazımov çıxışında Tərtər, Ağdərə, Talışkənd və Suqovuşan istiqamətlərində gedən döyüşlər zamanı yaşadıqlarını iştirakçılarla bölüşüb. O, Azərbaycan əsgərinin yüksək döyüş ruhunun, xalq–ordu birliyinin və Vətən sevgisinin tarixi Qələbənin mühüm amillərindən olduğunu qeyd edib.\n\n“Gəmi energetik qurğularının istismarı mühəndisliyi” ixtisası üzrə II kurs tələbəsi Alsu Bədirova şəhidlərin əziz xatirəsinə və Vətən mövzusuna həsr etdiyi müəllif şeirini səsləndirib.\n\nTədbir çərçivəsində Akademiyanın professor-müəllim heyətinin nümayəndələri və tələbələr də çıxış edərək şəhidlərimizin qəhrəmanlığından, Vətən müharibəsinin Azərbaycan tarixindəki əhəmiyyətindən və gənc nəslin vətənpərvərlik ruhunda yetişdirilməsinin vacibliyindən danışıblar. Çıxışlarda şəhid ailələrinə və qazilərə göstərilən diqqət və ehtiramın hər bir vətəndaşın mənəvi borcu olduğu vurğulanıb.\n\nTədbirdə çıxış edənlər 44 günlük Vətən müharibəsində qazanılmış tarixi Qələbənin xalqımızın birliyi, Azərbaycan Ordusunun gücü, şəhidlərimizin fədakarlığı və qazilərimizin qəhrəmanlığı sayəsində əldə olunduğunu diqqətə çatdırıblar.\n\nSonda şəhidlərin əziz xatirəsinin Azərbaycan xalqının qəlbində əbədi yaşayacağı, onların qəhrəmanlıq yolunun gələcək nəsillər üçün vətənpərvərlik, mərdlik və Vətənə sədaqət nümunəsi olaraq qalacağı vurğulanıb.\n\nTədbir Humanitar fənlər kafedrasının müdiri, dosent İlqar Abdullayevin yekun çıxışı ilə başa çatıb.\n\nŞəhidlərimizi ehtiramla anır, qazilərimizə möhkəm cansağlığı arzulayırıq."
+  },
+  {
+    "legacy": "news/1990",
+    "slug": "5-oktyabr-beynelxalq-muellimler-gunudur",
+    "title": "5 Oktyabr - Beynəlxalq Müəllimlər Günüdür",
+    "date": "2026-10-05T10:05:00+04:00",
+    "hero": "/uploads/news/1791186035_5_Oktyabr.jpeg.jpg",
+    "gallery": [
+      "/uploads/news/news_in/3d0a76d737e559d361b5362c1673e93f.jpg"
+    ],
+    "body": "5 Oktyabr bütün dünyada Beynəlxalq Müəllimlər Günü kimi qeyd olunur. Bu əlamətdar gün 1994-cü ildə UNESCO və Birləşmiş Millətlər Təşkilatının Təhsil bölməsi tərəfindən təsis edilib. 1966-cı il oktyabrın 5-də \"Müəllimlərin vəziyyəti haqqında\" beynəlxalq tövsiyə sənədi qəbul olunub. Məhz bu gün sonrakı illərdə Beynəlxalq Müəllimlər Günü kimi qeyd olunmağa başlayıb. Bu, bütün dünyada müəllimlərin iş şəraitini müəyyən edən ilk sənəd idi və cəmiyyətin inkişafına verdiyi mühüm töhfələrə görə dünyanın bütün maarifçilərinə həsr olunur."
+  }
+];
+
+export const IMPORT_ANNOUNCEMENTS: ImportAnnouncement[] = [
+  {
+    "legacy": "announce/520",
+    "slug": "felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2026",
+    "title": "Fəlsəfə doktoru proqramı üzrə «Fəlsəfə» fənnindən qəbul imtahanı verəcək iddiaçıların nəzərinə!",
+    "date": "2026-08-18T07:54:00+04:00",
+    "files": [
+      {
+        "path": "/uploads/dok.sual (1).pdf",
+        "name": "felsefe-imtahan-suallari-2026",
+        "label": "Fəlsəfə: imtahan sualları"
+      },
+      {
+        "path": "/uploads/proq_az_bol.pdf",
+        "name": "felsefe-doktorantura-proqrami-2026",
+        "label": "Fəlsəfə: doktorantura proqramı"
+      }
+    ],
+    "body": "Azərbaycan Dövlət Dəniz Akademiyasında 02.09.2026-cı il tarixində saat 11.00-da “Fəlsəfə” fənnindən doktoranturaya qəbul imtahanı keçiriləcək.\n\nİmtahan proqramı və suallarla aşağıdakı linklərdən tanış ola bilərsiniz:\n\n**Yüklə:** [Fəlsəfə: imtahan sualları (PDF)]({{file:0}})\n\n**Yüklə:** [Fəlsəfə: doktorantura proqramı (PDF)]({{file:1}})"
+  },
+  {
+    "legacy": "announce/521",
+    "slug": "adda-nin-doktorant-magistrant-ve-genc-tedqiqatcilarinin-nezerine",
+    "title": "ADDA-nın doktorant, magistrant və gənc tədqiqatçılarının nəzərinə",
+    "date": "2026-08-20T11:09:00+04:00",
+    "files": [],
+    "body": "**ADDA-nın doktorant, magistrant və gənc tədqiqatçılarının nəzərinə: NASCO 29 elmi konfransına sənəd qəbulu davam edir**\n\nAzərbaycan Dövlət Dəniz Akademiyasının doktorantları, magistrantları və gənc tədqiqatçıları 15–16 oktyabr 2026-cı il tarixlərində Naxçıvan Dövlət Universitetində keçiriləcək Doktorantların və gənc tədqiqatçıların XXIX Respublika Elmi Konfransında (NASCO 29) iştiraka dəvət olunur.\n\n**Konfransla bağlı əsas məlumatlar:**\n\n- **Keçirilmə tarixi:** 15–16 oktyabr 2026-cı il\n- **Sənəd qəbulu üçün son tarix:** 1 oktyabr 2026-cı il\n- **İştirak formatı:** Əyani və distant (onlayn videokonfrans).\n\n**Qeyd:** Qaydalara əsasən, hər bir təhsil müəssisəsi üzrə iştirakçıların maksimum 30%-nin distant formatda iştirakı mümkündür. Distant iştirakla bağlı müraciətlərə baxılarkən təqdim edilən məqalələrin tədqiqat istiqamətləri xüsusi olaraq nəzərə alınacaqdır.\n\nKonfransda iştirak etmək istəyən şəxslər əlavə məlumat və sənəd qəbulu üçün ADDA-nın müvafiq kafedralarına və ya Elmi tədqiqat və beynəlxalq əlaqələr şöbəsinə müraciət edə bilərlər."
+  },
+  {
+    "legacy": "announce/522",
+    "slug": "azerbaycan-dovlet-deniz-akademiyasina-adda-qebul-olan-abituriyentlerin-nezerine",
+    "title": "Azərbaycan Dövlət Dəniz Akademiyasına (ADDA) qəbul olan abituriyentlərin nəzərinə",
+    "date": "2026-08-25T03:20:00+04:00",
+    "files": [],
+    "body": "**Azərbaycan Dövlət Dəniz Akademiyası tələbə adı qazanmış bütün gəncləri təbrik edir, onlara gələcək təhsillərində müvəffəqiyyətlər arzulayır!**\n\n### 1. Elektron qeydiyyat\n\nAli təhsil müəssisələrinə qəbul olunan abituriyentlərin qeydiyyatı **28.08.2026 – 08.09.2026** tarixləri arasında (saat **18:00-dək**) keçiriləcəkdir.\n\nQəbul olunan şəxslər qeydiyyat üçün:\n\n1. Əvvəlcə **mygov ID** (vahid giriş sistemi) vasitəsilə **my.gov.az** portalındakı şəxsi kabinetlərinə daxil olmalıdırlar.\n2. Daha sonra portalın **“Xidmətlər”** bölməsinin **“Qurumlar”** kateqoriyasından **Elm və Təhsil Nazirliyini** seçməlidirlər.\n3. Burada təqdim olunan **“Ali və orta ixtisas təhsil müəssisələrinə təhsilalanların qeydiyyatı”** xidmətinə keçid edərək qeydiyyatı tamamlamalıdırlar.\n\n**Diqqət!**\n\n**portal.edu.az** saytında qeydiyyatdan keçməyən şəxslər Dövlət İmtahan Mərkəzi (DİM) tərəfindən qəbul olunmamış şəxs kimi hesab ediləcək və barəsində qəbul əmri verilməyəcəkdir.\n\n### 2. Sənədlərin təqdim edilməsi\n\n**portal.edu.az** portalında qeydiyyatdan keçmiş tələbələr **07.09.2026 – 11.09.2026-cı il** tarixləri arasında, hər gün saat **09:00-dan 16:00-dək** aşağıdakı sənədləri Akademiyanın əsas tədris binasına təqdim etməlidirlər:\n\n1. Şəxsiyyət vəsiqəsinin surəti (2 nüsxə);\n2. Attestat;\n3. Çağırışçı şəhadətnaməsi və ya hərbi biletin əsli və surəti;\n4. Tibbi arayış (forma 086);\n5. Narkoloji və psixoloji dispanserdən arayış;\n6. 8 ədəd 3x4 ölçülü fotoşəkil;\n7. Ödənişli tələbələr üçün ödəniş haqqında qəbzin surəti;\n8. İmtiyazlı tələbələr üçün imtiyazlı olduğunu təsdiq edən sənədin notarial qaydada təsdiq olunmuş surəti;\n9. Yaşayış yerindən arayış.\n\n### 3. Subbakalavrlar üçün əlavə sənədlər\n\nSubbakalavr əsasında qəbul olunan tələbələr yuxarıda göstərilən sənədlərə əlavə olaraq aşağıdakı sənədləri də təqdim etməlidirlər:\n\n- Diplom və diploma əlavəsinin əsli və surəti;\n- İş yerindən arayış;\n- Dənizçinin tibbi kitabçasının surəti;\n- Hərbi biletin surəti.\n\n**Ünvan:** Bakı şəhəri, Zərifə Əliyeva küçəsi 18 (Sahil metrosunun yaxınlığında)\n\n**Əlavə qeyd**\n\nAkademiyada qeydiyyat zamanı əyani təhsilalma forması üzrə qəbul olan tələbələrin yataqxanaya yerləşdirilmə üçün ərizələri qəbul ediləcəkdir."
+  },
+  {
+    "legacy": "announce/523",
+    "slug": "felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2026",
+    "title": "Fəlsəfə doktoru proqramı üzrə ixtisas fənnindən qəbul imtahanı verəcək iddiaçıların nəzərinə!",
+    "date": "2026-08-26T04:11:00+04:00",
+    "files": [
+      {
+        "path": "/uploads/3319_01.pdf",
+        "name": "3319-01-imtahan-suallari-2026",
+        "label": "3319.01 «Gəmiçilik texnikası»: imtahan sualları"
+      },
+      {
+        "path": "/uploads/3319_01_GEA.pdf",
+        "name": "3319-01-gea-imtahan-suallari-2026",
+        "label": "3319.01 «Gəmiçilik texnikası» (GEA): imtahan sualları"
+      },
+      {
+        "path": "/uploads/3319_02.pdf",
+        "name": "3319-02-imtahan-suallari-2026",
+        "label": "3319.02 «Gəmiçilik və su nəqliyyatının istismarı»: imtahan sualları"
+      },
+      {
+        "path": "/uploads/3319_03.pdf",
+        "name": "3319-03-imtahan-suallari-2026",
+        "label": "3319.03 «Gəmiqayırma və gəmi təmiri texnologiyası»: imtahan sualları"
+      }
+    ],
+    "body": "Azərbaycan Respublikası Nazirlər Kabinetinin 2010-cu il 1 iyul tarixli 129 nömrəli qərarı ilə təsdiq edilmiş “Doktoranturaların yaradılması və doktoranturaya qəbul Qaydaları”na və həmin qaydalarda dəyişiklik edilməsi barədə Nazirlər Kabinetinin 2019-cu il 13 noyabr tarixli 443 nömrəli qərarına müvafiq olaraq, doktorantura səviyyəsinə qəbul olunmaq istəyən namizədlər xarici dil, fəlsəfə və ixtisas fənləri üzrə ali təhsil pilləsinin magistratura səviyyəsi üçün qüvvədə olan tədris proqramları həcmində qəbul imtahanları verirlər.\n\nİxtisas fənni üzrə qəbul imtahanına yalnız “Fəlsəfə” fənnindən “məqbul” qiyməti almış şəxslər buraxılırlar.\n\n### İxtisas fənləri üzrə imtahan qrafiki və proqramlar\n\n#### 1. İxtisas: 3319.01 – “Gəmiçilik texnikası”\n\n**İmtahan tarixi və saatı:** 09 sentyabr 2026-cı il | Saat 11:00\n\n**İmtahan sualları:** [3319_01.pdf]({{file:0}}), [3319_01_GEA.pdf]({{file:1}})\n\n#### 2. İxtisas: 3319.02 – “Gəmiçilik və su nəqliyyatının istismarı”\n\n**İmtahan tarixi və saatı:** 08 sentyabr 2026-cı il | Saat 14:00\n\n**İmtahan sualları:** [3319_02.pdf]({{file:2}})\n\n#### 3. İxtisas: 3319.03 – “Gəmiqayırma və gəmi təmiri texnologiyası”\n\n**İmtahan tarixi və saatı:** 10 sentyabr 2026-cı il | Saat 11:00\n\n**İmtahan sualları:** [3319_03.pdf]({{file:3}})\n\n**Təşkilati qeyd:**\n\nİmtahanın keçiriləcəyi auditoriyanın müəyyənləşdirilməsi və digər təşkilati məsələlərlə bağlı iddiaçıların **423-cü otağa** müraciət etmələri xahiş olunur."
+  },
+  {
+    "legacy": "announce/524",
+    "slug": "heyder-eliyev-ve-azerbaycan-tarixi-x-umumrespublika-bilik-yarisi",
+    "title": "“Heydər Əliyev və Azərbaycan tarixi” X ümumrespublika bilik yarışı",
+    "date": "2026-09-23T01:13:00+04:00",
+    "files": [],
+    "body": "**Hörmətli tələbələr!**\n\nBu ilin noyabr ayında Heydər Əliyev Mərkəzində Ümummilli liderimizin zəngin həyatının, çoxşaxəli fəaliyyətinin və irsinin dərindən öyrənilməsi məqsədilə ali təhsil müəssisələrinin tələbələri arasında **“Heydər Əliyev və Azərbaycan tarixi”** X ümumrespublika bilik yarışı keçiriləcək.\n\nBiz də Azərbaycan Dövlət Dəniz Akademiyası olaraq həmişəki kimi yarışda iştirak etməyi özümüzə borc bilirik! Odur ki, bu yarışda iştirak etmək üçün tələbə və magistrantlarımız “Humanitar fənlər” kafedrasına **02 oktyabr 2026-cı il tarixinədək** müraciət edə bilərlər.\n\n**Qeyd:** Kafedranın keçirəcəyi seçki əsasında 8 nəfər bilik yarışında iştirak etmək hüququ qazanacaq."
+  }
+];

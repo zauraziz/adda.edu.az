@@ -5,7 +5,7 @@
     "singularName": "home-page",
     "pluralName": "home-pages",
     "displayName": "3. Sayt — Ana səhifə",
-    "description": "Ana səhifənin admində idarə olunan blokları: hero slaydları, «Niyə məhz ADDA» fakt kartları, kampus foto kartları, sitat və video slayder (az/en/ru)."
+    "description": "Ana səhifənin admində idarə olunan blokları: hero slaydları, «Niyə məhz ADDA» fakt kartları, kampus foto kartları, sitat bloku (mətn, müəllif, fon şəkli, video, düymə) (az/en/ru)."
   },
   "options": {
     "draftAndPublish": false
@@ -58,15 +58,31 @@
       "type": "string",
       "maxLength": 120
     },
-    "videos": {
-      "type": "component",
-      "repeatable": true,
-      "component": "home.video",
-      "max": 12
+    "quoteImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
     },
-    "videoChannel": {
+    "quoteVideo": {
       "type": "string",
       "maxLength": 300
+    },
+    "quoteVideoFile": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"]
+    },
+    "quoteCta": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "quoteCtaEn": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "quoteCtaRu": {
+      "type": "string",
+      "maxLength": 40
     }
   }
 }

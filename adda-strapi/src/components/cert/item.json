@@ -1,0 +1,54 @@
+{
+  "collectionName": "components_cert_items",
+  "info": {
+    "displayName": "Sertifikat",
+    "description": "Akademiyanın bir sertifikatı və ya keyfiyyət sənədi (F5.51).",
+    "icon": "shield"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "titleEn": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "titleRu": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "short": {
+      "type": "string",
+      "maxLength": 90
+    },
+    "shortEn": {
+      "type": "string",
+      "maxLength": 90
+    },
+    "shortRu": {
+      "type": "string",
+      "maxLength": 90
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["files", "images"]
+    },
+    "footer": {
+      "type": "boolean",
+      "default": true
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

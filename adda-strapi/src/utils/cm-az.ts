@@ -404,14 +404,23 @@ const CT: Record<string, Dict> = {
     heroSlides: ['Hero slaydları', 'Ən yuxarıdakı slayder (2–6 slayd). Sıranı sürüşdürərək dəyişin; birinci slayd ilk görünəndir. Şəkil: üfüqi, ən azı 1600 px en.'],
     facts: ['«Niyə məhz ADDA» kartları', 'Rəqəmli sübut kartları (6-ya qədər). Yalnız mənbəsi olan rəqəm yazın və kartı həmin mənbə səhifəsinə bağlayın.'],
     campusCards: ['Kampus foto kartları', '«Kampus həyatı» blokunun 3 foto kartı: 1 — böyük, 2 — sağda, 3 — aşağıda. Şəkil yüklənməyibsə arxiv şəkli göstərilir.'],
-    quote: ['Sitat (az)', 'Video blokunun başındakı sitat, dırnaqsız (dırnağı sayt qoyur).'],
+    quote: ['Sitat (az)', 'Sitat blokunun mətni, dırnaqsız (dırnağı sayt qoyur).'],
     quoteEn: ['Sitat (en)', EN + ' Boş qalsa az mətni göstərilir.'],
     quoteRu: ['Sitat (ru)', RU + ' Boş qalsa az mətni göstərilir.'],
     quoteAttr: ['Sitatın müəllifi (az)', 'Məs.: «Azərbaycan Dövlət Dəniz Akademiyası · 1996».'],
     quoteAttrEn: ['Sitatın müəllifi (en)', EN],
     quoteAttrRu: ['Sitatın müəllifi (ru)', RU],
-    videos: ['Videolar', 'Video slayder (12-yə qədər). Birinci video böyük pleyerdə açılır; sıranı sürüşdürərək dəyişin.'],
-    videoChannel: ['Kanalın keçidi', URL_RULE + ' Slayderin yanında «Kanala keç» kimi görünür.'],
+    // F5.51 — sitat bloku: fon şəkli, video, düymə (cmAz:v11).
+    quoteImage: ['Fon şəkli', 'Sitat blokunun arxasındakı foto: üfüqi, ən azı 1920 px en, sakit kadr (mətn üstündə tünd örtüklə oxunur). Boş qalsa əvvəlki foto göstərilir.'],
+    quoteVideo: ['Video (YouTube)', 'Düyməyə basanda açılan video: ünvan (https://www.youtube.com/watch?v=…, youtu.be/…) və ya 11 simvollu ID. Video yerləşdirməyə (embed) açıq olmalıdır.'],
+    quoteVideoFile: ['Video faylı', 'YouTube əvəzinə öz faylınız (MP4, 100 MB-a qədər). Yüklənibsə YouTube ünvanından üstündür. Video da, fayl da boşdursa düymə görünmür.'],
+    quoteCta: ['Düymə (az)', 'Məs.: «ADDA-nı yaşa» (40 simvola qədər).'],
+    quoteCtaEn: ['Düymə (en)', EN],
+    quoteCtaRu: ['Düymə (ru)', RU],
+  },
+  // F5.51 — «Sertifikatlar» (cmAz:v11).
+  'api::cert-block.cert-block': {
+    items: ['Sertifikatlar', '«/sertifikatlar» səhifəsi və footer-dəki zolaq. Sıranı sürüşdürərək dəyişin, «+» ilə sənəd əlavə edin, lazımsızı gizlədin.'],
   },
   'api::social-block.social-block': {
     eyebrow: ['Üst yazı', 'Başlığın üstündəki kiçik yazı.'],
@@ -634,12 +643,18 @@ const COMP: Record<string, Dict> = {
     noteEn: ['Qeyd (en)', EN],
     noteRu: ['Qeyd (ru)', RU],
   },
-  'home.video': {
-    youtube: ['YouTube', 'Videonun ünvanı (https://www.youtube.com/watch?v=…, youtu.be/…) və ya 11 simvollu ID. Video yerləşdirməyə (embed) açıq olmalıdır.'],
-    hidden: ['Gizlət', 'Aktivdirsə video göstərilmir (silinmədən).'],
-    title: ['Ad (az)', 'Slayderdə görünən ad (160 simvola qədər).'],
-    titleEn: ['Ad (en)', EN],
-    titleRu: ['Ad (ru)', RU],
+  // F5.51 — Akademiyanın bir sertifikatı (cmAz:v11).
+  'cert.item': {
+    title: ['Ad (az)', 'Sənədin tam adı. Məs.: «Azərbaycan Respublikası Təhsil Nazirliyinin akkreditasiya sertifikatı».'],
+    titleEn: ['Ad (en)', EN + ' Boş qalsa az adı göstərilir.'],
+    titleRu: ['Ad (ru)', RU + ' Boş qalsa az adı göstərilir.'],
+    short: ['Qısa ad (az)', 'Footer-də görünür: «Qurum: sənəd» — «: »-dən sonrakı hissə ikinci sətirdə kiçik yazılır. Məs.: «Təhsil Nazirliyi: akkreditasiya sertifikatı».'],
+    shortEn: ['Qısa ad (en)', EN],
+    shortRu: ['Qısa ad (ru)', RU],
+    image: ['Şəkil (skan)', 'Sənədin skanı: JPG və ya PNG, ən azı 1200 px hündürlük. Saytda kiçik önizləmə və böyüdülmüş görünüş.'],
+    file: ['Fayl', 'İstəyə bağlı: PDF və ya orijinal fayl. «Faylı aç» bu faylı açır (yoxdursa skanı).'],
+    footer: ['Footer-də göstər', 'Aktivdirsə sənəd saytın altındakı «Akkreditasiya və sertifikatlar» zolağında da görünür (4 sənəd tövsiyə olunur).'],
+    hidden: ['Gizlət', 'Aktivdirsə sənəd saytda göstərilmir (silinmədən).'],
   },
   'nav.link': {
     label: ['Ad', 'Menyuda görünən mətn.'],
@@ -797,8 +812,10 @@ function merge(conf: Conf, dict: Dict): number {
 // Yalnız defolt adı və boş qaydanı yazır — təkrar işləmək zərərsizdir.
 // v8 (F5.49): «Rəsmi qurumlar» (api::org-block.org-block, org.item).
 // v10 (F5.50): «Ana səhifə» (api::home-page.home-page, home.slide/fact/photo/video).
+// v11 (F5.51): sitat blokunun yeni sahələri (quoteImage/quoteVideo/quoteVideoFile/quoteCta),
+//   «Sertifikatlar» (api::cert-block.cert-block, cert.item); home.video silindi.
 // (v9 qaydaların yenilənməsinin markeridir — aşağıda UPGRADE_SETS.)
-const MARKER = 'cmAz:v10';
+const MARKER = 'cmAz:v11';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
