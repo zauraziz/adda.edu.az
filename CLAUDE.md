@@ -195,7 +195,9 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `dedupe:v2`, `cmAz:v7`, `telebeMenu:v1`, `beynelxalqMenu:v1`, `telebePages:v1`,
 `beynelxalqPages:v1`, `dedupe:v3`, `cmAz:v8`, `cmAz:v9`, `faqMenu:v1`, `ascoMenu:v1`,
 `audienceMenu:v1`, `faqPage:v1`, `ascoPage:v1`, `gizClean:v1`, `orgBlock:v1`,
-`cmAz:v10`, `homeLayout:v1`, `homePage:v1`) + mövcud
+`cmAz:v10`, `homeLayout:v1`, `homePage:v1`, `homeQuote:v1`, `homeLayout:v2`, `cmAz:v11`,
+`certBlock:v1`, `certLayout:v1`, `certMenu:v1`, `certImages:v1`, `newsImport:v1`,
+`eventsF551:v1`; sayğac `legacyImport:tries`, fayl xəritəsi `legacyFiles:v1`) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -736,13 +738,48 @@ olunur. Çevirmə kimdə?
    - **«Niyə məhz ADDA»** (`WhyAdda`, `06-spotlight.css`): köhnə Spotlight +
      Stats bir blokda, 3×2 kart; mobildə üfüqi sürüşən sıra. `07-stats.css`,
      `Spotlight/Stats/StatsIsland/VQuote.tsx`, `lib/hero-slides.ts` silinib.
-   - **Video** (`VideoSea` + `VideoSeaIsland`, `12-vquote.css`): YouTube yalnız
-     kliklə (`youtube-nocookie.com`, autoplay), əvvəl yalnız önizləmə
-     (`i.ytimg.com` hq → mümkünsə maxres). JS-siz keçid YouTube-a aparır.
-     Videolar ASCO-nun rəsmi kanalından; iframe-in `referrerPolicy`-si
-     `no-referrer` OLMAMALIDIR (YouTube «153» pleyer xətası verir).
+   - **Video** (`VideoSea` + `VideoSeaIsland`) — **F5.51-də silindi** (bax 22):
+     sitat bloku əvvəlki dizayndadır. Qayda qalır: YouTube yalnız kliklə
+     (`youtube-nocookie.com`), iframe-in `referrerPolicy`-si `no-referrer`
+     OLMAMALIDIR (YouTube «153» pleyer xətası verir).
    - **Footer qurumları:** bərabər xanalar 3/2/1 sütun, natamam sətir mərkəzdə,
      loqo/nişan 64×44.
+22. **F5.51 — sertifikatlar, sitat bloku, köhnə saytdan xəbər/elan, tədbirlər**
+   (layihə sənədi `claude/f551-sertifikatlar-sitat-idxal.md`).
+   - **Sertifikatlar:** single type «3. Sayt — Sertifikatlar» (`api::cert-block.cert-block`,
+     dilsiz; `cert.item`: ad az/en/ru, qısa ad «Qurum: sənəd» — `: `-dən sonrası
+     footer-də ikinci sətir, skan, fayl, «Footer-də göstər», gizlət). `certBlock:v1`
+     (boşdursa köhnə saytın 6 sənədi), skanlar ARXA PLANDA köhnə saytdan
+     (`certImages:v1`), forma `certLayout:v1` (+ tək tiplərin başlığı: documentId
+     əvəzinə tipin adı, org-block da). Next: `/sertifikatlar` (lövbər az qısa
+     addan — `lib/cert.ts` `certAnchor`; böyütmə `CertIsland`), footer zolağı
+     «Rəsmi qurumlar»-dan əvvəl (4/2/1). Ehtiyat `lib/cert-fallback.ts` =
+     `DEFAULT_CERTS` (yoxlama `same51`). Menyu `certMenu:v1`: «Akkreditasiya və
+     sertifikatlar» və footer «Akkreditasiya» → `/sertifikatlar`, «Keyfiyyət siyasəti»
+     → `/sertifikatlar#keyfiyyet-sahesinde-siyaset` (yalnız hələ «hazırlanır»/«#» idisə).
+     301: `/certificates`, `/hazirlanir/akkreditasiya*` (`next.config.js`).
+   - **Sitat bloku:** F5.50-nin video slayderi silindi (`home.video`, `videos`,
+     `videoChannel`) — əvvəlki «video sitat» dizaynı: `VQuote` + `VQuoteIsland`,
+     `12-vquote.css`. Admin: `quoteImage` (fon; boşdursa əvvəlki foto
+     `HOME_QUOTE_BG`), `quoteVideo` (YouTube), `quoteVideoFile` (MP4 ≤ 100 MB,
+     üstündür), `quoteCta*`; ikisi də boşdursa düymə yoxdur. Video `<dialog>`-da —
+     qlobal `*{margin:0}` dialogun mərkəzləməsini silir, `margin:auto` MƏCBURİDİR.
+     Defolt video Akademiyanın rəsmi kanalındandır; `homeQuote:v1` (boşdursa),
+     forma `homeLayout:v2`.
+   - **Köhnə saytdan idxal** (`src/utils/news-import.ts`, `legacy-files.ts`; məzmun
+     `news-import-content.ts` AVTOMATİKDİR: `tools/migration/f551-news.mjs` ←
+     `data/f551-oldsite.json`): 15.07–14.10.2026 — 6 xəbər (news/1985–1990), 5 elan
+     (announce/520–524), az, köhnə tarixlə; Web Push GETMİR (`create({ status:
+     'published' })` push middleware-inin tutduğu `publish` hərəkəti deyil). Şəkil və
+     PDF arxa planda `LEGACY_SITE_URL`-dən (defolt `https://adda.edu.az`), yol başına
+     bir dəfə (`legacyFiles:v1`); TLS zənciri natamamdırsa http; şəbəkə xətasında
+     növbəti başlanğıcda, 3 uğursuzluqdan sonra şəkilsiz. Köhnə URL-lər
+     `gen-redirects.mjs` → `IMPORTED`.
+   - **Tədbirlər** (`eventsF551:v1`, az): NASCO 29 (15–16.10, Naxçıvan Dövlət
+     Universiteti, hibrid), Zəfər Günü (06.11), Heydər Əliyevin anım günü (11.12) —
+     saat və zal təxminidir. Ana səhifə zolağı tarix/saatı Bakı vaxtı ilə göstərir
+     (`lib/format.ts` → `bakuTime`); 5-dən az tədbirdə sütun sayı = tədbir sayı.
+   - Admin: `cmAz:v11`.
 
 ---
 

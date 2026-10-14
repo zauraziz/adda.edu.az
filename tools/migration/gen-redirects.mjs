@@ -60,6 +60,26 @@ const MOVED = {
   'sehife/beynelxalq-elaqeler-qrupu': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
 };
 
+/**
+ * F5.51 — Strapi seed-i ilə idxal olunan köhnə sayt yazıları (15.07–14.10.2026,
+ * `data/f551-oldsite.json` → adda-strapi/src/utils/news-import-content.ts).
+ * extracted/*.json-da yoxdur; slug seed-dəkidir. SİNXRON: news-import-content.ts
+ * (f551-news.mjs çıxışında slug-lar yazılır).
+ */
+const IMPORTED = {
+  'news/1985': 'xeberler/adda-numayende-heyeti-cin-xalq-respublikasinda-isguzar-seferde-olub',
+  'news/1986': 'xeberler/2026-ci-ilde-adda-ya-qebul-neticeleri-aciqlanib',
+  'news/1987': 'xeberler/azerbaycan-dovlet-deniz-akademiyasinda-bilik-gunu-ve-yeni-tedris-ilinin-baslanma',
+  'news/1988': 'xeberler/20-sentyabr-dovlet-suverenliyi-gunu',
+  'news/1989': 'xeberler/azerbaycan-dovlet-deniz-akademiyasinda-27-sentyabr-anim-gunu-qeyd-olunub',
+  'news/1990': 'xeberler/5-oktyabr-beynelxalq-muellimler-gunudur',
+  'announce/520': 'elanlar/felsefe-doktoru-proqrami-uzre-felsefe-fenninden-qebul-imtahani-verecek-iddiacila-2026',
+  'announce/521': 'elanlar/adda-nin-doktorant-magistrant-ve-genc-tedqiqatcilarinin-nezerine',
+  'announce/522': 'elanlar/azerbaycan-dovlet-deniz-akademiyasina-adda-qebul-olan-abituriyentlerin-nezerine',
+  'announce/523': 'elanlar/felsefe-doktoru-proqrami-uzre-ixtisas-fenninden-qebul-imtahani-verecek-iddiacila-2026',
+  'announce/524': 'elanlar/heyder-eliyev-ve-azerbaycan-tarixi-x-umumrespublika-bilik-yarisi',
+};
+
 const OUT = join(ROOT, '..', '..', 'adda-nextjs', 'lib', 'legacy-redirects.ts');
 
 const src = dataPath('redirects.json');
@@ -151,6 +171,10 @@ if (conflicts.length) {
   console.error('  Dilsiz sixilma etibarsizdir — xerite yaradilmadi.\n');
   for (const c of conflicts.slice(0, 6)) console.error(`    ${c.key}: ${c.a}  vs  ${c.b}`);
   process.exit(1);
+}
+
+for (const [k, v] of Object.entries(IMPORTED)) {
+  if (!map.has(k)) map.set(k, v);
 }
 
 const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));

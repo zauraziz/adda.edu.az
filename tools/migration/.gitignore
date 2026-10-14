@@ -67,6 +67,10 @@ data/*
 # F5.34b — FACILITY_SEED (adda-strapi/src/index.ts) OXUYUR, auditoriya/laboratoriya.
 !data/facilities.json
 
+# F5.51 — köhnə saytın 15.07–14.10.2026 xəbər və elanları (brauzerdən, mətn
+# sha256 ilə yoxlanıb). f551-news.mjs → adda-strapi/src/utils/news-import-content.ts.
+!data/f551-oldsite.json
+
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML
 #   data/manifest.json         — crawl checkpoint-i
