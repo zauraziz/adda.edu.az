@@ -49,7 +49,10 @@ const DORM = '/sehife/yataqxana';
 const GRANTS = '/sehife/qrantlar';
 const PRACTICE = '/sehife/tecrube-haqqinda';
 const OFFICE = '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi';
-const OFFICE_PHONE = '(+99412) 493-36-44 (3078)';
+// F5.53 — ümumi nömrə + daxili nömrə, dilin formatında (src/utils/phone-fix.ts).
+const OFFICE_PHONE_AZ = '(012) 493 36 44, daxili 3078';
+const OFFICE_PHONE_EN = '+994 12 493 36 44, ext. 3078';
+const OFFICE_PHONE_RU = '+994 12 493 36 44, доб. 3078';
 const ASK = '/vetendaslarin-muracieti?istiqamet=beynelxalq';
 const IAMU = 'https://iamu-edu.org';
 const EVISA = 'https://evisa.gov.az';
@@ -89,15 +92,15 @@ const AZ = (path: string): string => `/az${path}`;
 
 const CONTACT_AZ =
   '**Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi**\n\nKorpus 1, 4-cü mərtəbə\n\n' +
-  `**Daxili telefon:** ${OFFICE_PHONE}\n\n**Əcnəbi tələbələr:** akademiya@asco.az, +994 12 493 36 44\n\n` +
+  `**Telefon:** ${OFFICE_PHONE_AZ}\n\n**Əcnəbi tələbələr:** akademiya@asco.az, (012) 493 36 44\n\n` +
   `Sualınızı [onlayn göndərin](${ASK}) — cavab e-poçtunuza gəlir.`;
 const CONTACT_EN =
   '**Research and International Relations Department**\n\nBuilding 1, 4th floor\n\n' +
-  `**Internal phone:** ${OFFICE_PHONE}\n\n**International students:** akademiya@asco.az, +994 12 493 36 44\n\n` +
+  `**Phone:** ${OFFICE_PHONE_EN}\n\n**International students:** akademiya@asco.az, +994 12 493 36 44\n\n` +
   `[Send your question online](${ASK}) — the reply comes to your e-mail.`;
 const CONTACT_RU =
   '**Отдел научных исследований и международных связей**\n\nКорпус 1, 4-й этаж\n\n' +
-  `**Внутренний телефон:** ${OFFICE_PHONE}\n\n**Иностранные студенты:** akademiya@asco.az, +994 12 493 36 44\n\n` +
+  `**Телефон:** ${OFFICE_PHONE_RU}\n\n**Иностранные студенты:** akademiya@asco.az, +994 12 493 36 44\n\n` +
   `[Задайте вопрос онлайн](${ASK}) — ответ придёт на e-mail.`;
 
 const L_AZ = {
@@ -1271,7 +1274,7 @@ const GUIDE_PAGE: BeynelxalqPageSeed = {
 - əcnəbi tələbələrin məktub və sorğularını cavablandırır;
 - Akademiyadakı tədbir, konfrans və seminarlar barədə məlumat verir.
 
-Qəbul və təhsil haqqı barədə: akademiya@asco.az, +994 12 493 36 44.
+Qəbul və təhsil haqqı barədə: akademiya@asco.az, (012) 493 36 44.
 
 ## Tədris və dil
 
@@ -1314,7 +1317,7 @@ Akademiyanın diplomu 170-dən çox ölkədə tanınır.`,
       },
       {
         question: 'Sualım var. Kimə yazım?',
-        answer: 'Qəbul və təhsil haqqı barədə — akademiya@asco.az (+994 12 493 36 44). Digər məsələlər üzrə onlayn forma ilə «Beynəlxalq əlaqələr və əcnəbi tələbələr» istiqamətinə yazın.',
+        answer: 'Qəbul və təhsil haqqı barədə — akademiya@asco.az, (012) 493 36 44. Digər məsələlər üzrə onlayn forma ilə «Beynəlxalq əlaqələr və əcnəbi tələbələr» istiqamətinə yazın.',
       },
     ],
     sideLinks: [

@@ -9,6 +9,8 @@
  *     media kitabxanasında təkrar yaranmır.
  *   - Yalnız şəkil (JPEG/PNG/WebP) və PDF — faylın ilk baytları yoxlanır
  *     (səhv səhifə HTML kimi qayıdanda fayl yaradılmır), ölçü ≤ 20 MB.
+ *     F5.53: `{ documents: true }` ilə həm də PPTX (ZIP) və CorelDRAW (CDR:
+ *     RIFF və ya ZIP) — korporativ üslubun rəsmi faylları; uzantı köhnə yoldandır.
  *   - Köhnə serverin TLS zənciri natamamdırsa (Node brauzer kimi aralıq
  *     sertifikatı özü tapmır) ictimai şəkil/PDF http ilə bir dəfə də istənir.
  *   - Şəbəkə xətası (DNS, bağlantı, vaxt aşımı) `LegacyUnreachable` atır —
@@ -51,12 +53,32 @@ function sniff(buf: Buffer): { mime: string; ext: string } | null {
   return null;
 }
 
+const DOC_MIME: Record<string, string> = {
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  cdr: 'application/x-cdr',
+};
+
+/** F5.53 — sənəd faylları: ZIP (PPTX, yeni CDR) və ya RIFF «CDR» (köhnə CorelDRAW). */
+function sniffDocument(buf: Buffer, path: string): { mime: string; ext: string } | null {
+  const ext = (path.split('.').pop() || '').toLowerCase();
+  if (!DOC_MIME[ext] || buf.length < 12) return null;
+  const zip = buf[0] === 0x50 && buf[1] === 0x4b && buf[2] === 0x03 && buf[3] === 0x04;
+  const riffCdr = buf.subarray(0, 4).toString('latin1') === 'RIFF' && buf.subarray(8, 11).toString('latin1').toUpperCase() === 'CDR';
+  if (zip || (ext === 'cdr' && riffCdr)) return { mime: DOC_MIME[ext], ext };
+  return null;
+}
+
+export interface LegacyOptions {
+  /** PPTX və CDR də qəbul olunsun (korporativ üslub). */
+  documents?: boolean;
+}
+
 async function get(url: string): Promise<Response> {
   return fetch(url, { headers: { 'User-Agent': UA }, redirect: 'follow', signal: AbortSignal.timeout(TIMEOUT_MS) });
 }
 
 /** Faylı endirir. Şəbəkə xətası → LegacyUnreachable; HTTP/format xətası → Error. */
-export async function downloadLegacy(path: string): Promise<{ buf: Buffer; mime: string; ext: string }> {
+export async function downloadLegacy(path: string, opts: LegacyOptions = {}): Promise<{ buf: Buffer; mime: string; ext: string }> {
   const url = legacyUrl(path);
   let res: Response;
   try {
@@ -79,8 +101,8 @@ export async function downloadLegacy(path: string): Promise<{ buf: Buffer; mime:
   if (declared > MAX_BYTES) throw new Error(`${url}: ${(declared / 1048576).toFixed(1)} MB — çox böyükdür`);
   const buf = Buffer.from(await res.arrayBuffer());
   if (buf.length > MAX_BYTES) throw new Error(`${url}: çox böyükdür`);
-  const kind = sniff(buf);
-  if (!kind) throw new Error(`${url}: şəkil və ya PDF deyil`);
+  const kind = sniff(buf) ?? (opts.documents ? sniffDocument(buf, path) : null);
+  if (!kind) throw new Error(`${url}: ${opts.documents ? 'şəkil, PDF, PPTX və ya CDR' : 'şəkil və ya PDF'} deyil`);
   return { buf, ...kind };
 }
 
@@ -89,7 +111,13 @@ export async function downloadLegacy(path: string): Promise<{ buf: Buffer; mime:
  * qaytarır). `name` — uzantısız fayl adı (məs. «xeber-1985-qapaq»), `alt` —
  * şəklin alternativ mətni.
  */
-export async function importLegacyFile(strapi: Core.Strapi, path: string, name: string, alt: string): Promise<LegacyFile> {
+export async function importLegacyFile(
+  strapi: Core.Strapi,
+  path: string,
+  name: string,
+  alt: string,
+  opts: LegacyOptions = {},
+): Promise<LegacyFile> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
   const files = strapi.db.query('plugin::upload.file');
   const map = ((await store.get({ key: STORE_KEY })) as Record<string, number> | null) ?? {};
@@ -99,7 +127,7 @@ export async function importLegacyFile(strapi: Core.Strapi, path: string, name: 
     if (f?.id && f.url) return { id: f.id, url: f.url };
   }
 
-  const { buf, mime, ext } = await downloadLegacy(path);
+  const { buf, mime, ext } = await downloadLegacy(path, opts);
   const filename = `${name}.${ext}`;
   const tmp = join(tmpdir(), `adda-legacy-${Date.now()}-${filename}`);
   writeFileSync(tmp, buf);

@@ -36,7 +36,10 @@ export type ElmPageSeed = QebulPageSeed;
 export const ELM_HUB_SLUG = 'elmi-tedqiqat-fealiyyeti';
 const HUB = `/sehife/${ELM_HUB_SLUG}`;
 const OFFICE = '/struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi';
-const OFFICE_PHONE = '(+99412) 493-36-44 (3078)';
+// F5.53 — ümumi nömrə + daxili nömrə, dilin formatında (src/utils/phone-fix.ts).
+const OFFICE_PHONE_AZ = '(012) 493 36 44, daxili 3078';
+const OFFICE_PHONE_EN = '+994 12 493 36 44, ext. 3078';
+const OFFICE_PHONE_RU = '+994 12 493 36 44, доб. 3078';
 const CRIS = 'https://cris.adda.edu.az';
 const AEF = 'https://www.aef.gov.az';
 const AEF_2024 = 'https://www.aef.gov.az/az/grant/view/54';
@@ -78,15 +81,15 @@ function archiveList(year: (y: number) => string, issue: (n: number) => string):
 
 const CONTACT_AZ =
   '**Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi**\n\nKorpus 1, 4-cü mərtəbə\n\n' +
-  `**Daxili telefon:** ${OFFICE_PHONE}\n\n` +
+  `**Telefon:** ${OFFICE_PHONE_AZ}\n\n` +
   `E-poçt və heyət — [şöbənin səhifəsində](${OFFICE}). Sualınızı [onlayn göndərin](${ASK}) — cavab e-poçtunuza gəlir.`;
 const CONTACT_EN =
   '**Research and International Relations Department**\n\nBuilding 1, 4th floor\n\n' +
-  `**Internal phone:** ${OFFICE_PHONE}\n\n` +
+  `**Phone:** ${OFFICE_PHONE_EN}\n\n` +
   `E-mail and staff are on the [department page](${OFFICE}). [Send your question online](${ASK}) — the reply comes to your e-mail.`;
 const CONTACT_RU =
   '**Отдел научных исследований и международных связей**\n\nКорпус 1, 4-й этаж\n\n' +
-  `**Внутренний телефон:** ${OFFICE_PHONE}\n\n` +
+  `**Телефон:** ${OFFICE_PHONE_RU}\n\n` +
   `Электронная почта и сотрудники — на [странице отдела](${OFFICE}). [Задайте вопрос онлайн](${ASK}) — ответ придёт на e-mail.`;
 
 const OFFICE_AZ: LinkSeed = { label: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi', url: OFFICE };
@@ -225,7 +228,7 @@ Tələbələr elmə [Tələbə Elmi Cəmiyyəti](/sehife/telebe-elmi-cemiyyeti) 
       {
         question: 'Qrant müraciəti barədə kimə yazım?',
         answer:
-          `Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsinə: Korpus 1, 4-cü mərtəbə, daxili telefon ${OFFICE_PHONE}. Sualı onlayn da göndərə bilərsiniz — «Elmi işlər, nəşr və qrantlar» istiqamətini seçin.`,
+          `Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsinə: Korpus 1, 4-cü mərtəbə, telefon ${OFFICE_PHONE_AZ}. Sualı onlayn da göndərə bilərsiniz — «Elmi işlər, nəşr və qrantlar» istiqamətini seçin.`,
       },
       {
         question: 'Akademiyada doktorantura varmı?',
@@ -369,7 +372,7 @@ Students join research through the [Student Research Society](/sehife/telebe-elm
       },
       {
         question: 'Whom should I contact about a grant application?',
-        answer: `The Research and International Relations Department: Building 1, 4th floor, internal phone ${OFFICE_PHONE}. You can also write online and choose “Research, publications and grants”.`,
+        answer: `The Research and International Relations Department: Building 1, 4th floor, phone ${OFFICE_PHONE_EN}. You can also write online and choose “Research, publications and grants”.`,
       },
     ],
     sideLinks: [
@@ -508,7 +511,7 @@ Students join research through the [Student Research Society](/sehife/telebe-elm
       },
       {
         question: 'К кому обратиться по поводу гранта?',
-        answer: `В Отдел научных исследований и международных связей: корпус 1, 4-й этаж, внутренний телефон ${OFFICE_PHONE}. Можно написать и онлайн, выбрав направление «Наука, публикации и гранты».`,
+        answer: `В Отдел научных исследований и международных связей: корпус 1, 4-й этаж, телефон ${OFFICE_PHONE_RU}. Можно написать и онлайн, выбрав направление «Наука, публикации и гранты».`,
       },
     ],
     sideLinks: [
@@ -864,7 +867,7 @@ Azərbaycan Respublikasının Prezidenti yanında Ali Attestasiya Komissiyası W
     ],
     contact:
       '**Redaksiya:** [elvina.abdullayeva@asco.az](mailto:elvina.abdullayeva@asco.az)\n\n' +
-      `**Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi** — Korpus 1, 4-cü mərtəbə, daxili telefon ${OFFICE_PHONE}. [Şöbənin səhifəsi](${OFFICE})`,
+      `**Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi** — Korpus 1, 4-cü mərtəbə, telefon ${OFFICE_PHONE_AZ}. [Şöbənin səhifəsi](${OFFICE})`,
   },
   en: {
     title: '“Proceedings of Azerbaijan State Marine Academy”',
@@ -969,7 +972,7 @@ The Higher Attestation Commission regards journals included in one of the three 
     ],
     contact:
       '**Editorial office:** [elvina.abdullayeva@asco.az](mailto:elvina.abdullayeva@asco.az)\n\n' +
-      `**Research and International Relations Department** — Building 1, 4th floor, internal phone ${OFFICE_PHONE}. [Department page](${OFFICE})`,
+      `**Research and International Relations Department** — Building 1, 4th floor, phone ${OFFICE_PHONE_EN}. [Department page](${OFFICE})`,
   },
   ru: {
     title: 'Журнал «Научные труды АГМА»',
@@ -1074,7 +1077,7 @@ ${archiveList((y) => String(y), (n) => `№ ${n}`)}
     ],
     contact:
       '**Редакция:** [elvina.abdullayeva@asco.az](mailto:elvina.abdullayeva@asco.az)\n\n' +
-      `**Отдел научных исследований и международных связей** — корпус 1, 4-й этаж, внутренний телефон ${OFFICE_PHONE}. [Страница отдела](${OFFICE})`,
+      `**Отдел научных исследований и международных связей** — корпус 1, 4-й этаж, телефон ${OFFICE_PHONE_RU}. [Страница отдела](${OFFICE})`,
   },
 };
 

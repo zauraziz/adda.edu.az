@@ -99,6 +99,21 @@ const DATABLOCK_DESC_V8 =
   'konfrans — elmi tədbirlər və konfrans xəbərləri; tedbirler — növbəti tədbirlər və tələbə həyatından xəbərlər; idman — idman yarışları; ' +
   'medeniyyet — konsert, şənlik, intellektual yarışlar; beynelxalq — beynəlxalq əməkdaşlıq xəbərləri; asco — adında «ASCO» olan xəbərlər. ' +
   'yox — blok yoxdur.';
+// F5.53 (v12) — telefon: daxili nömrənin önünə saytda ümumi nömrə yazılır.
+const PERSON_PHONE_DESC_V1 = 'Format: +994 12 404 37 15. Daxili nömrə üçün: «daxili 1234».';
+const PERSON_PHONE_DESC_V2 =
+  'Tam nömrə (məs. +994 50 123 45 67) və ya yalnız daxili nömrə (məs. 1234). Saytda daxili nömrənin önünə ' +
+  'Akademiyanın ümumi nömrəsi yazılır: «(012) 493 36 44, daxili 1234».';
+const UNIT_PHONEEXT_DESC_V1 = 'Məs.: «1234».';
+const UNIT_PHONEEXT_DESC_V2 =
+  'Yalnız daxili nömrə, məs. «1234». Saytda «(012) 493 36 44, daxili 1234» kimi görünür; boşdursa Akademiyanın ümumi nömrəsi.';
+// F5.53 (v12).
+const DATABLOCK_DESC_V9 =
+  'Kataloqdan canlı cədvəl: subbakalavr / bakalavr / magistr / doktorantura / tekrar_ali — həmin pillənin ixtisasları, yer sayı, haqq, keçid balı; ' +
+  'ingilis — ingilisdilli yerlər; qebul_cedveli — bütün pillələr və illər üzrə keçid balları. Başlıq üzrə lent: aciq_qapi — «Açıq qapı» tədbirləri; ' +
+  'konfrans — elmi tədbirlər və konfrans xəbərləri; tedbirler — növbəti tədbirlər və tələbə həyatından xəbərlər; idman — idman yarışları; ' +
+  'medeniyyet — konsert, şənlik, intellektual yarışlar; beynelxalq — beynəlxalq əməkdaşlıq xəbərləri; asco — adında «ASCO» olan xəbərlər; ' +
+  'korporativ — rənglər və şriftlər bloku (mətn bölmələrindən sonra; «Korporativ üslub» səhifəsi). yox — blok yoxdur.';
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -231,7 +246,7 @@ const CT: Record<string, Dict> = {
     photo: ['Şəkil', PHOTO_PORTRAIT],
     email: ['Korporativ e-poçt', '@adda.edu.az ünvanı. Əməkdaş profilinə bu ünvanla daxil olur — dəqiq yazılmalıdır.'],
     altEmail: ['Əlavə e-poçt', 'İkinci @adda.edu.az ünvanı varsa — onunla da profilə daxil olmaq olur.'],
-    phone: ['Telefon', 'Format: +994 12 404 37 15. Daxili nömrə üçün: «daxili 1234».', '+994 12 404 37 15'],
+    phone: ['Telefon', PERSON_PHONE_DESC_V2, '+994 50 123 45 67'],
     office: ['İş otağı', 'Məs.: «305».'],
     building: ['Bina', 'Məs.: «II tədris binası».'],
     faculty: ['Fakültə', 'Akademik heyət üçün.'],
@@ -256,7 +271,7 @@ const CT: Record<string, Dict> = {
     building: ['Bina', 'Məs.: «I tədris binası».'],
     floor: ['Mərtəbə', 'Məs.: «3».'],
     room: ['Otaq', 'Məs.: «305».'],
-    phoneExt: ['Daxili telefon', 'Məs.: «1234».'],
+    phoneExt: ['Daxili telefon', UNIT_PHONEEXT_DESC_V2],
     email: ['E-poçt', 'Bölmənin ümumi ünvanı.'],
     vacancies: ['Vakansiyalar', 'Açıq vəzifələr. Vəzifə tutulanda sətri silin.'],
     strategy: ['Strateji hədəflər üzrə öhdəliklər', MD],
@@ -906,6 +921,15 @@ const UPGRADE_SETS: {
     list: [
       { kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V7, to: LAYOUT_DESC_V8 },
       { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V7, to: DATABLOCK_DESC_V8 },
+    ],
+  },
+  {
+    marker: 'cmAz:v12',
+    note: 'F5.53: sahə qaydaları yeniləndi: {n} (blok «korporativ», telefon sahələri).',
+    list: [
+      { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V8, to: DATABLOCK_DESC_V9 },
+      { kind: 'ct', uid: 'api::person.person', field: 'phone', from: PERSON_PHONE_DESC_V1, to: PERSON_PHONE_DESC_V2 },
+      { kind: 'ct', uid: 'api::unit.unit', field: 'phoneExt', from: UNIT_PHONEEXT_DESC_V1, to: UNIT_PHONEEXT_DESC_V2 },
     ],
   },
 ];

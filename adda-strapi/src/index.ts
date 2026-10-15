@@ -45,6 +45,11 @@ import { applyHomePageV1, applyHomeQuoteV1, placeHomeFields } from './utils/home
 // F5.51 — «3. Sayt — Sertifikatlar», menyu keçidləri; köhnə saytdan xəbər/elan idxalı və 3 tədbir (arxa planda).
 import { applyCertBlockV1, applyCertMenuV1, placeCertFields } from './utils/cert-block';
 import { startLegacyImportF551 } from './utils/news-import';
+// F5.53 — struktur sırası (naviqasiya fakültəsi birinci, rektorun tabeliyi), ümumi
+// telefon (012) 493 36 44, «Məxfilik siyasəti», «İstifadə şərtləri», «Korporativ üslub».
+import { applyStructureOrderV1 } from './utils/structure-order';
+import { applyPhoneFixV1 } from './utils/phone-fix';
+import { applyLegalPagesV1, startCorpPageF553 } from './utils/legal-pages';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1743,31 +1748,31 @@ interface UnitSeed {
 const UNIT_TREE: UnitSeed[] = [
   { slug: 'elmi-sura', az: 'Elmi Şura', ru: 'Учёный совет', en: 'Academic Council', parent: null, sortOrder: 10 },
   { slug: 'rektor', az: 'Rektor', ru: 'Ректор', en: 'Rector', parent: 'elmi-sura', sortOrder: 10 },
-  { slug: 'rektorun-musaviri', az: 'Rektorun müşaviri', ru: 'Советник ректора', en: 'Adviser to the Rector', parent: 'rektor', sortOrder: 10 },
-  { slug: 'rektorun-komekcisi', az: 'Rektorun köməkçisi', ru: 'Помощник ректора', en: 'Assistant to the Rector', parent: 'rektor', sortOrder: 20 },
-  { slug: 'elmi-katib', az: 'Elmi katib', ru: 'Учёный секретарь', en: 'Academic Secretary', parent: 'rektor', sortOrder: 30 },
-  { slug: 'referent', az: 'Referent', ru: 'Референт', en: 'Referent', parent: 'rektor', sortOrder: 40 },
-  { slug: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', az: 'Tədrisin təşkili və idarəedilməsi üzrə prorektor', ru: 'Проректор по организации и управлению учебным процессом', en: 'Vice-Rector for Academic Organisation and Management', parent: 'rektor', sortOrder: 50 },
-  { slug: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', az: 'Gəmi mexanikası və elektromexanikası fakültəsi', ru: 'Факультет судовой механики и электромеханики', en: 'Faculty of Marine Engineering and Electrical Engineering', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 10 },
-  { slug: 'tetbiqi-mexanika-kafedrasi', az: 'Tətbiqi mexanika kafedrası', ru: 'Кафедра прикладной механики', en: 'Applied Mechanics Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 10 },
-  { slug: 'gemi-energetik-qurgulari-kafedrasi', az: 'Gəmi energetik qurğuları kafedrası', ru: 'Кафедра судовых энергетических установок', en: 'Marine Power Plants Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 20 },
-  { slug: 'gemi-elektroavtomatikasi-kafedrasi', az: 'Gəmi elektroavtomatikası kafedrası', ru: 'Кафедра судовой электроавтоматики', en: 'Marine Electrical Automation Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 30 },
-  { slug: 'gemi-suruculuyu-fakultesi', az: 'Gəmi sürücülüyü fakültəsi', ru: 'Факультет судовождения', en: 'Faculty of Navigation', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 20 },
+  { slug: 'rektorun-musaviri', az: 'Rektorun müşaviri', ru: 'Советник ректора', en: 'Adviser to the Rector', parent: 'rektor', sortOrder: 70 },
+  { slug: 'rektorun-komekcisi', az: 'Rektorun köməkçisi', ru: 'Помощник ректора', en: 'Assistant to the Rector', parent: 'rektor', sortOrder: 80 },
+  { slug: 'elmi-katib', az: 'Elmi katib', ru: 'Учёный секретарь', en: 'Academic Secretary', parent: 'rektor', sortOrder: 90 },
+  { slug: 'referent', az: 'Referent', ru: 'Референт', en: 'Referent', parent: 'rektor', sortOrder: 100 },
+  { slug: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', az: 'Tədrisin təşkili və idarəedilməsi üzrə prorektor', ru: 'Проректор по организации и управлению учебным процессом', en: 'Vice-Rector for Academic Organisation and Management', parent: 'rektor', sortOrder: 10 },
+  { slug: 'gemi-suruculuyu-fakultesi', az: 'Gəmi sürücülüyü fakültəsi', ru: 'Факультет судовождения', en: 'Faculty of Navigation', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 10 },
   { slug: 'deniz-naviqasiyasi-kafedrasi', az: 'Dəniz naviqasiyası kafedrası', ru: 'Кафедра морской навигации', en: 'Marine Navigation Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 10 },
   { slug: 'gemiqayirma-ve-gemi-temiri-kafedrasi', az: 'Gəmiqayırma və gəmi təmiri kafedrası', ru: 'Кафедра судостроения и судоремонта', en: 'Shipbuilding and Ship Repair Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 20 },
   { slug: 'ingilis-dili-kafedrasi', az: 'İngilis dili kafedrası', ru: 'Кафедра английского языка', en: 'English Language Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 30 },
   { slug: 'humanitar-fenler-kafedrasi', az: 'Humanitar fənlər kafedrası', ru: 'Кафедра гуманитарных дисциплин', en: 'Humanities Department', parent: 'gemi-suruculuyu-fakultesi', sortOrder: 40 },
+  { slug: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', az: 'Gəmi mexanikası və elektromexanikası fakültəsi', ru: 'Факультет судовой механики и электромеханики', en: 'Faculty of Marine Engineering and Electrical Engineering', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 20 },
+  { slug: 'tetbiqi-mexanika-kafedrasi', az: 'Tətbiqi mexanika kafedrası', ru: 'Кафедра прикладной механики', en: 'Applied Mechanics Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 10 },
+  { slug: 'gemi-energetik-qurgulari-kafedrasi', az: 'Gəmi energetik qurğuları kafedrası', ru: 'Кафедра судовых энергетических установок', en: 'Marine Power Plants Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 20 },
+  { slug: 'gemi-elektroavtomatikasi-kafedrasi', az: 'Gəmi elektroavtomatikası kafedrası', ru: 'Кафедра судовой электроавтоматики', en: 'Marine Electrical Automation Department', parent: 'gemi-mexanikasi-ve-elektromexanikasi-fakultesi', sortOrder: 30 },
   { slug: 'tedris-proseslerinin-teskili-sobesi', az: 'Tədris proseslərinin təşkili şöbəsi', ru: 'Отдел организации учебного процесса', en: 'Academic Process Organisation Department', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 30 },
   { slug: 'teserrufat-isleri-sobesi', az: 'Təsərrüfat işləri şöbəsi', ru: 'Отдел хозяйственных работ', en: 'Facilities Department', parent: 'tedrisin-teskili-ve-idareedilmesi-uzre-prorektorluq', sortOrder: 40 },
-  { slug: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', az: 'Elmi işlər və beynəlxalq əlaqələr üzrə prorektor', ru: 'Проректор по научной работе и международным связям', en: 'Vice-Rector for Research and International Relations', parent: 'rektor', sortOrder: 60 },
+  { slug: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', az: 'Elmi işlər və beynəlxalq əlaqələr üzrə prorektor', ru: 'Проректор по научной работе и международным связям', en: 'Vice-Rector for Research and International Relations', parent: 'rektor', sortOrder: 20 },
   { slug: 'elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi', az: 'Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi', ru: 'Отдел научных исследований и международных связей', en: 'Research and International Relations Department', parent: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', sortOrder: 10 },
   { slug: 'informasiya-resurs-merkezi', az: 'İnformasiya resurs mərkəzi', ru: 'Информационно-ресурсный центр', en: 'Information Resource Centre', parent: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', sortOrder: 20 },
   { slug: 'metbee', az: 'Mətbəə', ru: 'Типография', en: 'Printing House', parent: 'elmi-isler-ve-beynelxalq-elaqeler-uzre-prorektorluq', sortOrder: 30 },
-  { slug: 'muhasibat-ucotu-ve-hesabati-sobesi', az: 'Mühasibat uçotu və hesabatı şöbəsi', ru: 'Отдел бухгалтерского учёта и отчётности', en: 'Accounting and Reporting Department', parent: 'rektor', sortOrder: 70 },
-  { slug: 'huquq-meslehetcisi', az: 'Hüquq məsləhətçisi', ru: 'Юрисконсульт', en: 'Legal Adviser', parent: 'rektor', sortOrder: 80 },
-  { slug: 'personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi', az: 'Personalın idarəedilməsi, əmək haqqı və kargüzarlıq şöbəsi', ru: 'Отдел управления персоналом, оплаты труда и делопроизводства', en: 'HR, Payroll and Records Department', parent: 'rektor', sortOrder: 90 },
-  { slug: 'tehsil-innovasiyalari-ve-reqemsal-heller-merkezi', az: 'Təhsil innovasiyaları və rəqəmsal həllər mərkəzi', ru: 'Центр образовательных инноваций и цифровых решений', en: 'Centre for Educational Innovation and Digital Solutions', parent: 'rektor', sortOrder: 100 },
-  { slug: 'telim-tedris-merkezi', az: 'Təlim Tədris Mərkəzi', ru: 'Учебно-тренировочный центр', en: 'Training Centre', parent: 'rektor', sortOrder: 110 },
+  { slug: 'muhasibat-ucotu-ve-hesabati-sobesi', az: 'Mühasibat uçotu və hesabatı şöbəsi', ru: 'Отдел бухгалтерского учёта и отчётности', en: 'Accounting and Reporting Department', parent: 'rektor', sortOrder: 50 },
+  { slug: 'huquq-meslehetcisi', az: 'Hüquq məsləhətçisi', ru: 'Юрисконсульт', en: 'Legal Adviser', parent: 'rektor', sortOrder: 110 },
+  { slug: 'personalin-idareedilmesi-emek-haqqi-ve-karguzarliq-sobesi', az: 'Personalın idarəedilməsi, əmək haqqı və kargüzarlıq şöbəsi', ru: 'Отдел управления персоналом, оплаты труда и делопроизводства', en: 'HR, Payroll and Records Department', parent: 'rektor', sortOrder: 60 },
+  { slug: 'tehsil-innovasiyalari-ve-reqemsal-heller-merkezi', az: 'Təhsil innovasiyaları və rəqəmsal həllər mərkəzi', ru: 'Центр образовательных инноваций и цифровых решений', en: 'Centre for Educational Innovation and Digital Solutions', parent: 'rektor', sortOrder: 30 },
+  { slug: 'telim-tedris-merkezi', az: 'Təlim Tədris Mərkəzi', ru: 'Учебно-тренировочный центр', en: 'Training Centre', parent: 'rektor', sortOrder: 40 },
   { slug: 'azerbaycan-denizcilik-kolleci-phs', az: 'Azərbaycan Dənizçilik Kolleci PHŞ', ru: 'Азербайджанский морской колледж ППЛ', en: 'Azerbaijan Maritime College', parent: 'rektor', sortOrder: 120 },
 ];
 
@@ -2216,7 +2221,19 @@ export default {
       // F5.51 — köhnə saytdan sertifikat skanları, 15.07–14.10.2026 xəbər və
       // elanları, 3 tədbir — ARXA PLANDA (bax src/utils/news-import.ts).
       .then(() => startLegacyImportF551(strapi))
-      .catch((e: Error) => strapi.log.error('[news] F5.51: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[news] F5.51: ' + e.message))
+      // F5.53 — bölmələrin sırası (sortOrder), BİR DƏFƏ.
+      .then(() => applyStructureOrderV1(strapi))
+      .catch((e: Error) => strapi.log.error('[struktur] F5.53: ' + e.message))
+      // F5.53 — səhifələrdə telefon: səhv +994 12 404 33 40 → (012) 493 36 44, BİR DƏFƏ.
+      .then(() => applyPhoneFixV1(strapi))
+      .catch((e: Error) => strapi.log.error('[telefon] F5.53: ' + e.message))
+      // F5.53 — «Məxfilik siyasəti», «İstifadə şərtləri» (yoxdursa), BİR DƏFƏ.
+      .then(() => applyLegalPagesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[legal] F5.53: ' + e.message))
+      // F5.53 — «Korporativ üslub»: rəsmi fayllar köhnə saytdan — ARXA PLANDA.
+      .then(() => startCorpPageF553(strapi))
+      .catch((e: Error) => strapi.log.error('[korporativ] F5.53: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

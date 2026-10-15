@@ -72,7 +72,9 @@ export type DataBlock =
   | 'medeniyyet'
   | 'beynelxalq'
   // F5.49: adında «ASCO» olan xəbərlər («ASCO və Akademiya» səhifəsi).
-  | 'asco';
+  | 'asco'
+  // F5.53: «Korporativ üslub» — rənglər və şriftlər bloku (Next: BrandStyle.tsx).
+  | 'korporativ';
 
 export interface StepSeed {
   /** Bir səhifədə bir neçə trayektoriya varsa (məs. 9 və 11 illik baza). */
@@ -134,7 +136,7 @@ const APPLY: LinkSeed = { label: 'Onlayn müraciət', url: '/sehife/onlayn-murac
 
 const ADDRESS = 'Bakı, Zərifə Əliyeva küçəsi 18 («Sahil» metrosunun yaxınlığı)';
 const CONTACT_AZ =
-  `**Ünvan:** ${ADDRESS}\n\n**Telefon:** +994 12 404 33 40\n\n**E-poçt:** info@adda.edu.az\n\n` +
+  `**Ünvan:** ${ADDRESS}\n\n**Telefon:** (012) 493 36 44\n\n**E-poçt:** info@adda.edu.az\n\n` +
   'Qəbul barədə sualınızı [onlayn göndərin](/vetendaslarin-muracieti?istiqamet=qebul) — cavab e-poçtunuza gəlir.';
 
 // ── 1. Kollecə qəbul (subbakalavr) ───────────────────────────────────────────
@@ -1049,7 +1051,7 @@ const YATAQXANA: QebulPageSeed = {
 };
 
 // ── 9. Əcnəbi vətəndaşlar: qəbul qaydaları və təhsil haqqı (az/en/ru) ────────
-const FOREIGN_CONTACT_AZ = '**Ünvan:** Bakı, Zərifə Əliyeva küçəsi 18\n\n**Telefon:** +994 12 493 36 44\n\n**E-poçt:** akademiya@asco.az';
+const FOREIGN_CONTACT_AZ = '**Ünvan:** Bakı, Zərifə Əliyeva küçəsi 18\n\n**Telefon:** (012) 493 36 44\n\n**E-poçt:** akademiya@asco.az';
 
 const ECNEBI: QebulPageSeed = {
   slug: 'ecnebi-telebelerin-qebulu-qaydalari',

@@ -1875,6 +1875,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'medeniyyet',
         'beynelxalq',
         'asco',
+        'korporativ',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{

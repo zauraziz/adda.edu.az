@@ -85,13 +85,13 @@ const AZ = (path: string): string => `/az${path}`;
 
 const ADDRESS_AZ = 'Bakı, Zərifə Əliyeva küçəsi 18';
 const CONTACT_AZ =
-  `**Ünvan:** ${ADDRESS_AZ}\n\n**Telefon:** +994 12 404 33 40\n\n**E-poçt:** info@adda.edu.az\n\n` +
+  `**Ünvan:** ${ADDRESS_AZ}\n\n**Telefon:** (012) 493 36 44\n\n**E-poçt:** info@adda.edu.az\n\n` +
   `Sualınızı [onlayn göndərin](${ASK}) — cavab e-poçtunuza gəlir.`;
 const CONTACT_EN =
-  '**Address:** 18 Zarifa Aliyeva Street, Baku\n\n**Phone:** +994 12 404 33 40\n\n**E-mail:** info@adda.edu.az\n\n' +
+  '**Address:** 18 Zarifa Aliyeva Street, Baku\n\n**Phone:** +994 12 493 36 44\n\n**E-mail:** info@adda.edu.az\n\n' +
   `[Send your question online](${ASK}) — the reply comes to your e-mail.`;
 const CONTACT_RU =
-  '**Адрес:** Баку, ул. Зарифы Алиевой, 18\n\n**Телефон:** +994 12 404 33 40\n\n**E-mail:** info@adda.edu.az\n\n' +
+  '**Адрес:** Баку, ул. Зарифы Алиевой, 18\n\n**Телефон:** +994 12 493 36 44\n\n**E-mail:** info@adda.edu.az\n\n' +
   `[Задайте вопрос онлайн](${ASK}) — ответ придёт на e-mail.`;
 
 const L_AZ = {

@@ -24,6 +24,7 @@
  * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
  */
 import { deliver } from '../api/identity/services/identity';
+import { ACADEMY_PHONE_AZ } from './phone-fix';
 
 type Row = Record<string, unknown>;
 
@@ -45,10 +46,10 @@ const TYPE_LABEL: Record<string, string> = {
 
 const SITE_URL = (process.env.SITE_URL || 'https://demo.adda.edu.az').replace(/\/+$/, '');
 
-// F5.32d — F5.30a-da təsdiqlənmiş, canlıda olan əlaqə məlumatı (bax
-// _components/Footer.tsx SITE_PHONE-un yanındakı eyni qərar/izah).
+// F5.32d — əlaqə məlumatı. F5.53: telefon Akademiyanın ümumi nömrəsidir
+// (src/utils/phone-fix.ts; saytda adda-nextjs/lib/phone.ts) — əvvəlki nömrə səhv idi.
 const ADDA_ADDRESS = 'AZ1000, Bakı, Zərifə Əliyeva küçəsi 18';
-const ADDA_PHONE = '+994 12 404 33 40';
+const ADDA_PHONE = ACADEMY_PHONE_AZ;
 
 interface AppealRow {
   documentId: unknown;

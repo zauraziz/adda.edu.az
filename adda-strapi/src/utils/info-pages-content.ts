@@ -44,13 +44,13 @@ const NEWS = {
 const AZ = (path: string): string => `/az${path}`;
 
 const CONTACT_AZ =
-  '**Ünvan:** Bakı, Zərifə Əliyeva küçəsi 18 («Sahil» metrosunun yaxınlığı)\n\n**Telefon:** +994 12 404 33 40\n\n' +
+  '**Ünvan:** Bakı, Zərifə Əliyeva küçəsi 18 («Sahil» metrosunun yaxınlığı)\n\n**Telefon:** (012) 493 36 44\n\n' +
   `**E-poçt:** info@adda.edu.az\n\nSualınızı [onlayn göndərin](${ASK}) — cavab e-poçtunuza gəlir.`;
 const CONTACT_EN =
-  '**Address:** 18 Zarifa Aliyeva Street, Baku (near Sahil metro station)\n\n**Phone:** +994 12 404 33 40\n\n' +
+  '**Address:** 18 Zarifa Aliyeva Street, Baku (near Sahil metro station)\n\n**Phone:** +994 12 493 36 44\n\n' +
   `**E-mail:** info@adda.edu.az\n\n[Send your question online](${ASK}) — the reply comes to your e-mail.`;
 const CONTACT_RU =
-  '**Адрес:** Баку, ул. Зарифы Алиевой, 18 (рядом со станцией метро «Сахил»)\n\n**Телефон:** +994 12 404 33 40\n\n' +
+  '**Адрес:** Баку, ул. Зарифы Алиевой, 18 (рядом со станцией метро «Сахил»)\n\n**Телефон:** +994 12 493 36 44\n\n' +
   `**E-mail:** info@adda.edu.az\n\n[Задайте вопрос онлайн](${ASK}) — ответ придёт на e-mail.`;
 
 // ── 1. Tez-tez verilən suallar ───────────────────────────────────────────────
@@ -155,7 +155,7 @@ const FAQ_PAGE: QebulPageSeed = {
       {
         question: 'Akademiyaya sualımı necə göndərim?',
         answer:
-          `[Onlayn müraciət formasında](${ASK}) mövzunu seçin — cavab e-poçtunuza gəlir. Telefon: +994 12 404 33 40, e-poçt: info@adda.edu.az.`,
+          `[Onlayn müraciət formasında](${ASK}) mövzunu seçin — cavab e-poçtunuza gəlir. Telefon: (012) 493 36 44, e-poçt: info@adda.edu.az.`,
       },
       {
         question: 'Xəbər və tədbirləri necə izləyim?',
@@ -244,7 +244,7 @@ const FAQ_PAGE: QebulPageSeed = {
       {
         question: 'How do I send a question to the Academy?',
         answer:
-          `Choose a topic in the [online enquiry form](${ASK}) — the reply comes to your e-mail. Phone: +994 12 404 33 40, e-mail: info@adda.edu.az.`,
+          `Choose a topic in the [online enquiry form](${ASK}) — the reply comes to your e-mail. Phone: +994 12 493 36 44, e-mail: info@adda.edu.az.`,
       },
       {
         question: 'How can I follow news and events?',
@@ -333,7 +333,7 @@ const FAQ_PAGE: QebulPageSeed = {
       {
         question: 'Как отправить вопрос в Академию?',
         answer:
-          `Выберите тему в [форме онлайн-обращения](${ASK}) — ответ придёт на e-mail. Телефон: +994 12 404 33 40, e-mail: info@adda.edu.az.`,
+          `Выберите тему в [форме онлайн-обращения](${ASK}) — ответ придёт на e-mail. Телефон: +994 12 493 36 44, e-mail: info@adda.edu.az.`,
       },
       {
         question: 'Как следить за новостями и мероприятиями?',
