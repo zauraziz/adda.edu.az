@@ -151,6 +151,12 @@ const azLower = (s) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
   `src/utils/admin-inbox.ts` + `src/admin/inbox/`). Yeni tipdə bu adı İŞLƏTMƏ.
 - Upload servisi `originalFilename` (kiçik `n`) və `refId` üçün rəqəm ID istəyir.
 - **`plugins.ts` əl ilə redaktə olunmamalıdır.**
+- **`strapi.db.query().update()` `updatedAt`-ı HƏMİŞƏ indiki vaxta qoyur**
+  (@strapi/database timestamps abunəçisi verilən dəyərin üstündən yazır). Mexaniki
+  düzəliş (F5.53 telefon) redaktə tarixini dəyişməməlidir: yoxsa `section-pages.ts`
+  sonrakı miqrasiyada səhifəni «redaktor dəyişib» sayıb atlayır, admində qaralama
+  «Dəyişdirilib» görünə bilər. `updateMany({ where: { id }, data: { ...d, updatedAt: köhnə } })`
+  — obyekt datada vaxt qoyulmur.
 - **Admin interfeysi Azərbaycancadır, amma dili `en`-dir (F5.39).** `az`
   Strapi-nin `languageNativeNames` siyahısında yoxdur → mətnlər
   `config.translations.en` ÜZƏRİNƏ yazılır (`src/admin/translations/az.ts`,
@@ -208,7 +214,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `audienceMenu:v1`, `faqPage:v1`, `ascoPage:v1`, `gizClean:v1`, `orgBlock:v1`,
 `cmAz:v10`, `homeLayout:v1`, `homePage:v1`, `homeQuote:v1`, `homeLayout:v2`, `cmAz:v11`,
 `certBlock:v1`, `certLayout:v1`, `certMenu:v1`, `certImages:v1`, `newsImport:v1`,
-`eventsF551:v1`; sayğac `legacyImport:tries`, fayl xəritəsi `legacyFiles:v1`) + mövcud
+`eventsF551:v1`, `structOrder:v1`, `phoneFix:v1`, `legalPages:v1`, `corpPage:v1`, `cmAz:v12`;
+sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -285,6 +292,14 @@ bilinmir.
   `/_health`-i döyəcləyir. Buna baxmayaraq yoxlayıcılarda **isinmə fazası** var.
 - SMTP portları (25/465/587) **səssizcə bloklanır** — Resend işlədilir.
 - «Clear build cache» **lazımsızdır** və pulsuz planda build-i 20+ dəqiqəyə çıxarır.
+
+### Cloudinary
+
+- **PDF çatdırılması hesabda BAĞLIDIR** (15.10.2026 yoxlanılıb): `image/upload/…pdf`
+  401 qaytarır (`x-cld-error: deny or ACL failure`) — saytdakı Cloudinary PDF-ləri
+  («Elmi Əsərlər» arxivi, qaydalar, F5.51 elan faylları, F5.53 loqotip PDF) açılmır.
+  Həll kodda deyil: Cloudinary konsolu → Settings → Security → «Allow delivery of PDF
+  and ZIP files». Şəkil, `.ai`, `raw/upload` (PPTX, CDR) işləyir.
 
 ---
 
@@ -794,6 +809,43 @@ olunur. Çevirmə kimdə?
 23. **F5.52 — admin «removeChild» xətası** (layihə sənədi `claude/f552-admin-removechild.md`).
    Səbəb brauzer tərcüməsidir (bax «Strapi 5» tələləri). `src/admin/dom-guard.ts`:
    tərcümə bağlanır + DOM qoruyucusu. Server tərəfi, sxem, marker YOXDUR.
+24. **F5.53 — struktur sırası, ümumi telefon, «əməkdaş», hüquqi səhifələr, korporativ üslub**
+   (layihə sənədi `claude/f553-struktur-telefon-huquqi.md`).
+   - **Sıra:** bölmələr saytda `sortOrder`, sonra ad ilə. «Gəmi sürücülüyü fakültəsi»
+     «Gəmi mexanikası…»-ndan əvvəl; rektorun BİRBAŞA tabeliyi: tədris prorektoru →
+     elmi işlər və beynəlxalq əlaqələr prorektoru → mərkəzlər → şöbələr → digərləri
+     (müşavir, köməkçi, elmi katib, referent, hüquq məsləhətçisi, kollec). Prorektorların
+     tabeliyi dəyişmir. BİR DƏFƏ (`structOrder:v1`, `src/utils/structure-order.ts`,
+     `updateMany` documentId üzrə — bütün dil/qaralama sətirləri), sonra admində «Sıra».
+     `UNIT_TREE` eyni sırada; `/kafedralar` qrupları və `/rehberlik` dekanları fakültə sırası ilə.
+     Əlifba sırası olan filtrlər (heyət, auditoriyalar) əlifba ilə qalır.
+   - **Telefon:** Akademiyanın nömrəsi (012) 493 36 44 (+994 12 404 33 40 SƏHV idi).
+     TƏK mənbə: Next `lib/phone.ts`, Strapi `src/utils/phone-fix.ts` (EYNİ format): az
+     «(012) 493 36 44», en/ru «+994 12 493 36 44»; daxili nömrə «…, daxili 3078» /
+     «ext.» / «доб.», keçid `tel:+994124933644,3078`. Üst zolaq (mobil menyuda da),
+     footer, `/elaqe`; bölmə səhifəsində «Əlaqə» həmişə telefonla. `person.phone` və
+     `unit.phoneExt` render zamanı `phoneView` ilə (qısa nömrə və köhnə
+     «(+99412) 493-36-44 (3078)» — eyni format; başqa nömrə olduğu kimi). Səhifə mətnləri
+     BİR DƏFƏ (`phoneFix:v1`): bütün sətirlər + komponentlər (suallar, addımlar, faktlar,
+     yan keçidlər), `updatedAt` SAXLANIR; seed faylları yeni formatdadır. Başqa birbaşa
+     nömrələr (Tədris ofisi 498-73-94, TTM 404 39 46/47) dəyişməyib.
+   - **«Əməkdaş»:** bölmədə çalışanların sayı «N əməkdaş» / «Əməkdaş: N» («heyət» yox);
+     kateqoriya adları (Professor-müəllim heyəti, İnzibati heyət) qalır.
+   - **Hüquqi səhifələr** (`legalPages:v1`, `src/utils/legal-pages.ts`, məzmun
+     `legal-pages-content.ts`, layout `akademiya`, qayda section-pages.ts kimi):
+     `/sehife/mexfilik-siyaseti`, `/sehife/istifade-sertleri` az/en/ru. Kukilər
+     (`adda_id`, `adda-a11y`, `adda_session_id`) və emal edənlər (Vercel, Render, Neon,
+     Cloudinary, Resend, Gemini, Web Push) mətndə adbaad — yeni kuki/servis əlavə
+     olunanda mətn də. **Hüquq şöbəsi yoxlamalıdır.**
+   - **Korporativ üslub** (`/sehife/korporativ-uslub`, `corpPage:v1`, ARXA PLANDA 12 s,
+     sayğac `corpPage:tries`): köhnə səhifə yeni quruluşda — loqotip (PNG, PDF, CDR),
+     təqdimat şablonu (PPTX), qaydalar, `dataBlock=korporativ` → `BrandStyle.tsx`
+     (rənglər HEX/RGB, şriftlər — kilidli dizayn sistemi; dəyişəndə orada da). Köhnə
+     səhifədə Cloudinary-də olan fayllar təkrar endirilmir, qalanı köhnə saytdan
+     (`legacy-files.ts`, `documents: true` PPTX/CDR qəbul edir). CSS prefiksi `corp-`
+     (`.brand` başlığın loqo blokudur — eyni ad bloku ortaya sıxırdı).
+   - Footer: Məxfilik siyasəti, İstifadə şərtləri, Korporativ stil → səhifələr.
+     Admin: `cmAz:v12` (blok «korporativ», telefon sahələrinin qaydası).
 
 ---
 
