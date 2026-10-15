@@ -15,13 +15,21 @@
  *     nisbi vaxt da — azRelativeTime);
  *   - «Məsul redaktorlar» səhifəsi, yan panel və vidcet (src/admin/owners/,
  *     server: src/utils/page-owners.ts).
+ *
+ * F5.52: brauzer tərcüməsi admini «removeChild» xətası ilə çökdürürdü —
+ * dom-guard.ts (translate="no", notranslate, lang="az", DOM qoruyucusu).
  */
 import type { StrapiApp } from '@strapi/strapi/admin';
 import { Bell, User } from '@strapi/icons';
+import { protectAdminDom } from './dom-guard';
 import { InboxMenuIcon } from './inbox/MenuIcon';
 import { InboxSidePanel } from './inbox/SidePanel';
 import { OwnerSidePanel } from './owners/OwnerSidePanel';
 import { AZ_ADMIN_TRANSLATIONS } from './translations/az';
+
+// Modul yüklənəndə — React ilk dəfə render etməzdən və brauzer səhifənin dilini
+// təyin etməzdən ƏVVƏL (register() isə şəbəkə sorğusundan sonra çağırılır).
+protectAdminDom();
 
 type ContentManagerApis = { apis: { addEditViewSidePanel: (panels: unknown[]) => void } };
 
@@ -30,23 +38,6 @@ const INBOX_READ = ['api::appeal.appeal', 'api::correction.correction', 'api::rs
   action: 'plugin::content-manager.explorer.read',
   subject,
 }));
-
-/**
- * Strapi `<html lang>`-ı interfeys dilinə (`en`) bərabər qoyur. Mətnlər
- * Azərbaycancadır — `lang="en"` ilə CSS böyük hərfə çevirəndə «i» → «I»
- * olur («GÖZLƏYIR»). `az` olanda «İ» düzgün çıxır, yazı yoxlaması da
- * Azərbaycan dilində işləyir. Yalnız `en` dəyişdirilir: istifadəçi profildə
- * başqa dil (məs. rus) seçibsə toxunulmur.
- */
-function keepHtmlLangAz(): void {
-  if (typeof document === 'undefined') return;
-  const el = document.documentElement;
-  const fix = () => {
-    if (el.lang === 'en') el.lang = 'az';
-  };
-  fix();
-  new MutationObserver(fix).observe(el, { attributes: true, attributeFilter: ['lang'] });
-}
 
 /**
  * Nisbi vaxt («3 hours ago») — admin `en` dilindədir, Intl.RelativeTimeFormat
@@ -89,7 +80,6 @@ export default {
     translations: { en: AZ_ADMIN_TRANSLATIONS },
   },
   register(app: StrapiApp) {
-    keepHtmlLangAz();
     azRelativeTime();
     app.addMenuLink({
       to: 'bildirisler',
