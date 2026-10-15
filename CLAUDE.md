@@ -158,7 +158,18 @@ const azLower = (s) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
   `translations/en.json`-u, həm kodda olan `id: '…', defaultMessage: '…'`
   açarlarını yoxla. Plagin açarı prefikslidir və hərf həssasdır
   (`cloud.Plugin.name`, `content-type-builder.*`). Nisbi vaxt («3 saat əvvəl»)
-  `app.tsx → azRelativeTime()`, `<html lang="az">` isə `keepHtmlLangAz()` ilə.
+  `app.tsx → azRelativeTime()`, `<html lang="az">` isə `dom-guard.ts → keepHtmlLangAz()` ilə.
+- **Admin brauzerdə tərcümə OLUNMAMALIDIR (F5.52).** Chrome/Edge «Tərcümə et»
+  mətn düyünlərini `<font>`-la əvəz edir, React öz düyününü silə bilmir:
+  «Failed to execute 'removeChild' on 'Node'» → ekran «Xəta baş verdi»
+  (tərcümə olunmuş ekranda xəta mətni də Azərbaycancaya çevrilir, «Strapi's GitHub»
+  → «Strapi'nin GitHub-u» — tanınma əlaməti). `src/admin/dom-guard.ts` admin modulu
+  yüklənəndə (register-dən ƏVVƏL, brauzer dili load-dan sonra təyin edir):
+  `<html translate="no" class="notranslate">`, `<meta name="google" content="notranslate">`,
+  `lang="az"` və ehtiyat qoruyucu (`removeChild`/`insertBefore` kənar DOM
+  dəyişikliyində xəta atmır, konsola `[adda]` xəbərdarlığı). Statik
+  `index.html`-i Strapi özü yaradır (`DefaultDocument`, `lang="en"`) — ona
+  toxunmaq lazım deyil. Reproduksiya: tərcüməçi modeli ilə ilk qeydi açanda çökür.
 - **Content Manager sahə adları və qaydaları `src/utils/cm-az.ts`-dədir** (28
   tip + 25 komponent). BİR DƏFƏ yazılır (store `adda-admin` → `cmAz:v1`),
   yalnız defolt adı (sahə adının özü) və boş təsviri əvəz edir — admində
@@ -780,6 +791,9 @@ olunur. Çevirmə kimdə?
      saat və zal təxminidir. Ana səhifə zolağı tarix/saatı Bakı vaxtı ilə göstərir
      (`lib/format.ts` → `bakuTime`); 5-dən az tədbirdə sütun sayı = tədbir sayı.
    - Admin: `cmAz:v11`.
+23. **F5.52 — admin «removeChild» xətası** (layihə sənədi `claude/f552-admin-removechild.md`).
+   Səbəb brauzer tərcüməsidir (bax «Strapi 5» tələləri). `src/admin/dom-guard.ts`:
+   tərcümə bağlanır + DOM qoruyucusu. Server tərəfi, sxem, marker YOXDUR.
 
 ---
 
