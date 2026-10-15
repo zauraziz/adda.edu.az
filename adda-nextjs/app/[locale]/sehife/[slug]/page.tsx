@@ -29,6 +29,7 @@ import '../../../_styles/36-unit.css';
 import '../../../_styles/37-program.css';
 import '../../../_styles/42-qebul.css';
 import '../../../_styles/44-faq.css';
+import '../../../_styles/46-corp.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ContentPage from '../../../_components/ContentPage';

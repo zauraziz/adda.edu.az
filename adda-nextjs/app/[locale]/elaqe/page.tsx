@@ -6,10 +6,8 @@
 // STATİKDİR (CMS-dən çəkilmir) — hardcode edilmiş sabit faktlar (ünvan,
 // telefon, e-poçt) + daxili keçidlər, ona görə admin redaktə qapısı yoxdur.
 //
-// TELEFON: bax _components/Footer.tsx SITE_PHONE — üç fərqli nömrə
-// mənbəyi arasından seçilib (Zaur müəllim təsdiqləyib), bu səhifə EYNİ
-// sabiti idxal edir ki, səhifə/altbilgi arasında YENİDƏN uyğunsuzluq
-// yaranmasın.
+// TELEFON: lib/phone.ts (F5.53, Zaur müəllim təsdiqləyib: (012) 493 36 44) —
+// footer və üst zolaq EYNİ mənbədən götürür.
 //
 // İŞ SAATLARI/NƏQLİYYAT QEYDİ: mənbə YOXDUR (heç bir unit-in
 // `receptionHours`-u ümumi akademiya saatını təmsil etmir — cəmi bir
@@ -37,7 +35,8 @@ import '../../_styles/36-unit.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
-import Footer, { SITE_PHONE } from '../../_components/Footer';
+import Footer from '../../_components/Footer';
+import { academyPhone } from '@/lib/phone';
 import { getMenu, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -118,7 +117,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <h2 className="un-block-title">{tr('Ümumi əlaqə', locale)}</h2>
             <div className="prose">
               <p><i className="ti ti-map-pin" aria-hidden="true" /> {address}</p>
-              <p><i className="ti ti-phone" aria-hidden="true" /> <a href={SITE_PHONE.href}>{SITE_PHONE.display}</a></p>
+              <p><i className="ti ti-phone" aria-hidden="true" /> <a href={academyPhone(locale).href}>{academyPhone(locale).text}</a></p>
               <p><i className="ti ti-mail" aria-hidden="true" /> <a href="mailto:info@adda.edu.az">info@adda.edu.az</a></p>
             </div>
           </section>

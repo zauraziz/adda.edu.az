@@ -62,6 +62,8 @@ export interface MNavData {
   portal: { title: string; cards: MNavLink[] } | null;
   audiences: MNavLink[];
   languages: MNavLang[];
+  /** F5.53 — Akademiyanın ümumi nömrəsi (lib/phone.ts); masaüstündə üst zolaqdadır. */
+  phone?: MNavLink;
   labels: MNavLabels;
 }
 
@@ -243,6 +245,13 @@ export default function MobileNav({ data }: { data: MNavData }) {
                     </a>
                   ))}
                 </>
+              ) : null}
+
+              {data.phone ? (
+                <a className="mnav-row mnav-phone" href={data.phone.href}>
+                  <span>{data.phone.label}</span>
+                  <i className="ti ti-phone" aria-hidden="true" />
+                </a>
               ) : null}
 
               {data.languages.length ? (

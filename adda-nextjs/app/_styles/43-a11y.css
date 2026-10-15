@@ -1,7 +1,7 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 364, əhatəli: 2, dəyişməz: 494,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 367, əhatəli: 2, dəyişməz: 505,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
@@ -24,6 +24,8 @@ html[data-contrast="high"] .gov-parent-mark{color:var(--gold-400)}
 html[data-contrast="high"] .utility-left a{color:#33566B}
 html[data-contrast="high"] .utility-left a:hover{color:var(--navy-800)}
 html[data-contrast="high"] .utility-left i{color:#105781}
+html[data-contrast="high"] .utility-left .util-phone{color:var(--navy-800)}
+html[data-contrast="high"] .utility-left .util-phone i{color:var(--navy-700)}
 html[data-contrast="high"] .lang-btn{color:var(--navy-800)}
 html[data-contrast="high"] .lang-btn i{color:#105781}
 html[data-contrast="high"] .lang-menu a{color:rgba(255,255,255,.88)}
@@ -858,3 +860,15 @@ html[data-contrast="high"] .cert-org{color:#615026}
 html[data-contrast="high"] .cert-title{color:var(--navy-900)}
 html[data-contrast="high"] .cert-open{color:var(--navy-700)}
 html[data-contrast="high"] .cert-open:hover{color:#615026}
+html[data-contrast="high"] .corp-h{color:#615026}
+html[data-contrast="high"] .corp-swatch-name{color:var(--navy-900)}
+html[data-contrast="high"] .corp-codes dt{color:var(--navy-700)}
+html[data-contrast="high"] .corp-codes dd{color:var(--navy-900)}
+html[data-contrast="high"] .corp-use{color:var(--navy-700)}
+html[data-contrast="high"] .corp-font-role{color:#615026}
+html[data-contrast="high"] .corp-font-name{color:var(--navy-900)}
+html[data-contrast="high"] .corp-specimen{color:var(--navy-900)}
+html[data-contrast="high"] .corp-sample{color:var(--navy-800)}
+html[data-contrast="high"] .corp-font-note{color:var(--navy-700)}
+html[data-contrast="high"] .corp-font-note a{color:var(--navy-700)}
+html[data-contrast="high"] .corp-font-note a:hover{color:#615026}

@@ -6,6 +6,7 @@
 
 import { getStaffDirectory, mediaUrl, type PersonFull, type StaffType } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
+import { phoneView } from '@/lib/phone';
 import StaffDirectoryIsland, {
   type DirectoryPerson,
   type FilterOption,
@@ -137,7 +138,8 @@ export default async function StaffDirectory({
       academicTitle: p.academicTitle ? tr(p.academicTitle, locale) : null,
       photo: mediaUrl(p.photo),
       email: p.email ?? null,
-      phone: p.phone ?? null,
+      phone: phoneView(p.phone, locale)?.text ?? null,
+      phoneHref: phoneView(p.phone, locale)?.href ?? null,
       tags: (p.researchAreas ?? []).map((t) => tr(t.label, locale)),
       langs: (p.languages ?? []).map((l) => l.lang),
       types: roles.map((r) => r.staffType),

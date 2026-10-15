@@ -1,0 +1,107 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F5.53 / «Korporativ üslub»: rənglər və şriftlər bloku
+   (app/_components/BrandStyle.tsx, page.dataBlock = korporativ).
+   Rəng nümunəsi inline fondur, üstündə mətn yoxdur; ad və kodlar ağ kartda.
+   Prefiks «corp-»: «.brand» saytın başlığındakı loqo blokudur (02-header.css,
+   align-items:center + margin-right) — eyni ad bloku ortaya sıxırdı.
+   ═══════════════════════════════════════════════════════ */
+
+.corp-style { display: flex; flex-direction: column; gap: 16px; }
+.corp-h {
+  margin: 8px 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+.corp-swatches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.corp-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 12px 16px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+}
+.corp-chip {
+  height: 96px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(11, 61, 92, 0.12);
+}
+.corp-swatch-name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--navy-900);
+}
+.corp-codes { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.corp-codes div { display: flex; gap: 6px; align-items: baseline; }
+.corp-codes dt {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--navy-700);
+}
+.corp-codes dd {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--text-sm);
+  color: var(--navy-900);
+  user-select: all;
+}
+.corp-use { margin: 0; font-size: var(--text-sm); line-height: 1.5; color: var(--navy-700); }
+
+.corp-fonts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.corp-font {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 16px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+}
+.corp-font-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.corp-font-role {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+.corp-font-name { font-family: var(--font-body); font-size: var(--text-sm); font-weight: 700; color: var(--navy-900); }
+.corp-font--display { font-family: var(--font-display); }
+.corp-font--body { font-family: var(--font-body); }
+.corp-specimen { margin: 0; font-size: 2rem; line-height: 1.25; color: var(--navy-900); overflow-wrap: anywhere; }
+.corp-sample { margin: 0; font-size: var(--text-lg); line-height: 1.4; color: var(--navy-800); }
+.corp-font-note { margin: 0; font-size: var(--text-sm); color: var(--navy-700); }
+.corp-font-note a { display: inline-flex; align-items: center; gap: 4px; color: var(--navy-700); font-weight: 700; }
+.corp-font-note a:hover { color: var(--gold-600); }
+.corp-font-note a:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; border-radius: 4px; }
+
+@media (max-width: 640px) {
+  .corp-fonts { grid-template-columns: minmax(0, 1fr); }
+  .corp-swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .corp-chip { height: 72px; }
+  .corp-specimen { font-size: 1.6rem; }
+}

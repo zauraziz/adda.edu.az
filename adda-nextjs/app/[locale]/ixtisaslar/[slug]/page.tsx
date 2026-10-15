@@ -920,7 +920,7 @@ export default async function ProgramPage({
                     tapılmazsa VƏ YA heyət boşdursa bütün blok görünmür. */}
                 {staffStatsHas ? (
                   <div>
-                    <div className="un-sub-title">{tr('Kafedra heyəti', locale)}</div>
+                    <div className="un-sub-title">{tr('Kafedranın əməkdaşları', locale)}</div>
                     <p className="un-side-text un-side-text--icon">
                       <i className="ti ti-school" aria-hidden="true" />
                       {tr('Professor', locale)}: {professorCount}
@@ -931,7 +931,7 @@ export default async function ProgramPage({
                     </p>
                     <p className="un-side-text un-side-text--icon">
                       <i className="ti ti-users" aria-hidden="true" />
-                      {tr('Elmi dərəcəli heyət', locale)}: {degreedCount}
+                      {tr('Elmi dərəcəli əməkdaş', locale)}: {degreedCount}
                     </p>
                   </div>
                 ) : null}

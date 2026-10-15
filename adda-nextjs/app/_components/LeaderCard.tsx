@@ -7,6 +7,7 @@ import { AdminOnly } from './AdminGate';
 import { adminUrl } from './AdminOnly';
 import { mediaUrl, type LeaderPerson } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
+import { phoneView } from '@/lib/phone';
 
 /**
  * F4.7c/F4.9d — e-poçt `overflow-wrap: anywhere` ilə söz ortasından qırılırdı
@@ -28,6 +29,7 @@ function EmailWrap({ email }: { email: string }) {
 }
 
 export default function LeaderCard({ head, locale }: { head: LeaderPerson; locale: Locale }) {
+  const phone = phoneView(head.phone, locale);
   const photo = mediaUrl(head.photo);
   return (
     <div>
@@ -55,10 +57,10 @@ export default function LeaderCard({ head, locale }: { head: LeaderPerson; local
               <dd><a href={`mailto:${head.email}`}><EmailWrap email={head.email} /></a></dd>
             </div>
           ) : null}
-          {head.phone ? (
+          {phone ? (
             <div>
               <dt>{tr('Telefon', locale)}</dt>
-              <dd><a href={`tel:${head.phone.replace(/[^\d+]/g, '')}`}>{head.phone}</a></dd>
+              <dd><a href={phone.href}>{phone.text}</a></dd>
             </div>
           ) : null}
         </dl>

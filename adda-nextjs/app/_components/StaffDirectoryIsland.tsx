@@ -25,7 +25,9 @@ export interface DirectoryPerson {
   academicTitle: string | null;
   photo: string | null;
   email: string | null;
+  /** F5.53 — göstərilən mətn (daxili nömrəyə ümumi nömrə əlavə olunub, lib/phone.ts). */
   phone: string | null;
+  phoneHref: string | null;
   tags: string[];
   langs: string[];
   types: string[];
@@ -244,7 +246,7 @@ export default function StaffDirectoryIsland({ people, alphabet, filters, labels
                     </a>
                   ) : null}
                   {p.phone ? (
-                    <a href={`tel:${p.phone.replace(/[^\d+]/g, '')}`} className="dir-link">
+                    <a href={p.phoneHref ?? `tel:${p.phone.replace(/[^\d+]/g, '')}`} className="dir-link">
                       <i className="ti ti-phone" aria-hidden="true" /> {p.phone}
                     </a>
                   ) : null}

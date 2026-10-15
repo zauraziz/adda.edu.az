@@ -130,14 +130,20 @@ export default async function KafedraListPage({ params }: { params: Promise<{ lo
     groups.set(parentSlug, list);
   }
 
+  // F5.53 — fakültələr strukturdakı sıra ilə («Sıra», sortOrder): Gəmi sürücülüyü
+  // birinci. Əvvəl ada görə idi və «Gəmi mexanikası…» önə düşürdü (m < s).
   const orderedGroups = [...groups.entries()]
     .map(([parentSlug, list]) => ({
       parentSlug,
       facultyName: bySlug.get(parentSlug)?.name ?? null,
+      facultyOrder: bySlug.get(parentSlug)?.sortOrder ?? 100,
       units: [...list].sort((a, b) => a.name.localeCompare(b.name, 'az')),
     }))
-    .sort((a, b) =>
-      (a.facultyName ?? '').localeCompare(b.facultyName ?? '', 'az'),
+    .sort(
+      (a, b) =>
+        Number(a.facultyName === null) - Number(b.facultyName === null) ||
+        a.facultyOrder - b.facultyOrder ||
+        (a.facultyName ?? '').localeCompare(b.facultyName ?? '', 'az'),
     );
 
   return (

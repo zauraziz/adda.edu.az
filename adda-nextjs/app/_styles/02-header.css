@@ -18,6 +18,10 @@
 .utility-left a:hover{color:var(--navy-800)}
 .utility-left i{font-size:13px;color:var(--navy-600);transition:transform var(--nav-dur-fast) var(--nav-ease)}
 .utility-left a:hover i{transform:translateY(-1px)}
+/* F5.53 — Akademiyanın ümumi nömrəsi (lib/phone.ts): zolağın əvvəlində, ayırıcı xətlə. */
+.utility-left .util-phone{font-weight:700;color:var(--navy-800);padding-right:24px;border-right:1px solid #DCE6EE;white-space:nowrap}
+.utility-left .util-phone i{color:var(--navy-700)}
+.mnav-phone{margin-top:12px}
 .utility-right{display:flex;align-items:center;gap:4px}
 .lang-group{display:flex;gap:2px;margin-right:12px}
 /* F5.49 — dil seçimi: düymə (cari dil) + klikdə açılan siyahı («Bunlar üçün» üslubunda). */

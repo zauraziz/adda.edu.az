@@ -133,7 +133,9 @@ export type PageDataBlock =
   | 'medeniyyet'
   | 'beynelxalq'
   // F5.49 — adında «ASCO» olan xəbərlər («ASCO və Akademiya»).
-  | 'asco';
+  | 'asco'
+  // F5.53 — «Korporativ üslub»: rənglər və şriftlər bloku (kodda, BrandStyle.tsx).
+  | 'korporativ';
 export interface PageFact {
   label: string;
   value: string;

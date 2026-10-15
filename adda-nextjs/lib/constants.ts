@@ -28,8 +28,9 @@ export const SOCIAL_LINKS = {
   linkedin: 'https://linkedin.com/school/adda',
 } as const;
 
+// F5.53 — işlənmir; telefonun mənbəyi lib/phone.ts (Akademiyanın nömrəsi (012) 493 36 44).
 export const CONTACT_INFO = {
-  phone: '+994 12 493 59 27',
+  phone: '+994 12 493 36 44',
   email: 'info@adda.edu.az',
   address: 'Z.Əliyeva küç. 18, Bakı, AZ1000',
   coordinates: { lat: 40.3699, lng: 49.8372 },

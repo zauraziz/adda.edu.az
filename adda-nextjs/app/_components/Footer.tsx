@@ -16,6 +16,7 @@ import { getCertBlock, getOrgBlock, getSocialBlock, mediaUrl, type SiteMenu, typ
 import { FALLBACK_MENU } from '@/lib/menu-fallback';
 import { orgName, visibleOrgs } from '@/lib/org-fallback';
 import { certView } from '@/lib/cert';
+import { academyPhone } from '@/lib/phone';
 import NewsletterIsland, { type NewsletterMsgs } from './NewsletterIsland';
 import PageOwnerNote from './PageOwnerNote';
 
@@ -41,24 +42,19 @@ const SOCIALS: { name: string; icon: string; key: keyof SocialBlock }[] = [
 // F5.30c — "Rektorla əlaqə" ölü `#` keçidi idi, /rehberlik-ə bağlanmışdı.
 // F5.36c — vətəndaş müraciəti formasına yönəlir, «Rektora müraciət»
 // istiqaməti əvvəlcədən seçili (`?istiqamet=rektor`, bax
-// vetendaslarin-muracieti/page.tsx APPEAL_DIRECTIONS). Qalan üçü hələ də
-// Faza 2 yer tutucusudur, TOXUNULMUR.
-const LEGAL: { label: string; href?: string }[] = [
-  { label: 'Məxfilik siyasəti' },
-  { label: 'İstifadə şərtləri' },
-  { label: 'Korporativ stil' },
+// vetendaslarin-muracieti/page.tsx APPEAL_DIRECTIONS).
+// F5.53 — qalan üçü də səhifəyə aparır (Strapi `page`, layout=akademiya;
+// məzmun adda-strapi/src/utils/legal-pages-content.ts). «Korporativ stil» —
+// köhnə saytdan gələn «Korporativ üslub» səhifəsi (menyuda da odur).
+const LEGAL: { label: string; href: string }[] = [
+  { label: 'Məxfilik siyasəti', href: '/sehife/mexfilik-siyaseti' },
+  { label: 'İstifadə şərtləri', href: '/sehife/istifade-sertleri' },
+  { label: 'Korporativ stil', href: '/sehife/korporativ-uslub' },
   { label: 'Rektorla əlaqə', href: '/vetendaslarin-muracieti?istiqamet=rektor' },
 ];
 
-/**
- * F5.30a/c — sayt üzrə TƏK telefon mənbəyi. Köhnə `/sehife/elaqe` (Strapi
- * `page` qeydi, 4043700) və işlənməyən `lib/constants.ts` (493 59 27) fərqli
- * nömrələr göstərirdi — bura artıq canlıda olan, kod-dan gələn (DB-dən
- * asılı olmayan) nömrə əsas götürülüb. Zaur müəllim düzgün olduğunu
- * TƏSDİQLƏMƏLİDİR. `/elaqe` səhifəsi (F5.30a) EYNİ sabiti idxal edir ki,
- * iki yerdə YENİDƏN uyğunsuzluq yaranmasın.
- */
-export const SITE_PHONE = { display: '+994 12 404 33 40', href: 'tel:+994124043340' };
+// F5.53 — telefonun TƏK mənbəyi lib/phone.ts-dir: Zaur müəllim təsdiqləyib —
+// Akademiyanın əlaqə nömrəsi (012) 493 36 44 (əvvəlki +994 12 404 33 40 səhv idi).
 
 export default async function Footer({ menu, locale }: { menu: SiteMenu | null; locale: Locale }) {
   const fcols = menu && menu.footerMenyusu.length ? menu.footerMenyusu : FALLBACK_MENU.footerMenyusu;
@@ -68,6 +64,7 @@ export default async function Footer({ menu, locale }: { menu: SiteMenu | null; 
     getCertBlock(),
   ]);
   const orgs = visibleOrgs(orgItems);
+  const phone = academyPhone(locale);
   const certs = certView(certItems, locale).filter((c) => c.footer);
   const socials = SOCIALS.map((s) => ({ ...s, href: ((social?.[s.key] as string | null) ?? '').trim() })).filter((s) =>
     /^https?:\/\//i.test(s.href),
@@ -126,7 +123,7 @@ export default async function Footer({ menu, locale }: { menu: SiteMenu | null; 
             </a>
             <div className="foot-contact">
               <a href="#"><i className="ti ti-map-pin" />{' ' + tr('Bakı şəhəri, AZ1000, Azərbaycan', locale)}</a>
-              <a href={SITE_PHONE.href}><i className="ti ti-phone" />{' ' + SITE_PHONE.display}</a>
+              <a href={phone.href}><i className="ti ti-phone" />{' ' + phone.text}</a>
               <a href="mailto:info@adda.edu.az"><i className="ti ti-mail" />{' info@adda.edu.az'}</a>
             </div>
             {socials.length ? (
@@ -211,9 +208,7 @@ export default async function Footer({ menu, locale }: { menu: SiteMenu | null; 
           <p>{tr('© 2026 Azərbaycan Dövlət Dəniz Akademiyası. Bütün hüquqlar qorunur.', locale)}</p>
           <ul className="ftx-legal">
             {LEGAL.map((x) => (
-              // Faza 2: qalan üçünün href="#" → real marşrutlar. "Rektorla
-              // əlaqə" F5.30c-də bağlanıb, `x.href` varsa o işlənir.
-              <li key={x.label}><a href={x.href ? `/${locale}${x.href}` : '#'}>{tr(x.label, locale)}</a></li>
+              <li key={x.label}><a href={`/${locale}${x.href}`}>{tr(x.label, locale)}</a></li>
             ))}
           </ul>
         </div>

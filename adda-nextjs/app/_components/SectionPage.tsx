@@ -29,6 +29,7 @@ import { tr, fallbackNotice, type Locale } from '@/lib/i18n';
 import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
 import { FEED_TEXT } from '@/lib/feed-text';
 import { faqAnswerHtml } from '@/lib/faq-html';
+import BrandStyle, { BRAND_ID } from './BrandStyle';
 
 const PAGE_UID = 'api::page.page';
 
@@ -291,7 +292,7 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const sideLinks = (doc.sideLinks ?? []).filter((l): l is MenuLink => Boolean(l?.label && l?.url));
 
   const { intro, sections } = splitSections(doc.body ?? '');
-  const used = new Set<string>(['trayektoriya', 'ixtisaslar', 'suallar']);
+  const used = new Set<string>(['trayektoriya', 'ixtisaslar', 'suallar', BRAND_ID]);
   for (const s of sections) {
     let id = sectionId(s.title);
     for (let n = 2; used.has(id); n++) id = `${sectionId(s.title)}-${n}`;
@@ -335,12 +336,17 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
     (doc.stepsTitle ?? '').trim() ||
     tr(isQebul ? (tracks.size > 1 ? 'Qəbul trayektoriyaları' : 'Qəbul trayektoriyası') : 'Addım-addım', locale);
   const faqTitle = tr('Tez-tez verilən suallar', locale);
+  // F5.53 — «Korporativ üslub»: rənglər və şriftlər bloku mətn bölmələrindən SONRA
+  // (əvvəl loqotip və təqdimat şablonu — admində redaktə olunan mətndə).
+  const brand = block === 'korporativ';
+  const brandTitle = tr('Rənglər və şriftlər', locale);
 
   // Sıra: giriş → trayektoriya → canlı blok → mətn bölmələri → suallar.
   const toc = [
     ...(steps.length ? [{ id: 'trayektoriya', label: stepsTitle }] : []),
     ...(blockHas ? [{ id: 'ixtisaslar', label: blockTitle }] : []),
     ...sections.map((s) => ({ id: s.id, label: s.title })),
+    ...(brand ? [{ id: BRAND_ID, label: brandTitle }] : []),
     ...(faq.length ? [{ id: 'suallar', label: faqTitle }] : []),
   ];
   let tint = 0;
@@ -433,6 +439,13 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                     <div className="prose" dangerouslySetInnerHTML={{ __html: sectionHtml[i] }} />
                   </section>
                 ))}
+
+                {brand ? (
+                  <section id={BRAND_ID} className={'un-block pr-anchor' + nextTint()}>
+                    <h2 className="un-block-title">{brandTitle}</h2>
+                    <BrandStyle locale={locale} />
+                  </section>
+                ) : null}
 
                 {faq.length ? (
                   <section id="suallar" className={'un-block pr-anchor' + nextTint()}>

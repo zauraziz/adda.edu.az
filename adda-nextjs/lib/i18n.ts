@@ -1178,6 +1178,30 @@ const T: Array<[string, string, string]> = [
   ['Tam ölçüdə aç', 'Открыть в полном размере', 'Open full size'],
   ['PDF faylını aç', 'Открыть PDF-файл', 'Open the PDF file'],
   ['Hələlik sənəd yoxdur.', 'Пока документов нет.', 'No documents yet.'],
+  // ── F5.53 — bölmədə çalışanların sayı «əməkdaş» («heyət» yox) ──
+  ['əməkdaş', 'сотрудников', 'staff'],
+  ['Əməkdaş', 'Сотрудники', 'Staff'],
+  ['Elmi dərəcəli əməkdaş', 'С учёной степенью', 'With an academic degree'],
+  ['Kafedranın əməkdaşları', 'Сотрудники кафедры', 'Department staff'],
+  // ── F5.53 — «Korporativ üslub»: rənglər və şriftlər (BrandStyle.tsx) ──
+  ['Rənglər və şriftlər', 'Цвета и шрифты', 'Colours and typefaces'],
+  ['Əsas rənglər', 'Основные цвета', 'Primary colours'],
+  ['Köməkçi rənglər', 'Дополнительные цвета', 'Supporting colours'],
+  ['Dəniz göyü', 'Морской синий', 'Navy'],
+  ['Qızılı', 'Золотой', 'Gold'],
+  ['Tünd dəniz göyü', 'Тёмно-синий', 'Dark navy'],
+  ['Açıq fon', 'Светлый фон', 'Light background'],
+  ['Ağ', 'Белый', 'White'],
+  ['Əsas rəng: başlıqlar, menyu, tünd bloklar', 'Основной: заголовки, меню, тёмные блоки', 'Primary: headings, menus, dark sections'],
+  ['Vurğu: düymələr, xətlər, nişanlar', 'Акцент: кнопки, линии, значки', 'Accent: buttons, rules, badges'],
+  ['Footer və tünd fonlar', 'Подвал и тёмные фоны', 'Footer and dark backgrounds'],
+  ['Açıq bloklar və kartların fonu', 'Светлые блоки и фон карточек', 'Light sections and card backgrounds'],
+  ['Fon; tünd fonda mətn', 'Фон; текст на тёмном фоне', 'Background; text on dark'],
+  ['Şriftlər', 'Шрифты', 'Typefaces'],
+  ['Başlıqlar', 'Заголовки', 'Headings'],
+  ['Əsas mətn', 'Основной текст', 'Body text'],
+  ['Pulsuz şrift, SIL Open Font License 1.1', 'Бесплатный шрифт, SIL Open Font License 1.1', 'Free typeface, SIL Open Font License 1.1'],
+  ['Google Fonts-da bax', 'Открыть в Google Fonts', 'View on Google Fonts'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.

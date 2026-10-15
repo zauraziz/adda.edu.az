@@ -157,7 +157,8 @@ export default async function StructurePage({ params }: { params: Promise<{ loca
                   clear: tr('Təmizlə', locale),
                   expandAll: tr('Hamısını aç', locale),
                   collapseAll: tr('Hamısını yığ', locale),
-                  staff: tr('heyət', locale),
+                  // F5.53 — bölmədə çalışanların sayı: «4 əməkdaş» («heyət» yox).
+                  staff: tr('əməkdaş', locale),
                   units: tr('bölmə', locale),
                   departments: tr('kafedra', locale),
                   faculties: tr('fakültə', locale),

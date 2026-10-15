@@ -50,6 +50,7 @@ import {
   type LeadershipUnit,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
+import { phoneView } from '@/lib/phone';
 
 export const revalidate = 300;
 
@@ -117,9 +118,13 @@ function postRank(position: string | null | undefined, order: RegExp[]): number 
 /** Rəhbərlik bloku: prorektor -> müşavir -> elmi katib. */
 const LEAD_ORDER = [/prorektor/, /müşavir/, /elmi katib/];
 
-/** Əvvəl vəzifə növü, sonra əlifba. */
+/** F5.53 — strukturdakı sıra («Sıra», sortOrder): tədris prorektoru elmi işlər
+ * prorektorundan, Gəmi sürücülüyü Gəmi mexanikasından əvvəl. */
+const byStructure = (a: LeadershipUnit, b: LeadershipUnit) => (a.sortOrder ?? 100) - (b.sortOrder ?? 100);
+
+/** Əvvəl vəzifə növü, sonra strukturdakı sıra, sonra əlifba. */
 const byRankThenName = (order: RegExp[]) => (a: LeadershipUnit, b: LeadershipUnit) =>
-  postRank(a.head?.position, order) - postRank(b.head?.position, order) || byName(a, b);
+  postRank(a.head?.position, order) - postRank(b.head?.position, order) || byStructure(a, b) || byName(a, b);
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];
@@ -224,7 +229,8 @@ function LeaderCard({
             <>
               <dt>{tr('Telefon', locale)}</dt>
               <dd>
-                <a href={`tel:${head.phone.replace(/[^\d+]/g, '')}`}>{head.phone}</a>
+                {/* F5.53 — daxili nömrəyə ümumi nömrə əlavə olunur (lib/phone.ts). */}
+                <a href={phoneView(head.phone, locale)?.href}>{phoneView(head.phone, locale)?.text}</a>
               </dd>
             </>
           ) : null}
@@ -315,12 +321,17 @@ export default async function LeadershipPage({
   // F5.29 — tək «Tədris bölmələri» bloku İKİYƏ bölünüb: fakültə rəhbərləri
   // (dekan) və kafedra müdirləri, AYRI-AYRI bloklarda. Bloklar artıq
   // vəzifəyə görə AYRILDIĞI üçün `ACADEMIC_ORDER`/rütbə sıralaması lazım
-  // deyil — hər blok daxilində sadəcə əlifba sırası (`byName`).
+  // deyil (F5.53-dən blok daxilində strukturdakı sıra, sonra əlifba).
   const academicAll = rest.filter((u) => isAcademicPost(u.head?.position));
-  const faculties = [...academicAll.filter((u) => /dekan/.test(azLower(u.head?.position ?? '')))].sort(byName);
+  // F5.53 — fakültə və kafedralar strukturdakı sıra ilə (Gəmi sürücülüyü və
+  // onun kafedraları birinci), sonra ad.
+  const facultyOrder = (u: LeadershipUnit) => bySlug.get(u.parent?.slug ?? '')?.sortOrder ?? 100;
+  const faculties = [...academicAll.filter((u) => /dekan/.test(azLower(u.head?.position ?? '')))].sort(
+    (a, b) => byStructure(a, b) || byName(a, b),
+  );
   const departments = [
     ...academicAll.filter((u) => /kafedra müdiri/.test(azLower(u.head?.position ?? ''))),
-  ].sort(byName);
+  ].sort((a, b) => facultyOrder(a) - facultyOrder(b) || byStructure(a, b) || byName(a, b));
   const administrative = [...rest.filter((u) => !isAcademicPost(u.head?.position))].sort(byName);
 
   return (

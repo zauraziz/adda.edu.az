@@ -89,6 +89,7 @@ import {
   type UnitExtraBlock,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
+import { unitPhone } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
 
 /** F5.46 — admin keçidi: daxili ünvana dil prefiksi (eyni vərəq), xarici — yeni vərəqdə. */
@@ -403,7 +404,9 @@ export default async function UnitPage({
     .filter((p) => !unit.head || p.documentId !== unit.head.documentId)
     .sort((a, b) => azSort(a.name ?? '', b.name ?? ''));
 
-  const contactHas = Boolean(unit.building || unit.floor || unit.room || unit.phoneExt || unit.email);
+  // F5.53 — hər bölmənin əlaqəsində telefon var: daxili nömrə varsa
+  // «(012) 493 36 44, daxili N», yoxdursa Akademiyanın ümumi nömrəsi (lib/phone.ts).
+  const phone = unitPhone(unit.phoneExt, locale);
   // F4.11c — `receptionSlots` doludursa köhnə `receptionHours` sətrinin ƏVƏZİNƏ göstərilir.
   const receptionRows = buildReceptionRows(unit.receptionSlots, locale);
   const subunits = [...unit.children].sort(
@@ -530,20 +533,10 @@ export default async function UnitPage({
   const blockClass = (key: string) => 'un-block pr-anchor' + (tintByKey[key] ? ' un-block--tint' : '');
 
   // Yan panel: mündəricat · üst bölmə · rəhbər · heyət · əlaqə · qəbul saatları ·
-  // auditoriyalar · onlayn xidmətlər · sənədlər · düzəliş. Heç biri yoxdursa
-  // səhifə TƏK SÜTUN olur (.un-layout--single).
-  const sideHas = Boolean(
-    tocItems.length ||
-      unit.head ||
-      staffShown.length ||
-      facilities.length ||
-      contactHas ||
-      receptionRows.length ||
-      unit.receptionHours ||
-      unit.onlineServices.length ||
-      unit.parent ||
-      sideDocsSorted.length,
-  );
+  // auditoriyalar · onlayn xidmətlər · sənədlər · düzəliş. F5.53-dən «Əlaqə»
+  // bloku HƏR bölmədə var (ən azı Akademiyanın ümumi nömrəsi) — panel həmişə
+  // görünür; `.un-layout--single` artıq bölmə səhifəsində işlənmir.
+  const sideHas = true;
 
   // Fakt zolağı (ixtisas səhifəsindəki kimi): fakültə keçidi · ixtisas ·
   // kafedra/alt bölmə · heyət · otaq · daxili telefon · qəbul saatları.
@@ -667,7 +660,8 @@ export default async function UnitPage({
                 {staff.length && !isHidden('heyet') ? (
                   <li className="un-fact">
                     <i className="ti ti-users" aria-hidden="true" />
-                    <span className="un-fact-k">{tr('Heyət', locale)}</span>
+                    {/* F5.53 — say üçün «Əməkdaş» («Heyət» yox). */}
+                    <span className="un-fact-k">{tr('Əməkdaş', locale)}</span>
                     <span className="un-fact-v">{staff.length}</span>
                   </li>
                 ) : null}
@@ -681,8 +675,8 @@ export default async function UnitPage({
                 {unit.phoneExt ? (
                   <li className="un-fact">
                     <i className="ti ti-phone" aria-hidden="true" />
-                    <span className="un-fact-k">{tr('Daxili telefon', locale)}</span>
-                    <span className="un-fact-v">{unit.phoneExt}</span>
+                    <span className="un-fact-k">{tr('Telefon', locale)}</span>
+                    <a href={phone.href} className="un-fact-v">{phone.text}</a>
                   </li>
                 ) : null}
                 {unit.receptionHours ? (
@@ -978,58 +972,55 @@ export default async function UnitPage({
                   </div>
                 ) : null}
 
-                {contactHas ? (
-                  <div>
-                    <div className="un-sub-title">{tr('Əlaqə', locale)}</div>
-                    <div className="na-event-info" style={{ maxWidth: 'none', margin: 0 }}>
-                      {unit.building ? (
-                        <div className="na-ei-row">
-                          <i className="ti ti-building na-ei-ic" aria-hidden="true" />
-                          <div>
-                            <div className="na-ei-k">{tr('Korpus', locale)}</div>
-                            <div className="na-ei-v">{unit.building}</div>
-                          </div>
+                {/* F5.53 — «Əlaqə» həmişə görünür (telefon həmişə var). */}
+                <div>
+                  <div className="un-sub-title">{tr('Əlaqə', locale)}</div>
+                  <div className="na-event-info" style={{ maxWidth: 'none', margin: 0 }}>
+                    {unit.building ? (
+                      <div className="na-ei-row">
+                        <i className="ti ti-building na-ei-ic" aria-hidden="true" />
+                        <div>
+                          <div className="na-ei-k">{tr('Korpus', locale)}</div>
+                          <div className="na-ei-v">{unit.building}</div>
                         </div>
-                      ) : null}
-                      {unit.floor ? (
-                        <div className="na-ei-row">
-                          <i className="ti ti-stairs na-ei-ic" aria-hidden="true" />
-                          <div>
-                            <div className="na-ei-k">{tr('Mərtəbə', locale)}</div>
-                            <div className="na-ei-v">{unit.floor}</div>
-                          </div>
+                      </div>
+                    ) : null}
+                    {unit.floor ? (
+                      <div className="na-ei-row">
+                        <i className="ti ti-stairs na-ei-ic" aria-hidden="true" />
+                        <div>
+                          <div className="na-ei-k">{tr('Mərtəbə', locale)}</div>
+                          <div className="na-ei-v">{unit.floor}</div>
                         </div>
-                      ) : null}
-                      {unit.room ? (
-                        <div className="na-ei-row">
-                          <i className="ti ti-door na-ei-ic" aria-hidden="true" />
-                          <div>
-                            <div className="na-ei-k">{tr('Otaq', locale)}</div>
-                            <div className="na-ei-v">{unit.room}</div>
-                          </div>
+                      </div>
+                    ) : null}
+                    {unit.room ? (
+                      <div className="na-ei-row">
+                        <i className="ti ti-door na-ei-ic" aria-hidden="true" />
+                        <div>
+                          <div className="na-ei-k">{tr('Otaq', locale)}</div>
+                          <div className="na-ei-v">{unit.room}</div>
                         </div>
-                      ) : null}
-                      {unit.phoneExt ? (
-                        <div className="na-ei-row">
-                          <i className="ti ti-phone na-ei-ic" aria-hidden="true" />
-                          <div>
-                            <div className="na-ei-k">{tr('Daxili telefon', locale)}</div>
-                            <div className="na-ei-v">{unit.phoneExt}</div>
-                          </div>
-                        </div>
-                      ) : null}
-                      {unit.email ? (
-                        <div className="na-ei-row">
-                          <i className="ti ti-mail na-ei-ic" aria-hidden="true" />
-                          <div>
-                            <div className="na-ei-k">{tr('E-poçt', locale)}</div>
-                            <div className="na-ei-v"><a href={`mailto:${unit.email}`}>{unit.email}</a></div>
-                          </div>
-                        </div>
-                      ) : null}
+                      </div>
+                    ) : null}
+                    <div className="na-ei-row">
+                      <i className="ti ti-phone na-ei-ic" aria-hidden="true" />
+                      <div>
+                        <div className="na-ei-k">{tr('Telefon', locale)}</div>
+                        <div className="na-ei-v"><a href={phone.href}>{phone.text}</a></div>
+                      </div>
                     </div>
+                    {unit.email ? (
+                      <div className="na-ei-row">
+                        <i className="ti ti-mail na-ei-ic" aria-hidden="true" />
+                        <div>
+                          <div className="na-ei-k">{tr('E-poçt', locale)}</div>
+                          <div className="na-ei-v"><a href={`mailto:${unit.email}`}>{unit.email}</a></div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
-                ) : null}
+                </div>
 
                 {/* F4.11c — `receptionSlots` doludursa gün-gün cədvəl, boşdursa köhnə sətir. */}
                 {receptionRows.length ? (
@@ -1114,7 +1105,7 @@ export default async function UnitPage({
             ) : null}
           </div>
 
-          {/* F4.5c — alt bölmələr səhifənin sonunda öz kart cərgəsində (ad + rəhbər + heyət sayı). */}
+          {/* F4.5c — alt bölmələr səhifənin sonunda öz kart cərgəsində (ad + rəhbər + əməkdaş sayı). */}
           {subunitsShown.length ? (
             <section className="un-subunits">
               <h2 className="un-block-title">{blockTitleSubunits}</h2>
@@ -1127,7 +1118,7 @@ export default async function UnitPage({
                       <Link href={`/${locale}/struktur/${c.slug}`} className="un-subunit-card">
                         <div className="un-subunit-name">{c.name}</div>
                         {h ? <div className="un-subunit-head">{h.name}</div> : null}
-                        {n ? <div className="un-subunit-count">{tr('Heyət', locale)}: {n}</div> : null}
+                        {n ? <div className="un-subunit-count">{tr('Əməkdaş', locale)}: {n}</div> : null}
                       </Link>
                     </li>
                   );

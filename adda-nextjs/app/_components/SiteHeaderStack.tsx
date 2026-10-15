@@ -8,6 +8,7 @@ import {
   type SiteMenu, type MenuCategory, type MenuLink, type MenuPortal, type MenuPortalCard,
 } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
+import { academyPhone } from '@/lib/phone';
 import { menuHref } from '@/lib/menu-href';
 import { FALLBACK_MENU, FALLBACK_EACAD } from '@/lib/menu-fallback';
 import { orgName, parentHref, parentLabel, parentOrg } from '@/lib/org-fallback';
@@ -78,6 +79,7 @@ function buildMobileNav(
       label: tr(l.label, locale),
       href: menuHref(l.url, locale),
     })),
+    phone: { label: academyPhone(locale).text, href: academyPhone(locale).href },
     languages: (['az', 'ru', 'en'] as const).map((l) => ({
       code: l,
       label: l.toUpperCase(),
@@ -290,7 +292,13 @@ export default async function SiteHeaderStack({ menu, locale }: { menu: SiteMenu
       {/* Utility */}
       <div className="utility">
         <div className="utility-inner">
-          <div className="utility-left"><UtilityLeft cats={ust} locale={locale} /></div>
+          <div className="utility-left">
+            {/* F5.53 — Akademiyanın ümumi nömrəsi hər səhifədə (lib/phone.ts); mobildə menyudadır. */}
+            <a className="util-phone" href={academyPhone(locale).href}>
+              <i className="ti ti-phone" aria-hidden="true" /> {academyPhone(locale).text}
+            </a>
+            <UtilityLeft cats={ust} locale={locale} />
+          </div>
           <div className="utility-right">
             <div className="infofor" id="infofor">
               <button className="infofor-btn" id="infoforBtn" aria-expanded={false}>

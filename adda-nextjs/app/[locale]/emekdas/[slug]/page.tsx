@@ -43,6 +43,7 @@ import {
   type OrgUnit,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
+import { phoneView } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
 
 export const revalidate = 300;
@@ -112,6 +113,7 @@ export default async function PersonPage({
     getPersonBySlug(slug, locale).catch(() => null as PersonFull | null),
   ]);
   if (!person) notFound();
+  const phone = phoneView(person.phone, locale);
 
   const news = await getPersonArticles(slug, locale, 6).catch(() => [] as Article[]);
 
@@ -282,11 +284,12 @@ export default async function PersonPage({
                     <a className="prf-fact-v dir-link" href={`mailto:${person.email}`}>{person.email}</a>
                   </li>
                 ) : null}
-                {person.phone ? (
+                {phone ? (
                   <li>
                     <span className="prf-fact-k">{tr('Telefon', locale)}</span>
-                    <a className="prf-fact-v dir-link" href={`tel:${person.phone.replace(/[^\d+]/g, '')}`}>
-                      {person.phone}
+                    {/* F5.53 — daxili nömrəyə ümumi nömrə əlavə olunur (lib/phone.ts). */}
+                    <a className="prf-fact-v dir-link" href={phone.href}>
+                      {phone.text}
                     </a>
                   </li>
                 ) : null}
