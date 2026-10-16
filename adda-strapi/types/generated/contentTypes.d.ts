@@ -974,6 +974,10 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
     year: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -1876,6 +1880,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'beynelxalq',
         'asco',
         'korporativ',
+        'esasnameler',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{

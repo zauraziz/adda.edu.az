@@ -51,6 +51,14 @@ export const PAGE_PAGE_MOVES: Readonly<Record<string, string>> = {
 };
 
 /**
+ * F5.54 — səhifənin ünvanı dəyişib, qeyd eynidir (dərcdə qalır): /sehife/<açar> →
+ * /sehife/<dəyər> 301. Admində yaradılan nizamnamə səhifəsinin ünvanı oxunmaz idi.
+ */
+export const PAGE_SLUG_RENAMES: Readonly<Record<string, string>> = {
+  'az-rbaycan-doevl-t-d-niz-akademiyasinin-nizamnam-si': 'nizamname',
+};
+
+/**
  * Öz marşrutuna əvvəl köçmüş səhifələr (F5.21d, F5.30a). Səhifə qeydi arxiv
  * kimi dərcdə qalır, 301 artıq var — burada yalnız menyu keçidləri üçün.
  */
@@ -60,12 +68,17 @@ export const PAGE_ROUTE_MOVES: Readonly<Record<string, string>> = {
 };
 
 /** Axtarışda göstərilməyən səhifələr (köçmüş, ünvanı yönlənir). */
-export const MOVED_PAGE_SLUGS: string[] = [...PAGE_UNIT_MOVES.map((m) => m.page), ...Object.keys(PAGE_PAGE_MOVES)];
+export const MOVED_PAGE_SLUGS: string[] = [
+  ...PAGE_UNIT_MOVES.map((m) => m.page),
+  ...Object.keys(PAGE_PAGE_MOVES),
+  ...Object.keys(PAGE_SLUG_RENAMES),
+];
 
 /** /sehife/<slug> köçübsə yeni ünvan (dilsiz), yoxsa null. */
 export function movedPageTarget(slug: string): string | null {
   const m = PAGE_UNIT_MOVES.find((x) => x.page === slug);
   if (m) return `/struktur/${m.unit}`;
   if (PAGE_PAGE_MOVES[slug]) return `/sehife/${PAGE_PAGE_MOVES[slug]}`;
+  if (PAGE_SLUG_RENAMES[slug]) return `/sehife/${PAGE_SLUG_RENAMES[slug]}`;
   return PAGE_ROUTE_MOVES[slug] ?? null;
 }

@@ -64,6 +64,10 @@
       "min": 1881,
       "max": 2100
     },
+    "url": {
+      "type": "string",
+      "maxLength": 300
+    },
     "units": {
       "type": "relation",
       "relation": "manyToMany",

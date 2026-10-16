@@ -50,6 +50,8 @@ import { startLegacyImportF551 } from './utils/news-import';
 import { applyStructureOrderV1 } from './utils/structure-order';
 import { applyPhoneFixV1 } from './utils/phone-fix';
 import { applyLegalPagesV1, startCorpPageF553 } from './utils/legal-pages';
+// F5.54 — Nizamnamə və «Əsasnamələr» (bax src/utils/esasnameler.ts).
+import { applyEsasnamelerF554 } from './utils/esasnameler';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -192,7 +194,7 @@ const SEED = {
               },
               {
                 "label": "Himayəçilər Şurası",
-                "url": "/hazirlanir/himayeciler-surasi"
+                "url": "/sehife/himayeciler-surasi"
               },
               {
                 "label": "Təşkilati struktur",
@@ -213,7 +215,7 @@ const SEED = {
             "links": [
               {
                 "label": "Nizamnamə və təsis sənədləri",
-                "url": "/hazirlanir/nizamname-ve-tesis-senedleri"
+                "url": "/sehife/nizamname"
               },
               {
                 "label": "Normativ-hüquqi sənədlər",
@@ -221,7 +223,7 @@ const SEED = {
               },
               {
                 "label": "Struktur bölmələrin əsasnamələri",
-                "url": "/hazirlanir/struktur-bolmelerin-esasnameleri"
+                "url": "/sehife/struktur-bolmelerin-esasnameleri"
               },
               {
                 "label": "Akademik dürüstlük bəyannaməsi",
@@ -247,6 +249,10 @@ const SEED = {
               {
                 "label": "Akkreditasiya və sertifikatlar",
                 "url": "/sertifikatlar"
+              },
+              {
+                "label": "Keyfiyyəti idarəetmə sistemi",
+                "url": "/sehife/keyfiyyet-idareetme-sistemi"
               },
               {
                 "label": "İllik fəaliyyət hesabatları",
@@ -537,6 +543,14 @@ const SEED = {
               {
                 "label": "Keyfiyyət və nəticələr",
                 "url": "/sehife/keyfiyyetin-monitorinqi"
+              },
+              {
+                "label": "Yekun dövlət attestasiyası",
+                "url": "/sehife/yekun-dovlet-attestasiyasi"
+              },
+              {
+                "label": "Tədris-metodiki Şura",
+                "url": "/sehife/tedris-metodiki-sura"
               }
             ]
           }
@@ -737,7 +751,7 @@ const SEED = {
             "links": [
               {
                 "label": "Məzunlar assosiasiyası",
-                "url": "/hazirlanir/mezunlar-assosiasiyasi"
+                "url": "/sehife/mezunlar-assosiasiyasi"
               },
               {
                 "label": "Regional və beynəlxalq nümayəndəliklər",
@@ -2233,7 +2247,11 @@ export default {
       .catch((e: Error) => strapi.log.error('[legal] F5.53: ' + e.message))
       // F5.53 — «Korporativ üslub»: rəsmi fayllar köhnə saytdan — ARXA PLANDA.
       .then(() => startCorpPageF553(strapi))
-      .catch((e: Error) => strapi.log.error('[korporativ] F5.53: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[korporativ] F5.53: ' + e.message))
+      // F5.54 — Nizamnamə (/sehife/nizamname), əsasnamə sənədləri, reyestr və yeni
+      // səhifələr, bölmələrin boş sahələri, yan keçidlər, menyu — hər biri BİR DƏFƏ.
+      .then(() => applyEsasnamelerF554(strapi))
+      .catch((e: Error) => strapi.log.error('[esasname] F5.54: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

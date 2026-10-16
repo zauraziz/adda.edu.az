@@ -114,6 +114,11 @@ const DATABLOCK_DESC_V9 =
   'konfrans — elmi tədbirlər və konfrans xəbərləri; tedbirler — növbəti tədbirlər və tələbə həyatından xəbərlər; idman — idman yarışları; ' +
   'medeniyyet — konsert, şənlik, intellektual yarışlar; beynelxalq — beynəlxalq əməkdaşlıq xəbərləri; asco — adında «ASCO» olan xəbərlər; ' +
   'korporativ — rənglər və şriftlər bloku (mətn bölmələrindən sonra; «Korporativ üslub» səhifəsi). yox — blok yoxdur.';
+// F5.54 (v14).
+const DATABLOCK_DESC_V10 = DATABLOCK_DESC_V9.replace(
+  'yox — blok yoxdur.',
+  'esasnameler — əsasnamələr siyahısı (növü «esasname» olan sənədlər; «Struktur bölmələrin əsasnamələri» səhifəsi). yox — blok yoxdur.',
+);
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -206,6 +211,11 @@ const CT: Record<string, Dict> = {
     category: ['Növ', 'normativ; esasname — əsasnamə; emr — əmr; qerar — qərar; hesabat; etika; akkreditasiya; forma — blank; diger — digər.'],
     file: ['Fayl', 'PDF tövsiyə olunur (brauzerdə açılır). Word faylı yüklənərək açılır.'],
     year: ['İl', 'Qəbul/təsdiq ili, məs. 2024.'],
+    // F5.54 (cmAz:v13).
+    url: [
+      'Səhifə',
+      'Sənədin aid olduğu səhifə, məs. «/sehife/himayeciler-surasi» (istəyə bağlı). «Struktur bölmələrin əsasnamələri» siyahısında sənədin adı bu səhifəyə aparır.',
+    ],
     units: ['Struktur bölmələr', 'Sənəd bu bölmələrin səhifəsində «Sənədlər» siyahısında görünür.'],
     programs: ['İxtisaslar', 'Sənəd bu ixtisasların səhifəsində görünür.'],
     facilities: ['Auditoriya və laboratoriyalar', 'Sənəd bu obyektlərin səhifəsində görünür.'],
@@ -830,7 +840,8 @@ function merge(conf: Conf, dict: Dict): number {
 // v11 (F5.51): sitat blokunun yeni sahələri (quoteImage/quoteVideo/quoteVideoFile/quoteCta),
 //   «Sertifikatlar» (api::cert-block.cert-block, cert.item); home.video silindi.
 // (v9 qaydaların yenilənməsinin markeridir — aşağıda UPGRADE_SETS.)
-const MARKER = 'cmAz:v11';
+// v13 (F5.54): sənədin «Səhifə» sahəsi (api::document.document → url).
+const MARKER = 'cmAz:v13';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
@@ -931,6 +942,11 @@ const UPGRADE_SETS: {
       { kind: 'ct', uid: 'api::person.person', field: 'phone', from: PERSON_PHONE_DESC_V1, to: PERSON_PHONE_DESC_V2 },
       { kind: 'ct', uid: 'api::unit.unit', field: 'phoneExt', from: UNIT_PHONEEXT_DESC_V1, to: UNIT_PHONEEXT_DESC_V2 },
     ],
+  },
+  {
+    marker: 'cmAz:v14',
+    note: 'F5.54: sahə qaydaları yeniləndi: {n} (blok «esasnameler»).',
+    list: [{ kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V9, to: DATABLOCK_DESC_V10 }],
   },
 ];
 

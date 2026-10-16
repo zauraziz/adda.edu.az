@@ -106,7 +106,7 @@ async function writePages(strapi: Core.Strapi, job: SectionPagesJob): Promise<Re
   const out: Result = { created: [], rebuilt: [], skipped: [] };
 
   for (const seed of job.pages) {
-    const shared = { layout: job.layout, dataBlock: seed.dataBlock };
+    const shared = { layout: seed.layout ?? job.layout, dataBlock: seed.dataBlock };
     let documentId = '';
     const az = (await docs.findFirst({ locale: 'az', status: 'draft', filters: { slug: { $eq: seed.slug } } })) as Row | null;
 

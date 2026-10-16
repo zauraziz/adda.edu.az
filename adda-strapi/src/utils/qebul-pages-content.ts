@@ -74,7 +74,9 @@ export type DataBlock =
   // F5.49: adında «ASCO» olan xəbərlər («ASCO və Akademiya» səhifəsi).
   | 'asco'
   // F5.53: «Korporativ üslub» — rənglər və şriftlər bloku (Next: BrandStyle.tsx).
-  | 'korporativ';
+  | 'korporativ'
+  // F5.54: «Struktur bölmələrin əsasnamələri» — kateqoriyası «esasname» olan sənədlər (Next: RegulationList.tsx).
+  | 'esasnameler';
 
 export interface StepSeed {
   /** Bir səhifədə bir neçə trayektoriya varsa (məs. 9 və 11 illik baza). */
@@ -115,6 +117,8 @@ export interface PageLocaleSeed {
 export interface QebulPageSeed {
   slug: string;
   dataBlock: DataBlock;
+  /** F5.54: səhifənin öz şablonu (verilməsə işin ümumi şablonu — section-pages.ts). */
+  layout?: string;
   az: PageLocaleSeed;
   en?: PageLocaleSeed;
   ru?: PageLocaleSeed;
