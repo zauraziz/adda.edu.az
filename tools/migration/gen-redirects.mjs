@@ -58,6 +58,8 @@ const MOVED = {
   'sehife/elmi-jurnalimiz-onlayn-versiyada': 'sehife/elmi-jurnal',
   // F5.48 (dedupe:v3)
   'sehife/beynelxalq-elaqeler-qrupu': 'struktur/elmi-tedqiqat-ve-beynelxalq-elaqeler-sobesi',
+  // F5.54: ünvan dəyişdi (PAGE_SLUG_RENAMES)
+  'sehife/az-rbaycan-doevl-t-d-niz-akademiyasinin-nizamnam-si': 'sehife/nizamname',
 };
 
 /**

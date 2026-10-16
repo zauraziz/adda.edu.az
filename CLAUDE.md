@@ -214,7 +214,9 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `audienceMenu:v1`, `faqPage:v1`, `ascoPage:v1`, `gizClean:v1`, `orgBlock:v1`,
 `cmAz:v10`, `homeLayout:v1`, `homePage:v1`, `homeQuote:v1`, `homeLayout:v2`, `cmAz:v11`,
 `certBlock:v1`, `certLayout:v1`, `certMenu:v1`, `certImages:v1`, `newsImport:v1`,
-`eventsF551:v1`, `structOrder:v1`, `phoneFix:v1`, `legalPages:v1`, `corpPage:v1`, `cmAz:v12`;
+`eventsF551:v1`, `structOrder:v1`, `phoneFix:v1`, `legalPages:v1`, `corpPage:v1`, `cmAz:v12`,
+`esasnameDocs:v1`, `nizamname:v1`, `esasnamePages:v1`, `esasnameUnits:v1`, `esasnameLinks:v1`,
+`esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`;
 sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
@@ -433,28 +435,32 @@ Dənizçilik Kolleci.
 
 ---
 
-## Əsasnamələr (10 sənəd, yüklənməyib)
+## Əsasnamələr (ADDA-ƏS-001…021, F5.54)
 
-| № | Sənəd | Bölmə |
+Media kitabxanası, qovluq «Əsəsnamələr»: 21 fayl (KİS sənədləri, ISO 9001:2015; fayl
+adında kod — «+ADDA-ES_009_-_24_…», `esasnameler.ts` → `codeOf`). Hər birinə «1. Məzmun —
+Sənəd» qeydi (kateqoriya «esasname», başlıq «… (ADDA-ƏS-0NN)»). Bölmənin öz əsasnaməsi
+bölməyə bağlıdır (bölmə səhifəsində «Sənədlər»), qalanları «Səhifə» (`url`) sahəsi ilə
+səhifəyə; hamısı `/sehife/struktur-bolmelerin-esasnameleri` reyestrindədir
+(`dataBlock=esasnameler`, `RegulationList.tsx`). Xəritə: `esasname-content.ts` → `REGULATIONS`.
+
+| Kod | Sənəd | Hara |
 |---|---|---|
-| 011 | Elmi-tədqiqat və beynəlxalq əlaqələr şöbəsi | 1 |
-| 012 | İnformasiya resurs mərkəzi | 1 |
-| 013 | Personalın idarə edilməsi və əmək haqqı şöbəsi | 1 |
-| 014 | Kafedralar (ümumi) | **7 kafedra** |
-| 015 | Mühasibat uçotu və hesabatı şöbəsi | 1 |
-| 016 | Təlim Tədris Mərkəzi | 1 |
-| 018 | Mətbəə | 1 |
-| 019 | Fakültələr (ümumi) | **2 fakültə** |
-| 020 | İNKTİQ | **Personal + Təsərrüfat** |
-| 021 | Tədris qeydiyyat şöbəsi *(köhnə ad)* | Tədris proseslərinin təşkili şöbəsi |
+| 001 | Himayədarlar Şurası | /sehife/himayeciler-surasi |
+| 002 | Məzunlar Assosiasiyası (nizamnamə) | /sehife/mezunlar-assosiasiyasi |
+| 003, 004 | Tədris-metodiki komissiya, Şura | /sehife/tedris-metodiki-sura |
+| 005, 006 | «İlin tələbəsi», «Ən yaxşı müəllim» | /sehife/ilin-telebesi, /sehife/en-yaxsi-muellim |
+| 007 | Buraxılış yekun dövlət attestasiyası | /sehife/yekun-dovlet-attestasiyasi |
+| 008, 010, 017 | Təcrübə, doktorant attestasiyası, yataqxana | mövcud səhifələr |
+| 009 | KİS Daxili Audit Komissiyası | /sehife/keyfiyyet-idareetme-sistemi |
+| 011–016, 018–021 | Bölmələr (014 — 7 kafedra, 019 — 2 fakültə, 020 — personal + təsərrüfat, 021 — tədris proseslərinin təşkili şöbəsi) | bölmə |
 
-009 (daxili audit), 010 (doktorant attestasiyası), 017 (yataqxana) — **nəzərə alınmır**.
-
-Mənbə səhvləri: 019-un başlıq cədvəlində səhvən «İnformasiya resurs mərkəzi»
-yazılıb; 021-in sənəd nömrəsi 020 ilə toqquşur. Hər ikisi Word faylındadır.
-
-**Açıq qərar:** fayllar `.docx`/`.doc` formatındadır, spesifikasiyada PDF tələb
-olunur. Çevirmə kimdə?
+Mənbə səhvləri (fayllarda, saytda düzəldilməyib): 004 prod-da «Elmi Şuranın əsasnaməsi»
+adı ilə Elmi Şuraya bağlanmışdı (F5.54 düzəldir); 001 «Himayədarlar», Nizamnamə
+«Himayəçilər» deyir, üzv sayını 001 vermir, Nizamnamə 5 nəfər (4.6) — sayt Nizamnaməyə
+uyğundur; 016-da təsdiq «AXDG QSC-nin sədri» (ASCO şablonundan qalıb); 016, 017, 018-də
+Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxdur; 019-un başlıq cədvəlində səhvən «İnformasiya resurs mərkəzi»;
+021-in sənəd nömrəsi 020 ilə toqquşur. Hamısı az dilindədir — `titleRu/En` boşdur.
 
 ---
 
@@ -463,9 +469,8 @@ olunur. Çevirmə kimdə?
 1. Push (F3.17→F3.24) → `ABOUT_MIGRATE=true` → deploy → logu yoxla → flagı sil
 2. Menyu: ru/en Heyət keçidi (F3.9-dan sonra) — `positionRu/En`,
    `academicTitleRu/En`, `bioRu/En` sahələrinin frontend-də göstərilməsi daxil
-3. Əsasnamələrin yüklənməsi — sxem və səhifə hazırdır (F3.17/F3.20/F3.22), `titleRu/En` /
-   `descriptionRu/En` doldurmaq açıq qalır (mənbə `.docx`/`.doc`, çevirmə kimdə
-   sualı hələ açıqdır)
+3. Əsasnamələr yüklənib və bağlanıb (F5.54) — `titleRu/En` / `descriptionRu/En` və
+   yeni səhifələrin ru/en mətni açıq qalır; «Qaydalar» qovluğu (19 fayl) hələ bağlanmayıb
 4. Məzmun: fotolar, əlaqə məlumatları, bölmə təsvirləri (`about` 0/28)
 5. `STAFF_ARCHIVE` — 22 ayrılmış müəllim hələ saytdadır
 6. Menyu keçidlərinin bağlanması — F3.24 real ölçüb: 90 `/hazirlanir`
@@ -846,6 +851,40 @@ olunur. Çevirmə kimdə?
      (`.brand` başlığın loqo blokudur — eyni ad bloku ortaya sıxırdı).
    - Footer: Məxfilik siyasəti, İstifadə şərtləri, Korporativ stil → səhifələr.
      Admin: `cmAz:v12` (blok «korporativ», telefon sahələrinin qaydası).
+25. **F5.54 — Nizamnamə və əsasnamələr** (layihə sənədi `claude/f554-nizamname-esasnameler.md`).
+   Hamısı `src/utils/esasnameler.ts`, məzmun `nizamname-content.ts`, `esasname-content.ts`;
+   addımlar ayrı-ayrı BİR DƏFƏ, biri xəta versə digərləri işləyir:
+   - **Sənədlər** (`esasnameDocs:v1`): kodu olan fayl media kitabxanasında adından tapılır;
+     sənəd yoxdursa yaradılır (bölməyə bağlanırsa — bölmənin MÖVCUD dil sətirlərinə) və
+     dərc olunur; varsa yalnız boş `url` və kateqoriya. Kodsuz «diger» sənəd adında
+     «əsasnamə» varsa → «esasname». Qaralamada dərc olunmamış redaktə varsa yalnız qaralama.
+   - **Nizamnamə** (`nizamname:v1`, köhnə dəyərlər `nizamname:backup`): admində yaradılan
+     səhifə `/sehife/nizamname` olur (köhnə oxunmaz ünvan 301: `next.config.js`
+     PAGE_PAGE_MAP, `moved-pages.ts` PAGE_SLUG_RENAMES, `gen-redirects.mjs`). Mətn hələ
+     PDF-dən köçürülmüşdürsə (`CHARTER_RAW_MARK`, layout standart) — rəsmi mətn 8 fəsil,
+     bəndlər qalın nömrə ilə, layout `akademiya`; redaktə olunubsa YALNIZ ünvan
+     (`updateMany`, `updatedAt` saxlanır). Keçid komponentlərində köhnə ünvan → yeni,
+     məsul redaktor `page:nizamname`-ə.
+   - **Səhifələr** (`esasnamePages:v1`, section-pages.ts qaydası, `seed.layout` artıq
+     səhifə üzrə): reyestr + Himayəçilər Şurası, Məzunlar Assosiasiyası (akademiya),
+     Tədris-metodiki Şura və komissiya, «Ən yaxşı müəllim», Yekun dövlət attestasiyası
+     (tehsil), «İlin tələbəsi» (telebe), Keyfiyyəti idarəetmə sistemi (akademiya). Yalnız az;
+     fayl keçidi `{{ES:n}}` → media URL (lokalda `ADMIN_PUBLIC_URL` + `/uploads/…`).
+   - **Bölmələr** (`esasnameUnits:v1`): İRM, mühasibatlıq, personal, mətbəə — yalnız BOŞ
+     missiya/fəaliyyət/xidmətlər (az) və əlavə bloku yoxdursa «Quruluş və idarəetmə».
+   - **Yan keçidlər** (`esasnameLinks:v1`): təcrübə, yataqxana, doktorantura → əsasnamə
+     faylı; keyfiyyətin monitorinqi → KİS; tələbə həyatı → «İlin tələbəsi».
+   - **Menyu** (`esasnameMenu:v1`): «Nizamnamə və təsis sənədləri» (prod-da köhnə ünvan
+     idi), «Struktur bölmələrin əsasnamələri», «Himayəçilər Şurası», «Məzunlar
+     assosiasiyası» — yalnız yer tutan/köhnə ünvandadırsa; «Tədris prosesi və keyfiyyət» +
+     yekun attestasiya, TMŞ; «Keyfiyyət və hesabatlılıq» + KİS («Akkreditasiya və
+     sertifikatlar»-dan sonra). Seed MENU və `menu-fallback.ts` eyni.
+   - Sxem: `document.url` (string, 300), `page.dataBlock` + «esasnameler». Admin:
+     `cmAz:v13` (`url` adı), `cmAz:v14` (blok «esasnameler» qaydası).
+   - Mobil: `.un-block { padding: 16px 0 }` (≤560px) boz blokun yan boşluğunu
+     sıfırlayırdı — indi yalnız şaquli (`36-unit.css`).
+   - Lokal sınaq: `dist`-də əl ilə dəyişiklikdən sonra `dist/tsconfig.tsbuildinfo` silinməlidir,
+     yoxsa `tsc` faylı yenidən yazmır.
 
 ---
 
