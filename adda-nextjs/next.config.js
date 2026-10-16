@@ -35,6 +35,9 @@ const PAGE_UNIT_MAP = {
 // çıxır). SİNXRON: adda-strapi/src/utils/moved-pages.ts (PAGE_PAGE_MOVES).
 const PAGE_PAGE_MAP = {
   'elmi-jurnalimiz-onlayn-versiyada': 'elmi-jurnal',
+  // F5.54: nizamnamə səhifəsinin ünvanı (qeyd eynidir). SİNXRON: moved-pages.ts
+  // (PAGE_SLUG_RENAMES), esasname-content/nizamname-content.ts (CHARTER_OLD_SLUG).
+  'az-rbaycan-doevl-t-d-niz-akademiyasinin-nizamnam-si': 'nizamname',
 };
 
 /** @type {import('next').NextConfig} */

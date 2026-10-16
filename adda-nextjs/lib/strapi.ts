@@ -18,6 +18,9 @@ export interface StrapiMedia {
   height: number | null;
   /** F5.51 — video faylı (sitat bloku) və PDF üçün. */
   mime?: string | null;
+  /** F5.54 — sənəd faylının uzantısı («.pdf») və ölçüsü (KB, Strapi). */
+  ext?: string | null;
+  size?: number | null;
 }
 
 /** ── F2.4: Görünürlük & əlaqə referansları ── */
@@ -135,7 +138,9 @@ export type PageDataBlock =
   // F5.49 — adında «ASCO» olan xəbərlər («ASCO və Akademiya»).
   | 'asco'
   // F5.53 — «Korporativ üslub»: rənglər və şriftlər bloku (kodda, BrandStyle.tsx).
-  | 'korporativ';
+  | 'korporativ'
+  // F5.54 — «Struktur bölmələrin əsasnamələri»: kateqoriyası «esasname» olan sənədlər (RegulationList.tsx).
+  | 'esasnameler';
 export interface PageFact {
   label: string;
   value: string;
@@ -1590,6 +1595,8 @@ export interface UnitDocumentItem {
   category: 'normativ' | 'esasname' | 'emr' | 'qerar' | 'hesabat' | 'etika' | 'akkreditasiya' | 'forma' | 'diger';
   year: number | null;
   file: StrapiMedia | null;
+  /** F5.54 — sənədin aid olduğu səhifə («/sehife/himayeciler-surasi»); köhnə Strapi-də yoxdur. */
+  url?: string | null;
 }
 
 /** Sənəd başlığı/təsviri cari dildə — `document` lokallaşdırılmayıb, üç sahədən seçilir. */
@@ -1769,6 +1776,22 @@ export async function getUnitPrograms(
 }
 
 /** Bölməyə bağlı sənədlər (əsasnamə, hesabat və s.) — `document.units` çoxa-çox, `document` lokallaşdırılmayıb. */
+/** F5.54 — əsasnamə: bağlı bölmələr (bölmə dil üzrə ayrı sətirdir — admin hər dilin sətrini bağlayır). */
+export interface RegulationItem extends UnitDocumentItem {
+  units?: { slug: string; name: string; locale?: string | null }[] | null;
+}
+
+/** F5.54 — «Struktur bölmələrin əsasnamələri» reyestri: kateqoriyası «esasname» olan bütün sənədlər. */
+export async function getRegulations(): Promise<RegulationItem[]> {
+  return fetchAllPages<RegulationItem>('/documents', {
+    'filters[category][$eq]': 'esasname',
+    'populate[file]': true,
+    'populate[units][fields][0]': 'slug',
+    'populate[units][fields][1]': 'name',
+    'populate[units][fields][2]': 'locale',
+  });
+}
+
 export async function getUnitDocuments(unitSlug: string): Promise<UnitDocumentItem[]> {
   return fetchAllPages<UnitDocumentItem>('/documents', {
     'filters[units][slug][$eq]': unitSlug,

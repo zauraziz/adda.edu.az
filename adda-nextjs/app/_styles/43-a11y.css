@@ -1,7 +1,7 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 367, əhatəli: 2, dəyişməz: 505,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 372, əhatəli: 2, dəyişməz: 509,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
@@ -872,3 +872,12 @@ html[data-contrast="high"] .corp-sample{color:var(--navy-800)}
 html[data-contrast="high"] .corp-font-note{color:var(--navy-700)}
 html[data-contrast="high"] .corp-font-note a{color:var(--navy-700)}
 html[data-contrast="high"] .corp-font-note a:hover{color:#615026}
+html[data-contrast="high"] .rg-h{color:#615026}
+html[data-contrast="high"] .rg-count{color:#4d525c}
+html[data-contrast="high"] .rg-code{color:var(--navy-700)}
+html[data-contrast="high"] .rg-title{color:var(--navy-800)}
+html[data-contrast="high"] a.rg-title:hover{color:#615026}
+html[data-contrast="high"] .rg-unit{color:var(--navy-700)}
+html[data-contrast="high"] .rg-file{color:var(--navy-700)}
+html[data-contrast="high"] .rg-file small{color:#4d525c}
+html[data-contrast="high"] .rg-file i{color:#615026}

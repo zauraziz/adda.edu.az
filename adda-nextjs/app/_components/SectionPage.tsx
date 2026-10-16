@@ -23,13 +23,14 @@ import ProgramToc from './ProgramToc';
 import { AdminProvider } from './AdminGate';
 import { BlockTitle } from './AdminOnly';
 import { AllLevels, LevelTable, OpenDays, SideSummary, type FeedText } from './AdmissionData';
-import { isTitleFeed, type Article, type EventItem, type MenuLink, type PageDoc, type PageLayout, type PageStep, type SiteMenu, type TitleFeed } from '@/lib/strapi';
+import { isTitleFeed, type Article, type EventItem, type MenuLink, type PageDoc, type PageLayout, type PageStep, type RegulationItem, type SiteMenu, type TitleFeed } from '@/lib/strapi';
 import { BLOCK_TAB, englishRows, rowsForTab, stats, type AdmissionRow } from '@/lib/admission';
 import { tr, fallbackNotice, type Locale } from '@/lib/i18n';
 import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
 import { FEED_TEXT } from '@/lib/feed-text';
 import { faqAnswerHtml } from '@/lib/faq-html';
 import BrandStyle, { BRAND_ID } from './BrandStyle';
+import RegulationList, { REGULATIONS_ID } from './RegulationList';
 
 const PAGE_UID = 'api::page.page';
 
@@ -270,6 +271,8 @@ export interface SectionPageData {
   news?: Article[];
   /** Server vaxtı (ms) — «növbəti / ötən» bölgüsü. */
   now?: number;
+  /** F5.54 — əsasnamələr (dataBlock = esasnameler). */
+  regulations?: RegulationItem[];
 }
 
 export interface SectionPageProps {
@@ -292,7 +295,7 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const sideLinks = (doc.sideLinks ?? []).filter((l): l is MenuLink => Boolean(l?.label && l?.url));
 
   const { intro, sections } = splitSections(doc.body ?? '');
-  const used = new Set<string>(['trayektoriya', 'ixtisaslar', 'suallar', BRAND_ID]);
+  const used = new Set<string>(['trayektoriya', 'ixtisaslar', 'suallar', BRAND_ID, REGULATIONS_ID]);
   for (const s of sections) {
     let id = sectionId(s.title);
     for (let n = 2; used.has(id); n++) id = `${sectionId(s.title)}-${n}`;
@@ -340,11 +343,15 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   // (əvvəl loqotip və təqdimat şablonu — admində redaktə olunan mətndə).
   const brand = block === 'korporativ';
   const brandTitle = tr('Rənglər və şriftlər', locale);
+  // F5.54 — əsasnamələr reyestri canlı blokun yerində (girişdən sonra, mətn bölmələrindən əvvəl).
+  const regs = block === 'esasnameler' ? (data.regulations ?? []) : [];
+  const regsTitle = tr('Əsasnamələr', locale);
 
   // Sıra: giriş → trayektoriya → canlı blok → mətn bölmələri → suallar.
   const toc = [
     ...(steps.length ? [{ id: 'trayektoriya', label: stepsTitle }] : []),
     ...(blockHas ? [{ id: 'ixtisaslar', label: blockTitle }] : []),
+    ...(regs.length ? [{ id: REGULATIONS_ID, label: regsTitle }] : []),
     ...sections.map((s) => ({ id: s.id, label: s.title })),
     ...(brand ? [{ id: BRAND_ID, label: brandTitle }] : []),
     ...(faq.length ? [{ id: 'suallar', label: faqTitle }] : []),
@@ -430,6 +437,13 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                     ) : (
                       <LevelTable rows={blockRows} locale={locale} showLevel={block === 'ingilis'} />
                     )}
+                  </section>
+                ) : null}
+
+                {regs.length ? (
+                  <section id={REGULATIONS_ID} className={'un-block pr-anchor' + nextTint()}>
+                    <h2 className="un-block-title">{regsTitle}</h2>
+                    <RegulationList items={regs} locale={locale} />
                   </section>
                 ) : null}
 

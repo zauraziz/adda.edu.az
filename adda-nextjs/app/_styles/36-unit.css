@@ -395,8 +395,10 @@ a.un-fact-v:hover { text-decoration: underline; text-underline-offset: 2px; }
   .un-row-date { min-width: 0; }
   .un-row--news { align-items: stretch; }
   .un-row-thumb { width: 100%; aspect-ratio: 16 / 9; margin-bottom: 0.3rem; }
-  /* F4.9e — mobildə bloklar arası 32px (16px+16px), masaüstündəki 48px-dən az. */
-  .un-block { padding: 16px 0; }
+  /* F4.9e — mobildə bloklar arası 32px (16px+16px), masaüstündəki 48px-dən az.
+     F5.54: yalnız şaquli — «padding: 16px 0» .un-block--tint-in yan boşluğunu
+     sıfırlayırdı, boz blokun mətni ekranın kənarına yapışırdı. */
+  .un-block { padding-top: 16px; padding-bottom: 16px; }
 }
 
 /* ── F4.4: funksiya/xidmət kart toru — markdown siyahısından qurulur

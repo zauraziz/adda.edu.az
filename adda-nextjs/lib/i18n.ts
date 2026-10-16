@@ -1202,6 +1202,12 @@ const T: Array<[string, string, string]> = [
   ['Əsas mətn', 'Основной текст', 'Body text'],
   ['Pulsuz şrift, SIL Open Font License 1.1', 'Бесплатный шрифт, SIL Open Font License 1.1', 'Free typeface, SIL Open Font License 1.1'],
   ['Google Fonts-da bax', 'Открыть в Google Fonts', 'View on Google Fonts'],
+  // ── F5.54 — «Struktur bölmələrin əsasnamələri» reyestri (RegulationList.tsx) ──
+  ['Əsasnamələr', 'Положения', 'Regulations'],
+  ['Struktur bölmələr', 'Структурные подразделения', 'Structural units'],
+  ['Şuralar, birliklər və proseslər', 'Советы, объединения и процессы', 'Councils, associations and processes'],
+  ['Faylı aç', 'Открыть файл', 'Open file'],
+  ['Fayl', 'Файл', 'File'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1713,6 +1719,10 @@ const MENU_T: Array<[string, string, string]> = [
   // F5.49
   ['ASCO və Akademiya', 'ASCO и Академия', 'ASCO and the Academy'],
   ['Tərəfdaşlar və işəgötürənlər', 'Партнёрам и работодателям', 'Partners and employers'],
+  // F5.54 — əsasnamələr üzrə yeni səhifələr (adda-strapi/src/utils/esasnameler.ts MENU_ADD).
+  ['Yekun dövlət attestasiyası', 'Итоговая государственная аттестация', 'Final State Attestation'],
+  ['Tədris-metodiki Şura', 'Учебно-методический совет', 'Academic Methodology Council'],
+  ['Keyfiyyəti idarəetmə sistemi', 'Система менеджмента качества', 'Quality Management System'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

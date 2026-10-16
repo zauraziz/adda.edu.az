@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F5.54 / «Struktur bölmələrin əsasnamələri» reyestri
+   (app/_components/RegulationList.tsx, page.dataBlock = esasnameler).
+   Sətir: kod · ad (+ bağlı bölmələr) · fayl düyməsi. Mobildə kod
+   adın üstünə keçir, fayl düyməsi sağda qalır.
+   ═══════════════════════════════════════════════════════ */
+
+.rg-list { display: flex; flex-direction: column; gap: 24px; }
+.rg-h {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+.rg-count { font-weight: 700; letter-spacing: 0; color: var(--gray-500); }
+.rg-rows { list-style: none; margin: 0; padding: 0; }
+.rg-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.rg-row:last-child { border-bottom: none; }
+.rg-code {
+  padding-top: 4px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--navy-700);
+  white-space: nowrap;
+}
+.rg-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rg-title {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--navy-800);
+  text-decoration: none;
+}
+a.rg-title:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
+.rg-units { display: flex; flex-wrap: wrap; gap: 6px; }
+.rg-unit {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--navy-700);
+  text-decoration: none;
+}
+.rg-unit:hover { border-color: var(--gold-300); background: var(--gold-100); }
+.rg-file {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 8.5rem;
+  padding: 6px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--navy-700);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rg-file small { font-size: inherit; font-weight: 500; color: var(--gray-500); }
+.rg-file i { font-size: 1.15em; color: var(--gold-600); }
+.rg-file:hover { border-color: var(--gold-300); background: var(--gold-100); }
+
+@media (max-width: 640px) {
+  .rg-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .rg-code { grid-column: 1 / -1; padding-top: 0; }
+  .rg-file { min-width: 0; padding: 6px 10px; }
+  .rg-unit { border-radius: 12px; }
+}
