@@ -216,7 +216,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `certBlock:v1`, `certLayout:v1`, `certMenu:v1`, `certImages:v1`, `newsImport:v1`,
 `eventsF551:v1`, `structOrder:v1`, `phoneFix:v1`, `legalPages:v1`, `corpPage:v1`, `cmAz:v12`,
 `esasnameDocs:v1`, `nizamname:v1`, `esasnamePages:v1`, `esasnameUnits:v1`, `esasnameLinks:v1`,
-`esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`;
+`esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`, `poliklinika:v1`, `eAkademiya:v1`, `tercume:v1`
+(irəliləyiş `tercume:done`, `tercume:tries`);
 sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
@@ -885,6 +886,29 @@ Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxd
      sıfırlayırdı — indi yalnız şaquli (`36-unit.css`).
    - Lokal sınaq: `dist`-də əl ilə dəyişiklikdən sonra `dist/tsconfig.tsbuildinfo` silinməlidir,
      yoxsa `tsc` faylı yenidən yazmır.
+26. **F5.55 — Dənizçilər poliklinikası, E-Akademiya, ru/en tərcümə.**
+   - **Poliklinika** (`poliklinika:v1`, `src/utils/poliklinika-fix.ts`): ASCO-nun «Dənizçilər
+     poliklinikası» 2021-də ləğv edilib. Bakalavriat, FAQ, «ASCO və Akademiya» (az/en/ru):
+     tibbi müayinənin «yeri və vaxtı Akademiyanın elanında bildirilir», ünvan və ASCO
+     cədvəlinin «Tibbi müayinə» sətri çıxıb, addımın «Kim»-i «Tibbi komissiya». Yalnız seed-in
+     dəqiq cümlələri, bütün sətirlər birbaşa bazada, `updatedAt` saxlanır; qalıq logda.
+     Müayinənin yeni yeri mənbədə yoxdur — məlum olanda mətnə yazılır.
+   - **E-Akademiya** (`eAkademiya:v1`, `src/utils/eakademiya-menu.ts`): «Elektron jurnal»,
+     «Dərs cədvəli», «Sertifikatlar» → Elm Portalı (cris.adda.edu.az), CJMSE jurnalı
+     (cjmse.adda.edu.az), Kurslara qeydiyyat (portal.adda.edu.az — Vercel `adda-courses`).
+     Seed, `menu-fallback.ts`, `MENU_T` eyni.
+   - **Tərcümə** (`tercume:v1`, `src/utils/translate-missing.ts`, ARXA PLANDA 45 s):
+     Gemini (`GEMINI_API_KEY`; model `TRANSLATE_MODEL` → `RAG_CHAT_MODEL`), JSON rejimi,
+     terminologiya lüğəti. Doldurur: dərc olunmuş az səhifənin OLMAYAN ru/en sətri
+     (yaradılır və dərc olunur; az mətni 80 simvoldan qısa yer tutanlar yox), bölmənin
+     ru/en-də BOŞ mətn sahələri, əlavə blokları, keçid etiketləri (sətir yoxdursa
+     yaradılır), sənədin boş `titleRu/En`, `descriptionRu/En`. Mövcud tərcüməyə
+     toxunulmur. Cavab yoxlanılır (quruluş, keçid ünvanları, dil), 7000 simvoldan uzun
+     mətn «## » bölmələri ilə; nizamnamədə «qeyri-rəsmi tərcümə» qeydi. Görülən iş
+     `tercume:done`-da, xəta element başına 3 başlanğıca qədər təkrarlanır. Yeni az
+     məzmunu üçün: `TRANSLATE_MISSING=true` → deploy → log → bayrağı sil. Lokal sınaq:
+     `TRANSLATE_PROVIDER=mock`. Xəbər, elan, tədbir, ixtisas daxil DEYİL; bölmənin
+     «Suallar»-ı (`unit.faq`) dilsizdir — tərcümə olunmur.
 
 ---
 
