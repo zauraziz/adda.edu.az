@@ -13,8 +13,8 @@
  * MƏNBƏLƏR (12 oktyabr 2026, yoxlanılıb):
  *   - saytın səhifələri: «ADDA dünən və bu gün» (1881, 1996), «Elektron
  *     kitabxana» (Nazirlər Kabinetinin 15.07.1996 qərarı), «Tədris gəmisi»
- *     («General Əsədov», 15.09.2015), «Təcrübə», «Bakalavriat» (Dənizçilər
- *     poliklinikası), «Yataqxana» (104 otaq, 311 yer), «Təqaüd və sosial dəstək»
+ *     («General Əsədov», 15.09.2015), «Təcrübə», «Bakalavriat» (tibbi müayinə;
+ *     Dənizçilər poliklinikası 2021-də ləğv edilib, F5.55), «Yataqxana» (104 otaq, 311 yer), «Təqaüd və sosial dəstək»
  *     (ASCO-nun əlavə təqaüdü: 2019 — 42, 2020 — 71 + 4), «İxtisasartırma və
  *     xaricdə təhsil» (Gəmiçilikdə Təqaüd Proqramı, 2016), «Məzunların işlə
  *     təminatı», əcnəbi tələbələr (5100 AZN, 2026/2027), Elmi Şura (bölmə);
@@ -120,7 +120,7 @@ const FAQ_PAGE: QebulPageSeed = {
         question: 'Tibbi müayinə lazımdırmı?',
         answer:
           'Dənizçi ixtisaslarına (məsələn, dəniz naviqasiyası, gəmi energetik qurğularının istismarı) qəbul olmaq istəyənlər elektron ərizəni ' +
-          'təsdiqlədikdən sonra ASCO-nun «Dənizçilər poliklinikası»nda xüsusi tibbi müayinədən keçir. Ətraflı — [Bakalavriat](/sehife/bakalavriat).',
+          'təsdiqlədikdən sonra xüsusi tibbi müayinədən keçir; yeri və vaxtı Akademiyanın elanında bildirilir. Ətraflı — [Bakalavriat](/sehife/bakalavriat).',
       },
       {
         question: 'Tələbələrə yataqxana verilirmi?',
@@ -209,7 +209,7 @@ const FAQ_PAGE: QebulPageSeed = {
         question: 'Is a medical examination required?',
         answer:
           'Applicants to seafaring programmes (for example, marine navigation or ship power plant operation) take a special medical examination ' +
-          'at ASCO’s Seafarers’ Polyclinic after confirming their online application. More — [Bachelor’s admission](/sehife/bakalavriat).',
+          'after confirming their online application; the place and time are given in the Academy’s announcement. More — [Bachelor’s admission](/sehife/bakalavriat).',
       },
       {
         question: 'Do students get a place in the residence hall?',
@@ -298,7 +298,7 @@ const FAQ_PAGE: QebulPageSeed = {
         question: 'Нужен ли медицинский осмотр?',
         answer:
           'Поступающие на морские специальности (например, морская навигация, эксплуатация судовых энергетических установок) после подтверждения ' +
-          'электронного заявления проходят специальный медосмотр в «Поликлинике моряков» ASCO. Подробнее — [Бакалавриат](/sehife/bakalavriat).',
+          'электронного заявления проходят специальный медосмотр; место и время указываются в объявлении Академии. Подробнее — [Бакалавриат](/sehife/bakalavriat).',
       },
       {
         question: 'Предоставляется ли общежитие?',
@@ -370,7 +370,7 @@ const ASCO_PAGE: QebulPageSeed = {
       {
         title: 'Qəbul və tibbi müayinə',
         who: 'Abituriyent',
-        body: 'Dənizçi ixtisaslarına qəbul olanlar ASCO-nun «Dənizçilər poliklinikası»nda xüsusi tibbi müayinədən keçir.',
+        body: 'Dənizçi ixtisaslarına qəbul olanlar xüsusi tibbi müayinədən keçir; yeri və vaxtı Akademiyanın elanında bildirilir.',
         linkLabel: 'Bakalavriata qəbul',
         linkUrl: '/sehife/bakalavriat',
       },
@@ -430,7 +430,6 @@ Nazirlər Kabinetinin 2022-ci ilin sentyabrında qəbul etdiyi qərarla Azərbay
 | Təqaüd | 2019-cu ildə yüksək balla qəbul olunan 42 tələbəyə, 2020-ci ilin yazında 71 əlaçı bakalavr və 4 magistranta əlavə təqaüd | [Təqaüd və sosial dəstək](/sehife/sosial-teminat-ve-maddi-yardim) |
 | Xaricdə təhsil | Gəmiçilikdə Təqaüd Proqramı (2016): xaricdə magistratura, sonra 5 il ASCO-da iş | [İxtisasartırma və xaricdə təhsil](/sehife/xaricde-tehsil-ve-ixtisasartirma) |
 | İşə qəbul | Akademiya ASCO-nun əsas kadr mənbəyidir | [Məzunların işlə təminatı](/sehife/mezunlarin-isle-teminati) |
-| Tibbi müayinə | dənizçi ixtisaslarına qəbul olanlar ASCO-nun «Dənizçilər poliklinikası»nda | [Bakalavriat](/sehife/bakalavriat) |
 | Təlimlər | Akademiyada ASCO təlimatçıları üçün təlim kursları təşkil olunur | [xəbər](${NEWS.instructors}) |`,
     faq: [
       {
@@ -454,8 +453,8 @@ Nazirlər Kabinetinin 2022-ci ilin sentyabrında qəbul etdiyi qərarla Azərbay
       {
         question: 'Tibbi müayinə harada keçirilir?',
         answer:
-          'Dənizçi ixtisaslarına qəbul olanlar ASCO-nun «Dənizçilər poliklinikası» MMC-də xüsusi tibbi müayinədən keçir. Tarix və sənəd siyahısı hər il ' +
-          'Akademiyanın elanında verilir.',
+          'Dənizçi ixtisaslarına qəbul olanlar xüsusi tibbi müayinədən keçir. Yeri, tarixi və sənəd siyahısı hər il Akademiyanın elanında verilir. ' +
+          'ASCO-nun «Dənizçilər poliklinikası» 2021-ci ildə ləğv edilib.',
       },
     ],
     sideLinks: [
@@ -484,7 +483,7 @@ Nazirlər Kabinetinin 2022-ci ilin sentyabrında qəbul etdiyi qərarla Azərbay
       {
         title: 'Admission and medical examination',
         who: 'Applicant',
-        body: 'Applicants to seafaring programmes take a special medical examination at ASCO’s Seafarers’ Polyclinic.',
+        body: 'Applicants to seafaring programmes take a special medical examination; the place and time are given in the Academy’s announcement.',
         linkLabel: 'Bachelor’s admission',
         linkUrl: '/sehife/bakalavriat',
       },
@@ -544,7 +543,6 @@ By a decision of the Cabinet of Ministers adopted in September 2022, Azerbaijan 
 | Scholarships | additional scholarships for 42 high-scoring entrants in 2019 and for 71 top bachelor’s and 4 master’s students in spring 2020 | [Scholarships and student support](/sehife/sosial-teminat-ve-maddi-yardim) |
 | Study abroad | Shipping Scholarship Programme (2016): a master’s degree abroad, then five years at ASCO | [Professional development and study abroad](/sehife/xaricde-tehsil-ve-ixtisasartirma) |
 | Employment | the Academy is ASCO’s principal source of personnel | [Graduate employment](/sehife/mezunlarin-isle-teminati) |
-| Medical examination | applicants to seafaring programmes are examined at ASCO’s Seafarers’ Polyclinic | [Bachelor’s admission](/sehife/bakalavriat) |
 | Training | the Academy runs courses for ASCO instructors | [news](${AZ(NEWS.instructors)}) |`,
     faq: [
       {
@@ -568,8 +566,8 @@ By a decision of the Cabinet of Ministers adopted in September 2022, Azerbaijan 
       {
         question: 'Where is the medical examination held?',
         answer:
-          'Applicants to seafaring programmes are examined at ASCO’s Seafarers’ Polyclinic. Dates and the list of documents are published every year ' +
-          'in the Academy’s announcement.',
+          'Applicants to seafaring programmes take a special medical examination. The place, dates and list of documents are published every year ' +
+          'in the Academy’s announcement. ASCO’s Seafarers’ Polyclinic was closed in 2021.',
       },
     ],
     sideLinks: [
@@ -598,7 +596,7 @@ By a decision of the Cabinet of Ministers adopted in September 2022, Azerbaijan 
       {
         title: 'Поступление и медосмотр',
         who: 'Абитуриент',
-        body: 'Поступающие на морские специальности проходят специальный медосмотр в «Поликлинике моряков» ASCO.',
+        body: 'Поступающие на морские специальности проходят специальный медосмотр; место и время указываются в объявлении Академии.',
         linkLabel: 'Поступление в бакалавриат',
         linkUrl: '/sehife/bakalavriat',
       },
@@ -658,7 +656,6 @@ ASCO осуществляет грузовые и пассажирские пе�
 | Стипендии | в 2019 году — 42 поступившим с высокими баллами, весной 2020 года — 71 бакалавру-отличнику и 4 магистрантам | [Стипендии и социальная поддержка](/sehife/sosial-teminat-ve-maddi-yardim) |
 | Обучение за рубежом | Стипендиальная программа в судоходстве (2016): магистратура за рубежом, затем пять лет в ASCO | [Повышение квалификации и обучение за рубежом](/sehife/xaricde-tehsil-ve-ixtisasartirma) |
 | Трудоустройство | Академия — основная кадровая опора ASCO | [Трудоустройство выпускников](/sehife/mezunlarin-isle-teminati) |
-| Медосмотр | поступающие на морские специальности проходят его в «Поликлинике моряков» ASCO | [Бакалавриат](/sehife/bakalavriat) |
 | Обучение персонала | в Академии проводятся курсы для инструкторов ASCO | [новость](${AZ(NEWS.instructors)}) |`,
     faq: [
       {
@@ -682,8 +679,8 @@ ASCO осуществляет грузовые и пассажирские пе�
       {
         question: 'Где проходит медосмотр?',
         answer:
-          'Поступающие на морские специальности проходят его в ООО «Поликлиника моряков» ASCO. Сроки и перечень документов ежегодно публикуются ' +
-          'в объявлении Академии.',
+          'Поступающие на морские специальности проходят специальный медосмотр. Место, сроки и перечень документов ежегодно публикуются ' +
+          'в объявлении Академии. «Поликлиника моряков» ASCO ликвидирована в 2021 году.',
       },
     ],
     sideLinks: [

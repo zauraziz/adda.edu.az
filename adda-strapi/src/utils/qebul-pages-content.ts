@@ -15,7 +15,8 @@
  *     (I qrup: RK/Rİ altqrupları, 300 + 400 bal);
  *   - ADDA elanları: doktorantura (18.05.2026), təkrar ali təhsil (08.06.2026),
  *     əcnəbilər (11.06.2026), qəbul olunanların nəzərinə (25.08.2026),
- *     tibbi müayinə (19.03.2020);
+ *     tibbi müayinə (19.03.2020; Dənizçilər poliklinikası 2021-də ləğv edilib —
+ *     yer və vaxt Akademiyanın elanında, F5.55);
  *   - 2026/2027 qəbul proqnozu (17.11.2025): kollecin 9/11 illik bölgüsü;
  *   - saytın mövcud səhifələri (bakalavriat, magistratura, doktorantura,
  *     əcnəbilər, yataqxana, məzunlar) — köhnə mətn yenidən qurulub.
@@ -320,10 +321,10 @@ const BAKALAVRIAT: QebulPageSeed = {
       {
         title: 'Xüsusi tibbi müayinə (dənizçi ixtisasları)',
         period: 'Ərizə təsdiqlənəndən sonra',
-        who: 'Dənizçilər poliklinikası',
+        who: 'Tibbi komissiya',
         body:
           'Dəniz naviqasiyası, Gəmi energetik qurğularının istismarı və Elektrik və elektronika mühəndisliyi ixtisaslarını seçmək istəyənlər ' +
-          'ASCO-nun «Dənizçilər poliklinikası»nda müayinədən keçməlidir. Tarix Akademiyanın elanında bildirilir.',
+          'xüsusi tibbi müayinədən keçməlidir. Yeri və tarixi Akademiyanın elanında bildirilir.',
         linkLabel: 'Ətraflı: tibbi müayinə',
         linkUrl: '#xususi-tibbi-muayine',
       },
@@ -402,7 +403,7 @@ const BAKALAVRIAT: QebulPageSeed = {
       '## Xüsusi tibbi müayinə',
       '',
       '«Dəniz naviqasiyası mühəndisliyi», «Gəmi energetik qurğularının istismarı mühəndisliyi» və «Elektrik və elektronika mühəndisliyi» ixtisaslarına qəbul olmaq istəyən abituriyentlər ' +
-        'elektron ərizəni təsdiqlədikdən sonra «Azərbaycan Xəzər Dəniz Gəmiçiliyi» QSC-nin «Dənizçilər poliklinikası» MMC-də xüsusi tibbi müayinədən keçməlidir.',
+        'elektron ərizəni təsdiqlədikdən sonra xüsusi tibbi müayinədən keçməlidir.',
       '',
       'Tibbi komissiyaya adətən təqdim olunur:',
       '',
@@ -412,7 +413,7 @@ const BAKALAVRIAT: QebulPageSeed = {
       '- psixonevroloji və narkoloji dispanserlərdən arayış;',
       '- qeydiyyatda olduğunuz poliklinikadan qısa epikriz.',
       '',
-      'Poliklinikanın ünvanı: Bakı, K. Kazımov küçəsi 120A (Mərkəzi Gömrük Hospitalının yanı). Müayinənin tarixi və dəqiq sənəd siyahısı hər il Akademiyanın elanında verilir.',
+      'Müayinənin yeri, tarixi və dəqiq sənəd siyahısı hər il Akademiyanın elanında verilir.',
       '',
       '## Qəbul olunanlar üçün: sənədlər',
       '',

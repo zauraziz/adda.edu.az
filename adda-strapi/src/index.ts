@@ -52,6 +52,10 @@ import { applyPhoneFixV1 } from './utils/phone-fix';
 import { applyLegalPagesV1, startCorpPageF553 } from './utils/legal-pages';
 // F5.54 — Nizamnamə və «Əsasnamələr» (bax src/utils/esasnameler.ts).
 import { applyEsasnamelerF554 } from './utils/esasnameler';
+// F5.55 — Dənizçilər poliklinikası (2021-də ləğv), E-Akademiya kartları, ru/en tərcümələr.
+import { applyPoliklinikaFixV1 } from './utils/poliklinika-fix';
+import { applyEAkademiyaMenuV1 } from './utils/eakademiya-menu';
+import { startTranslateMissing } from './utils/translate-missing';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -952,16 +956,16 @@ const SEED = {
           "icon": "chalkboard"
         },
         {
-          "label": "Elektron jurnal",
-          "description": "Qiymət və davamiyyət",
-          "url": "#",
-          "icon": "notebook"
+          "label": "Elm Portalı (CRIS)",
+          "description": "Tədqiqatçılar və nəşrlər",
+          "url": "https://cris.adda.edu.az",
+          "icon": "microscope"
         },
         {
-          "label": "Dərs cədvəli",
-          "description": "Cari semestr",
-          "url": "#",
-          "icon": "calendar"
+          "label": "CJMSE jurnalı",
+          "description": "Dəniz elmləri və mühəndislik",
+          "url": "https://cjmse.adda.edu.az",
+          "icon": "book-2"
         },
         {
           "label": "E-Kitabxana",
@@ -970,10 +974,10 @@ const SEED = {
           "icon": "books"
         },
         {
-          "label": "Sertifikatlar",
-          "description": "STCW & Təlim mərkəzi",
-          "url": "#",
-          "icon": "certificate"
+          "label": "Kurslara qeydiyyat",
+          "description": "STCW və təlim kursları",
+          "url": "https://portal.adda.edu.az",
+          "icon": "clipboard-check"
         },
         {
           "label": "Profilim",
@@ -2251,7 +2255,16 @@ export default {
       // F5.54 — Nizamnamə (/sehife/nizamname), əsasnamə sənədləri, reyestr və yeni
       // səhifələr, bölmələrin boş sahələri, yan keçidlər, menyu — hər biri BİR DƏFƏ.
       .then(() => applyEsasnamelerF554(strapi))
-      .catch((e: Error) => strapi.log.error('[esasname] F5.54: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[esasname] F5.54: ' + e.message))
+      // F5.55 — poliklinika (2021-də ləğv edilib) mətnləri, E-Akademiya kartları, BİR DƏFƏ.
+      .then(() => applyPoliklinikaFixV1(strapi))
+      .catch((e: Error) => strapi.log.error('[poliklinika] F5.55: ' + e.message))
+      .then(() => applyEAkademiyaMenuV1(strapi))
+      .catch((e: Error) => strapi.log.error('[menu] F5.55: ' + e.message))
+      // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
+      // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
+      .then(() => startTranslateMissing(strapi))
+      .catch((e: Error) => strapi.log.error('[tercume] F5.55: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
