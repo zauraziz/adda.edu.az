@@ -934,7 +934,12 @@ Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxd
      `strapiFetch`-ə açıq verilən 60/120/300 (ana səhifə bloku, orqan/sertifikat blokları,
      başlıq lentləri, detal) bütün səhifələri 2–5 dəqiqədə saxlayırdı — hamısı `CACHE_DAY`.
      Yoxlama: `next build` → `.next/prerender-manifest.json` `initialRevalidateSeconds`
-     (gözlənilən: ana səhifə 3600, qalanı 86400). `POST /api/revalidate` (başlıq
+     (gözlənilən: ana səhifə 3600, qalanı 86400).
+   - **Strapi əlçatmazdırsa** (şəbəkə, 5xx, 429, JSON deyil) `strapiFetch` bir dəfə də
+     soruşur, bu dəfə `RETRY_TTL` = 60 s ilə: Next səhifənin müddətini ən qısa fetch-dən
+     götürür (uğursuz fetch də sayılır), xətanı tutub boş blokla (və ya 404 ilə) çıxan
+     səhifə 1 gün yox, 60 s keşdə qalır və Strapi qayıdanda özü düzəlir (lokal yoxlanılıb:
+     Strapi söndürülüb → `s-maxage=60`, qaytarılıb → 86400). 4xx-də təkrar yoxdur. `POST /api/revalidate` (başlıq
      `x-revalidate-secret` = `REVALIDATE_SECRET`, yoxdursa `ADMIN_IMPORT_SECRET`):
      `revalidateTag(STRAPI_TAG)` + `revalidatePath('/', 'layout')`. Reaksiyalar
      `GET /api/reactions?type=&slug=` (Next keşi 1 gün, CDN 1 saat); öz reaksiyası

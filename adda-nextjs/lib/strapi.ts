@@ -199,6 +199,21 @@ type QueryValue = string | number | boolean | undefined;
 export const STRAPI_TAG = 'strapi';
 export const CACHE_DAY = 86_400;
 export const CACHE_HOUR = 3_600;
+/**
+ * Strapi əlçatmaz olanda (şəbəkə, 5xx, 429, JSON əvəzinə səhifə) bir dəfə də
+ * soruşulur, bu dəfə 60 s ilə. Next səhifənin müddətini ən qısa fetch-dən götürür
+ * (fetch uğursuz olsa da) — səhifə xətanı tutub boş blokla çıxsa belə 1 gün belə
+ * qalmır, Strapi qayıdanda 1 dəqiqəyə özü düzəlir. 4xx dəyişməzdir: təkrar yoxdur.
+ */
+export const RETRY_TTL = 60;
+
+class StrapiHttpError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
 
 async function strapiFetch<T>(
   path: string,
@@ -209,11 +224,20 @@ async function strapiFetch<T>(
   for (const [key, value] of Object.entries(query)) {
     if (value !== undefined) url.searchParams.set(key, String(value));
   }
-  const res = await fetch(url.toString(), { next: { revalidate, tags: [STRAPI_TAG] } });
-  if (!res.ok) {
-    throw new Error(`Strapi ${res.status} ${res.statusText} — ${path}`);
+  const load = async (ttl: number): Promise<T> => {
+    const res = await fetch(url.toString(), { next: { revalidate: ttl, tags: [STRAPI_TAG] } });
+    if (!res.ok) {
+      throw new StrapiHttpError(`Strapi ${res.status} ${res.statusText} — ${path}`, res.status);
+    }
+    return (await res.json()) as T;
+  };
+  try {
+    return await load(revalidate);
+  } catch (err) {
+    const status = err instanceof StrapiHttpError ? err.status : 0;
+    if (status >= 400 && status < 500 && status !== 429) throw err;
+    return load(Math.min(revalidate, RETRY_TTL));
   }
-  return res.json() as Promise<T>;
 }
 
 /** Nisbi media yolunu (/uploads/...) mütləq URL-ə çevirir. */
