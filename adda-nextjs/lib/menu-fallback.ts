@@ -66,10 +66,10 @@ export const FALLBACK_MENU: SiteMenu = {
   eAkademiya: { title: 'E-Akademiya platforması', subtitle: 'Rəqəmsal təhsil ekosistemi', cards: [
     { label: 'Tələbə kabineti', description: 'ADDA Lider sistemi', url: '#', icon: 'device-laptop' },
     { label: 'Müəllim kabineti', description: 'Tədris idarəetməsi', url: '#', icon: 'chalkboard' },
-    { label: 'Elektron jurnal', description: 'Qiymət və davamiyyət', url: '#', icon: 'notebook' },
-    { label: 'Dərs cədvəli', description: 'Cari semestr', url: '#', icon: 'calendar' },
+    { label: 'Elm Portalı (CRIS)', description: 'Tədqiqatçılar və nəşrlər', url: 'https://cris.adda.edu.az', icon: 'microscope' },
+    { label: 'CJMSE jurnalı', description: 'Dəniz elmləri və mühəndislik', url: 'https://cjmse.adda.edu.az', icon: 'book-2' },
     { label: 'E-Kitabxana', description: 'Elektron resurslar', url: '#', icon: 'books' },
-    { label: 'Sertifikatlar', description: 'STCW & Təlim mərkəzi', url: '#', icon: 'certificate' },
+    { label: 'Kurslara qeydiyyat', description: 'STCW və təlim kursları', url: 'https://portal.adda.edu.az', icon: 'clipboard-check' },
   ]},
   istifadeciQruplari: [
     { label: 'Abituriyentlər', url: '/bunlar-ucun/abituriyentler' }, { label: 'Tələbələr', url: '/bunlar-ucun/telebeler' },

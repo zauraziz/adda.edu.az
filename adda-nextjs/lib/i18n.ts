@@ -1723,6 +1723,12 @@ const MENU_T: Array<[string, string, string]> = [
   ['Yekun dövlət attestasiyası', 'Итоговая государственная аттестация', 'Final State Attestation'],
   ['Tədris-metodiki Şura', 'Учебно-методический совет', 'Academic Methodology Council'],
   ['Keyfiyyəti idarəetmə sistemi', 'Система менеджмента качества', 'Quality Management System'],
+  // F5.55 — E-Akademiya kartları (adda-strapi/src/utils/eakademiya-menu.ts).
+  ['Tədqiqatçılar və nəşrlər', 'Исследователи и публикации', 'Researchers and publications'],
+  ['CJMSE jurnalı', 'Журнал CJMSE', 'CJMSE Journal'],
+  ['Dəniz elmləri və mühəndislik', 'Морские науки и инженерия', 'Maritime science and engineering'],
+  ['Kurslara qeydiyyat', 'Запись на курсы', 'Course registration'],
+  ['STCW və təlim kursları', 'Курсы STCW и подготовки', 'STCW and training courses'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.
