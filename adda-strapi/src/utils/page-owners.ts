@@ -24,6 +24,7 @@
  */
 import type { Core } from '@strapi/strapi';
 import { deliver } from '../api/identity/services/identity';
+import { requestSiteRevalidate } from './site-revalidate';
 
 type Row = Record<string, unknown>;
 
@@ -718,6 +719,8 @@ export function registerPageOwners(strapi: Core.Strapi): void {
     const data: Row = { key, path, label, editorId, ...(changed ? { assignedById: user?.id ?? null, assignedAt: new Date().toISOString(), notifiedAt: null } : {}) };
     const row = existing ? await repo.update({ where: { id: existing.id }, data }) : await repo.create({ data });
     invalidate();
+    // F5.56 — saytın altbilgisindəki «Məsul redaktor» (/api/page-owners keşi) təzələnsin.
+    if (changed) requestSiteRevalidate(strapi, 'page-owner');
     strapi.log.info(`[adda-owners] ${key}: məsul ${existing?.editorId ?? '—'} → ${editorId ?? '—'} (admin #${user?.id})`);
     if (changed && editor) {
       const info = await recordInfo(strapi, [key]);

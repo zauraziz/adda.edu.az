@@ -56,6 +56,8 @@ import { applyEsasnamelerF554 } from './utils/esasnameler';
 import { applyPoliklinikaFixV1 } from './utils/poliklinika-fix';
 import { applyEAkademiyaMenuV1 } from './utils/eakademiya-menu';
 import { startTranslateMissing } from './utils/translate-missing';
+// F5.56 — Neon kvotası: sayt Strapi-ni gündə bir dəfə yeniləyir, dərc olunanda dərhal.
+import { registerSiteRevalidate, revalidateAfterDeploy, startSiteRevalidate } from './utils/site-revalidate';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1804,6 +1806,8 @@ export default {
     registerScoreNormalizer(strapi);
     // F5.43 — auditoriya/laboratoriya yazılanda boş və ya «facility» slug otaq + addan yaranır.
     registerFacilitySlugFill(strapi);
+    // F5.56 — dərc / dərcdən çıxarma / silmə → sayta xəbər (POST /api/revalidate, 8 s birləşdirmə).
+    registerSiteRevalidate(strapi);
     const inFlight = new Set<string>();
     (strapi.documents as unknown as { use: (m: unknown) => void }).use(
       async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
@@ -1891,6 +1895,8 @@ export default {
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    // F5.56 — media dəyişikliyi → sayt yenilənir; sirr yoxdursa logda xəbərdarlıq.
+    startSiteRevalidate(strapi);
     // F5.38 — CM görünüşü (müraciət/düzəliş/qeydiyyat), BİR DƏFƏ; portu bloklamır.
     // F5.39 — «Məsul olduğu səhifələr» şərti. Strapi şərt qeydiyyatına YALNIZ
     // bootstrap zamanı icazə verir — ona görə gözlənilir (sürətlidir, DB yoxdur).
@@ -2264,7 +2270,11 @@ export default {
       // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
       // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
       .then(() => startTranslateMissing(strapi))
-      .catch((e: Error) => strapi.log.error('[tercume] F5.55: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[tercume] F5.55: ' + e.message))
+      // F5.56 — yeni deploy-da (RENDER_GIT_COMMIT dəyişib) sayt bir dəfə yenilənir:
+      // birbaşa bazaya yazan bir dəfəlik düzəlişlər də sayta çıxsın.
+      .then(() => revalidateAfterDeploy(strapi))
+      .catch((e: Error) => strapi.log.error('[revalidate] F5.56: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //

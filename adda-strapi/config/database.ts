@@ -29,9 +29,13 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database 
         },
         schema: env('DATABASE_SCHEMA', 'public'),
       },
+      // F5.56 — Neon yuxuya gedir (5 dəq sorğu yoxdursa) və bağlantıları qırır.
+      // min 0: boş bağlantı 30 s sonra bağlanır, ölü bağlantı hovuzda qalmır
+      // (knex də min 0 tövsiyə edir). Render env-də DATABASE_POOL_MIN varsa o qalır.
       pool: {
-        min: env.int('DATABASE_POOL_MIN', 2),
+        min: env.int('DATABASE_POOL_MIN', 0),
         max: env.int('DATABASE_POOL_MAX', 10),
+        idleTimeoutMillis: env.int('DATABASE_POOL_IDLE_MS', 30000),
       },
     },
     sqlite: {

@@ -9,6 +9,10 @@
  *
  * Dövr: 60 san-dən bir, yalnız vərəq görünəndə; vərəqə qayıdanda dərhal.
  * Abunəçi qalmayanda (məs. çıxış) 5 san sonra dayanır.
+ *
+ * F5.56 — Neon kvotası: 10 dəqiqə hərəkət (siçan, klaviatura, toxunma, sürüşdürmə)
+ * yoxdursa sorğu dayanır. Açıq qalan admin vərəqi Render-i və Neon-u gecə-gündüz
+ * oyaq saxlayırdı. İstifadəçi qayıdan kimi dərhal yenidən soruşur.
  */
 import { useSyncExternalStore } from 'react';
 import { inboxApi, KINDS, type InboxItem, type Kind, type Summary } from './shared';
@@ -16,6 +20,8 @@ import { inboxApi, KINDS, type InboxItem, type Kind, type Summary } from './shar
 const POLL_MS = 60_000;
 const MIN_GAP_MS = 10_000;
 const STOP_DELAY_MS = 5_000;
+const IDLE_MS = 10 * 60_000;
+const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart'] as const;
 
 export interface Arrival {
   kind: Kind;
@@ -39,6 +45,7 @@ let stopTimer: ReturnType<typeof setTimeout> | null = null;
 let inFlight: Promise<void> | null = null;
 let lastPollAt = 0;
 let subscribers = 0;
+let lastActiveAt = Date.now();
 
 function emit(): void {
   listeners.forEach((l) => l());
@@ -74,8 +81,18 @@ async function poll(force = false): Promise<void> {
   return inFlight;
 }
 
+const isIdle = (): boolean => Date.now() - lastActiveAt >= IDLE_MS;
+
 function onVisibility(): void {
-  if (document.visibilityState === 'visible') void poll();
+  if (document.visibilityState !== 'visible') return;
+  lastActiveAt = Date.now();
+  void poll();
+}
+
+function onActivity(): void {
+  const wasIdle = isIdle();
+  lastActiveAt = Date.now();
+  if (wasIdle && document.visibilityState === 'visible') void poll();
 }
 
 function start(): void {
@@ -84,11 +101,13 @@ function start(): void {
     stopTimer = null;
   }
   if (timer) return;
+  lastActiveAt = Date.now();
   void poll(true);
   timer = setInterval(() => {
-    if (document.visibilityState === 'visible') void poll();
+    if (document.visibilityState === 'visible' && !isIdle()) void poll();
   }, POLL_MS);
   document.addEventListener('visibilitychange', onVisibility);
+  for (const e of ACTIVITY_EVENTS) window.addEventListener(e, onActivity, { passive: true });
 }
 
 function scheduleStop(): void {
@@ -99,6 +118,7 @@ function scheduleStop(): void {
     if (timer) clearInterval(timer);
     timer = null;
     document.removeEventListener('visibilitychange', onVisibility);
+    for (const e of ACTIVITY_EVENTS) window.removeEventListener(e, onActivity);
   }, STOP_DELAY_MS);
 }
 
