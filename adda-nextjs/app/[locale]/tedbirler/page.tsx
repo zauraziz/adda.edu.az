@@ -27,7 +27,7 @@ import { getAcademyEvents, getMenu, mediaUrl, type EventItem, type SiteMenu } fr
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate, EVENT_FORMAT_LABELS } from '@/lib/format';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];

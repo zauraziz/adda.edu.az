@@ -34,7 +34,7 @@ import Footer from '../../_components/Footer';
 import { getMenu, getFacultyUnits, type FacultyUnit, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];

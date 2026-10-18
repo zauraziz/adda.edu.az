@@ -59,6 +59,47 @@ function localeFromPath(p: string | null): Locale {
 const ZERO: Record<EmojiType, number> = { anchor: 0, ship: 0, compass: 0, wave: 0 };
 const OFF: Record<EmojiType, boolean> = { anchor: false, ship: false, compass: false, wave: false };
 
+// F5.56 — sayğaclar /api/reactions-dan (Vercel keşi; əvvəl hər açılışda birbaşa
+// Strapi: Render və Neon oyanırdı). Keş gec yenilənir, ona görə ziyarətçinin öz
+// reaksiyası brauzerdə saxlanılır: keşdə hələ yoxdursa sayğaca +1 və «seçilib».
+const MINE_KEY = "adda_rx";
+
+function readMine(): string[] {
+  try {
+    const v: unknown = JSON.parse(localStorage.getItem(MINE_KEY) || "[]");
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function addMine(key: string): void {
+  try {
+    const list = readMine().filter((k) => k !== key);
+    list.push(key);
+    localStorage.setItem(MINE_KEY, JSON.stringify(list.slice(-300)));
+  } catch {
+    /* yaddaş bağlıdır: yalnız bu açılışda görünür */
+  }
+}
+
+function sessionIdOf(): string {
+  const fresh = () =>
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+  try {
+    let sid = localStorage.getItem("adda_session_id");
+    if (!sid) {
+      sid = fresh();
+      localStorage.setItem("adda_session_id", sid);
+    }
+    return sid;
+  } catch {
+    return fresh();
+  }
+}
+
 export default function ReactionBar({ targetType, targetSlug }: ReactionBarProps) {
   const t = L[localeFromPath(usePathname())];
   const [counts, setCounts] = useState<Record<EmojiType, number>>({ ...ZERO });
@@ -68,41 +109,30 @@ export default function ReactionBar({ targetType, targetSlug }: ReactionBarProps
   const [pop, setPop] = useState<EmojiType | null>(null);
 
   useEffect(() => {
-    let sid = localStorage.getItem("adda_session_id");
-    if (!sid) {
-      sid =
-        typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : Math.random().toString(36).slice(2);
-      localStorage.setItem("adda_session_id", sid);
-    }
+    const sid = sessionIdOf();
     setSessionId(sid);
 
     let active = true;
-    fetch(
-      `${STRAPI_URL}/api/reactions?filters[targetType][$eq]=${targetType}&filters[targetSlug][$eq]=${targetSlug}&pagination[pageSize]=200`,
-    )
+    const apply = (sessions: Partial<Record<EmojiType, string[]>> | null) => {
+      if (!active) return;
+      const mine = new Set(readMine());
+      const c: Record<EmojiType, number> = { ...ZERO };
+      const u: Record<EmojiType, boolean> = { ...OFF };
+      for (const { type } of EMOJIS) {
+        const list = sessions?.[type] ?? [];
+        const onServer = list.includes(sid);
+        const onLocal = mine.has(`${targetType}:${targetSlug}:${type}`);
+        c[type] = list.length + (onLocal && !onServer ? 1 : 0);
+        u[type] = onServer || onLocal;
+      }
+      setCounts(c);
+      setReacted(u);
+      setLoaded(true);
+    };
+    fetch(`/api/reactions?type=${targetType}&slug=${encodeURIComponent(targetSlug)}`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((res) => {
-        if (!active) return;
-        if (res?.data) {
-          const c: Record<EmojiType, number> = { ...ZERO };
-          const u: Record<EmojiType, boolean> = { ...OFF };
-          res.data.forEach((item: { emoji?: EmojiType; sessionId?: string }) => {
-            const e = item.emoji;
-            if (e && e in c) {
-              c[e] += 1;
-              if (item.sessionId === sid) u[e] = true;
-            }
-          });
-          setCounts(c);
-          setReacted(u);
-        }
-        setLoaded(true);
-      })
-      .catch(() => {
-        if (active) setLoaded(true);
-      });
+      .then((res: { sessions?: Partial<Record<EmojiType, string[]>> | null } | null) => apply(res?.sessions ?? null))
+      .catch(() => apply(null));
 
     return () => {
       active = false;
@@ -124,6 +154,7 @@ export default function ReactionBar({ targetType, targetSlug }: ReactionBarProps
         body: JSON.stringify({ data: { targetType, targetSlug, emoji, sessionId } }),
       });
       if (!res.ok) throw new Error("reaction post failed");
+      addMine(`${targetType}:${targetSlug}:${emoji}`);
     } catch {
       setCounts((prev) => ({ ...prev, [emoji]: Math.max(0, prev[emoji] - 1) }));
       setReacted((prev) => ({ ...prev, [emoji]: false }));

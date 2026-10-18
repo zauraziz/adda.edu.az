@@ -41,7 +41,7 @@ import {
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 const CONDITION_LABEL: Record<FacilityCondition, string> = {
   islek: 'İşlək',

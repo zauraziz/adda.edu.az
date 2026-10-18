@@ -33,7 +33,7 @@ import { getAnnouncementBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/s
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate, IMPORTANCE_LABELS } from '@/lib/format';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {

@@ -28,7 +28,7 @@ import Pagination from '../../_components/Pagination';
 import { getAcademyArticlesPage, getMenu, mediaUrl, type Article, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];

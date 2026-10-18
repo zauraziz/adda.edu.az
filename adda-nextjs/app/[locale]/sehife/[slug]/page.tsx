@@ -55,7 +55,7 @@ import {
 import { buildRows } from '@/lib/admission';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   const out: Array<{ locale: string; slug: string }> = [];

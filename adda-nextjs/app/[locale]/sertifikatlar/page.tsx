@@ -36,7 +36,7 @@ import { getCertBlock, getMenu, type SiteMenu } from '@/lib/strapi';
 import { certView } from '@/lib/cert';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 const LEAD = 'Akademiyanın tanınmasını, akkreditasiyasını, beynəlxalq üzvlüyünü və keyfiyyət idarəetmə sistemini təsdiq edən sənədlər.';
 

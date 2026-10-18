@@ -46,7 +46,7 @@ import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { phoneView } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 const DEGREE_LABEL: Record<string, string> = {
   elmler_doktoru: 'Elmlər doktoru',

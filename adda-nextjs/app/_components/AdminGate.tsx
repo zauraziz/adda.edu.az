@@ -2,7 +2,7 @@
 
 // F4.9b — admin bəzəkləri (boş bloklar, «redaktə» keçidləri, status zolağı)
 // artıq build-time bayrağına (`NEXT_PUBLIC_ADMIN_EDIT_LINKS`) bağlı deyil —
-// hamı görürdü ya da heç kim. Səhifə `revalidate=300` ilə STATİK qalmalıdır,
+// hamı görürdü ya da heç kim. Səhifə ISR ilə (`revalidate`) STATİK qalmalıdır,
 // ona görə kimlik yoxlaması serverdə DEYİL, bu klient adasında baş verir:
 // hidrasiyadan sonra `/api/identity/is-admin` bir dəfə çağırılır (bax
 // AdminProvider), nəticə Context vasitəsilə `<AdminOnly>` overuşqlarına

@@ -187,16 +187,29 @@ interface StrapiList<T> {
 
 type QueryValue = string | number | boolean | undefined;
 
+/**
+ * F5.56 — Neon kvotası. Strapi cavabları Next keşində 1 GÜN saxlanılır və hamısı
+ * `STRAPI_TAG` ilə işarələnir: admində dərc, dərcdən çıxarma, silmə olanda Strapi
+ * /api/revalidate-ə xəbər verir (adda-strapi/src/utils/site-revalidate.ts) və keş
+ * dərhal təzələnir. Əvvəl 60 s idi: hər ziyarət dəqiqədə bir Render-i və Neon-u
+ * oyadırdı, Neon-un pulsuz kompüt kvotası bitdi. Marşrutların `revalidate`-i də
+ * 86400 (ana səhifə 3600 — «yaxınlaşan tədbirlər» vaxtdan asılıdır); marşrut
+ * konfiqurasiyası sabit rəqəm tələb edir, ona görə orada rəqəm yazılıb.
+ */
+export const STRAPI_TAG = 'strapi';
+export const CACHE_DAY = 86_400;
+export const CACHE_HOUR = 3_600;
+
 async function strapiFetch<T>(
   path: string,
   query: Record<string, QueryValue> = {},
-  revalidate = 60,
+  revalidate = CACHE_DAY,
 ): Promise<T> {
   const url = new URL(`/api${path}`, STRAPI_URL);
   for (const [key, value] of Object.entries(query)) {
     if (value !== undefined) url.searchParams.set(key, String(value));
   }
-  const res = await fetch(url.toString(), { next: { revalidate } });
+  const res = await fetch(url.toString(), { next: { revalidate, tags: [STRAPI_TAG] } });
   if (!res.ok) {
     throw new Error(`Strapi ${res.status} ${res.statusText} — ${path}`);
   }
@@ -510,9 +523,14 @@ function buildFeedQuery(p: FeedParams, defaultSort: string): Record<string, Quer
   if (p.visibility) q['filters[visibility][$eq]'] = p.visibility;
   if (p.facultySlug) q['filters[faculty][slug][$eq]'] = p.facultySlug;
   if (p.personSlug) q['filters[person][slug][$eq]'] = p.personSlug;
-  if (p.upcoming) q['filters[startAt][$gte]'] = new Date().toISOString();
+  // F5.56: saata yuvarlaqlaşdırılır — millisaniyəli vaxt hər sorğuda yeni URL
+  // (keş heç vaxt tutmurdu); saat içində bütün səhifələr eyni cavabı paylaşır.
+  if (p.upcoming) q['filters[startAt][$gte]'] = new Date(Math.floor(Date.now() / 3_600_000) * 3_600_000).toISOString();
   return q;
 }
+
+/** Lent keşi: vaxtdan asılı «yaxınlaşan» lent 1 saat, qalanları 1 gün (+ dərcdə dərhal). */
+const feedTtl = (p: FeedParams): number => p.revalidate ?? (p.upcoming ? CACHE_HOUR : CACHE_DAY);
 
 /** ── F2.5b: səhifələnmiş lent ──
  * `getFeed` yalnız `data`-nı qaytarır və `meta.pagination`-ı atır. Siyahı
@@ -539,7 +557,7 @@ export async function getFeedPage<T>(
     const json = await strapiFetch<StrapiList<T>>(
       '/' + contentType,
       { locale, ...buildFeedQuery({ ...params, page, limit: pageSize }, defaultSort) },
-      params.revalidate ?? 60,
+      feedTtl(params),
     );
     const p = json.meta?.pagination;
     return {
@@ -572,7 +590,7 @@ export async function getFeed<T>(
     const json = await strapiFetch<StrapiList<T>>(
       '/' + contentType,
       { locale, ...buildFeedQuery(params, defaultSort) },
-      params.revalidate ?? 60,
+      feedTtl(params),
     );
     return json.data ?? [];
   } catch (err) {
@@ -706,7 +724,7 @@ export async function getTitleFeedEvents(feed: TitleFeed, locale: Locale = 'az')
         sort: 'startAt:desc',
         'pagination[pageSize]': 8,
       },
-      300,
+      CACHE_DAY,
     ).then((j) => j.data ?? []);
   try {
     const rows = await load(locale);
@@ -725,7 +743,7 @@ export async function getTitleFeedNews(feed: TitleFeed, locale: Locale = 'az'): 
         sort: 'newsDate:desc',
         'pagination[pageSize]': 4,
       },
-      300,
+      CACHE_DAY,
     ).then((j) => j.data ?? []);
   try {
     const rows = await load(locale);
@@ -784,7 +802,7 @@ export async function getBySlug<T>(
     ...extraPopulate,
   };
   try {
-    const json = await strapiFetch<StrapiList<T>>('/' + contentType, query, 60);
+    const json = await strapiFetch<StrapiList<T>>('/' + contentType, query);
     return json.data?.[0] ?? null;
   } catch (err) {
     console.error('[detail] ' + contentType + '/' + slug + ' cekilmedi: ' + (err as Error).message);
@@ -1042,7 +1060,7 @@ export async function getOrgBlock(): Promise<OrgItem[] | null> {
     const json = await strapiFetch<{ data: { items?: OrgItem[] | null } | null }>(
       '/org-block',
       { 'populate[items][populate][logo]': true },
-      300,
+      CACHE_DAY,
     );
     const items = json.data?.items;
     return Array.isArray(items) && items.length ? items : null;
@@ -1103,7 +1121,7 @@ export async function getHomePage(): Promise<HomePageRaw | null> {
         'populate[quoteImage]': true,
         'populate[quoteVideoFile]': true,
       },
-      120,
+      CACHE_DAY,
     );
     return json.data ?? null;
   } catch {
@@ -1127,7 +1145,7 @@ export async function getCertBlock(): Promise<CertItemRaw[] | null> {
     const json = await strapiFetch<{ data: { items?: CertItemRaw[] | null } | null }>(
       '/cert-block',
       { 'populate[items][populate][image]': true, 'populate[items][populate][file]': true },
-      300,
+      CACHE_DAY,
     );
     const items = json.data?.items;
     return Array.isArray(items) && items.length ? items : null;

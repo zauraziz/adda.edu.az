@@ -38,7 +38,7 @@ import { getFaqSources, getMenu, getTitleFeedEvents, getTitleFeedNews, type Site
 import { AUDIENCES, audienceBySlug } from '@/lib/audiences';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 export const dynamicParams = false;
 
 export function generateStaticParams() {

@@ -29,7 +29,7 @@ import { getAcademyAnnouncementsPage, getMenu, mediaUrl, type Announcement, type
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate, IMPORTANCE_LABELS } from '@/lib/format';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];

@@ -52,7 +52,7 @@ import {
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { phoneView } from '@/lib/phone';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 const ROOT_SLUG = 'rektor';
 const COUNCIL_SLUG = 'elmi-sura';

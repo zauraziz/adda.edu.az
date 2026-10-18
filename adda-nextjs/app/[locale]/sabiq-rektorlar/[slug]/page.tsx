@@ -39,7 +39,7 @@ import { fmtDate } from '@/lib/format';
 import { RECTORS_FALLBACK, bySuccession, isCurrent, monogram, termLabel } from '@/lib/rectors';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 async function listFor(locale: Locale): Promise<Rector[]> {
   const fetched = await getRectors(locale);

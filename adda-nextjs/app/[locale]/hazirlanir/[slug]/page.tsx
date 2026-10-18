@@ -36,7 +36,7 @@ import { getMenu, getPageBySlug, type SiteMenu, type MenuCategory, type MenuLink
 import { menuHref, isPlaceholderHref } from '@/lib/menu-href';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 interface Found {
   label: string;

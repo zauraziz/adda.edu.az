@@ -34,7 +34,7 @@ import { CarnationIcon, SilhouetteIcon } from '../../_components/HeroIcons';
 import { getMenu, getHeroes, mediaUrl, HEROES_DEDICATION, type HeroPerson, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 /** ADDA-da oxuduğu ixtisas + illər — hər ikisi boşdursa heç nə göstərilmir. */
 function programMeta(h: Pick<HeroPerson, 'addaProgram' | 'studyYears'>): string | null {

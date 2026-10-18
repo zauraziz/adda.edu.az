@@ -41,7 +41,7 @@ import { getMenu, getPrograms, type Program, type ProgramCatalogTab, type SiteMe
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtFee, fmtScore } from '@/lib/format';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 // F5.24d — tab qruplaşdırması `degree`-dən DEYİL, `catalogTab`-dan gəlir
 // (qiyabi bakalavr «tekrar_ali» tabındadır — sadə degree+studyForm qaydası

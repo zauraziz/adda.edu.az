@@ -38,7 +38,7 @@ import { getMenu, getHeroes, getHeroBySlug, mediaUrl, type SiteMenu } from '@/li
 import { fmtDate } from '@/lib/format';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 /** JSON-LD/metadata description üçün — ilk abzas, markdown işarələri çıxarılıb. */
 function plainExcerpt(markdown: string): string {

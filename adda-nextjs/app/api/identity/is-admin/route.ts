@@ -1,7 +1,7 @@
 /**
  * F4.9b — GET /api/identity/is-admin
  * Sessiya e-poçtunu SERVER-ONLY `ADMIN_EMAILS`-la tutuşdurur (azLower ilə,
- * bax lib/identity.ts). Səhifələr `revalidate=300` ilə statik qalır — kimlik
+ * bax lib/identity.ts). Səhifələr ISR ilə (`revalidate`) statik qalır — kimlik
  * yoxlaması burada, klient adasından çağırılır (bax _components/AdminGate.tsx),
  * serverdə cookie oxumaq bütün ziyarətçilər üçün keşi öldürərdi.
  */

@@ -41,7 +41,7 @@ import {
 import { homeView } from '@/lib/home';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 60;
+export const revalidate = 3600; // F5.56: «yaxınlaşan tədbirlər» vaxtdan asılıdır
 
 export function generateStaticParams() {
   return [{ locale: 'az' }, { locale: 'ru' }, { locale: 'en' }];

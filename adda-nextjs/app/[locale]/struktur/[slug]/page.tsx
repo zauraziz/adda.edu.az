@@ -97,7 +97,7 @@ function linkProps(url: string, locale: Locale): { href: string; target?: string
   return isExternalHref(url) ? { href: url, target: '_blank', rel: 'noreferrer' } : { href: localHref(url, locale) };
 }
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   const out: Array<{ locale: string; slug: string }> = [];

@@ -40,7 +40,7 @@ import { academyPhone } from '@/lib/phone';
 import { getMenu, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 /**
  * F5.30a — «Kimə müraciət etməli?» marşrutlaşdırıcı cədvəl. ƏLAQƏ

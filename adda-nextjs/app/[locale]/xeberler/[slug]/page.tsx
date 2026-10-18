@@ -37,7 +37,7 @@ import { getArticleBySlug, getMenu, mediaUrl, type SiteMenu } from '@/lib/strapi
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { fmtDate, CAT_LABELS } from '@/lib/format';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {

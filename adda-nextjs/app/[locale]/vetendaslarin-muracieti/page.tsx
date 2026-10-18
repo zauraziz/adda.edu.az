@@ -46,7 +46,7 @@ import AppealIsland, { type AppealDirection } from '../../_components/AppealIsla
 import { getMenu, getUnits, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 /**
  * F5.36b — «Aidiyyəti bölmə»: 28 bölməlik açılan siyahı əvəzinə əsas

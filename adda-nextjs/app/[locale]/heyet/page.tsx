@@ -30,7 +30,7 @@ import StaffDirectory from '../../_components/StaffDirectory';
 import { getMenu, type SiteMenu, type StaffType } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 const TABS: { slug: string; label: string; lead: string; types: StaffType[] }[] = [
   {

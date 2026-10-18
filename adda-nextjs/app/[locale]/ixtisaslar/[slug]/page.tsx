@@ -65,7 +65,7 @@ import {
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, fallbackNotice, type Locale } from '@/lib/i18n';
 import { fmtFee, fmtScore } from '@/lib/format';
 
-export const revalidate = 300;
+export const revalidate = 86400;
 
 const DEGREE_LABEL: Record<ProgramDetail['degree'], string> = {
   bachelor: 'Bakalavriat',
