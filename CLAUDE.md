@@ -218,7 +218,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `esasnameDocs:v1`, `nizamname:v1`, `esasnamePages:v1`, `esasnameUnits:v1`, `esasnameLinks:v1`,
 `esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`, `poliklinika:v1`, `eAkademiya:v1`, `tercume:v1`
 (irəliləyiş `tercume:done`, `tercume:tries`);
-sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`) + mövcud
+sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`;
+F5.56 son deploy-un commit-i `siteRevalidate:commit` — marker deyil, sayt yeniləməsi üçün) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
 `FACILITY_SEED` (F5.43-dən): YALNIZ boş bazada, bir dəfə (`facilitySeed:v1`).
@@ -293,6 +294,19 @@ bilinmir.
 
 - Pulsuz plan **fəaliyyətsizlikdən sonra yatır**; cron-job.org hər 10 dəqiqədə
   `/_health`-i döyəcləyir. Buna baxmayaraq yoxlayıcılarda **isinmə fazası** var.
+  `/_health` bazaya getmir — Neon-u oyatmır.
+- **Neon pulsuz kvotası (F5.56).** Kompüt saatı bitəndə baza söndürülür, Strapi
+  `Your account or project has exceeded the quota` ilə dayanır və Render onu
+  dövri yenidən başladır. Neon sorğu olmayanda 5 dəqiqə sonra yatır — yatmağa
+  imkan verən hər şey qoruyulmalıdır: **saytın keşi gündəlikdir** (`lib/strapi.ts`
+  `STRAPI_TAG`, marşrutlar `revalidate = 86400`, ana səhifə 3600; `strapiFetch`-ə qısa
+  müddət YAZMA — səhifə ən qısa fetch-in müddətini götürür), dəyişiklik
+  sayta Strapi-nin `POST /api/revalidate` çağırışı ilə çıxır (`src/utils/site-revalidate.ts`,
+  env `REVALIDATE_SECRET` Render + Vercel-də EYNİ). Klient adası Strapi-yə
+  birbaşa GET etməməlidir (keşli Next marşrutu: `/api/reactions`, `/api/page-owners`);
+  admin sorğusu boş qalanda dayanır (`src/admin/inbox/store.ts`); Strapi-də
+  dövri baza işi (setInterval, tez-tez cron) yazılmamalıdır. Yeni növ saytda
+  görünürsə → `SITE_TYPES`-a əlavə et.
 - SMTP portları (25/465/587) **səssizcə bloklanır** — Resend işlədilir.
 - «Clear build cache» **lazımsızdır** və pulsuz planda build-i 20+ dəqiqəyə çıxarır.
 
@@ -508,7 +522,7 @@ Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxd
    keçidlər üçün Render env: `ADMIN_PUBLIC_URL` (defolt
    `https://adda-edu-az.onrender.com`), `SITE_URL` (defolt
    `https://demo.adda.edu.az`). Həftəlik xatırlatma: bazar ertəsi 09:00 (Bakı).
-   Saytda ad 5 dəqiqəyə qədər gecikmə ilə görünür (keş: Strapi 60 s + Next 300 s).
+   Saytda ad dərhal yenilənir (F5.56: təyinat → `POST /api/revalidate`), ən gec 1 saat (`/api/page-owners` keşi).
 11. **F5.40 — «Təhsil» menyusu v2** (təhlil: layihə sənədi
    `claude/tehsil-menyusu-optimallasdirma.md`). Prod menyusu
    `src/utils/menu-tehsil.ts` ilə BİR DƏFƏ yenilənir: bayraq YOX, store marker
@@ -909,6 +923,34 @@ Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxd
      məzmunu üçün: `TRANSLATE_MISSING=true` → deploy → log → bayrağı sil. Lokal sınaq:
      `TRANSLATE_PROVIDER=mock`. Xəbər, elan, tədbir, ixtisas daxil DEYİL; bölmənin
      «Suallar»-ı (`unit.faq`) dilsizdir — tərcümə olunmur.
+27. **F5.56 — Neon kvotası: sayt Strapi-ni gündə bir dəfə yeniləyir, dərcdə dərhal.**
+   Neon pulsuz kompüt saatı bitmişdi (Render logu: «exceeded the quota»). Səbəb: saytın
+   keşi 60 s idi (`strapiFetch` defoltu; marşrutlar 60/300), hər ziyarət dəqiqədə bir
+   Strapi-ni və bazanı oyadırdı; xəbər səhifəsindəki reaksiya adası hər açılışda Strapi-yə
+   gedirdi; açıq qalan admin vərəqi 60 s-dən bir «Bildirişlər»i soruşurdu.
+   - **Next:** `strapiFetch` 86400 s + teq `STRAPI_TAG`; lentlər 86400 (yaxınlaşan tədbirlər
+     3600, vaxt saata yuvarlaqlaşdırılır — URL sabit, keş tutur); marşrutlar 86400, ana
+     səhifə 3600; `/api/page-owners` 3600. **Səhifənin effektiv müddəti ən qısa fetch-inkidir:**
+     `strapiFetch`-ə açıq verilən 60/120/300 (ana səhifə bloku, orqan/sertifikat blokları,
+     başlıq lentləri, detal) bütün səhifələri 2–5 dəqiqədə saxlayırdı — hamısı `CACHE_DAY`.
+     Yoxlama: `next build` → `.next/prerender-manifest.json` `initialRevalidateSeconds`
+     (gözlənilən: ana səhifə 3600, qalanı 86400). `POST /api/revalidate` (başlıq
+     `x-revalidate-secret` = `REVALIDATE_SECRET`, yoxdursa `ADMIN_IMPORT_SECRET`):
+     `revalidateTag(STRAPI_TAG)` + `revalidatePath('/', 'layout')`. Reaksiyalar
+     `GET /api/reactions?type=&slug=` (Next keşi 1 gün, CDN 1 saat); öz reaksiyası
+     brauzerdə (`localStorage.adda_rx`) — keşdə yoxdursa sayğaca +1. POST əvvəlki kimi Strapi-yə.
+   - **Strapi:** `src/utils/site-revalidate.ts` — Document Service middleware:
+     `SITE_TYPES`; dərc olunan növdə publish/unpublish/delete, qalanlarında
+     create/update/delete; media faylı dəyişəndə/silinəndə; məsul redaktor təyinatı;
+     yeni deploy (`RENDER_GIT_COMMIT` ≠ `siteRevalidate:commit`). 8 s birləşdirmə, ən gec
+     60 s. Yalnız Render-də (`RENDER`) və ya `REVALIDATE_URL` ilə; sirr yoxdursa açılışda
+     xəbərdarlıq, heç nə göndərilmir. Xəta (401/503/404) logda səbəbi ilə.
+   - **Baza hovuzu:** `min 0`, `idleTimeoutMillis 30000` (env `DATABASE_POOL_MIN`,
+     `DATABASE_POOL_IDLE_MS`) — Neon yatanda ölü bağlantı qalmır.
+   - **Admin:** «Bildirişlər» sorğusu 10 dəqiqə hərəkət olmayanda dayanır, qayıdanda dərhal.
+   - **Quraşdırma:** Render (Strapi) və Vercel-də eyni `REVALIDATE_SECRET`; Vercel-ə
+     dəyişən əlavə olunandan sonra yenidən deploy. Sirr yoxdursa sayt dəyişikliyi 1
+     günə qədər gecikmə ilə göstərir. Lokal sınaq: Strapi `REVALIDATE_URL=http://localhost:3000/api/revalidate`.
 
 ---
 
