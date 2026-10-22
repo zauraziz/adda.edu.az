@@ -217,7 +217,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `eventsF551:v1`, `structOrder:v1`, `phoneFix:v1`, `legalPages:v1`, `corpPage:v1`, `cmAz:v12`,
 `esasnameDocs:v1`, `nizamname:v1`, `esasnamePages:v1`, `esasnameUnits:v1`, `esasnameLinks:v1`,
 `esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`, `poliklinika:v1`, `eAkademiya:v1`, `tercume:v1`
-(irəliləyiş `tercume:done`, `tercume:tries`);
+(irəliləyiş `tercume:done`, `tercume:tries`), `qaydaDocs:v1`, `qaydaPages:v1`, `qaydaText:v1`,
+`qaydaLinks:v1`, `qaydaMenu:v1`, `cmAz:v15`;
 sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`;
 F5.56 son deploy-un commit-i `siteRevalidate:commit` — marker deyil, sayt yeniləməsi üçün) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
@@ -312,11 +313,10 @@ bilinmir.
 
 ### Cloudinary
 
-- **PDF çatdırılması hesabda BAĞLIDIR** (15.10.2026 yoxlanılıb): `image/upload/…pdf`
-  401 qaytarır (`x-cld-error: deny or ACL failure`) — saytdakı Cloudinary PDF-ləri
-  («Elmi Əsərlər» arxivi, qaydalar, F5.51 elan faylları, F5.53 loqotip PDF) açılmır.
-  Həll kodda deyil: Cloudinary konsolu → Settings → Security → «Allow delivery of PDF
-  and ZIP files». Şəkil, `.ai`, `raw/upload` (PPTX, CDR) işləyir.
+- **PDF çatdırılması** 15.10.2026-da bağlı idi (`image/upload/…pdf` → 401, `x-cld-error:
+  deny or ACL failure`); **22.10.2026 yoxlanılıb — açılır** (konsolda «Allow delivery of
+  PDF and ZIP files» qoşulub). Yenidən 401 olarsa həll kodda deyil: Cloudinary konsolu →
+  Settings → Security. Şəkil, `.ai`, `raw/upload` (DOCX, PPTX, CDR) işləyir.
 
 ---
 
@@ -479,13 +479,57 @@ Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxd
 
 ---
 
+## Qaydalar və təlimatlar (ADDA-TL, ADDA-ƏP, F5.57)
+
+Media kitabxanası, qovluqlar «Qaydalar» (TL-010…027, 19 fayl) və «Təlimat» (TL-001…009,
+ƏP-001…004, 15 fayl). Kod fayl adındadır («ADDA_-TL-024…», «ADDA-EP-003…»; `qaydalar.ts` →
+`ruleCodeOf`). Hər sənədə «1. Məzmun — Sənəd» qeydi: qaydalar — kateqoriya `qayda`,
+təlimat və prosedurlar — `telimat`, başlıq «… (ADDA-TL-0NN)» / «… (ADDA-ƏP-00N)», qısa
+təsvir. Hamısı `/sehife/qaydalar-ve-telimatlar` reyestrindədir (`dataBlock=qaydalar`,
+`RegulationList.tsx kind="qayda"`, iki qrup). Xəritə: `qaydalar-content.ts` → `RULE_DOCS`.
+
+| Kod | Sənəd | İzah olunduğu səhifə |
+|---|---|---|
+| TL-027, TL-003 | Kredit sistemi qaydaları, tədris prosesinin təşkili | /sehife/kredit-sistemi |
+| TL-017, TL-020 | İmtahanlar, ingilis dili imtahanları | /sehife/qiymetlendirme-ve-imtahan-qaydalari |
+| TL-026, TL-025 | Yay semestri, əlavə kəsir qrupları | /sehife/yay-semestri-ve-elave-kesir |
+| TL-024, TL-023 | Kreditlərin tanınması (bərpa, köçürmə…; subbakalavr) | /sehife/kocurme-ve-berpa |
+| TL-021, TL-022 | Diplomqabağı təcrübə, qiyabidə təcrübədən azad olunma | /sehife/diplomqabagi-tecrube |
+| TL-018 | Dövlət imtahanının keçirilməsi | /sehife/yekun-dovlet-attestasiyasi («İmtahan günü») |
+| TL-001, 004–008, ƏP-002, ƏP-004 | Tədris planı, dərs növləri, trenajor, distant | /sehife/tedrisin-teskili |
+| ƏP-003 | Diplom, transkript, dublikat | /sehife/diplom-ve-transkript |
+| TL-010 | Antiplagiat | /sehife/akademik-durustluk |
+| TL-012 | Daxili intizam qaydaları | /sehife/daxili-intizam-qaydalari |
+| TL-013, TL-015 | Fəxri doktor, fəxri professor | /sehife/fexri-adlar |
+| TL-016 | «Qaynar xətt» | /sehife/muracietlere-baxilma-qaydasi |
+| TL-019 | İşə qəbul | /sehife/ise-qebul-qaydalari |
+| TL-011 | Əcnəbilərin hazırlıq kursları | /sehife/ecnebi-telebelerin-qebulu-qaydalari |
+| TL-014 | KİS işçi qrupu | /sehife/keyfiyyet-idareetme-sistemi |
+| TL-002, ƏP-001 | Qısamüddətli kurslar, istehlakçılarla iş | TTM bölməsi |
+
+Mənbə uyğunsuzluqları (fayllarda, saytda düzəldilməyib): TL-008-in faylı «ADDA-TL-009…» adı
+ilə yüklənib (sənədin özündə TL-008 — `fileCode: 9`); TL-012-nin iki variantı var — bağlanan
+«Daxili intizam qaydaları» (28.01.2025), ikincisi «daxili_nizamdocx» bağlanmır; TL-006 üç
+dəfə yüklənib (bağlanan PDF); apellyasiya müddəti ƏS-007-də «1 iş günü, rektora», TL-018-də
+«elan günü, apellyasiya komissiyasına» — YDA səhifəsində ƏS-007 saxlanılıb; TL-018 nəzəri
+suala hazırlığı həm 20, həm 30 dəqiqə yazır (saytda yazılmayıb); davamiyyət həddi TL-027-də
+bakalavr qiyabi 20%, TL-012-də bakalavr 15% / magistr və təkrar ali 20%; TL-017-də yazılı-şifahi
+imtahan «ADDA-ƏS-009»-a istinad edir (ƏS-009 KİS audit komissiyasıdır); TL-016 «Qaynar xətt»
+üçün (012) 493 09 19 və akademiya@asco.az verir (saytın ümumi ünvanı info@adda.edu.az);
+əcnəbi bələdçisində hazırlıq kursu «6 və ya 12 ay» idi, TL-011 — 6 və ya 9 ay (düzəldildi).
+Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sənədi (fayl «pasport 308.docx»,
+«diger») otaq pasportudur — toxunulmayıb. Hamısı az dilindədir.
+
+---
+
 ## Qalan iş
 
 1. Push (F3.17→F3.24) → `ABOUT_MIGRATE=true` → deploy → logu yoxla → flagı sil
 2. Menyu: ru/en Heyət keçidi (F3.9-dan sonra) — `positionRu/En`,
    `academicTitleRu/En`, `bioRu/En` sahələrinin frontend-də göstərilməsi daxil
-3. Əsasnamələr yüklənib və bağlanıb (F5.54) — `titleRu/En` / `descriptionRu/En` və
-   yeni səhifələrin ru/en mətni açıq qalır; «Qaydalar» qovluğu (19 fayl) hələ bağlanmayıb
+3. Əsasnamələr (F5.54), qaydalar və təlimatlar (F5.57) yüklənib və bağlanıb —
+   `titleRu/En` / `descriptionRu/En` və yeni səhifələrin ru/en mətni açıq qalır
+   (Gemini kvotası, bax 28)
 4. Məzmun: fotolar, əlaqə məlumatları, bölmə təsvirləri (`about` 0/28)
 5. `STAFF_ARCHIVE` — 22 ayrılmış müəllim hələ saytdadır
 6. Menyu keçidlərinin bağlanması — F3.24 real ölçüb: 90 `/hazirlanir`
@@ -956,6 +1000,44 @@ Elmi Şuranın təsdiq tarixi və protokolu boşdur, 015-də təsdiq sətri yoxd
    - **Quraşdırma:** Render (Strapi) və Vercel-də eyni `REVALIDATE_SECRET`; Vercel-ə
      dəyişən əlavə olunandan sonra yenidən deploy. Sirr yoxdursa sayt dəyişikliyi 1
      günə qədər gecikmə ilə göstərir. Lokal sınaq: Strapi `REVALIDATE_URL=http://localhost:3000/api/revalidate`.
+28. **F5.57 — qaydalar və təlimatlar** (layihə sənədi `claude/f557-qaydalar-telimatlar.md`).
+   Hamısı `src/utils/qaydalar.ts`, məzmun `qaydalar-content.ts`; addımlar ayrı-ayrı BİR DƏFƏ:
+   - **Sənədlər** (`qaydaDocs:v1`): 30 qeyd (yuxarıdakı cədvəl); varsa (fayl və ya başlıqdakı
+     kod üzrə) yalnız «diger» → yeni kateqoriya, boş `url`, boş təsvir. Eyni kodlu artıq
+     fayllar logda. Bölməyə bağlanma bölmənin mövcud dil sətirlərinə (F5.54 kimi).
+   - **Səhifələr** (`qaydaPages:v1`, section-pages.ts qaydası, yalnız az): reyestr + 12
+     səhifə (`tehsil`: kredit sistemi, qiymətləndirmə, yay semestri, köçürmə, diplomqabağı
+     təcrübə, tədrisin təşkili, diplom; `elm`: akademik dürüstlük; `akademiya`: daxili
+     intizam, fəxri adlar, müraciətlər, işə qəbul). Fayl keçidi `{{TL:n}}` / `{{EP:n}}`.
+     Məsul redaktor: `page:fexri-doktorlarimiz` → `page:fexri-adlar`,
+     `page:akademik-durustluk-beyannamesi` → `page:akademik-durustluk`.
+   - **Mətn** (`qaydaText:v1`, `TEXT_FIXES`): seed mətnində dəqiq fraqment — YDA-ya
+     «İmtahan günü» (TL-018), əcnəbilərin qəbulu az/en/ru — hazırlıq kursları (TL-011),
+     bələdçi az/en/ru — «6 və ya 9 ay». `updateMany`, hər dilin qaralama və dərc sətri,
+     `updatedAt` saxlanır; fraqment tapılmasa logda (admində əl ilə).
+   - **Yan keçidlər** (`qaydaLinks:v1`): 16 mövcud səhifəyə, yalnız yoxdursa; qaralamada
+     dərc olunmamış redaktə varsa yalnız qaralama.
+   - **Menyu** (`qaydaMenu:v1`): «Fəxri doktorlarımız» → «Fəxri doktor və fəxri professor»,
+     «Akademik dürüstlük bəyannaməsi» → «Akademik dürüstlük və antiplagiat», «Müraciətlərə
+     baxılma qaydası» — yalnız hələ «hazırlanır»/«#»-dirsə; «Hüquqi baza və etika» +
+     qaydalar, daxili intizam; «Heyət» + işə qəbul; «Dəniz praktikası» + diplomqabağı
+     təcrübə; «Təhsil» + yeni qrup «Tədris qaydaları» (7 keçid); «Tələbə üçün» + daxili
+     intizam. Seed MENU, `menu-fallback.ts`, `MENU_T` eyni; 301 `/hazirlanir/…` →
+     `next.config.js` `HAZIRLANIR_PAGE_MAP`.
+   - Sxem: `document.category` + `qayda`, `telimat` (`DocList`-də «Əsasnamə»-dən sonra);
+     `page.dataBlock` + `qaydalar`. Admin: `cmAz:v15`. `esasnameler.ts`-dən `absUrl`,
+     `hasPendingDraft`, `unitTargets` ixrac olunur.
+   - **Tərcümə (22.10.2026 ölçüsü, F5.57-dən əvvəl):** səhifə ru 42/57, en 42/57 (simvolla
+     67% / 83%); bölmə mətnləri az 107 176 simvol, en 31%, ru 12% (ru/en sətri var, sahələr
+     boş); sənəd adları 0/54. Gemini 19.10-da 91 işdən 21-ni etdi (7 səhifə × ru/en dərc
+     olundu; 7 bölmə tərcüməsi qaralamada — ru/en sətrində dərc olunmamış redaktə olduğu
+     üçün dərc edilmədi). Sonra `HTTP 429: You exceeded your current quota` (pulsuz kvota),
+     Render-in təkrar başlatmaları hər elementin 3 cəhdini yedi, iş 20.10-da bağlandı
+     (`tercume:v1`). Davam: Gemini açarında ödəniş/kvota → Render `TRANSLATE_MISSING=true` →
+     deploy → «hazırdır» logu → bayrağı sil; 7 bölmə qaralaması admində yoxlanıb dərc edilir.
+   - Lokal sınaq: SQLite, təmiz baza → bütün zəncir; sonra fayllar, köhnə menyu, redaktor
+     halları ilə F5.57 yenidən və təkrar (74 yoxlama). `strapi.db.query().update()` vaxtı
+     yazır — sınaq skriptində də `updateMany`.
 
 ---
 
