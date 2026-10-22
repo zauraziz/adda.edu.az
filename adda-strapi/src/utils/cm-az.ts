@@ -119,6 +119,16 @@ const DATABLOCK_DESC_V10 = DATABLOCK_DESC_V9.replace(
   'yox — blok yoxdur.',
   'esasnameler — əsasnamələr siyahısı (növü «esasname» olan sənədlər; «Struktur bölmələrin əsasnamələri» səhifəsi). yox — blok yoxdur.',
 );
+// F5.57 (v15).
+const DATABLOCK_DESC_V11 = DATABLOCK_DESC_V10.replace(
+  'yox — blok yoxdur.',
+  'qaydalar — qaydalar və təlimatlar siyahısı (növü «qayda», «telimat» olan sənədlər; «Qaydalar və təlimatlar» səhifəsi). yox — blok yoxdur.',
+);
+const DOC_CATEGORY_DESC_V1 =
+  'normativ; esasname — əsasnamə; emr — əmr; qerar — qərar; hesabat; etika; akkreditasiya; forma — blank; diger — digər.';
+const DOC_CATEGORY_DESC_V2 =
+  'normativ; esasname — əsasnamə; qayda — qayda (ADDA-TL); telimat — təlimat və ya prosedur (ADDA-TL, ADDA-ƏP); emr — əmr; qerar — qərar; ' +
+  'hesabat; etika; akkreditasiya; forma — blank; diger — digər.';
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -208,7 +218,7 @@ const CT: Record<string, Dict> = {
     description: ['Qısa təsvir', '1–2 cümlə (500 simvola qədər).'],
     descriptionRu: ['Təsvir (rusca)', RU],
     descriptionEn: ['Təsvir (ingiliscə)', EN],
-    category: ['Növ', 'normativ; esasname — əsasnamə; emr — əmr; qerar — qərar; hesabat; etika; akkreditasiya; forma — blank; diger — digər.'],
+    category: ['Növ', DOC_CATEGORY_DESC_V1],
     file: ['Fayl', 'PDF tövsiyə olunur (brauzerdə açılır). Word faylı yüklənərək açılır.'],
     year: ['İl', 'Qəbul/təsdiq ili, məs. 2024.'],
     // F5.54 (cmAz:v13).
@@ -947,6 +957,14 @@ const UPGRADE_SETS: {
     marker: 'cmAz:v14',
     note: 'F5.54: sahə qaydaları yeniləndi: {n} (blok «esasnameler»).',
     list: [{ kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V9, to: DATABLOCK_DESC_V10 }],
+  },
+  {
+    marker: 'cmAz:v15',
+    note: 'F5.57: sahə qaydaları yeniləndi: {n} (blok «qaydalar», sənəd növləri «qayda», «telimat»).',
+    list: [
+      { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V10, to: DATABLOCK_DESC_V11 },
+      { kind: 'ct', uid: 'api::document.document', field: 'category', from: DOC_CATEGORY_DESC_V1, to: DOC_CATEGORY_DESC_V2 },
+    ],
   },
 ];
 

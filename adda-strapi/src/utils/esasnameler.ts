@@ -49,7 +49,7 @@ const UNIT_UID = 'api::unit.unit';
 const DOC_UID = 'api::document.document';
 const TAG = '[esasname] F5.54';
 
-interface Docs {
+export interface Docs {
   findFirst: (a: Row) => Promise<Row | null>;
   findOne: (a: Row) => Promise<Row | null>;
   findMany: (a: Row) => Promise<Row[]>;
@@ -71,13 +71,13 @@ const store = (strapi: Core.Strapi) => strapi.store({ type: 'plugin', name: 'add
 const azLower = (s: string) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
 
 /** Lokal provayderdə fayl ünvanı nisbidir («/uploads/…») — mətndə tam ünvan lazımdır. */
-function absUrl(u: string): string {
+export function absUrl(u: string): string {
   if (!u.startsWith('/')) return u;
   return (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender.com').trim().replace(/\/+$/, '') + u;
 }
 
 // ── Media: əsasnamə faylları ─────────────────────────────────────────────────
-interface MediaFile {
+export interface MediaFile {
   id: number;
   name: string;
   url: string;
@@ -127,7 +127,7 @@ function withFiles(seed: QebulPageSeed, files: Map<number, MediaFile[]>): QebulP
 }
 
 /** Qaralamada dərc olunmamış redaktə varmı (CM-in «Dəyişdirilib» qaydası: qaralama daha yenidir)? */
-async function hasPendingDraft(d: Docs, documentId: string, draft: Row, locale?: string): Promise<{ published: boolean; pending: boolean }> {
+export async function hasPendingDraft(d: Docs, documentId: string, draft: Row, locale?: string): Promise<{ published: boolean; pending: boolean }> {
   const pub = await d.findOne({ documentId, ...(locale ? { locale } : {}), status: 'published' });
   if (!pub) return { published: false, pending: false };
   return { published: true, pending: time(draft.updatedAt) > time(pub.updatedAt) + 1000 };
@@ -140,7 +140,7 @@ const DOCS_MARKER = 'esasnameDocs:v1';
  * Bölmənin MÖVCUD dil sətirləri (qaralama) — sənəd admin kimi hər dilin sətrinə
  * bağlanır; olmayan dilə bağlamaq Document Service-də xətadır.
  */
-async function unitTargets(strapi: Core.Strapi, slugs: string[]): Promise<{ documentId: string; locale: string }[]> {
+export async function unitTargets(strapi: Core.Strapi, slugs: string[]): Promise<{ documentId: string; locale: string }[]> {
   if (!slugs.length) return [];
   const rows = await (strapi.db.query(UNIT_UID as never) as unknown as Q).findMany({
     where: { slug: { $in: slugs }, publishedAt: null },

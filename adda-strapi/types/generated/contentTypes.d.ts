@@ -928,6 +928,8 @@ export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
       [
         'normativ',
         'esasname',
+        'qayda',
+        'telimat',
         'emr',
         'qerar',
         'hesabat',
@@ -1881,6 +1883,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'asco',
         'korporativ',
         'esasnameler',
+        'qaydalar',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{

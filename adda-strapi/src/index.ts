@@ -58,6 +58,8 @@ import { applyEAkademiyaMenuV1 } from './utils/eakademiya-menu';
 import { startTranslateMissing } from './utils/translate-missing';
 // F5.56 — Neon kvotası: sayt Strapi-ni gündə bir dəfə yeniləyir, dərc olunanda dərhal.
 import { registerSiteRevalidate, revalidateAfterDeploy, startSiteRevalidate } from './utils/site-revalidate';
+// F5.57 — «Qaydalar» və «Təlimat» (ADDA-TL, ADDA-ƏP) — bax src/utils/qaydalar.ts.
+import { applyQaydalarF557 } from './utils/qaydalar';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -166,8 +168,8 @@ const SEED = {
                 "url": "/qehremanlarimiz"
               },
               {
-                "label": "Fəxri doktorlarımız",
-                "url": "/hazirlanir/fexri-doktorlarimiz"
+                "label": "Fəxri doktor və fəxri professor",
+                "url": "/sehife/fexri-adlar"
               },
               {
                 "label": "Fəxri məzunlar",
@@ -232,8 +234,16 @@ const SEED = {
                 "url": "/sehife/struktur-bolmelerin-esasnameleri"
               },
               {
-                "label": "Akademik dürüstlük bəyannaməsi",
-                "url": "/hazirlanir/akademik-durustluk-beyannamesi"
+                "label": "Qaydalar və təlimatlar",
+                "url": "/sehife/qaydalar-ve-telimatlar"
+              },
+              {
+                "label": "Daxili intizam qaydaları",
+                "url": "/sehife/daxili-intizam-qaydalari"
+              },
+              {
+                "label": "Akademik dürüstlük və antiplagiat",
+                "url": "/sehife/akademik-durustluk"
               },
               {
                 "label": "ADDA etika kodeksi",
@@ -241,7 +251,7 @@ const SEED = {
               },
               {
                 "label": "Müraciətlərə baxılma qaydası",
-                "url": "/hazirlanir/muracietlere-baxilma-qaydasi"
+                "url": "/sehife/muracietlere-baxilma-qaydasi"
               }
             ]
           },
@@ -296,6 +306,10 @@ const SEED = {
               {
                 "label": "İnzibati heyət",
                 "url": "/heyet/inzibati"
+              },
+              {
+                "label": "İşə qəbul qaydaları",
+                "url": "/sehife/ise-qebul-qaydalari"
               }
             ]
           },
@@ -513,6 +527,10 @@ const SEED = {
                 "url": "/sehife/tecrube-haqqinda"
               },
               {
+                "label": "Diplomqabağı təcrübə",
+                "url": "/sehife/diplomqabagi-tecrube"
+              },
+              {
                 "label": "Tədris gəmisi",
                 "url": "/sehife/tedris-gemisi"
               },
@@ -557,6 +575,39 @@ const SEED = {
               {
                 "label": "Tədris-metodiki Şura",
                 "url": "/sehife/tedris-metodiki-sura"
+              }
+            ]
+          },
+          {
+            "title": "Tədris qaydaları",
+            "links": [
+              {
+                "label": "Kredit sistemi ilə tədris",
+                "url": "/sehife/kredit-sistemi"
+              },
+              {
+                "label": "Qiymətləndirmə və imtahanlar",
+                "url": "/sehife/qiymetlendirme-ve-imtahan-qaydalari"
+              },
+              {
+                "label": "Yay semestri və əlavə kəsir",
+                "url": "/sehife/yay-semestri-ve-elave-kesir"
+              },
+              {
+                "label": "Köçürmə, bərpa və kreditlərin tanınması",
+                "url": "/sehife/kocurme-ve-berpa"
+              },
+              {
+                "label": "Tədrisin təşkili və dərs növləri",
+                "url": "/sehife/tedrisin-teskili"
+              },
+              {
+                "label": "Diplom və akademik transkript",
+                "url": "/sehife/diplom-ve-transkript"
+              },
+              {
+                "label": "Qaydalar və təlimatlar",
+                "url": "/sehife/qaydalar-ve-telimatlar"
               }
             ]
           }
@@ -648,6 +699,10 @@ const SEED = {
               {
                 "label": "Təqaüd və sosial dəstək",
                 "url": "/sehife/sosial-teminat-ve-maddi-yardim"
+              },
+              {
+                "label": "Daxili intizam qaydaları",
+                "url": "/sehife/daxili-intizam-qaydalari"
               }
             ]
           },
@@ -2267,6 +2322,11 @@ export default {
       .catch((e: Error) => strapi.log.error('[poliklinika] F5.55: ' + e.message))
       .then(() => applyEAkademiyaMenuV1(strapi))
       .catch((e: Error) => strapi.log.error('[menu] F5.55: ' + e.message))
+      // F5.57 — qaydalar və təlimatlar: sənədlər, reyestr və yeni səhifələr, mövcud
+      // səhifələrin mətni və yan keçidləri, menyu — hər biri BİR DƏFƏ. Tərcümə işindən
+      // ƏVVƏL: yeni az məzmunu TRANSLATE_MISSING=true ilə tərcüməyə düşsün.
+      .then(() => applyQaydalarF557(strapi))
+      .catch((e: Error) => strapi.log.error('[qayda] F5.57: ' + e.message))
       // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
       // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
       .then(() => startTranslateMissing(strapi))
