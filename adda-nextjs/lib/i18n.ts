@@ -1208,6 +1208,10 @@ const T: Array<[string, string, string]> = [
   ['Şuralar, birliklər və proseslər', 'Советы, объединения и процессы', 'Councils, associations and processes'],
   ['Faylı aç', 'Открыть файл', 'Open file'],
   ['Fayl', 'Файл', 'File'],
+  // ── F5.57 — «Qaydalar və təlimatlar» (RegulationList.tsx kind="qayda", DocList.tsx) ──
+  ['Qaydalar və təlimatlar', 'Правила и инструкции', 'Rules and Instructions'],
+  ['Qaydalar', 'Правила', 'Rules'],
+  ['Təlimatlar və prosedurlar', 'Инструкции и процедуры', 'Instructions and procedures'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.
@@ -1723,6 +1727,19 @@ const MENU_T: Array<[string, string, string]> = [
   ['Yekun dövlət attestasiyası', 'Итоговая государственная аттестация', 'Final State Attestation'],
   ['Tədris-metodiki Şura', 'Учебно-методический совет', 'Academic Methodology Council'],
   ['Keyfiyyəti idarəetmə sistemi', 'Система менеджмента качества', 'Quality Management System'],
+  // F5.57 — qaydalar və təlimatlar üzrə səhifələr (adda-strapi/src/utils/qaydalar-content.ts RULE_MENU_*).
+  ['Fəxri doktor və fəxri professor', 'Почётный доктор и почётный профессор', 'Honorary Doctor and Honorary Professor'],
+  ['Akademik dürüstlük və antiplagiat', 'Академическая честность и антиплагиат', 'Academic Integrity and Anti-plagiarism'],
+  ['Daxili intizam qaydaları', 'Правила внутреннего распорядка', 'Internal Regulations'],
+  ['İşə qəbul qaydaları', 'Правила приёма на работу', 'Recruitment Rules'],
+  ['Diplomqabağı təcrübə', 'Преддипломная практика', 'Pre-graduation Placement'],
+  ['Tədris qaydaları', 'Правила обучения', 'Study Regulations'],
+  ['Kredit sistemi ilə tədris', 'Кредитная система обучения', 'Credit System'],
+  ['Qiymətləndirmə və imtahanlar', 'Оценивание и экзамены', 'Assessment and Examinations'],
+  ['Yay semestri və əlavə kəsir', 'Летний семестр и дополнительные группы', 'Summer Semester and Extra Groups'],
+  ['Köçürmə, bərpa və kreditlərin tanınması', 'Перевод, восстановление и признание кредитов', 'Transfer, Reinstatement and Credit Recognition'],
+  ['Tədrisin təşkili və dərs növləri', 'Организация обучения и виды занятий', 'Teaching Organisation and Class Types'],
+  ['Diplom və akademik transkript', 'Диплом и академический транскрипт', 'Diploma and Academic Transcript'],
   // F5.55 — E-Akademiya kartları (adda-strapi/src/utils/eakademiya-menu.ts).
   ['Tədqiqatçılar və nəşrlər', 'Исследователи и публикации', 'Researchers and publications'],
   ['CJMSE jurnalı', 'Журнал CJMSE', 'CJMSE Journal'],

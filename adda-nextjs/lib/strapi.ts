@@ -140,7 +140,9 @@ export type PageDataBlock =
   // F5.53 — «Korporativ üslub»: rənglər və şriftlər bloku (kodda, BrandStyle.tsx).
   | 'korporativ'
   // F5.54 — «Struktur bölmələrin əsasnamələri»: kateqoriyası «esasname» olan sənədlər (RegulationList.tsx).
-  | 'esasnameler';
+  | 'esasnameler'
+  // F5.57 — «Qaydalar və təlimatlar»: kateqoriyası «qayda», «telimat» olan sənədlər (RegulationList.tsx).
+  | 'qaydalar';
 export interface PageFact {
   label: string;
   value: string;
@@ -1634,7 +1636,8 @@ export interface UnitDocumentItem {
   description: string | null;
   descriptionRu: string | null;
   descriptionEn: string | null;
-  category: 'normativ' | 'esasname' | 'emr' | 'qerar' | 'hesabat' | 'etika' | 'akkreditasiya' | 'forma' | 'diger';
+  // F5.57 — `qayda`, `telimat` (ADDA-TL, ADDA-ƏP).
+  category: 'normativ' | 'esasname' | 'qayda' | 'telimat' | 'emr' | 'qerar' | 'hesabat' | 'etika' | 'akkreditasiya' | 'forma' | 'diger';
   year: number | null;
   file: StrapiMedia | null;
   /** F5.54 — sənədin aid olduğu səhifə («/sehife/himayeciler-surasi»); köhnə Strapi-də yoxdur. */
@@ -1823,10 +1826,13 @@ export interface RegulationItem extends UnitDocumentItem {
   units?: { slug: string; name: string; locale?: string | null }[] | null;
 }
 
-/** F5.54 — «Struktur bölmələrin əsasnamələri» reyestri: kateqoriyası «esasname» olan bütün sənədlər. */
-export async function getRegulations(): Promise<RegulationItem[]> {
+/**
+ * F5.54 — «Struktur bölmələrin əsasnamələri» reyestri: kateqoriyası «esasname» olan bütün sənədlər.
+ * F5.57 — eyni sorğu «Qaydalar və təlimatlar» üçün: `['qayda', 'telimat']`.
+ */
+export async function getRegulations(categories: UnitDocumentItem['category'][] = ['esasname']): Promise<RegulationItem[]> {
   return fetchAllPages<RegulationItem>('/documents', {
-    'filters[category][$eq]': 'esasname',
+    ...Object.fromEntries(categories.map((c, i) => [`filters[category][$in][${i}]`, c])),
     'populate[file]': true,
     'populate[units][fields][0]': 'slug',
     'populate[units][fields][1]': 'name',

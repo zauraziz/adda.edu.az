@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════
    ADDA — F5.54 / «Struktur bölmələrin əsasnamələri» reyestri
-   (app/_components/RegulationList.tsx, page.dataBlock = esasnameler).
+   (app/_components/RegulationList.tsx, page.dataBlock = esasnameler);
+   F5.57 — eyni siyahı «Qaydalar və təlimatlar» üçün (dataBlock = qaydalar).
    Sətir: kod · ad (+ bağlı bölmələr) · fayl düyməsi. Mobildə kod
    adın üstünə keçir, fayl düyməsi sağda qalır.
    ═══════════════════════════════════════════════════════ */
@@ -49,6 +50,14 @@
   text-decoration: none;
 }
 a.rg-title:hover { color: var(--gold-600); text-decoration: underline; text-underline-offset: 2px; }
+/* F5.57 — sənədin qısa təsviri («Qaydalar və təlimatlar»). */
+.rg-desc {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--gray-700);
+}
 .rg-units { display: flex; flex-wrap: wrap; gap: 6px; }
 .rg-unit {
   display: inline-flex;

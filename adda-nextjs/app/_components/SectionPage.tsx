@@ -30,7 +30,7 @@ import { isExternalHref, localHref, localizeLinks } from '@/lib/md-links';
 import { FEED_TEXT } from '@/lib/feed-text';
 import { faqAnswerHtml } from '@/lib/faq-html';
 import BrandStyle, { BRAND_ID } from './BrandStyle';
-import RegulationList, { REGULATIONS_ID } from './RegulationList';
+import RegulationList, { REGULATIONS_ID, RULES_ID } from './RegulationList';
 
 const PAGE_UID = 'api::page.page';
 
@@ -271,7 +271,7 @@ export interface SectionPageData {
   news?: Article[];
   /** Server vaxtı (ms) — «növbəti / ötən» bölgüsü. */
   now?: number;
-  /** F5.54 — əsasnamələr (dataBlock = esasnameler). */
+  /** F5.54 — əsasnamələr (dataBlock = esasnameler); F5.57 — qaydalar və təlimatlar (dataBlock = qaydalar). */
   regulations?: RegulationItem[];
 }
 
@@ -344,14 +344,17 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
   const brand = block === 'korporativ';
   const brandTitle = tr('Rənglər və şriftlər', locale);
   // F5.54 — əsasnamələr reyestri canlı blokun yerində (girişdən sonra, mətn bölmələrindən əvvəl).
-  const regs = block === 'esasnameler' ? (data.regulations ?? []) : [];
-  const regsTitle = tr('Əsasnamələr', locale);
+  // F5.57 — «Qaydalar və təlimatlar» eyni yerdə, eyni komponentlə (kind="qayda").
+  const rules = block === 'qaydalar';
+  const regs = block === 'esasnameler' || rules ? (data.regulations ?? []) : [];
+  const regsTitle = tr(rules ? 'Qaydalar və təlimatlar' : 'Əsasnamələr', locale);
+  const regsId = rules ? RULES_ID : REGULATIONS_ID;
 
   // Sıra: giriş → trayektoriya → canlı blok → mətn bölmələri → suallar.
   const toc = [
     ...(steps.length ? [{ id: 'trayektoriya', label: stepsTitle }] : []),
     ...(blockHas ? [{ id: 'ixtisaslar', label: blockTitle }] : []),
-    ...(regs.length ? [{ id: REGULATIONS_ID, label: regsTitle }] : []),
+    ...(regs.length ? [{ id: regsId, label: regsTitle }] : []),
     ...sections.map((s) => ({ id: s.id, label: s.title })),
     ...(brand ? [{ id: BRAND_ID, label: brandTitle }] : []),
     ...(faq.length ? [{ id: 'suallar', label: faqTitle }] : []),
@@ -441,9 +444,9 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
                 ) : null}
 
                 {regs.length ? (
-                  <section id={REGULATIONS_ID} className={'un-block pr-anchor' + nextTint()}>
+                  <section id={regsId} className={'un-block pr-anchor' + nextTint()}>
                     <h2 className="un-block-title">{regsTitle}</h2>
-                    <RegulationList items={regs} locale={locale} />
+                    <RegulationList items={regs} locale={locale} kind={rules ? 'qayda' : 'esasname'} />
                   </section>
                 ) : null}
 

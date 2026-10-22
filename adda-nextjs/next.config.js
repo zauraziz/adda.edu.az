@@ -40,6 +40,13 @@ const PAGE_PAGE_MAP = {
   'az-rbaycan-doevl-t-d-niz-akademiyasinin-nizamnam-si': 'nizamname',
 };
 
+// F5.57: «hazırlanır» yer tutanı → səhifə (menyu miqrasiyası `qaydaMenu:v1`, adda-strapi/src/utils/qaydalar.ts).
+const HAZIRLANIR_PAGE_MAP = {
+  'fexri-doktorlarimiz': 'fexri-adlar',
+  'akademik-durustluk-beyannamesi': 'akademik-durustluk',
+  'muracietlere-baxilma-qaydasi': 'muracietlere-baxilma-qaydasi',
+};
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -99,6 +106,13 @@ const nextConfig = {
       ...['certificates', 'hazirlanir/akkreditasiya-ve-sertifikatlar', 'hazirlanir/akkreditasiya'].map((from) => ({
         source: '/:locale(az|ru|en)/' + from,
         destination: '/:locale/sertifikatlar',
+        permanent: true,
+      })),
+      // F5.57: menyunun «hazırlanır» keçidləri → qaydalar üzrə yeni səhifələr. SİNXRON:
+      // adda-strapi/src/utils/qaydalar-content.ts (RULE_MENU_RULES).
+      ...Object.entries(HAZIRLANIR_PAGE_MAP).map(([from, to]) => ({
+        source: '/:locale(az|ru|en)/hazirlanir/' + from,
+        destination: '/:locale/sehife/' + to,
         permanent: true,
       })),
     ];

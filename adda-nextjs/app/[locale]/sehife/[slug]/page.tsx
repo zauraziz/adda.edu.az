@@ -84,6 +84,8 @@ async function loadSectionData(doc: PageDoc, locale: Locale): Promise<SectionPag
   if (block === 'yox' || block === 'korporativ') return {};
   // F5.54 — «Struktur bölmələrin əsasnamələri»: kateqoriyası «esasname» olan sənədlər.
   if (block === 'esasnameler') return { regulations: await getRegulations().catch(() => [] as RegulationItem[]) };
+  // F5.57 — «Qaydalar və təlimatlar»: kateqoriyası «qayda», «telimat» olan sənədlər.
+  if (block === 'qaydalar') return { regulations: await getRegulations(['qayda', 'telimat']).catch(() => [] as RegulationItem[]) };
   // F5.47 — `konfrans`, F5.48 — `tedbirler`, `idman`, `medeniyyet`, `beynelxalq` də başlıq üzrə lentdir.
   if (isTitleFeed(block)) {
     const [events, news] = await Promise.all([getTitleFeedEvents(block, locale), getTitleFeedNews(block, locale)]);

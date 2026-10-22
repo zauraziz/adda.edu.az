@@ -26,6 +26,9 @@ export function DocList({ docs, locale }: { docs: UnitDocumentItem[]; locale: Lo
 /** `hesabat` BURADA YOXDUR — o, əsas sütunda qalır (F4.6d). */
 export const DOC_CATEGORY_ORDER: UnitDocumentItem['category'][] = [
   'esasname',
+  // F5.57 — qaydalar (ADDA-TL) və təlimat/prosedurlar (ADDA-TL, ADDA-ƏP).
+  'qayda',
+  'telimat',
   'emr',
   'qerar',
   'normativ',
@@ -37,6 +40,8 @@ export const DOC_CATEGORY_ORDER: UnitDocumentItem['category'][] = [
 
 export const DOC_CATEGORY_LABEL_AZ: Record<string, string> = {
   esasname: 'Əsasnamə',
+  qayda: 'Qaydalar',
+  telimat: 'Təlimatlar və prosedurlar',
   emr: 'Əmrlər',
   qerar: 'Qərarlar',
   normativ: 'Normativ sənədlər',
