@@ -79,6 +79,8 @@ npx tsc --noEmit -p src/admin/tsconfig.json && npm run build
 cd adda-nextjs && npx tsc --noEmit
 # CSS-də rəng/fon və ya komponentin sinfi dəyişibsə (F5.49, bax «Next.js» tələləri):
 npm run gen:contrast && npm run gen:contrast -- --check
+# səhifə yeni komponent/sinif işlədirsə (F5.58): CSS faylı səhifədə import olunubmu
+npm run check:css
 ```
 
 `npm run build` (Next.js) qumluqda `fonts.googleapis.com` bloklandığı üçün
@@ -151,6 +153,13 @@ const azLower = (s) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
   `src/utils/admin-inbox.ts` + `src/admin/inbox/`). Yeni tipdə bu adı İŞLƏTMƏ.
 - Upload servisi `originalFilename` (kiçik `n`) və `refId` üçün rəqəm ID istəyir.
 - **`plugins.ts` əl ilə redaktə olunmamalıdır.**
+- **Admin «Ünvan» generatoru Azərbaycan hərflərini atır** (`@sindresorhus/slugify` 1.x:
+  «Məmmədov» → «m-mm-dov», «ü» → «ue», ad boşdursa «person-N»). F5.58-dən
+  `patchUidTransliteration` (bootstrap) Content Manager-in `uid` servisinə hərfləri latına
+  çevirib ötürür — bütün tiplər üçün. Köhnə oxunmaz ünvanlar `person-merge.ts`-də.
+- **Document Service middleware-də `errors.ValidationError` (`@strapi/utils`)** admində
+  qırmızı bildiriş kimi görünür (F5.58 əməkdaş qoruyucusu). Miqrasiya/seed-də sorğu
+  konteksti yoxdur — `strapi.requestContext.get()` boşdur, qoruyucu onlara toxunmur.
 - **`strapi.db.query().update()` `updatedAt`-ı HƏMİŞƏ indiki vaxta qoyur**
   (@strapi/database timestamps abunəçisi verilən dəyərin üstündən yazır). Mexaniki
   düzəliş (F5.53 telefon) redaktə tarixini dəyişməməlidir: yoxsa `section-pages.ts`
@@ -218,7 +227,8 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `esasnameDocs:v1`, `nizamname:v1`, `esasnamePages:v1`, `esasnameUnits:v1`, `esasnameLinks:v1`,
 `esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`, `poliklinika:v1`, `eAkademiya:v1`, `tercume:v1`
 (irəliləyiş `tercume:done`, `tercume:tries`), `qaydaDocs:v1`, `qaydaPages:v1`, `qaydaText:v1`,
-`qaydaLinks:v1`, `qaydaMenu:v1`, `cmAz:v15`;
+`qaydaLinks:v1`, `qaydaMenu:v1`, `cmAz:v15`, `personMerge:v1`, `personSlugs:v1` (məlumat: `personRedirects` —
+əməkdaşın köhnə ünvanı → yeni, `personMerge:backup` — silinmiş təkrar qeydlər);
 sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`;
 F5.56 son deploy-un commit-i `siteRevalidate:commit` — marker deyil, sayt yeniləməsi üçün) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
@@ -290,6 +300,14 @@ bilinmir.
 - **`.container` + öz sinif:** öz sinifdə `padding: X 0 Y` konteynerin yan
   boşluğunu sıfırlayır (mobildə mətn kənara yapışır, F5.49: `aud-wrap`,
   `na-head`) — `padding-top`/`padding-bottom` yaz.
+- **CSS səhifə-səhifə import olunur (F5.58).** Komponentin CSS faylı səhifədə yoxdursa,
+  başqa səhifədən klient naviqasiyası ilə gələndə stil yaddaşda qalır və düzgün görünür,
+  birbaşa girəndə isə komponent stilsizdir — «bəzən» xətası (əməkdaş səhifəsində «Düzəliş
+  təklif et» brauzerin adi düyməsi idi). Yeni komponent/səhifədə `npm run check:css`;
+  kiçik vidcet CSS-i özü ilə gətirə bilər (`CorrectionIsland` → 23, `IdentityGate` → 24).
+- **Menyunun vurğusu klientdədir (F5.58):** `HeaderIsland` + `MobileNav` cari ünvanı
+  `lib/nav-active.ts` ilə menyu keçidlərinə tutuşdurur (bölmə, mega paneldə qrup və keçid).
+  SSR-də heç bir bölmə vurğulanmır — server başlığı keşlidir və ünvanı bilmir.
 
 ### Render / Neon
 
@@ -329,6 +347,7 @@ npm run check:locales    # bölmələrin dil əhatəsi, head dil üzrə
 npm run plan:heads       # vəzifəyə görə rəhbər təklifi (yalnız oxuma)
 npm run check:audiences  # auditoriya keçidlərinin bütövlüyü
 npm run check:menu       # menyu keçidlərinin auditi (yalnız oxuma)
+npm run check:css        # F5.58: səhifə işlətdiyi siniflərin CSS faylını import edirmi
 ```
 
 **Qayda: əvvəlcə diaqnostika, sonra düzəliş.** Alətin öz çıxışını istə, təxmin
@@ -1038,6 +1057,53 @@ Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sən�
    - Lokal sınaq: SQLite, təmiz baza → bütün zəncir; sonra fayllar, köhnə menyu, redaktor
      halları ilə F5.57 yenidən və təkrar (74 yoxlama). `strapi.db.query().update()` vaxtı
      yazır — sınaq skriptində də `updateMany`.
+29. **F5.58 — əməkdaşlar, axtarış, menyu, düzəliş vidceti, footer** (layihə sənədi
+   `claude/f558-emekdaslar-axtaris.md`).
+   - **Təkrar əməkdaşlar** (`personMerge:v1`, `src/utils/person-merge.ts`): prod-da 22 ad 49
+     qeyddə idi — kafedra/laboratoriya siyahıları admində doldurulanda mövcud əməkdaş YENİ
+     qeyd kimi yaradılıb. Ad açarı (kiçik hərf, ə→e …, boşluq, bitişik «oğlu/qızı») eyni olan
+     qeydlər birləşir. Əsas qeyd: dərc > profil yenilənib > bölmə rəhbəri > e-poçt > foto >
+     vəzifə sayı > bölmə > oxunan ünvan > köhnə. Vəzifələr «Vəzifələr»-ə (eyni vəzifə bir dəfə:
+     «Tədris müəssisəsində böyük laborant» = «Böyük laborant»; bölməsiz vəzifə bölməli ilə
+     birləşir; həmin bölmədə vəzifəsi varsa əlavə olunmur), boş sahələr doldurulur, əlaqələr
+     (auditoriyanın məsulu, bölmə rəhbəri, xəbər, elan, tədbir, müraciət, profil tarixçəsi)
+     əsas qeydə keçir, təkrar SİLİNİR (ehtiyat `personMerge:backup`), köhnə ünvan → yeni
+     (`personRedirects`, `GET /api/person-redirects`, sayt 301). Əsas qeydin dərc olunmamış
+     redaktəsi varsa qrup toxunulmur. Ziddiyyət (bölməsiz «Baş müəllim» ↔ «Dosent, kafedra»)
+     logda qalır — admində yoxlanılır (prod-da Ağazadə Şahin, Ağayeva Gülsüm).
+   - **Ünvanlar** (`personSlugs:v1`): «person-N» və Strapi slugify ünvanı → addan Azərbaycan
+     hərfləri ilə; adın artıq boşluqları. Birbaşa bazada, hər sətrin `updatedAt`-ı saxlanır;
+     `person:<slug>` təyinatı və `personSlug` (profil tarixçəsi, şəxsi məlumat) yeni ünvana.
+   - **Qoruyucu** (register `registerPersonGuard`): admində/API-də mövcud adla əməkdaş yaratmaq,
+     surətini çıxarmaq, adı başqasınınkına dəyişmək — ValidationError («əlavə vəzifəni həmin
+     qeydin Vəzifələr siyahısına yazın»); boş/«person-N»/oxunmaz ünvan addan.
+   - **Əməkdaş səhifəsi** (`lib/positions.ts`): vəzifə bir dəfə, rəhbər vəzifə əvvəldə, elmi ad
+     vəzifənin eynisidirsə yazılmır («Dekan — fakültə», «Dosent — kafedra», «Fəlsəfə doktoru»).
+     Bölmənin yan panelində «Heyət» → «Əməkdaşlar» (admində blok başlığı varsa o); sıra vəzifə
+     dərəcəsinə görə (`positionRank`: rektor → prorektor → elmi katib → dekan/direktor → müdir →
+     müavin → professor → dosent → baş müəllim → müəllim → assistent → baş/aparıcı mütəxəssis →
+     mütəxəssis → tyutor → … → laborant → tədris ustası), sonra ad; /heyet kataloqu da eyni.
+   - **Axtarış** (`src/utils/search-index.ts`, controller `api/site-search`): bütün məzmun
+     (əməkdaş, səhifə, bölmə, ixtisas, sənəd, xəbər, elan, tədbir, auditoriya, sabiq rektor,
+     qəhrəman, tarix, sertifikat). Dil üzrə yaddaşda indeks: ilk sorğuda qurulur, axtarılan
+     növdə yazı olanda (Document Service middleware) növbəti sorğuda yenidən — Neon hər sorğuda
+     oyanmır. Bükmə uzunluğu saxlayır (parça orijinaldan); sorğunun hər sözü istənilən sahədə
+     söz başlanğıcı kimi (sıra fərq etmir), «Həmdullaoğlu» = «Həmdulla oğlu», başlıqda bir hərf
+     səhvi; ru/en-də nəticə azdırsa az məzmunu (`lang: 'az'`, «az» nişanı). Nəticədə `url`.
+     Next: pəncərədə «Bütün nəticələr (N)», Enter → `/axtaris?q=&tip=` (növ nişanları, ilk 50,
+     `noindex`); `/api/search` `limit`, `type`, `total`, `counts` ötürür.
+   - **Menyu:** açıq səhifənin bölməsi vurğulanır, mega paneldə qrupu açıq və keçidi seçilmiş,
+     mobil menyuda da (`lib/nav-active.ts`; kafedra → «Kafedralar», əməkdaş → «Heyət»).
+   - **Düzəliş vidceti bəzən stilsiz:** əməkdaş və «hazırlanır» səhifəsi 23/24 CSS-ni import
+     etmirdi (auditoriya — qalereya, heyət — səhifələmə, tədbir — lövbər də). `check:css` aləti.
+   - **Footer sertifikatları gah 3, gah 4:** Strapi əlçatmaz olanda ehtiyat (`lib/cert-fallback.ts`)
+     Təhsil Nazirliyinin sertifikatını da göstərirdi (admində 16.10-da footer-dən çıxarılıb);
+     ehtiyat və Strapi `DEFAULT_CERTS` eyni edildi.
+   - Telefon (012) 493 36 44 dəyişmədi (Zaur müəllimin seçimi). «Qaydalar və təlimatlar» menyuda
+     iki yerdədir: Akademiya → Hüquqi baza və etika, Təhsil → Tədris qaydaları.
+   - Lokal sınaq: F5.57 bazası + 7 qrup (Süleymanov, Nadir ×4 və auditoriyalar, Ağazadə
+     ziddiyyəti, İskəndərov person-5, dərc olunmamış redaktə…) — 53 yoxlama; Playwright
+     (əməkdaş, bölmə, menyu, axtarış pəncərəsi və səhifəsi, mobil menyu).
 
 ---
 
