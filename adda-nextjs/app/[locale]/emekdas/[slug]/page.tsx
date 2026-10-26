@@ -21,11 +21,15 @@ import '../../../_styles/16-footer-ftx.css';
 import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
+// F5.58 — düzəliş vidceti və kimlik qapısı: səhifəyə birbaşa girəndə stilsiz qalırdı
+// (CSS yalnız bölmə/xəbər səhifəsindən keçəndə yüklənmişdi).
+import '../../../_styles/23-correction.css';
+import '../../../_styles/24-identity.css';
 import '../../../_styles/28-staff.css';
 import '../../../_styles/29-directory.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
@@ -33,6 +37,7 @@ import CorrectionIsland from '../../../_components/CorrectionIsland';
 import {
   getMenu,
   getPersonBySlug,
+  getPersonRedirect,
   getPersonSlugs,
   getPersonArticles,
   getUnits,
@@ -45,6 +50,7 @@ import {
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { phoneView } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
+import { titleRepeats, viewRoles } from '@/lib/positions';
 
 export const revalidate = 86400;
 
@@ -91,7 +97,7 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const p = await getPersonBySlug(slug, locale).catch(() => null);
   if (!p) return { title: tr('Əməkdaş', locale) };
-  const post = p.roles?.[0]?.position ?? p.position ?? '';
+  const post = viewRoles(p.roles, { position: p.position, unitName: p.unit?.name })[0]?.position ?? '';
   const shown = p.displayName || p.name;
   return { title: shown, description: post ? `${shown} — ${tr(post, locale)}` : shown };
 }
@@ -112,7 +118,12 @@ export default async function PersonPage({
     getMenu(locale).catch(() => null as SiteMenu | null),
     getPersonBySlug(slug, locale).catch(() => null as PersonFull | null),
   ]);
-  if (!person) notFound();
+  if (!person) {
+    // F5.58 — birləşmiş təkrar qeydin və ya düzəlmiş ünvanın köhnə ünvanı.
+    const to = await getPersonRedirect(slug);
+    if (to) permanentRedirect(`/${locale}/emekdas/${to}`);
+    notFound();
+  }
   const phone = phoneView(person.phone, locale);
 
   const news = await getPersonArticles(slug, locale, 6).catch(() => [] as Article[]);
@@ -131,7 +142,10 @@ export default async function PersonPage({
       .filter((pair): pair is [string, string] => Boolean(pair[1])),
   );
 
-  const roles = person.roles ?? [];
+  // F5.58 — eyni vəzifə bir dəfə (bölməsiz «Dosent» bölməli «Dosent» ilə birləşir),
+  // rəhbər vəzifə (dekan, müdir…) əvvəldə; elmi ad vəzifənin eynisidirsə təkrarlanmır.
+  const roles = viewRoles(person.roles, { position: person.position, unitName: person.unit?.name, staffType: person.staffType });
+  const shownTitle = nonEmpty(person.academicTitle) && !titleRepeats(person.academicTitle, roles) ? person.academicTitle : null;
   const areas = person.researchAreas ?? [];
   const langs = person.languages ?? [];
   const pubs = person.publications ?? [];
@@ -256,9 +270,9 @@ export default async function PersonPage({
                   })}
                 </ul>
               ) : null}
-              {nonEmpty(person.academicTitle) || nonEmpty(degree) ? (
+              {nonEmpty(shownTitle) || nonEmpty(degree) ? (
                 <p className="prf-rank">
-                  {[person.academicTitle, degree].filter(nonEmpty).map((v) => tr(v as string, locale)).join(' · ')}
+                  {[shownTitle, degree].filter(nonEmpty).map((v) => tr(v as string, locale)).join(' · ')}
                 </p>
               ) : null}
             </div>

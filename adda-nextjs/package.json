@@ -14,6 +14,7 @@
     "check:program-gaps": "node ../tools/check-program-gaps.mjs",
     "check:unit-heads": "node ../tools/check-unit-heads.mjs",
     "check:heroes": "node ../tools/check-heroes.mjs",
+    "check:css": "node ../tools/check-css-imports.mjs",
     "plan:heads": "node ../tools/plan-unit-heads.mjs",
     "gen:contrast": "node ../tools/gen-contrast-css.mjs",
     "dev": "next dev",

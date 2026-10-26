@@ -192,18 +192,19 @@ function MainNav({ cats, locale }: { cats: MenuCategory[]; locale: Locale }) {
   return (
     <>
       {cats.slice().sort(byOrder).map((c, i) => {
-        const active = i === 0;
+        // F5.58 — bölmənin vurğusu açıq səhifəyə görə HeaderIsland-da qoyulur (lib/nav-active.ts);
+        // əvvəl burada həmişə birinci bölmə («Akademiya») vurğulanırdı.
         const groups = c.groups ?? [];
         if (!groups.length) {
           return (
             <div className="nav-item" key={`nv-${i}`}>
-              <a href={menuHref(c.url, locale)} className={active ? 'active' : undefined}>{tr(c.label, locale)}</a>
+              <a href={menuHref(c.url, locale)}>{tr(c.label, locale)}</a>
             </div>
           );
         }
         return (
           <div className="nav-item nav-mega" key={`nv-${i}`}>
-            <a href={menuHref(c.url, locale)} className={active ? 'active' : undefined}>{tr(c.label, locale)}{' '}<MegaChevH /></a>
+            <a href={menuHref(c.url, locale)}>{tr(c.label, locale)}{' '}<MegaChevH /></a>
             <div className="mega">
               <div className="mega-wrap">
                 <nav className="mega-groups" aria-label={tr(c.label, locale)}>

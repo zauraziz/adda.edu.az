@@ -1,13 +1,13 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 372, əhatəli: 2, dəyişməz: 510,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 380, əhatəli: 3, dəyişməz: 522,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
 html[data-contrast="high"]{color-scheme:light}
 html[data-contrast="high"] :focus-visible{outline:3px solid #000!important;outline-offset:2px!important;box-shadow:0 0 0 5px #fff!important}
-html[data-contrast="high"] :is(#siteHeader,.ap-done-ic,.ap-sec-num,.ap-status-tag--formal,.ap-submit,.aud-cta,.cert-zoom,.cl-innov,.cl-ov,.cl-photo,.cmp,.copilot__go,.dg-ic,.gal-lb,.gov-banner,.hero,.hero-veil,.hero-wrap,.idn-avatar,.idn-gate-btn,.idn-verify-btn,.infofor-btn,.infofor-menu,.intlx,.ix-static,.lang-menu,.ld-plate,.mc-card,.mega-cta,.mnav-backdrop,.mnav-panel,.na-badge--kritik,.na-cover,.na-hero,.na-sp-photo,.np-card-media,.np-chip--kritik,.np-hero,.nx-btn,.nx-card,.nx-ov,.pe-btn--primary,.pr-chart-swatch--free,.psh-btn,.qb-cta,.qb-step-n,.rector-photo,.rk-plate,.rsvp-head,.rsvp-submit,.search-backdrop,.stats-panel,.sx-card,.sx-card--cta,.sx-dur,.sx-fbtn,.un-head-plate,.un-staff-mini-pic,.un-staff-mono,.vq-frame,.vq-modal,.vq-ov,.vq-x,.vquote,.whyx,footer,header) :focus-visible{outline-color:#fff!important;box-shadow:0 0 0 5px #000!important}
+html[data-contrast="high"] :is(#siteHeader,.ap-done-ic,.ap-sec-num,.ap-status-tag--formal,.ap-submit,.aud-cta,.cert-zoom,.cl-innov,.cl-ov,.cl-photo,.cmp,.copilot__go,.dg-ic,.gal-lb,.gov-banner,.hero,.hero-veil,.hero-wrap,.idn-avatar,.idn-gate-btn,.idn-verify-btn,.infofor-btn,.infofor-menu,.intlx,.ix-static,.lang-menu,.ld-plate,.mc-card,.mega-cta,.mnav-backdrop,.mnav-panel,.na-badge--kritik,.na-cover,.na-hero,.na-sp-photo,.np-card-media,.np-chip--kritik,.np-hero,.nx-btn,.nx-card,.nx-ov,.pe-btn--primary,.pr-chart-swatch--free,.psh-btn,.qb-cta,.qb-step-n,.rector-photo,.rk-plate,.rsvp-head,.rsvp-submit,.search-backdrop,.srp-btn,.stats-panel,.sx-card,.sx-card--cta,.sx-dur,.sx-fbtn,.un-head-plate,.un-staff-mini-pic,.un-staff-mono,.vq-frame,.vq-modal,.vq-ov,.vq-x,.vquote,.whyx,footer,header) :focus-visible{outline-color:#fff!important;box-shadow:0 0 0 5px #000!important}
 html[data-contrast="high"] :is(.prose,.na-body,.un-main,.aud-wrap,.faq-wrap) a:not([class]){text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 html[data-contrast="high"] :is(input,select,textarea){border-color:#4A5A63!important}
 html[data-contrast="high"] ::placeholder{color:#3F4A50;opacity:1}
@@ -69,7 +69,9 @@ html[data-contrast="high"] .mnav-h{color:#fff}
 html[data-contrast="high"] .mnav-overview{color:#f0e7cf}
 html[data-contrast="high"] .mnav-grp-h{color:#deca9e}
 html[data-contrast="high"] .mnav-link{color:rgba(255, 255, 255, 0.8)}
+html[data-contrast="high"] .mnav-link.mnav-link.is-current{color:rgba(255,255,255,.92)}
 html[data-contrast="high"] .mnav-link:hover{color:#fff}
+html[data-contrast="high"] .mnav-link.is-current{color:#fff}
 html[data-contrast="high"] .mnav-langs a{color:rgba(255, 255, 255, 0.75)}
 html[data-contrast="high"] .mnav-langs a.is-active{color:#000000}
 html[data-contrast="high"] .mnav-langs a.is-active{color:#000000}
@@ -304,6 +306,7 @@ html[data-contrast="high"] .mg-item.active .mgc{color:#615026}
 html[data-contrast="high"] .mp-title{color:var(--navy-900)}
 html[data-contrast="high"] .mp-links a{color:var(--ink)}
 html[data-contrast="high"] .mp-links a:hover{color:var(--navy-700)}
+html[data-contrast="high"] .mp-links a.is-current{color:var(--navy-700)}
 html[data-contrast="high"] .mc-card{color:#fff}
 html[data-contrast="high"] .mc-eyebrow{color:var(--gold-300,#DFC389)}
 html[data-contrast="high"] .mc-btn{color:var(--navy-900)}
@@ -320,6 +323,10 @@ html[data-contrast="high"] .search-hit .sh-main b{color:var(--navy-900,#0B3D5C)}
 html[data-contrast="high"] .search-hit .sh-main small{color:#405461}
 html[data-contrast="high"] .search-hit>i{color:#425765}
 html[data-contrast="high"] .search-hit:hover>i{color:#615026}
+html[data-contrast="high"] .search-hit .sh-main b .sh-lang{color:#105781}
+html[data-contrast="high"] .search-all{color:var(--navy-800)}
+html[data-contrast="high"] .search-all:hover{color:var(--navy-900)}
+html[data-contrast="high"] .search-all i{color:#615026}
 html[data-contrast="high"] .search-empty,html[data-contrast="high"] .search-loading{color:#425663}
 html[data-contrast="high"] .np-hero{color:var(--white)}
 html[data-contrast="high"] .np-eyebrow{color:#ddc997}
@@ -882,3 +889,16 @@ html[data-contrast="high"] .rg-unit{color:var(--navy-700)}
 html[data-contrast="high"] .rg-file{color:var(--navy-700)}
 html[data-contrast="high"] .rg-file small{color:#4d525c}
 html[data-contrast="high"] .rg-file i{color:#615026}
+html[data-contrast="high"] .srp-input{color:var(--navy-900)}
+html[data-contrast="high"] .srp-btn{color:#fff}
+html[data-contrast="high"] .srp-btn i{color:#ddc997}
+html[data-contrast="high"] .srp-chip{color:var(--navy-800)}
+html[data-contrast="high"] .srp-chip span{color:#615026}
+html[data-contrast="high"] .srp-chip[aria-current="page"]{color:#fff}
+html[data-contrast="high"] .srp-chip[aria-current="page"] span{color:#ede3c9}
+html[data-contrast="high"] .srp-type{color:#5d4d25}
+html[data-contrast="high"] .srp-title{color:var(--navy-800)}
+html[data-contrast="high"] a.srp-title:hover{color:#105781}
+html[data-contrast="high"] .srp-lang{color:#105781}
+html[data-contrast="high"] .srp-excerpt{color:var(--gray-700)}
+html[data-contrast="high"] .srp-empty,html[data-contrast="high"] .srp-more{color:var(--gray-700)}

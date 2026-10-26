@@ -19,5 +19,10 @@
 .search-hit .sh-main small{font-size:calc(12.5px * var(--fs-scale));color:rgba(11,61,92,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-hit>i{color:rgba(11,61,92,.3);font-size:calc(16px * var(--fs-scale));flex-shrink:0}
 .search-hit:hover>i{color:var(--gold-600,#C9A961)}
+/* F5.58 — az məzmununun nişanı (ru/en) və tam nəticələr səhifəsinə keçid */
+.search-hit .sh-main b .sh-lang{font-style:normal;font-size:calc(10.5px * var(--fs-scale));font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--navy-600);border:1px solid var(--line);border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:1px}
+.search-all{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 4px 2px;padding:11px 14px;border-radius:10px;font-family:var(--nav-font,'Manrope',sans-serif);font-size:calc(13.5px * var(--fs-scale));font-weight:700;color:var(--navy-800);background:var(--navy-50);text-decoration:none}
+.search-all:hover{background:var(--navy-100);color:var(--navy-900)}
+.search-all i{color:var(--gold-600)}
 .search-empty,.search-loading{padding:28px 20px;text-align:center;font-size:calc(14px * var(--fs-scale));color:rgba(11,61,92,.5);font-family:var(--nav-font,'Manrope',sans-serif)}
 @media(max-width:560px){ .search-modal{padding:8vh 12px 12px} .search-hit .sh-type{min-width:52px;font-size:calc(10px * var(--fs-scale))} }

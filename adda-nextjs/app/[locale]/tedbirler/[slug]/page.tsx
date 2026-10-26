@@ -24,6 +24,7 @@ import '../../../_styles/21-rsvp.css';
 import '../../../_styles/22-reactions.css';
 import '../../../_styles/23-correction.css';
 import '../../../_styles/24-identity.css';
+import '../../../_styles/37-program.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

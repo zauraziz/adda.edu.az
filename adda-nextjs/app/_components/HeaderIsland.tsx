@@ -9,7 +9,9 @@
 // hər effektdə tam cleanup (naviqasiyada listener yığılmır), locale props-dan
 // gəlir (pathname parse YOX). Contract ID/selektorlar dəyişməyib.
 import { useEffect } from 'react';
-import { SEARCH_UI, searchHref } from '@/lib/search-ui';
+import { usePathname } from 'next/navigation';
+import { navMatch } from '@/lib/nav-active';
+import { SEARCH_UI, hitHref, searchPageHref, type SearchHit } from '@/lib/search-ui';
 import type { Locale } from '@/lib/i18n';
 import { A11Y_KEY, FS_STEPS, readA11y, type A11yState } from '@/lib/a11y';
 
@@ -25,6 +27,7 @@ const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A11yText }) {
+  const pathname = usePathname();
   // ── #siteHeader.scrolled (scrollY > 120) ──
   useEffect(() => {
     const header = document.getElementById('siteHeader');
@@ -158,6 +161,39 @@ export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A
     return () => off.forEach((f) => f());
   }, []);
 
+  // ── F5.58: menyuda açıq səhifənin yeri (lib/nav-active.ts) ──
+  // Bölmə vurğulanır, mega paneldə keçidin qrupu açıq və keçid seçilmiş olur.
+  // Əvvəl SSR hər səhifədə birinci bölməni («Akademiya») vurğulayırdı.
+  useEffect(() => {
+    const items = Array.from(document.querySelectorAll<HTMLElement>('.mainnav > .nav-item'));
+    const entries: { item: HTMLElement; link: HTMLAnchorElement; top: boolean }[] = [];
+    items.forEach((item) => {
+      item.querySelectorAll<HTMLAnchorElement>('.mp-links a').forEach((link) => entries.push({ item, link, top: false }));
+      const top = item.querySelector<HTMLAnchorElement>(':scope > a');
+      if (top) entries.push({ item, link: top, top: true });
+    });
+    items.forEach((it) => it.querySelector(':scope > a')?.classList.remove('active'));
+    document.querySelectorAll('.mp-links a.is-current').forEach((a) => {
+      a.classList.remove('is-current');
+      a.removeAttribute('aria-current');
+    });
+    const m = navMatch(window.location.pathname, window.location.search, entries.map((e) => e.link.getAttribute('href') || ''));
+    if (!m) return;
+    const e = entries[m.index];
+    e.item.querySelector(':scope > a')?.classList.add('active');
+    if (e.top) return;
+    const panel = e.link.closest('.mega-panel');
+    const gi = panel?.getAttribute('data-mp');
+    if (panel && gi != null) {
+      e.item.querySelectorAll('.mg-item').forEach((b) => b.classList.toggle('active', b.getAttribute('data-mi') === gi));
+      e.item.querySelectorAll('.mega-panel').forEach((pn) => pn.classList.toggle('active', pn === panel));
+    }
+    if (m.exact) {
+      e.link.classList.add('is-current');
+      e.link.setAttribute('aria-current', 'page');
+    }
+  }, [pathname]);
+
   // ── Axtarış modalı (debounce 220ms; köhnəlmiş cavab seq ilə kəsilir) ──
   useEffect(() => {
     const btn = document.querySelector<HTMLElement>('[data-search-open]');
@@ -179,20 +215,26 @@ export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     const closers = Array.from(modal.querySelectorAll('[data-search-close]'));
 
-    type Hit = { title?: string; excerpt?: string; contentType?: string; slug?: string };
-    const render = (hits: Hit[]) => {
+    // F5.58 — bütün məzmun: nəticənin `url`-i (əməkdaş, sənəd, auditoriya…), ru/en-də
+    // az məzmununa «az» nişanı, altda tam nəticələr səhifəsi («Bütün nəticələr (N)»).
+    const render = (hits: SearchHit[], total: number, q: string) => {
       if (!hits.length) { results.innerHTML = `<div class="search-empty">${esc(ui.empty)}</div>`; return; }
-      results.innerHTML = hits
+      const rows = hits
         // K20: netice artiq kliklenir. Marsrut yoxdursa (bilinmeyen tip)
         // element <a> deyil <span> kimi render olunur — sinmis link olmasin.
         .map((h) => {
-          const href = searchHref(locale, h.contentType, h.slug);
-          const inner = `<span class="sh-type">${esc(ui.types[h.contentType || ''] || '')}</span><span class="sh-main"><b>${esc(h.title || '')}</b>${h.excerpt ? `<small>${esc(h.excerpt)}</small>` : ''}</span><i class="ti ti-arrow-up-right"></i>`;
-          return href
-            ? `<a href="${esc(href)}" class="search-hit">${inner}</a>`
+          const link = hitHref(locale, h);
+          const lang = h.lang && h.lang !== locale ? ` <em class="sh-lang">${esc(ui.azOnly)}</em>` : '';
+          const inner = `<span class="sh-type">${esc(ui.types[h.contentType || ''] || '')}</span><span class="sh-main"><b>${esc(h.title || '')}${lang}</b>${h.excerpt ? `<small>${esc(h.excerpt)}</small>` : ''}</span><i class="ti ti-arrow-up-right"></i>`;
+          return link
+            ? `<a href="${esc(link.href)}" class="search-hit"${link.external ? ' target="_blank" rel="noopener noreferrer"' : ''}>${inner}</a>`
             : `<span class="search-hit is-plain">${inner}</span>`;
         })
         .join('');
+      const more = total > hits.length
+        ? `<a class="search-all" href="${esc(searchPageHref(locale, q))}">${esc(ui.all)} (${total}) <i class="ti ti-arrow-right" aria-hidden="true"></i></a>`
+        : '';
+      results.innerHTML = rows + more;
     };
 
     let timer: ReturnType<typeof setTimeout>;
@@ -206,24 +248,35 @@ export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A
       timer = setTimeout(async () => {
         try {
           const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&locale=${locale}`);
-          const data = await r.json();
-          if (mine === seq) render((data.hits || []) as Hit[]);
+          const data = (await r.json()) as { hits?: SearchHit[]; total?: number };
+          if (mine === seq) render(data.hits || [], data.total ?? (data.hits || []).length, q);
         } catch {
           if (mine === seq) results.innerHTML = `<div class="search-empty">${esc(ui.error)}</div>`;
         }
       }, 220);
     };
 
+    // Enter — tam nəticələr səhifəsi.
+    const onEnter = (e: KeyboardEvent) => {
+      const q = input.value.trim();
+      if (e.key === 'Enter' && q.length >= 2) {
+        e.preventDefault();
+        window.location.href = searchPageHref(locale, q);
+      }
+    };
+
     btn.addEventListener('click', open);
     closers.forEach((el) => el.addEventListener('click', close));
     document.addEventListener('keydown', onKey);
     input.addEventListener('input', onInput);
+    input.addEventListener('keydown', onEnter);
     return () => {
       clearTimeout(timer);
       btn.removeEventListener('click', open);
       closers.forEach((el) => el.removeEventListener('click', close));
       document.removeEventListener('keydown', onKey);
       input.removeEventListener('input', onInput);
+      input.removeEventListener('keydown', onEnter);
     };
   }, [locale]);
 

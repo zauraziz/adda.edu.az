@@ -25,7 +25,8 @@ export default function Timeline({ milestones, locale }: { milestones: Milestone
           const img = mediaUrl(m.image);
           const side = i % 2 === 0 ? 'l' : 'r';
           return (
-            <li className={'tl-stop tl-stop--' + side} key={m.documentId}>
+            // F5.58 — lövbər: axtarış nəticəsi «/tarix#il-<il>» həmin mərhələyə aparır.
+            <li className={'tl-stop tl-stop--' + side} key={m.documentId} id={m.year ? `il-${m.year}` : undefined}>
               <span className="tl-node" aria-hidden="true">
                 <i className="ti ti-anchor" />
               </span>

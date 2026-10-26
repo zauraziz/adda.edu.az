@@ -20,6 +20,7 @@ import '../../_styles/16-footer-ftx.css';
 import '../../_styles/17-header-mega.css';
 import '../../_styles/18-search.css';
 import '../../_styles/19-news-page.css';
+import '../../_styles/26-pagination.css';
 import '../../_styles/28-staff.css';
 import '../../_styles/29-directory.css';
 import type { Metadata } from 'next';

@@ -1212,6 +1212,14 @@ const T: Array<[string, string, string]> = [
   ['Qaydalar və təlimatlar', 'Правила и инструкции', 'Rules and Instructions'],
   ['Qaydalar', 'Правила', 'Rules'],
   ['Təlimatlar və prosedurlar', 'Инструкции и процедуры', 'Instructions and procedures'],
+  // F5.58 — axtarış nəticələri səhifəsi (/axtaris)
+  ['Axtar', 'Найти', 'Search'],
+  ['Hamısı', 'Все', 'All'],
+  ['Axtarış nəticələri', 'Результаты поиска', 'Search results'],
+  ['Axtarmaq üçün ən azı 2 hərf yazın.', 'Введите не менее 2 символов.', 'Type at least 2 characters.'],
+  ['İlk 50 nəticə göstərilir. Axtarışı dəqiqləşdirin.', 'Показаны первые 50 результатов. Уточните запрос.', 'Showing the first 50 results. Refine your search.'],
+  ['nəticə', 'результатов', 'results'],
+  ['Azərbaycan dilində', 'На азербайджанском', 'In Azerbaijani'],
 ];
 
 // translateStatic() Faza 1 / Footer-də SİLİNDİ.

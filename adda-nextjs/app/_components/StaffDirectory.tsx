@@ -7,6 +7,7 @@
 import { getStaffDirectory, mediaUrl, type PersonFull, type StaffType } from '@/lib/strapi';
 import { tr, type Locale } from '@/lib/i18n';
 import { phoneView } from '@/lib/phone';
+import { positionRank } from '@/lib/positions';
 import StaffDirectoryIsland, {
   type DirectoryPerson,
   type FilterOption,
@@ -36,42 +37,11 @@ const LANG_LABEL: Record<string, string> = {
 };
 
 /**
- * Vəzifə dərəcəsi.
- *
- * Siyahı əvvəl Strapi-dən `name:asc` ilə gəlirdi — `name` isə ştatdakı
- * "Soyad Ad Ata" formasıdır, yəni sıralama SOYAD üzrə idi və vəzifəni
- * nəzərə almırdı. Kataloqda professorla müəllimin qarışıq durması
- * oxunuşu çətinləşdirir.
- *
- * İndi: əvvəlcə vəzifə dərəcəsi, sonra göstərilən ad (əlifba, `az`).
- *
- * SIRALI NAXIŞLAR, sadə sətir axtarışı DEYİL. Sətir axtarışı iki tələ
- * yaradırdı: `Rektor` ⊂ `Prorektor` (prorektor rektor səviyyəsinə qalxırdı)
- * və `Müəllim` ⊂ `Baş müəllim`. Lövbərli və sıralı naxışlar bunu həll edir —
- * siyahı yuxarıdan aşağı yoxlanılır, ilk uyğunluq qazanır. Ştatdakı
- * qısaldılmış yazılışlar (`…üzrə pr.`) da nəzərə alınıb.
+ * Vəzifə dərəcəsi — F5.58-dən ortaq: lib/positions.ts `positionRank` (bölmə səhifəsinin
+ * yan paneli və əməkdaş səhifəsi də onu işlədir). Siyahı əvvəl SOYADA görə idi;
+ * indi əvvəlcə vəzifə dərəcəsi, sonra göstərilən ad (əlifba, `az`).
  */
-const RANK_PATTERNS: [RegExp, number][] = [
-  [/^rektor$/i, 0],
-  [/prorektor|üzrə\s*pr\.?$/i, 1],
-  [/elmi katib/i, 2],
-  [/kafedra müdiri/i, 3],
-  [/dekan müavini/i, 5],
-  [/^dekan$/i, 4],
-  [/müdir müavini/i, 7],
-  [/şöbə müdiri|^müdir$/i, 6],
-  [/professor/i, 10],
-  [/dosent/i, 11],
-  [/baş müəllim/i, 12],
-  [/müəllim/i, 13],
-];
-
-/** Siyahıda olmayan vəzifə ortada qalır — sona atılıb gözdən itmir. */
-function rankOf(position: string): number {
-  const v = String(position || '').trim();
-  for (const [re, rank] of RANK_PATTERNS) if (re.test(v)) return rank;
-  return 50;
-}
+const rankOf = (position: string | null | undefined): number => positionRank(position);
 
 /**
  * Əlifba indeksi üçün ilk hərf.

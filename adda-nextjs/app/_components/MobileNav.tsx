@@ -21,10 +21,11 @@
 // bu zənciri tamamilə qırır.
 //
 // Mətnlər PROPS ilə gəlir — server komponentində `tr()`-dən keçir.
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { switchLocalePath } from '@/lib/locale-path';
+import { navMatch } from '@/lib/nav-active';
 
 export interface MNavLink {
   label: string;
@@ -77,6 +78,20 @@ export default function MobileNav({ data }: { data: MNavData }) {
   const pathname = usePathname();
   const { labels } = data;
 
+  // F5.58 — açıq səhifənin bölməsi və keçidi (masaüstü menyu ilə eyni qayda, lib/nav-active.ts).
+  const current = useMemo(() => {
+    if (!mounted) return null;
+    const flat: { s: number; href: string; link: boolean }[] = [];
+    data.main.forEach((sec, si) => {
+      sec.groups.forEach((g) => g.links.forEach((l) => flat.push({ s: si, href: l.href, link: true })));
+      flat.push({ s: si, href: sec.href, link: false });
+    });
+    const m = navMatch(pathname, window.location.search, flat.map((f) => f.href));
+    if (!m) return null;
+    const f = flat[m.index];
+    return { section: f.s, href: f.link && m.exact ? f.href : null };
+  }, [mounted, pathname, data.main]);
+
   useEffect(() => setMounted(true), []);
 
   // Bağlananda səviyyə kökə qayıdır — növbəti açılış yarımçıq qalmasın.
@@ -90,9 +105,13 @@ export default function MobileNav({ data }: { data: MNavData }) {
     setSection(null);
   }, [pathname]);
 
-  // Səviyyə dəyişəndə sürüşmə yuxarı qayıdır.
+  // Səviyyə dəyişəndə sürüşmə yuxarı qayıdır; F5.58 — bölmədə açıq səhifənin keçidi varsa ona.
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    const box = scrollRef.current;
+    if (!box) return;
+    box.scrollTop = 0;
+    const cur = section ? box.querySelector<HTMLElement>('.mnav-link.is-current') : null;
+    if (cur) box.scrollTop = Math.max(0, cur.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientHeight / 2);
   }, [section]);
 
   // Escape: əvvəlcə bir səviyyə geri, kökdədirsə bağlanır.
@@ -154,7 +173,7 @@ export default function MobileNav({ data }: { data: MNavData }) {
         <button
           type="button"
           key={`${keyPrefix}-${i}`}
-          className="mnav-row"
+          className={keyPrefix === 'm' && current?.section === i ? 'mnav-row is-current' : 'mnav-row'}
           onClick={() => setSection(s)}
         >
           <span>{s.label}</span>
@@ -204,7 +223,12 @@ export default function MobileNav({ data }: { data: MNavData }) {
                 <div className="mnav-grp" key={`g-${gi}`}>
                   <span className="mnav-grp-h">{g.title}</span>
                   {g.links.map((l, li) => (
-                    <a key={`g-${gi}-l-${li}`} className="mnav-link" href={l.href}>
+                    <a
+                      key={`g-${gi}-l-${li}`}
+                      className={current?.href === l.href ? 'mnav-link is-current' : 'mnav-link'}
+                      aria-current={current?.href === l.href ? 'page' : undefined}
+                      href={l.href}
+                    >
                       {l.label}
                     </a>
                   ))}

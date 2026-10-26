@@ -1,0 +1,31 @@
+/* ═══════════════════════════════════════════════════════
+   ADDA — F5.58 / Axtarış nəticələri səhifəsi (/axtaris)
+   Forma, növ nişanları, nəticə siyahısı. Tokenlər :root-dan.
+   ═══════════════════════════════════════════════════════ */
+.srp{padding-top:0;padding-bottom:48px}
+.srp-form{display:flex;gap:8px;max-width:720px}
+.srp-input{flex:1;min-width:0;height:48px;padding:0 16px;border:1px solid var(--line);border-radius:12px;font-family:var(--nav-font,'Manrope',sans-serif);font-size:calc(15px * var(--fs-scale));color:var(--navy-900);background:#fff}
+.srp-input:focus{outline:2px solid var(--navy-500);outline-offset:1px;border-color:var(--navy-500)}
+.srp-btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 20px;border:0;border-radius:12px;background:var(--navy-800);color:#fff;font-family:var(--nav-font,'Manrope',sans-serif);font-size:calc(14px * var(--fs-scale));font-weight:700;cursor:pointer}
+.srp-btn:hover{background:var(--navy-700)}
+.srp-btn i{color:var(--gold-400)}
+.srp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.srp-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:calc(13px * var(--fs-scale));font-weight:600;color:var(--navy-800);text-decoration:none;background:#fff}
+.srp-chip span{font-weight:700;color:var(--gold-600)}
+.srp-chip:hover{border-color:var(--navy-500)}
+.srp-chip[aria-current="page"]{background:var(--navy-800);border-color:var(--navy-800);color:#fff}
+.srp-chip[aria-current="page"] span{color:var(--gold-400)}
+.srp-list{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;max-width:920px}
+.srp-item{display:flex;align-items:flex-start;gap:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.srp-type{flex-shrink:0;min-width:88px;padding:4px 8px;border-radius:6px;background:var(--gold-100);color:var(--gold-600);font-size:calc(11px * var(--fs-scale));font-weight:700;letter-spacing:.4px;text-transform:uppercase;text-align:center}
+.srp-main{flex:1;min-width:0}
+.srp-title{font-family:var(--nav-font,'Manrope',sans-serif);font-size:calc(16px * var(--fs-scale));font-weight:700;line-height:1.35;color:var(--navy-800);text-decoration:none}
+a.srp-title:hover{text-decoration:underline;color:var(--navy-600)}
+.srp-lang{display:inline-block;margin-left:8px;padding:0 6px;border:1px solid var(--line);border-radius:4px;font-size:calc(10.5px * var(--fs-scale));font-weight:700;text-transform:uppercase;color:var(--navy-600);vertical-align:2px}
+.srp-excerpt{margin:4px 0 0;font-size:calc(14px * var(--fs-scale));line-height:1.5;color:var(--gray-700)}
+.srp-empty,.srp-more{margin-top:24px;font-size:calc(15px * var(--fs-scale));color:var(--gray-700)}
+@media (max-width:560px){
+  .srp-item{flex-direction:column;gap:8px}
+  .srp-type{min-width:0}
+  .srp-btn span{display:none}
+}

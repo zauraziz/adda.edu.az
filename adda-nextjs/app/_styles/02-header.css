@@ -378,6 +378,9 @@ header.scrolled{position:fixed;top:0;left:0;right:0;animation:navDown .35s var(-
   text-decoration: none;
 }
 .mnav-link:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
+/* F5.58 — açıq səhifənin bölməsi və keçidi (MobileNav, lib/nav-active.ts) */
+.mnav-row.is-current { box-shadow: inset 3px 0 0 var(--gold-500); padding-left: 14px; }
+.mnav-link.is-current { background: rgba(255, 255, 255, 0.12); color: #fff; font-weight: 600; box-shadow: inset 3px 0 0 var(--gold-500); }
 
 /* ── Dil seçimi (hse.ru menyunun içində saxlayır) ── */
 .mnav-langs {

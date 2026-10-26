@@ -29,6 +29,8 @@ import '../../../_styles/16-footer-ftx.css';
 import '../../../_styles/17-header-mega.css';
 import '../../../_styles/18-search.css';
 import '../../../_styles/19-news-page.css';
+import '../../../_styles/23-correction.css';
+import '../../../_styles/24-identity.css';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import ContentPage from '../../../_components/ContentPage';

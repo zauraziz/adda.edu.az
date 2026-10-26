@@ -1602,6 +1602,20 @@ export async function getPersonBySlug(slug: string, _locale: Locale = 'az'): Pro
 export const getPersonSlugs = (_locale: Locale = 'az') => allSlugs('/people', null);
 
 /**
+ * F5.58 — əməkdaşın köhnə ünvanı → yeni (təkrar qeyd birləşəndə, oxunmaz ünvan
+ * «m-mm-dov-…», «person-N» düzələndə). Strapi: GET /api/person-redirects.
+ */
+export async function getPersonRedirect(slug: string): Promise<string | null> {
+  try {
+    const json = await strapiFetch<{ data?: Record<string, string> }>('/person-redirects');
+    const to = json?.data?.[slug];
+    return typeof to === 'string' && to && to !== slug ? to : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Bir struktur bölməsi — valideyn, alt bölmələr və heyəti ilə.
  *
  * `unit` (2025 təşkilati sxemi) və `department` (köhnə saytdan miqrasiya)

@@ -89,6 +89,7 @@ import {
   type UnitExtraBlock,
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
+import { positionRank, postInUnit } from '@/lib/positions';
 import { unitPhone } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
 
@@ -314,8 +315,8 @@ function StaffMiniRow({
   unitName: string;
   locale: Locale;
 }) {
-  const role = (p.roles ?? []).find((r) => r.unitName === unitName);
-  const post = role?.position || p.position || '';
+  // F5.58 — bu bölmədəki vəzifəsi (bir neçəsi varsa ən yüksəyi), yoxdursa əsas vəzifə.
+  const post = postInUnit(p, unitName);
   const photo = mediaUrl(p.photo);
   const initials = (p.displayName || p.name || '—')
     .split(/\s+/)
@@ -400,9 +401,13 @@ export default async function UnitPage({
 
   // F4.8c — heyət siyahısında rəhbər TƏKRARLANMIR (yan paneldə kartı var);
   // fakt zolağının «Heyət» sayı isə TAM heyətdir (`staff.length`).
+  // F5.58 — vəzifə dərəcəsinə görə (dekan müavini → mütəxəssis → tyutor; professor →
+  // dosent → … → laborant), eyni dərəcədə ada görə.
   const staffList = staff
     .filter((p) => !unit.head || p.documentId !== unit.head.documentId)
-    .sort((a, b) => azSort(a.name ?? '', b.name ?? ''));
+    .map((p) => ({ p, rank: positionRank(postInUnit(p, unit.name)) }))
+    .sort((a, b) => a.rank - b.rank || azSort(a.p.name ?? '', b.p.name ?? ''))
+    .map(({ p }) => p);
 
   // F5.53 — hər bölmənin əlaqəsində telefon var: daxili nömrə varsa
   // «(012) 493 36 44, daxili N», yoxdursa Akademiyanın ümumi nömrəsi (lib/phone.ts).
@@ -461,7 +466,8 @@ export default async function UnitPage({
   const blockTitleFaq = titleOf('suallar', tr('Tez-tez verilən suallar', locale));
   const blockTitleNews = titleOf('xeberler', tr('Əlaqəli xəbərlər', locale));
   const blockTitleFacilities = tr('Auditoriya və laboratoriyalar', locale);
-  const blockTitleStaff = titleOf('heyet', tr('Heyət', locale));
+  // F5.58 — «Heyət» əvəzinə «Əməkdaşlar» (admində blokun öz başlığı varsa o).
+  const blockTitleStaff = titleOf('heyet', tr('Əməkdaşlar', locale));
   const blockTitleSubunits = titleOf('alt_bolmeler', tr(subunitsAreKafedras ? 'Kafedralar' : 'Alt bölmələr', locale));
   const staffShown = isHidden('heyet') ? [] : staffList;
   const subunitsShown = isHidden('alt_bolmeler') ? [] : subunits;

@@ -95,6 +95,9 @@
 .mp-links a:hover{color:var(--navy-700);background:var(--navy-50);padding-left:21px}
 .mp-links a:hover::before{transform:translateY(-50%) scale(1)}
 .mp-links a:focus-visible{outline:2px solid var(--navy-500);outline-offset:2px;border-radius:6px}
+/* F5.58 — açıq səhifənin keçidi (HeaderIsland, lib/nav-active.ts) */
+.mp-links a.is-current{color:var(--navy-700);background:var(--navy-50);padding-left:21px;font-weight:700}
+.mp-links a.is-current::before{transform:translateY(-50%) scale(1)}
 .mega-cta{padding:28px 28px 32px 0;display:flex;align-items:flex-start}
 .mc-card{background:linear-gradient(165deg,var(--navy-900),#0a3452 60%,#0d3f60);border-radius:16px;padding:24px 22px;color:#fff;display:flex;flex-direction:column;gap:10px;width:100%}
 .mc-eyebrow{font-family:var(--nav-font);font-size:calc(10.5px * var(--fs-scale));font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-300,#DFC389)}

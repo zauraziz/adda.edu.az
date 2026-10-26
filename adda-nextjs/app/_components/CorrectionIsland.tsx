@@ -5,6 +5,8 @@
 // kimlikden goturur. POST birbasa Strapi-ye yox, `/api/submit/correction`
 // route handler-ine gedir (sessiya httpOnly cookie-dedir).
 import { useMemo, useState } from "react";
+// F5.58 — vidcetin stili özü ilə: səhifə CSS-i unudanda da (əməkdaş səhifəsi) stilsiz qalmasın.
+import "../_styles/23-correction.css";
 import IdentityGate, { useIdentity } from "./IdentityGate";
 
 // K18: `page` ve `general` elave olundu — statik mezmun sehifeleri de

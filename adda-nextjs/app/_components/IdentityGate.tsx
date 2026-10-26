@@ -6,6 +6,8 @@
 // Sessiya tokeni httpOnly cookie-dədir — bu modul onu heç vaxt görmür.
 // Etiketlər props ilə gəlir: tam T lüğəti client bundle-a düşmür.
 import { useCallback, useEffect, useState } from "react";
+// F5.58 — vidcetin stili özü ilə: səhifə CSS-i unudanda da stilsiz qalmasın.
+import '../_styles/24-identity.css';
 
 export interface Identity {
   email: string;

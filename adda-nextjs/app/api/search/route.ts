@@ -23,9 +23,12 @@ interface Hit {
   documentId?: string;
   title?: string;
   slug?: string;
+  /** F5.58 — saytda yol (dilsiz) və ya faylın tam ünvanı. */
+  url?: string;
   excerpt?: string;
   contentType?: string;
   category?: string;
+  lang?: string;
 }
 
 /** `?debug=1` — səbəbi göstərir. Səssiz `{hits: []}` bir daha təkrarlanmasın. */
@@ -70,22 +73,25 @@ export async function GET(req: NextRequest) {
     return res;
   }
 
-  if (!q) return NextResponse.json({ hits: [] });
+  if (!q) return NextResponse.json({ hits: [], total: 0 });
+  // F5.58 — modal 8, tam nəticələr səhifəsi 50-yə qədər; növ süzgəci (`type=person,page`).
+  const limit = Math.min(50, Math.max(1, parseInt(req.nextUrl.searchParams.get('limit') || '8', 10) || 8));
+  const type = (req.nextUrl.searchParams.get('type') || '').replace(/[^a-z,-]/g, '').slice(0, 120);
 
   try {
     const r = await fetch(
-      `${STRAPI_URL}/api/site-search?q=${encodeURIComponent(q)}&locale=${locale}&limit=8`,
+      `${STRAPI_URL}/api/site-search?q=${encodeURIComponent(q)}&locale=${locale}&limit=${limit}${type ? `&type=${type}` : ''}`,
       { next: { revalidate: 30 } },
     );
     if (!r.ok) {
       // Səssiz sınma OLMASIN: səbəb heç olmasa server logunda qalsın.
       console.error('[search] Strapi ' + r.status + ': ' + (await r.text()).slice(0, 200));
-      return NextResponse.json({ hits: [] });
+      return NextResponse.json({ hits: [], total: 0 });
     }
-    const data = (await r.json()) as { hits?: Hit[] };
-    return NextResponse.json({ hits: data.hits || [] });
+    const data = (await r.json()) as { hits?: Hit[]; total?: number; counts?: Record<string, number> };
+    return NextResponse.json({ hits: data.hits || [], total: data.total ?? (data.hits || []).length, counts: data.counts || {} });
   } catch (err) {
     console.error('[search] elcatmaz: ' + (err as Error).message);
-    return NextResponse.json({ hits: [] });
+    return NextResponse.json({ hits: [], total: 0 });
   }
 }
