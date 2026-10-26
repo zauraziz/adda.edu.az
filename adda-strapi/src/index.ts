@@ -60,6 +60,8 @@ import { startTranslateMissing } from './utils/translate-missing';
 import { registerSiteRevalidate, revalidateAfterDeploy, startSiteRevalidate } from './utils/site-revalidate';
 // F5.57 — «Qaydalar» və «Təlimat» (ADDA-TL, ADDA-ƏP) — bax src/utils/qaydalar.ts.
 import { applyQaydalarF557 } from './utils/qaydalar';
+import { applyPersonF558, patchUidTransliteration, registerPersonGuard } from './utils/person-merge';
+import { registerSearchIndex } from './utils/search-index';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -1863,6 +1865,11 @@ export default {
     registerFacilitySlugFill(strapi);
     // F5.56 — dərc / dərcdən çıxarma / silmə → sayta xəbər (POST /api/revalidate, 8 s birləşdirmə).
     registerSiteRevalidate(strapi);
+    // F5.58 — admində mövcud adla yeni əməkdaş yaratmaq rədd edilir; «person-N» və
+    // oxunmaz ünvan addan düzəlir (bax src/utils/person-merge.ts).
+    registerPersonGuard(strapi);
+    // F5.58 — axtarılan növdə yazı → sayt axtarışının yaddaş indeksi köhnəlir.
+    registerSearchIndex(strapi);
     const inFlight = new Set<string>();
     (strapi.documents as unknown as { use: (m: unknown) => void }).use(
       async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
@@ -1952,6 +1959,8 @@ export default {
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     // F5.56 — media dəyişikliyi → sayt yenilənir; sirr yoxdursa logda xəbərdarlıq.
     startSiteRevalidate(strapi);
+    // F5.58 — admində «Ünvan» generatoru: ə, ü, ö, ş, ç, ğ, ı → latın («m-mm-dov» yox).
+    patchUidTransliteration(strapi);
     // F5.38 — CM görünüşü (müraciət/düzəliş/qeydiyyat), BİR DƏFƏ; portu bloklamır.
     // F5.39 — «Məsul olduğu səhifələr» şərti. Strapi şərt qeydiyyatına YALNIZ
     // bootstrap zamanı icazə verir — ona görə gözlənilir (sürətlidir, DB yoxdur).
@@ -2327,6 +2336,10 @@ export default {
       // ƏVVƏL: yeni az məzmunu TRANSLATE_MISSING=true ilə tərcüməyə düşsün.
       .then(() => applyQaydalarF557(strapi))
       .catch((e: Error) => strapi.log.error('[qayda] F5.57: ' + e.message))
+      // F5.58 — təkrar əməkdaş qeydləri bir qeyddə (vəzifələr, əlaqələr, köhnə ünvan → yeni)
+      // və «person-N», oxunmaz ünvanlar addan — hər biri BİR DƏFƏ.
+      .then(() => applyPersonF558(strapi))
+      .catch((e: Error) => strapi.log.error('[heyet] F5.58: ' + e.message))
       // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
       // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
       .then(() => startTranslateMissing(strapi))

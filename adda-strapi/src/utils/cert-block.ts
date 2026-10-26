@@ -79,7 +79,8 @@ export const DEFAULT_CERTS: CertSeed[] = [
       en: 'Ministry of Education: accreditation certificate',
       ru: 'Министерство образования: сертификат об аккредитации',
     },
-    footer: true,
+    // F5.58 — admində footer-dən çıxarılıb (16.10.2026): ehtiyat da 3 sənəd göstərsin.
+    footer: false,
   },
   {
     path: '/uploads/certificates/IAMU-SERTIFiKAT.jpg',

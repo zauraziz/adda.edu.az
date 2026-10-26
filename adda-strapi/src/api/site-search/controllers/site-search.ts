@@ -1,34 +1,18 @@
 /**
- * F2/K25 — sayt axtarışı BAZA ÜZƏRİNDƏN.
+ * F2/K25 — sayt axtarışı (Meilisearch əvəzinə); F5.58 — bütün məzmun, yaddaşda
+ * indeks, sözlərə bölünmüş və diakritiksiz uyğunlaşma (bax src/utils/search-index.ts).
  *
- * NİYƏ MEILISEARCH-DƏN İMTİNA: pulsuz sınaq müddəti bitdi, instans söndü və
- * bütün axtarış sıradan çıxdı. Pulsuz, davamlı alternativ seçərkən ən güclü
- * arqument budur — məzmun ONSUZ DA Neon Postgres-dədir. Ayrıca indeks
- * olmayanda:
- *   - sinxronizasiya yoxdur (indeks sürüşməsi mümkün deyil)
- *   - "yenidən indeksləmə" addımı yoxdur
- *   - sınaq müddəti bitə biləcək əlavə xidmət yoxdur
+ * GET /api/site-search?q=&locale=az|ru|en&limit=1..50&type=person,page
+ * Cavab: { hits: [{documentId, title, slug, url, excerpt, contentType, category, lang?}],
+ *          total, counts: {növ: say}, query, locale }
+ * `url` — saytda yol (dilsiz, «/emekdas/…») və ya faylın tam ünvanı; `lang: 'az'`
+ * — ru/en-də nəticə az olduğu üçün əlavə olunmuş az məzmunu.
  *
- * ƏVƏZİNDƏ İTİRİLƏN: yazı səhvinə dözüm (typo tolerance). Azərbaycan dili
- * üçün bu, gözlənildiyindən az itkidir — şəkilçilər sonda olduğu üçün
- * alt-sətir axtarışı işləyir: "akademiya" sorğusu "Akademiyasının" tapır.
- *
- * ENGINE ASILILIĞI YOXDUR: `$containsi` Strapi səviyyəsindədir, yəni lokal
- * SQLite və prod Postgres-də eyni davranır. Xam SQL yazılmır.
- *
- * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
+ * Standalone kompilyasiya olunur — @strapi/strapi tipləri yalnız type importu.
  */
-import { MOVED_PAGE_SLUGS } from '../../../utils/moved-pages';
+import type { Core } from '@strapi/strapi';
+import { LOCALES, siteSearch, type Locale } from '../../../utils/search-index';
 
-type Row = Record<string, unknown>;
-
-interface DocService {
-  findMany(args: Row): Promise<Row[]>;
-}
-interface StrapiLike {
-  documents(uid: string): DocService;
-  log: { warn(m: string): void; error(m: string): void };
-}
 interface Ctx {
   query: Record<string, string | string[] | undefined>;
   body: unknown;
@@ -36,161 +20,26 @@ interface Ctx {
   set(field: string, value: string): void;
 }
 
-/** Axtarılan tiplər və onların sahə adları. */
-const SOURCES: Array<{
-  uid: string;
-  contentType: string;
-  title: string;
-  body: string;
-  excerpt?: string;
-  category?: string;
-  /** Əlavə süzgəc (axtarış şərti ilə $and). */
-  where?: Row;
-}> = [
-  { uid: 'api::article.article', contentType: 'article', title: 'title', body: 'body', excerpt: 'excerpt', category: 'category' },
-  { uid: 'api::announcement.announcement', contentType: 'announcement', title: 'title', body: 'body', excerpt: 'excerpt', category: 'importance' },
-  { uid: 'api::event.event', contentType: 'event', title: 'title', body: 'body', excerpt: 'excerpt', category: 'format' },
-  // F5.43 — bölməyə köçmüş səhifələr (rektor, Elmi Şura…) nəticədə çıxmır:
-  // ünvanları /struktur-a yönlənir, eyni nəticə iki dəfə görünməsin.
-  { uid: 'api::page.page', contentType: 'page', title: 'title', body: 'body', excerpt: 'seoDescription', where: { slug: { $notIn: MOVED_PAGE_SLUGS } } },
-  { uid: 'api::program.program', contentType: 'program', title: 'title', body: 'description', category: 'degree' },
-  // F5.41 — fakültənin yeganə səhifəsi struktur bölmədir (/struktur/<slug>);
-  // «2. Akademiya — Fakültə» arxivdir. Növ adı «faculty» qalır (nəticədə
-  // «Fakültə» yazılır), Next.js onu /struktur/-a aparır (lib/search-ui.ts).
-  { uid: 'api::unit.unit', contentType: 'faculty', title: 'name', body: 'about', where: { slug: { $endsWith: '-fakultesi' } } },
-  // F5.43 — kafedra, şöbə, mərkəz: struktur bölmənin özü. Əvvəl köhnə
-  // «2. Akademiya — Kafedra» (department, arxiv) axtarılırdı: köhnə adlar
-  // («MÜHASİBAT UÇOTU VƏ HESABAT ŞÖBƏSİ») və bəziləri olmayan ünvanlar.
-  { uid: 'api::unit.unit', contentType: 'unit', title: 'name', body: 'about', where: { slug: { $notContains: '-fakultesi' } } },
-];
+const one = (v: string | string[] | undefined): string => (Array.isArray(v) ? v[0] ?? '' : v ?? '');
 
-const LOCALES = ['az', 'ru', 'en'];
-const PER_TYPE = 20;
-
-/** Markdown işarələrini təmizlə — xülasə istifadəçiyə görünür. */
-function clean(raw: unknown): string {
-  if (typeof raw !== 'string' || !raw) return '';
-  return raw
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/^[ \t]*[-*+>]\s+/gm, '')
-    .replace(/^[ \t]*#{1,6}\s+/gm, '')
-    .replace(/[*_`]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-/** Uyğun gələn hissənin ətrafından parça çıxar. */
-function snippet(text: string, needle: string, max = 160): string {
-  if (!text) return '';
-  const at = text.toLowerCase().indexOf(needle.toLowerCase());
-  if (at < 0) return text.length > max ? text.slice(0, max - 1).trimEnd() + '…' : text;
-  const from = Math.max(0, at - 60);
-  const part = text.slice(from, from + max);
-  return (from > 0 ? '…' : '') + part.trim() + (from + max < text.length ? '…' : '');
-}
-
-/**
- * Sıralama balı — Meilisearch-in relevantlıq sıralamasını əvəz edir.
- *   başlıq tam uyğun        1000
- *   başlıq sorğu ilə başlayır 700
- *   başlıqda var             500
- *   xülasədə var             200
- *   gövdədə var              100
- * Üstünə: qısa başlıq (daha dəqiq uyğunluq) və yeni məzmun bir az irəli.
- */
-function score(q: string, title: string, excerpt: string, body: string, publishedAt: unknown): number {
-  const t = title.toLowerCase();
-  const n = q.toLowerCase();
-  let s = 0;
-  if (t === n) s = 1000;
-  else if (t.startsWith(n)) s = 700;
-  else if (t.includes(n)) s = 500;
-  else if (excerpt.toLowerCase().includes(n)) s = 200;
-  else if (body.toLowerCase().includes(n)) s = 100;
-
-  if (title.length && title.length < 80) s += 20;
-
-  const ts = typeof publishedAt === 'string' ? Date.parse(publishedAt) : NaN;
-  if (Number.isFinite(ts)) {
-    // Son 3 ilin məzmunu 0..30 arası əlavə bal alır.
-    const years = (Date.now() - ts) / (365 * 86_400_000);
-    s += Math.max(0, 30 - years * 10);
-  }
-  return s;
-}
-
-export default ({ strapi }: { strapi: StrapiLike }) => ({
+export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async search(ctx: Ctx) {
-    const raw = ctx.query.q;
-    const q = (typeof raw === 'string' ? raw : '').trim().slice(0, 120);
-    const locale = LOCALES.indexOf(String(ctx.query.locale)) !== -1 ? String(ctx.query.locale) : 'az';
-    const limit = Math.min(20, Math.max(1, parseInt(String(ctx.query.limit ?? '8'), 10) || 8));
+    const q = one(ctx.query.q).trim().slice(0, 120);
+    const raw = one(ctx.query.locale);
+    const locale: Locale = (LOCALES as string[]).includes(raw) ? (raw as Locale) : 'az';
+    const limit = Math.min(50, Math.max(1, parseInt(one(ctx.query.limit) || '8', 10) || 8));
+    const types = one(ctx.query.type)
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => /^[a-z-]{2,20}$/.test(s));
 
     ctx.set('Cache-Control', 'public, max-age=30');
-
-    // 2 simvoldan qısa sorğu praktiki olaraq bütün bazanı qaytarardı.
-    if (q.length < 2) {
-      ctx.body = { hits: [], total: 0, query: q, locale };
-      return;
+    try {
+      ctx.body = await siteSearch(strapi, q, locale, limit, types);
+    } catch (err) {
+      strapi.log.error('[axtaris] F5.58: ' + (err as Error).message);
+      ctx.status = 500;
+      ctx.body = { hits: [], total: 0, counts: {}, query: q, locale, error: 'search failed' };
     }
-
-    // Tiplər PARALEL sorğulanır — ardıcıl gediş-gəliş tip sayı qədər yavaş olardı.
-    const perType = await Promise.all(
-      SOURCES.map(async (src) => {
-        const or: Row[] = [{ [src.title]: { $containsi: q } }, { [src.body]: { $containsi: q } }];
-        if (src.excerpt) or.push({ [src.excerpt]: { $containsi: q } });
-        try {
-          const rows = await strapi.documents(src.uid).findMany({
-            locale,
-            status: 'published',
-            filters: src.where ? { $and: [src.where, { $or: or }] } : { $or: or },
-            limit: PER_TYPE,
-            fields: [
-              'documentId',
-              'slug',
-              src.title,
-              src.body,
-              ...(src.excerpt ? [src.excerpt] : []),
-              ...(src.category ? [src.category] : []),
-              'publishedAt',
-            ],
-          } as Row);
-          return { src, rows };
-        } catch (err) {
-          // Bir tipin sxemi dəyişibsə qalanları sınmasın.
-          strapi.log.warn('[search] ' + src.uid + ' atlandi: ' + (err as Error).message);
-          return { src, rows: [] as Row[] };
-        }
-      })
-    );
-
-    const hits: Array<Row & { _score: number }> = [];
-    for (const { src, rows } of perType) {
-      for (const r of rows) {
-        const title = String(r[src.title] ?? '');
-        const bodyText = clean(r[src.body]);
-        const excerptRaw = src.excerpt ? String(r[src.excerpt] ?? '') : '';
-        const excerpt = excerptRaw.trim() || snippet(bodyText, q);
-        hits.push({
-          documentId: r.documentId,
-          title,
-          slug: r.slug,
-          excerpt: excerpt.length > 180 ? excerpt.slice(0, 177).trimEnd() + '…' : excerpt,
-          contentType: src.contentType,
-          category: src.category ? String(r[src.category] ?? '') : '',
-          _score: score(q, title, excerptRaw, bodyText, r.publishedAt),
-        });
-      }
-    }
-
-    hits.sort((a, b) => b._score - a._score);
-
-    ctx.body = {
-      hits: hits.slice(0, limit).map(({ _score, ...rest }) => rest),
-      total: hits.length,
-      query: q,
-      locale,
-    };
   },
 });
