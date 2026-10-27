@@ -1,7 +1,7 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 380, əhatəli: 3, dəyişməz: 522,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 381, əhatəli: 3, dəyişməz: 522,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
@@ -529,6 +529,7 @@ html[data-contrast="high"] .prf-side-title{color:#615026}
 html[data-contrast="high"] .prf-fact-k{color:#4d525c}
 html[data-contrast="high"] .prf-fact-v{color:var(--navy-900)}
 html[data-contrast="high"] .prf-fact-none{color:#4d525c}
+html[data-contrast="high"] .prf-sec .na-body li::marker{color:#615026}
 html[data-contrast="high"] .prf-sub{color:var(--navy-900)}
 html[data-contrast="high"] .prf-none{color:#4d525c}
 html[data-contrast="high"] .prf-time-when{color:#615026}

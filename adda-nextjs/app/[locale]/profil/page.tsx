@@ -33,6 +33,7 @@ import Footer from '../../_components/Footer';
 import ProfileEditorIsland from '../../_components/ProfileEditorIsland';
 import { getMenu, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
+import { DEGREE_LABEL, DEGREE_VALUES, LANG_LABEL, LANG_VALUES } from '@/lib/staff-labels';
 
 export const revalidate = 0;
 
@@ -154,18 +155,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
               labels={labels}
               gateLabels={gateLabels}
               redirect={`/${locale}/profil`}
-              degrees={[
-                { value: 'elmler_doktoru', label: tr('Elmlər doktoru', locale) },
-                { value: 'felsefe_doktoru', label: tr('Fəlsəfə doktoru', locale) },
-                { value: 'yoxdur', label: tr('Yoxdur', locale) },
-              ]}
-              langs={[
-                { value: 'az', label: tr('Azərbaycan', locale) },
-                { value: 'tr', label: tr('Türk', locale) },
-                { value: 'en', label: tr('İngilis', locale) },
-                { value: 'ru', label: tr('Rus', locale) },
-                { value: 'diger', label: tr('Digər', locale) },
-              ]}
+              degrees={DEGREE_VALUES.map((value) => ({ value, label: tr(DEGREE_LABEL[value], locale) }))}
+              langs={LANG_VALUES.map((value) => ({ value, label: tr(LANG_LABEL[value], locale) }))}
             />
           </div>
         </section>

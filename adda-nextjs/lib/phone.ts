@@ -9,7 +9,9 @@
  *   `tel:+994124933644,3239` (vergül — pauza, telefon daxili nömrəni özü yığır).
  *   Ümumi nömrə daxili nömrə ilə BİRLİKDƏ yazılıbsa (admində köhnə yazılış:
  *   «(+99412) 493-36-44 (3078)», «(012) 493-36-44 (daxili: 103)») — eyni format;
- *   başqa tam nömrə (məs. mobil) olduğu kimi qalır.
+ *   F5.59: başqa şəhər/mobil nömrəsi «(012) 371-03-24» də eyni qayda ilə — az
+ *   «(012) 371 03 24», en/ru «+994 12 371 03 24», keçid `tel:+994123710324`;
+ *   qalan yazılışlar olduğu kimi qalır.
  *
  * Strapi-də eyni nömrə: src/utils/phone-fix.ts (`ACADEMY_PHONE_*`).
  */
@@ -37,6 +39,8 @@ export function isExtension(raw: string): boolean {
 }
 
 const MAIN_DIGITS = '4933644';
+/** «(012) 371-03-24», «(050) 123 45 67» — şəhər kodu mötərizədə, 7 rəqəm. */
+const LOCAL_FULL = /^\(0(\d{2})\)\s*(\d{3})[\s-]?(\d{2})[\s-]?(\d{2})$/;
 const MAIN_CODES = ['', '12', '012', '99412', '0099412'];
 
 /**
@@ -70,6 +74,11 @@ export function phoneView(raw: string | null | undefined, locale: Locale): Phone
     const main = academyPhone(locale);
     if (!exts.length) return main;
     return { text: `${main.text}, ${EXT_WORD[locale]} ${exts.join(', ')}`, href: `tel:${ACADEMY_TEL},${exts[0]}` };
+  }
+  const m = LOCAL_FULL.exec(v);
+  if (m) {
+    const [, code, a, b, c] = m;
+    return { text: locale === 'az' ? `(0${code}) ${a} ${b} ${c}` : `+994 ${code} ${a} ${b} ${c}`, href: `tel:+994${code}${a}${b}${c}` };
   }
   const digits = v.replace(/[^\d+]/g, '');
   return { text: v, href: `tel:${digits}` };

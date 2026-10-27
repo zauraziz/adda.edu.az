@@ -8,6 +8,7 @@ import { getStaffDirectory, mediaUrl, type PersonFull, type StaffType } from '@/
 import { tr, type Locale } from '@/lib/i18n';
 import { phoneView } from '@/lib/phone';
 import { positionRank } from '@/lib/positions';
+import { DEGREE_LABEL, LANG_LABEL } from '@/lib/staff-labels';
 import StaffDirectoryIsland, {
   type DirectoryPerson,
   type FilterOption,
@@ -21,20 +22,6 @@ const ALPHABET = [
   'A', 'B', 'C', 'Ç', 'D', 'E', 'Ə', 'F', 'G', 'Ğ', 'H', 'X', 'I', 'İ', 'J',
   'K', 'Q', 'L', 'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z',
 ];
-
-const DEGREE_LABEL: Record<string, string> = {
-  elmler_doktoru: 'Elmlər doktoru',
-  felsefe_doktoru: 'Fəlsəfə doktoru',
-  yoxdur: 'Yoxdur',
-};
-
-const LANG_LABEL: Record<string, string> = {
-  az: 'Azərbaycan',
-  tr: 'Türk',
-  en: 'İngilis',
-  ru: 'Rus',
-  diger: 'Digər',
-};
 
 /**
  * Vəzifə dərəcəsi — F5.58-dən ortaq: lib/positions.ts `positionRank` (bölmə səhifəsinin

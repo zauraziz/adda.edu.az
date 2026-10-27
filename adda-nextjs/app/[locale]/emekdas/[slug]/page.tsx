@@ -51,21 +51,9 @@ import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 import { phoneView } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
 import { titleRepeats, viewRoles } from '@/lib/positions';
+import { DEGREE_LABEL, LANG_LABEL } from '@/lib/staff-labels';
 
 export const revalidate = 86400;
-
-const DEGREE_LABEL: Record<string, string> = {
-  elmler_doktoru: 'Elmlər doktoru',
-  felsefe_doktoru: 'Fəlsəfə doktoru',
-  yoxdur: '',
-};
-const LANG_LABEL: Record<string, string> = {
-  az: 'Azərbaycan',
-  tr: 'Türk',
-  en: 'İngilis',
-  ru: 'Rus',
-  diger: 'Digər',
-};
 
 /** Elmi identifikator -> xarici profil URL-i. Yalnız formatı məlum olanlar. */
 const SCHOLAR_HREF: Record<string, (v: string) => string | null> = {
@@ -173,7 +161,8 @@ export default async function PersonPage({
   const stamp = stampRaw ? new Date(stampRaw) : null;
   const monthsOld = stamp ? (Date.now() - stamp.getTime()) / (1000 * 60 * 60 * 24 * 30.4) : null;
   const stale = monthsOld !== null && monthsOld >= 12;
-  const degree = person.academicDegree ? DEGREE_LABEL[person.academicDegree] : '';
+  // F5.59 — «yoxdur» profildə yazılmır; «elmler_namizedi» əvvəl etiketsiz idi (dərəcə görünmürdü).
+  const degree = person.academicDegree && person.academicDegree !== 'yoxdur' ? DEGREE_LABEL[person.academicDegree] ?? '' : '';
 
   // Tab-lar: yalnız məzmunu olanlar. `home` həmişə var.
   const tabs: { id: string; label: string }[] = [{ id: 'esas', label: tr('Əsas səhifə', locale) }];

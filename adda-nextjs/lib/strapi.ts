@@ -1496,7 +1496,7 @@ export async function getFacultyUnits(locale: Locale = 'az'): Promise<FacultyUni
 // K26-11 — heyət kataloqu üçün genişləndirilmiş tiplər və sorğular.
 
 export interface StaffLanguage {
-  lang: 'az' | 'tr' | 'en' | 'ru' | 'diger';
+  lang: 'az' | 'tr' | 'en' | 'ru' | 'de' | 'fr' | 'diger';
   level: string | null;
 }
 export interface StaffScholar {
