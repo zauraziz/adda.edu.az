@@ -228,7 +228,7 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`, `poliklinika:v1`, `eAkademiya:v1`, `tercume:v1`
 (irəliləyiş `tercume:done`, `tercume:tries`), `qaydaDocs:v1`, `qaydaPages:v1`, `qaydaText:v1`,
 `qaydaLinks:v1`, `qaydaMenu:v1`, `cmAz:v15`, `personMerge:v1`, `personSlugs:v1` (məlumat: `personRedirects` —
-əməkdaşın köhnə ünvanı → yeni, `personMerge:backup` — silinmiş təkrar qeydlər);
+əməkdaşın köhnə ünvanı → yeni, `personMerge:backup` — silinmiş təkrar qeydlər), `staffProfiles:v1`, `cmAz:v16`;
 sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`;
 F5.56 son deploy-un commit-i `siteRevalidate:commit` — marker deyil, sayt yeniləməsi üçün) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
@@ -1104,6 +1104,33 @@ Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sən�
    - Lokal sınaq: F5.57 bazası + 7 qrup (Süleymanov, Nadir ×4 və auditoriyalar, Ağazadə
      ziddiyyəti, İskəndərov person-5, dərc olunmamış redaktə…) — 53 yoxlama; Playwright
      (əməkdaş, bölmə, menyu, axtarış pəncərəsi və səhifəsi, mobil menyu).
+30. **F5.59 — 10 əməkdaşın profili** (layihə sənədi `claude/f559-emekdas-profilleri.md`).
+   - **Miqrasiya** `src/utils/staff-profiles.ts`, məzmun `staff-profiles-content.ts` (Zaur müəllimin
+     JSON-u, 27.10.2026: prorektor İradə Süleymanova, dekanlar Abbasov və Əsgərov, 7 kafedra müdiri),
+     BİR DƏFƏ (`staffProfiles:v1`), YALNIZ boş sahələrə. Uyğunlaşdırma: ad açarı (`nameKey`), sonra
+     saytdakı qısa ad tam adın alt çoxluğudursa (ad və görünən ad tamamlanır), sonra e-poçtun yerli
+     hissəsi. Tərcümeyi-hal (markdown): «… fəlsəfə doktoru (2017), dosent (2022).» + `### Elmi və
+     peşə fəaliyyəti`, `### Mükafatlar`; təhsil, iş təcrübəsi (`sortYear` = başlanğıc ili, admin
+     qaydası), dil bilikləri, e-poçt/əlavə e-poçt, telefon, boş dərəcə və elmi ad. Saytdakı dərəcə/ad
+     göndərilənlə ziddirsə (Alıyeva: saytda elmlər doktoru, professor; JSON-da filologiya üzrə
+     fəlsəfə doktoru, dosent) sahələr və dərəcə cümləsi yazılmır — logda. Ştat qısaltması
+     «Tədrisin təşkili və idarəed.üzrə pr.» → bölmənin rəsmi adı (`POSITION_FIXES`). Dərc olunmamış
+     redaktəsi olan qeyddə yalnız qaralama. Xəta olarsa marker yazılmır (təkrar zərərsizdir).
+   - **Doğum tarixi saytda GÖRÜNMÜR:** «5. Sistem — Heyət — məxfi» (`staff-private`) — yoxdursa
+     yaradılır, boşdursa yazılır, fərqlidirsə toxunulmur (logda tarixsiz).
+   - **Sxem:** `staff.language.lang` + `de` (alman), `fr` (fransız); admin qaydası `cmAz:v16`.
+     «Profilim» (identity `DEGREES`, `LANGS`) — `elmler_namizedi` yox idi, saxlayanda namizədin
+     dərəcəsi silinirdi; `de`, `fr` əlavə olundu.
+   - **Next:** etiketlər TƏK yerdə — `lib/staff-labels.ts` (əməkdaş səhifəsi, /heyet kataloqu,
+     «Profilim»): «Elmlər namizədi» (əvvəl profildə görünmürdü, kataloq filtrində xam
+     `elmler_namizedi`), «Azərbaycan dili», «Alman dili»… Əməkdaş səhifəsinin etiketləri,
+     dil səviyyələri (əla, yaxşı, orta, sərbəst, ana dili), dərəcələr `T`-də (ru/en).
+     Tərcümeyi-halda `h3` `.prf-sub` ölçüsündə, siyahı nişanlı (`globals.css` `ul, ol` nişanı
+     sıfırlayır). Telefon (`lib/phone.ts`): «(012) 371-03-24» kimi şəhər/mobil nömrəsi də
+     formatlanır — az «(012) 371 03 24», en/ru «+994 12 371 03 24», keçid `tel:+994…`.
+   - Lokal sınaq: F5.58 bazası + prod-a bənzər 9 qeyd (qısa ad, ziddiyyət, dərc olunmamış redaktə,
+     şəxsi qeyd: eyni/fərqli/boş/əlaqəsiz), tapılmayan, çoxmənalı, e-poçtla tapılan — 58 yoxlama;
+     Playwright (az/ru/en əməkdaş səhifəsi, kataloq filtri, mobil).
 
 ---
 
