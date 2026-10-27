@@ -61,6 +61,7 @@ import { registerSiteRevalidate, revalidateAfterDeploy, startSiteRevalidate } fr
 // F5.57 — «Qaydalar» və «Təlimat» (ADDA-TL, ADDA-ƏP) — bax src/utils/qaydalar.ts.
 import { applyQaydalarF557 } from './utils/qaydalar';
 import { applyPersonF558, patchUidTransliteration, registerPersonGuard } from './utils/person-merge';
+import { applyStaffProfilesV1 } from './utils/staff-profiles';
 import { registerSearchIndex } from './utils/search-index';
 
 /**
@@ -2340,6 +2341,10 @@ export default {
       // və «person-N», oxunmaz ünvanlar addan — hər biri BİR DƏFƏ.
       .then(() => applyPersonF558(strapi))
       .catch((e: Error) => strapi.log.error('[heyet] F5.58: ' + e.message))
+      // F5.59 — 10 əməkdaşın profili (tərcümeyi-hal, təhsil, iş təcrübəsi, dillər, əlaqə) yalnız
+      // boş sahələrə; doğum tarixi saytda görünməyən şəxsi qeydə — BİR DƏFƏ.
+      .then(() => applyStaffProfilesV1(strapi))
+      .catch((e: Error) => strapi.log.error('[heyet] F5.59: ' + e.message))
       // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
       // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
       .then(() => startTranslateMissing(strapi))

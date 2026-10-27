@@ -89,8 +89,10 @@ function intIn(raw: unknown, min: number, max: number, fallback: number): number
   return Math.min(max, Math.max(min, Math.trunc(n)));
 }
 
-const DEGREES = ['elmler_doktoru', 'felsefe_doktoru', 'yoxdur'];
-const LANGS = ['az', 'tr', 'en', 'ru', 'diger'];
+// Strapi enum-ları ilə EYNİ (person.academicDegree, staff.language.lang). F5.59: «elmler_namizedi»
+// siyahıda yox idi — «Profilim»-dən saxlayanda namizədin dərəcəsi silinirdi; «de», «fr» əlavə olundu.
+const DEGREES = ['elmler_doktoru', 'felsefe_doktoru', 'elmler_namizedi', 'yoxdur'];
+const LANGS = ['az', 'tr', 'en', 'ru', 'de', 'fr', 'diger'];
 
 /**
  * Profil redaktəsinə icazə verilən e-poçt domenləri.

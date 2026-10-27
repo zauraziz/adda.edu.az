@@ -556,7 +556,9 @@ export interface StaffLanguage extends Struct.ComponentSchema {
     icon: 'earth';
   };
   attributes: {
-    lang: Schema.Attribute.Enumeration<['az', 'tr', 'en', 'ru', 'diger']> &
+    lang: Schema.Attribute.Enumeration<
+      ['az', 'tr', 'en', 'ru', 'de', 'fr', 'diger']
+    > &
       Schema.Attribute.Required;
     level: Schema.Attribute.String;
   };

@@ -129,6 +129,9 @@ const DOC_CATEGORY_DESC_V1 =
 const DOC_CATEGORY_DESC_V2 =
   'normativ; esasname — əsasnamə; qayda — qayda (ADDA-TL); telimat — təlimat və ya prosedur (ADDA-TL, ADDA-ƏP); emr — əmr; qerar — qərar; ' +
   'hesabat; etika; akkreditasiya; forma — blank; diger — digər.';
+// F5.59 (v16) — dil bilikləri: alman, fransız.
+const STAFF_LANG_DESC_V1 = 'az; tr; en; ru; diger — digər.';
+const STAFF_LANG_DESC_V2 = 'az; tr; en; ru; de — alman; fr — fransız; diger — digər (dilin adını «Səviyyə»-yə yazın).';
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -589,7 +592,7 @@ const COMP: Record<string, Dict> = {
     sortOrder: ['Sıra', SORT],
   },
   'staff.language': {
-    lang: ['Dil', 'az; tr; en; ru; diger — digər.'],
+    lang: ['Dil', STAFF_LANG_DESC_V2],
     level: ['Səviyyə', 'Məs.: «C1», «sərbəst», «ana dili».'],
   },
   'staff.scholar': {
@@ -965,6 +968,11 @@ const UPGRADE_SETS: {
       { kind: 'ct', uid: 'api::page.page', field: 'dataBlock', from: DATABLOCK_DESC_V10, to: DATABLOCK_DESC_V11 },
       { kind: 'ct', uid: 'api::document.document', field: 'category', from: DOC_CATEGORY_DESC_V1, to: DOC_CATEGORY_DESC_V2 },
     ],
+  },
+  {
+    marker: 'cmAz:v16',
+    note: 'F5.59: sahə qaydaları yeniləndi: {n} (dil bilikləri «de», «fr»).',
+    list: [{ kind: 'comp', uid: 'staff.language', field: 'lang', from: STAFF_LANG_DESC_V1, to: STAFF_LANG_DESC_V2 }],
   },
 ];
 

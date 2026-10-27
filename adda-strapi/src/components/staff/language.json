@@ -5,7 +5,7 @@
   "attributes": {
     "lang": {
       "type": "enumeration",
-      "enum": ["az", "tr", "en", "ru", "diger"],
+      "enum": ["az", "tr", "en", "ru", "de", "fr", "diger"],
       "required": true
     },
     "level": { "type": "string" }
