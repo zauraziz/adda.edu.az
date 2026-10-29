@@ -20,8 +20,13 @@
  * dəyişikliyi onda 1 günə qədər gecikmə ilə göstərir. Yalnız Render-də işləyir
  * (env `RENDER`) və ya `REVALIDATE_URL` verilibsə (lokal sınaq; vergüllə bir neçə).
  * Sayt yeniləməsi heç vaxt yazmanı sındırmır və gözlətmir.
+ *
+ * F5.60: SITE_URL və REVALIDATE_URL təmizlənir (env-url.ts). Render-də SITE_URL
+ * markdown keçidi kimi yazılmışdı — sorğu «Failed to parse URL» ilə düşür, sayt
+ * dərcdən sonra yenilənmirdi. Yanlış yazılış açılışda logda xəbərdarlıqdır.
  */
 import type { Core } from '@strapi/strapi';
+import { cleanUrl, envUrl, envUrlIssue, isHttpUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
@@ -62,13 +67,14 @@ const LIVE_DP = new Set(['publish', 'unpublish', 'delete']);
 const secret = (): string => (process.env.REVALIDATE_SECRET || process.env.ADMIN_IMPORT_SECRET || '').trim();
 
 function targets(): string[] {
+  // F5.60 — ünvan təmizlənir (env-url.ts): Render-də SITE_URL markdown keçidi idi.
   const own = (process.env.REVALIDATE_URL || '')
     .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+    .map((s) => cleanUrl(s))
+    .filter((s) => isHttpUrl(s));
   if (own.length) return own;
   if (!process.env.RENDER) return [];
-  const site = (process.env.SITE_URL || 'https://demo.adda.edu.az').trim().replace(/\/+$/, '');
+  const site = envUrl('SITE_URL', 'https://demo.adda.edu.az');
   return [`${site}/api/revalidate`];
 }
 
@@ -164,6 +170,8 @@ export function registerSiteRevalidate(strapi: Core.Strapi): void {
 export function startSiteRevalidate(strapi: Core.Strapi): void {
   const urls = targets();
   if (!urls.length) return;
+  const issue = envUrlIssue('SITE_URL');
+  if (issue) strapi.log.warn(`${TAG}: ${issue}. Render → Environment → SITE_URL-ə yalnız ünvanı yazın (markdown və dırnaq olmadan).`);
   if (!secret()) {
     strapi.log.warn(
       `${TAG}: REVALIDATE_SECRET yoxdur — admində dərc olunan dəyişiklik saytda 1 günə qədər gecikmə ilə görünür. ` +

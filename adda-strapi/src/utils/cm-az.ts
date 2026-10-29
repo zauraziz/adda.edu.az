@@ -132,6 +132,11 @@ const DOC_CATEGORY_DESC_V2 =
 // F5.59 (v16) — dil bilikləri: alman, fransız.
 const STAFF_LANG_DESC_V1 = 'az; tr; en; ru; diger — digər.';
 const STAFF_LANG_DESC_V2 = 'az; tr; en; ru; de — alman; fr — fransız; diger — digər (dilin adını «Səviyyə»-yə yazın).';
+// F5.60 (v17) — kollecin səhifələri.
+const LAYOUT_DESC_V9 = LAYOUT_DESC_V8.replace(
+  'axtarışla. Bütün dillərdə eynidir.',
+  'axtarışla; kollec — bolmeli + «Azərbaycan Dənizçilik Kolleci» qırıntısı (kollecin səhifələri). Bütün dillərdə eynidir.',
+);
 
 const CT: Record<string, Dict> = {
   'api::page.page': {
@@ -973,6 +978,11 @@ const UPGRADE_SETS: {
     marker: 'cmAz:v16',
     note: 'F5.59: sahə qaydaları yeniləndi: {n} (dil bilikləri «de», «fr»).',
     list: [{ kind: 'comp', uid: 'staff.language', field: 'lang', from: STAFF_LANG_DESC_V1, to: STAFF_LANG_DESC_V2 }],
+  },
+  {
+    marker: 'cmAz:v17',
+    note: 'F5.60: sahə qaydaları yeniləndi: {n} (Şablon «kollec»).',
+    list: [{ kind: 'ct', uid: 'api::page.page', field: 'layout', from: LAYOUT_DESC_V8, to: LAYOUT_DESC_V9 }],
   },
 ];
 

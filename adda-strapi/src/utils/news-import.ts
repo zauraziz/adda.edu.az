@@ -22,6 +22,7 @@ import type { Core } from '@strapi/strapi';
 import { attachCertImages } from './cert-block';
 import { importLegacyFile, legacyUrl, LegacyUnreachable } from './legacy-files';
 import { IMPORT_ANNOUNCEMENTS, IMPORT_ARTICLES } from './news-import-content';
+import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
@@ -108,7 +109,7 @@ const docsOf = (strapi: Core.Strapi, uid: string): Docs => strapi.documents(uid 
 /** Mətndəki fayl keçidi tam ünvan olmalıdır (Cloudinary-də onsuz da belədir; lokal provayderdə «/uploads/…»). */
 function absUrl(u: string): string {
   if (!u.startsWith('/')) return u;
-  return (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender.com').trim().replace(/\/+$/, '') + u;
+  return envUrl('ADMIN_PUBLIC_URL', 'https://adda-edu-az.onrender.com') + u;
 }
 
 /** Köhnə saytdakı dərc vaxtı: Document Service `publishedAt`-ı «indi» yazır. */

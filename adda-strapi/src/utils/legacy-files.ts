@@ -21,6 +21,7 @@ import { unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { Core } from '@strapi/strapi';
+import { envUrl } from './env-url';
 
 const STORE_KEY = 'legacyFiles:v1';
 const MAX_BYTES = 20 * 1024 * 1024;
@@ -36,7 +37,7 @@ export interface LegacyFile {
 }
 
 export function legacyBase(): string {
-  return (process.env.LEGACY_SITE_URL || 'https://adda.edu.az').trim().replace(/\/+$/, '');
+  return envUrl('LEGACY_SITE_URL', 'https://adda.edu.az');
 }
 
 /** «/uploads/dok.sual (1).pdf» → «/uploads/dok.sual%20%281%29.pdf» (mötərizə də — Markdown keçidində təhlükəsiz). */

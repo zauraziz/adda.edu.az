@@ -131,7 +131,7 @@ const FAQ_PAGE: QebulPageSeed = {
       {
         question: 'Tələbələr nə ilə ödənişsiz təmin olunur?',
         answer:
-          'Yay və qış geyim forması, dərs vəsaitləri və gündə iki dəfə yemək. Təqaüd semestrin nəticəsinə görə təyin olunur; ' +
+          'Yay və qış geyim forması və dərs vəsaitləri. Təqaüd semestrin nəticəsinə görə təyin olunur; ' +
           'fərqlənən tələbələrə ASCO-nun əlavə təqaüdü də verilib. Ətraflı — [Təqaüd və sosial dəstək](/sehife/sosial-teminat-ve-maddi-yardim).',
       },
       {
@@ -220,7 +220,7 @@ const FAQ_PAGE: QebulPageSeed = {
       {
         question: 'What do students receive free of charge?',
         answer:
-          'Summer and winter uniforms, textbooks and two meals a day. Scholarships depend on semester results; ASCO has also awarded additional ' +
+          'Summer and winter uniforms and textbooks. Scholarships depend on semester results; ASCO has also awarded additional ' +
           'scholarships to top students. More — [Scholarships and student support](/sehife/sosial-teminat-ve-maddi-yardim).',
       },
       {
@@ -309,7 +309,7 @@ const FAQ_PAGE: QebulPageSeed = {
       {
         question: 'Что студенты получают бесплатно?',
         answer:
-          'Летнюю и зимнюю форму, учебные пособия и двухразовое питание. Стипендия назначается по итогам семестра; отличившимся студентам ' +
+          'Летнюю и зимнюю форму и учебные пособия. Стипендия назначается по итогам семестра; отличившимся студентам ' +
           'ASCO также выплачивало дополнительную стипендию. Подробнее — [Стипендии и социальная поддержка](/sehife/sosial-teminat-ve-maddi-yardim).',
       },
       {

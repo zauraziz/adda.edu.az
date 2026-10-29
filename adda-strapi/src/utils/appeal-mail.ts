@@ -25,6 +25,7 @@
  */
 import { deliver } from '../api/identity/services/identity';
 import { ACADEMY_PHONE_AZ } from './phone-fix';
+import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
@@ -44,7 +45,8 @@ const TYPE_LABEL: Record<string, string> = {
   sikayet: 'Şikayət',
 };
 
-const SITE_URL = (process.env.SITE_URL || 'https://demo.adda.edu.az').replace(/\/+$/, '');
+// F5.60 — env markdown keçidi olsa da məktubdakı keçid düzgün (env-url.ts).
+const SITE_URL = envUrl('SITE_URL', 'https://demo.adda.edu.az');
 
 // F5.32d — əlaqə məlumatı. F5.53: telefon Akademiyanın ümumi nömrəsidir
 // (src/utils/phone-fix.ts; saytda adda-nextjs/lib/phone.ts) — əvvəlki nömrə səhv idi.

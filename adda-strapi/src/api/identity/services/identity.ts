@@ -11,6 +11,7 @@
  * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
  */
 import { createHash, randomBytes } from 'node:crypto';
+import { cleanUrl, isHttpUrl } from '../../../utils/env-url';
 
 /* ── Strapi-nin yalnız istifadə etdiyimiz hissəsi (inline tip) ────────── */
 type Row = Record<string, unknown>;
@@ -59,27 +60,8 @@ const SESSION_TTL_DAYS = intEnv('IDENTITY_SESSION_TTL_DAYS', 30);
  * Yoxlamadan keçməzsə məktub GÖNDƏRİLMİR — sınıq link göndərmək,
  * göndərməməkdən pisdir, çünki istifadəçi səbəbini bilmədən gözləyir.
  */
-function cleanUrl(raw: unknown): string {
-  let v = String(raw ?? '').trim();
-  // Markdown: [mətn](url) -> url
-  const md = v.match(/^\[[^\]]*\]\(([^)]+)\)/);
-  if (md) v = md[1].trim();
-  // Açılı mötərizə: <url> -> url
-  v = v.replace(/^<+/, '').replace(/>+$/, '');
-  // Ətraf dırnaqlar
-  v = v.replace(/^["']+/, '').replace(/["']+$/, '');
-  return v.replace(/\/+$/, '').trim();
-}
-
-function isHttpUrl(v: string): boolean {
-  try {
-    const u = new URL(v);
-    return (u.protocol === 'https:' || u.protocol === 'http:') && Boolean(u.hostname);
-  } catch {
-    return false;
-  }
-}
-
+// F5.60 — təmizləmə və yoxlama ortaq köməkçidədir (src/utils/env-url.ts): sayt yeniləməsi,
+// məsul redaktor və müraciət məktubları da eyni qaydanı işlədir.
 const SITE_URL_RAW = process.env.SITE_URL || 'https://demo.adda.edu.az';
 const SITE_URL = cleanUrl(SITE_URL_RAW);
 export const SITE_URL_OK = isHttpUrl(SITE_URL);

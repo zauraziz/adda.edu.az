@@ -1915,6 +1915,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'beynelxalq',
         'akademiya',
         'faq',
+        'kollec',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{

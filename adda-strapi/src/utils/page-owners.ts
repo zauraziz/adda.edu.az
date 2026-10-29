@@ -25,6 +25,7 @@
 import type { Core } from '@strapi/strapi';
 import { deliver } from '../api/identity/services/identity';
 import { requestSiteRevalidate } from './site-revalidate';
+import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
@@ -32,8 +33,9 @@ const OWNER_UID = 'api::page-owner.page-owner';
 export const EDITOR_ROLE_CODE = 'adda-mesul-redaktor';
 export const OWNER_CONDITION = 'api::adda-page-owner';
 
-const SITE_URL = (process.env.SITE_URL || 'https://demo.adda.edu.az').trim().replace(/\/+$/, '');
-const ADMIN_URL = (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender.com').trim().replace(/\/+$/, '') + '/admin';
+// F5.60 — məktubdakı «Saytda bax» / «Məzmun əlavə et» keçidləri: env markdown keçidi olsa da düzgün (env-url.ts).
+const SITE_URL = envUrl('SITE_URL', 'https://demo.adda.edu.az');
+const ADMIN_URL = envUrl('ADMIN_PUBLIC_URL', 'https://adda-edu-az.onrender.com') + '/admin';
 
 // ── Açar ─────────────────────────────────────────────────────────────────────
 

@@ -34,6 +34,7 @@
  */
 import type { Core } from '@strapi/strapi';
 import { MOVED_PAGE_SLUGS } from './moved-pages';
+import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 export type Locale = 'az' | 'ru' | 'en';
@@ -319,7 +320,7 @@ const pick = (locale: Locale, az: unknown, ru: unknown, en: unknown): string =>
 
 export function absUrl(u: string): string {
   if (!u || !u.startsWith('/')) return u;
-  return (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender.com').trim().replace(/\/+$/, '') + u;
+  return envUrl('ADMIN_PUBLIC_URL', 'https://adda-edu-az.onrender.com') + u;
 }
 
 /** Sertifikatın lövbəri — adda-nextjs lib/cert.ts `certAnchor` ilə EYNİ. */

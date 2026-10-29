@@ -144,7 +144,7 @@ const HUB_PAGE: TelebePageSeed = {
       { label: 'Tələbə təşkilatı', value: '3', icon: 'qrup' },
       { label: 'Yataqxana', value: '311 yer', icon: 'bina' },
       { label: 'İdman bazası', value: 'Hovuz və idman zalları', icon: 'idman' },
-      { label: 'Forma, dərslik, yemək', value: 'Ödənişsiz', icon: 'haqq' },
+      { label: 'Forma və dərslik', value: 'Ödənişsiz', icon: 'haqq' },
     ],
     steps: [
       {
@@ -193,7 +193,7 @@ const HUB_PAGE: TelebePageSeed = {
     body: `## Yaşayış və gündəlik şərait
 
 - **Yataqxana** — Üzeyir Hacıbəyli küçəsi 114: 104 otaq, 311 yer; tələbələrə güzəştli şərtlə, əcnəbi tələbələrə 2026/2027-ci ildə ödənişsiz. Qayda və şərait: [Yataqxana](${DORM}).
-- **Ödənişsiz təminat** — yay və qış geyim forması, dərs vəsaitləri və gündə iki dəfə yemək ([xəbər](${NEWS.benefits2024})).
+- **Ödənişsiz təminat** — yay və qış geyim forması və dərs vəsaitləri ([xəbər](${NEWS.benefits2024})).
 - **Kitabxana** — Azərbaycan, rus və ingilis dillərində dənizçilik ədəbiyyatı: [İnformasiya resurs mərkəzi](${LIBRARY}).
 - **İdman** — üzgüçülük hovuzu və idman zalları: [İdman](${SPORT}).
 
@@ -261,7 +261,7 @@ Akademiyada «Bədən tərbiyəsi və idman» kafedrası 2004-cü ildən fəaliy
       { label: 'Student organisations', value: '3', icon: 'qrup' },
       { label: 'Residence hall', value: '311 places', icon: 'bina' },
       { label: 'Sports facilities', value: 'Swimming pool and gyms', icon: 'idman' },
-      { label: 'Uniform, textbooks, meals', value: 'Free of charge', icon: 'haqq' },
+      { label: 'Uniform and textbooks', value: 'Free of charge', icon: 'haqq' },
     ],
     steps: [
       {
@@ -310,7 +310,7 @@ Akademiyada «Bədən tərbiyəsi və idman» kafedrası 2004-cü ildən fəaliy
     body: `## Accommodation and daily life
 
 - **Residence hall** — 114 Uzeyir Hajibeyli Street: 104 rooms, 311 places; offered to students on preferential terms and free of charge to international students in 2026/2027. Rules and facilities: [Residence hall](${DORM}).
-- **Free provision** — summer and winter uniforms, textbooks and two meals a day ([news](${AZ(NEWS.benefits2024)})).
+- **Free provision** — summer and winter uniforms and textbooks ([news](${AZ(NEWS.benefits2024)})).
 - **Library** — maritime literature in Azerbaijani, Russian and English: [Information Resource Centre](${LIBRARY}).
 - **Sport** — swimming pool and gyms: [Sport](${SPORT}).
 
@@ -378,7 +378,7 @@ More: [Culture and creativity](${CULTURE}).
       { label: 'Студенческие организации', value: '3', icon: 'qrup' },
       { label: 'Общежитие', value: '311 мест', icon: 'bina' },
       { label: 'Спортивная база', value: 'Бассейн и спортзалы', icon: 'idman' },
-      { label: 'Форма, учебники, питание', value: 'Бесплатно', icon: 'haqq' },
+      { label: 'Форма и учебники', value: 'Бесплатно', icon: 'haqq' },
     ],
     steps: [
       {
@@ -427,7 +427,7 @@ More: [Culture and creativity](${CULTURE}).
     body: `## Проживание и быт
 
 - **Общежитие** — ул. Узеира Гаджибейли, 114: 104 комнаты, 311 мест; студентам — на льготных условиях, иностранным студентам в 2026/2027 году — бесплатно. Правила и условия: [Общежитие](${DORM}).
-- **Бесплатное обеспечение** — летняя и зимняя форма, учебные пособия и двухразовое питание ([новость](${AZ(NEWS.benefits2024)})).
+- **Бесплатное обеспечение** — летняя и зимняя форма и учебные пособия ([новость](${AZ(NEWS.benefits2024)})).
 - **Библиотека** — морская литература на азербайджанском, русском и английском языках: [Информационно-ресурсный центр](${LIBRARY}).
 - **Спорт** — плавательный бассейн и спортивные залы: [Спорт](${SPORT}).
 
@@ -1289,14 +1289,13 @@ const SOCIAL_PAGE: TelebePageSeed = {
   az: {
     title: 'Təqaüd və sosial dəstək',
     lead:
-      'Akademiya tələbələri geyim forması, dərs vəsaitləri və gündə iki dəfə yeməklə ödənişsiz, yataqxana ilə güzəştli şərtlə təmin olunur. ' +
+      'Akademiya tələbələri geyim forması və dərs vəsaitləri ilə ödənişsiz, yataqxana ilə güzəştli şərtlə təmin olunur. ' +
       'Təqaüd hər semestr imtahan sessiyasının nəticəsinə görə təyin edilir; təhsildə fərqlənənlərə ASCO əlavə təqaüd verir.',
     seoDescription:
-      'ADDA-da təqaüd və sosial dəstək: təqaüd növləri və şərtləri, ASCO-nun əlavə təqaüdü, ödənişsiz forma, dərslik və yemək, yataqxana, həmkarlar ittifaqının köməyi.',
+      'ADDA-da təqaüd və sosial dəstək: təqaüd növləri və şərtləri, ASCO-nun əlavə təqaüdü, ödənişsiz forma və dərslik, yataqxana, həmkarlar ittifaqının köməyi.',
     stepsTitle: 'Təqaüd necə təyin olunur',
     facts: [
       { label: 'Forma və dərs vəsaiti', value: 'Ödənişsiz', icon: 'kitab' },
-      { label: 'Yemək', value: 'Gündə 2 dəfə', icon: 'diger' },
       { label: 'Yataqxana', value: 'Güzəştli şərtlə', icon: 'bina' },
       { label: 'Təqaüd', value: 'Hər semestr', icon: 'haqq' },
     ],
@@ -1329,7 +1328,6 @@ const SOCIAL_PAGE: TelebePageSeed = {
 
 - yay və qış geyim forması;
 - dərs vəsaitləri;
-- gündə iki dəfə yemək;
 - [yataqxana](${DORM}) — güzəştli şərtlə (Üzeyir Hacıbəyli küçəsi 114, 311 yer);
 - [informasiya resurs mərkəzi](${LIBRARY}) — Azərbaycan, rus və ingilis dillərində dənizçilik ədəbiyyatı;
 - idman zalları və üzgüçülük hovuzu — [İdman](${SPORT}).
@@ -1370,7 +1368,7 @@ Yazılı müraciət üçün [onlayn forma](${ASK}) var — cavab e-poçtunuza g�
       },
       {
         question: 'Forma və dərsliklər üçün ödəniş lazımdırmı?',
-        answer: 'Xeyr. Yay və qış geyim forması və dərs vəsaitləri ödənişsizdir; gündə iki dəfə yemək verilir.',
+        answer: 'Xeyr. Yay və qış geyim forması və dərs vəsaitləri ödənişsizdir.',
       },
       {
         question: 'Valideynlərini itirmiş tələbələrə hansı dəstək var?',
@@ -1384,14 +1382,13 @@ Yazılı müraciət üçün [onlayn forma](${ASK}) var — cavab e-poçtunuza g�
   en: {
     title: 'Scholarships and Student Support',
     lead:
-      'Students receive uniforms, textbooks and two meals a day free of charge, and a residence-hall place on preferential terms. ' +
+      'Students receive uniforms and textbooks free of charge, and a residence-hall place on preferential terms. ' +
       'Scholarships are awarded every semester on the basis of exam-session results; ASCO pays an additional scholarship to top students.',
     seoDescription:
-      'Scholarships and support at ADDA: scholarship types and criteria, ASCO’s additional scholarship, free uniform, textbooks and meals, residence hall, trade union help.',
+      'Scholarships and support at ADDA: scholarship types and criteria, ASCO’s additional scholarship, free uniform and textbooks, residence hall, trade union help.',
     stepsTitle: 'How scholarships are awarded',
     facts: [
       { label: 'Uniform and textbooks', value: 'Free of charge', icon: 'kitab' },
-      { label: 'Meals', value: 'Twice a day', icon: 'diger' },
       { label: 'Residence hall', value: 'Preferential terms', icon: 'bina' },
       { label: 'Scholarship', value: 'Every semester', icon: 'haqq' },
     ],
@@ -1424,7 +1421,6 @@ Yazılı müraciət üçün [onlayn forma](${ASK}) var — cavab e-poçtunuza g�
 
 - summer and winter uniforms;
 - textbooks;
-- two meals a day;
 - the [residence hall](${DORM}) on preferential terms (114 Uzeyir Hajibeyli Street, 311 places);
 - the [Information Resource Centre](${LIBRARY}) — maritime literature in Azerbaijani, Russian and English;
 - gyms and a swimming pool — [Sport](${SPORT}).
@@ -1465,7 +1461,7 @@ For written requests there is an [online form](${ASK}) — the reply comes to yo
       },
       {
         question: 'Do I pay for the uniform and textbooks?',
-        answer: 'No. Summer and winter uniforms and textbooks are free of charge, and two meals a day are provided.',
+        answer: 'No. Summer and winter uniforms and textbooks are free of charge.',
       },
       {
         question: 'What support is there for orphans?',
@@ -1478,14 +1474,13 @@ For written requests there is an [online form](${ASK}) — the reply comes to yo
   ru: {
     title: 'Стипендии и социальная поддержка',
     lead:
-      'Студенты бесплатно обеспечиваются формой, учебными пособиями и двухразовым питанием, общежитием — на льготных условиях. ' +
+      'Студенты бесплатно обеспечиваются формой и учебными пособиями, общежитием — на льготных условиях. ' +
       'Стипендия назначается каждый семестр по итогам экзаменационной сессии; отличившимся ASCO выплачивает дополнительную стипендию.',
     seoDescription:
-      'Стипендии и поддержка в АГМА: виды и условия стипендий, дополнительная стипендия ASCO, бесплатные форма, учебники и питание, общежитие, помощь профсоюза.',
+      'Стипендии и поддержка в АГМА: виды и условия стипендий, дополнительная стипендия ASCO, бесплатные форма и учебники, общежитие, помощь профсоюза.',
     stepsTitle: 'Как назначается стипендия',
     facts: [
       { label: 'Форма и учебные пособия', value: 'Бесплатно', icon: 'kitab' },
-      { label: 'Питание', value: 'Два раза в день', icon: 'diger' },
       { label: 'Общежитие', value: 'На льготных условиях', icon: 'bina' },
       { label: 'Стипендия', value: 'Каждый семестр', icon: 'haqq' },
     ],
@@ -1518,7 +1513,6 @@ For written requests there is an [online form](${ASK}) — the reply comes to yo
 
 - летняя и зимняя форма;
 - учебные пособия;
-- двухразовое питание;
 - [общежитие](${DORM}) — на льготных условиях (ул. Узеира Гаджибейли, 114, 311 мест);
 - [Информационно-ресурсный центр](${LIBRARY}) — морская литература на азербайджанском, русском и английском языках;
 - спортивные залы и плавательный бассейн — [Спорт](${SPORT}).
@@ -1559,7 +1553,7 @@ For written requests there is an [online form](${ASK}) — the reply comes to yo
       },
       {
         question: 'Нужно ли платить за форму и учебники?',
-        answer: 'Нет. Летняя и зимняя форма и учебные пособия бесплатны, предоставляется двухразовое питание.',
+        answer: 'Нет. Летняя и зимняя форма и учебные пособия бесплатны.',
       },
       {
         question: 'Какая поддержка есть для сирот?',

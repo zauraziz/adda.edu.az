@@ -62,6 +62,9 @@ import { registerSiteRevalidate, revalidateAfterDeploy, startSiteRevalidate } fr
 import { applyQaydalarF557 } from './utils/qaydalar';
 import { applyPersonF558, patchUidTransliteration, registerPersonGuard } from './utils/person-merge';
 import { applyStaffProfilesV1 } from './utils/staff-profiles';
+// F5.60 — «gündə iki dəfə yemək», «pulsuz yemək» ifadələri; kollecin səhifələri və məlumatı.
+import { applyMealTextV1 } from './utils/meal-text';
+import { applyKollecF560 } from './utils/kollec';
 import { registerSearchIndex } from './utils/search-index';
 
 /**
@@ -965,22 +968,52 @@ const SEED = {
       {
         "label": "Kollec",
         "order": 3,
-        "url": "#",
+        "url": "/struktur/azerbaycan-denizcilik-kolleci-phs",
         "groups": [
           {
-            "title": "Kollec",
+            "title": "Kollec haqqında",
             "links": [
               {
-                "label": "Fakültələr",
-                "url": "/fakulteler"
+                "label": "Kollec haqqında",
+                "url": "/struktur/azerbaycan-denizcilik-kolleci-phs"
               },
               {
-                "label": "Əlavə təhsil",
-                "url": "/hazirlanir/elave-tehsil"
+                "label": "Kollecin tarixi",
+                "url": "/sehife/kollecin-tarixi"
               },
               {
-                "label": "İnfrastruktur",
-                "url": "/hazirlanir/infrastruktur"
+                "label": "Kollecin Nizamnaməsi",
+                "url": "/sehife/kollecin-nizamnamesi"
+              }
+            ]
+          },
+          {
+            "title": "Təhsil",
+            "links": [
+              {
+                "label": "Təhsil və ixtisaslar",
+                "url": "/sehife/kollecde-tehsil"
+              },
+              {
+                "label": "İstehsalat təcrübəsi",
+                "url": "/sehife/kollecde-tecrube"
+              },
+              {
+                "label": "Tədris bazası",
+                "url": "/sehife/kollecde-tehsil#tedris-bazasi"
+              }
+            ]
+          },
+          {
+            "title": "Qəbul",
+            "links": [
+              {
+                "label": "Kollecə qəbul",
+                "url": "/sehife/subbakalavr"
+              },
+              {
+                "label": "İxtisaslar, plan yerləri və təhsil haqqı",
+                "url": "/ixtisaslar?tab=subbakalavr"
               }
             ]
           }
@@ -1638,15 +1671,15 @@ const PAGE_SPLIT_SEED: PageSplitSeed[] = [
     slug: 'sosial-teminat-ve-maddi-yardim',
     az: {
       title: 'Sosial təminat və maddi yardım',
-      body: '**Professor-müəllim və tələbə heyətinin səmərəli fəaliyyəti üçün Akademiyada hər cür şərait yaradılıb.**\n\n## Tələbələrə ödənişsiz təminat\n\nAkademiyada təhsil alan tələbələr aşağıdakılarla **ödənişsiz** təmin olunur:\n\n- Tam təmirli yataqxana (güzəştli şərtlə)\n- Gündə iki dəfə yemək\n- Yay və qış geyim formaları\n\n## Kampus infrastrukturu\n\n- Azərbaycan, rus və ingilis dillərində çoxsaylı dənizçilik ədəbiyyatı ilə təmin olunmuş informasiya-resurs mərkəzi\n- Yeməkxana\n- İdman zalları\n- Hovuz\n\nƏtraflı: [Yataqxana](/sehife/yataqxana) · [İdman](/sehife/idman) · [İnformasiya Resurs Mərkəzi](/struktur/informasiya-resurs-merkezi)\n\n## Tələbə təşkilatları\n\nDövlət gənclər siyasətinin prioritet istiqamətlərinə uyğun olaraq Akademiyada üç tələbə təşkilatı fəaliyyət göstərir:\n\n- [Tələbə Elmi Cəmiyyəti](/sehife/telebe-elmi-cemiyyeti)\n- [Tələbə Gənclər Təşkilatı](/sehife/telebe-gencler-teskilati)\n- [Tələbə Həmkarlar İttifaqı Komitəsi](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
+      body: '**Professor-müəllim və tələbə heyətinin səmərəli fəaliyyəti üçün Akademiyada hər cür şərait yaradılıb.**\n\n## Tələbələrə ödənişsiz təminat\n\nAkademiyada təhsil alan tələbələr aşağıdakılarla **ödənişsiz** təmin olunur:\n\n- Tam təmirli yataqxana (güzəştli şərtlə)\n- Yay və qış geyim formaları\n\n## Kampus infrastrukturu\n\n- Azərbaycan, rus və ingilis dillərində çoxsaylı dənizçilik ədəbiyyatı ilə təmin olunmuş informasiya-resurs mərkəzi\n- Yeməkxana\n- İdman zalları\n- Hovuz\n\nƏtraflı: [Yataqxana](/sehife/yataqxana) · [İdman](/sehife/idman) · [İnformasiya Resurs Mərkəzi](/struktur/informasiya-resurs-merkezi)\n\n## Tələbə təşkilatları\n\nDövlət gənclər siyasətinin prioritet istiqamətlərinə uyğun olaraq Akademiyada üç tələbə təşkilatı fəaliyyət göstərir:\n\n- [Tələbə Elmi Cəmiyyəti](/sehife/telebe-elmi-cemiyyeti)\n- [Tələbə Gənclər Təşkilatı](/sehife/telebe-gencler-teskilati)\n- [Tələbə Həmkarlar İttifaqı Komitəsi](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
     },
     ru: {
       title: 'Социальное обеспечение и материальная помощь',
-      body: '**В Академии созданы все условия для эффективной работы профессорско-преподавательского состава и студентов.**\n\n## Бесплатное обеспечение студентов\n\nСтуденты Академии **бесплатно** обеспечиваются:\n\n- полностью отремонтированным общежитием (на льготных условиях)\n- двухразовым питанием\n- летней и зимней форменной одеждой\n\n## Инфраструктура кампуса\n\n- Информационно-ресурсный центр с обширной литературой по морскому делу на азербайджанском, русском и английском языках\n- Столовая\n- Спортивные залы\n- Бассейн\n\nПодробнее: [Общежитие](/sehife/yataqxana) · [Спорт](/sehife/idman) · [Информационно-ресурсный центр](/struktur/informasiya-resurs-merkezi)\n\n## Студенческие организации\n\nВ соответствии с приоритетными направлениями государственной молодёжной политики в Академии действуют три студенческие организации:\n\n- [Студенческое научное общество](/sehife/telebe-elmi-cemiyyeti)\n- [Организация студенческой молодёжи](/sehife/telebe-gencler-teskilati)\n- [Студенческий профсоюзный комитет](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
+      body: '**В Академии созданы все условия для эффективной работы профессорско-преподавательского состава и студентов.**\n\n## Бесплатное обеспечение студентов\n\nСтуденты Академии **бесплатно** обеспечиваются:\n\n- полностью отремонтированным общежитием (на льготных условиях)\n- летней и зимней форменной одеждой\n\n## Инфраструктура кампуса\n\n- Информационно-ресурсный центр с обширной литературой по морскому делу на азербайджанском, русском и английском языках\n- Столовая\n- Спортивные залы\n- Бассейн\n\nПодробнее: [Общежитие](/sehife/yataqxana) · [Спорт](/sehife/idman) · [Информационно-ресурсный центр](/struktur/informasiya-resurs-merkezi)\n\n## Студенческие организации\n\nВ соответствии с приоритетными направлениями государственной молодёжной политики в Академии действуют три студенческие организации:\n\n- [Студенческое научное общество](/sehife/telebe-elmi-cemiyyeti)\n- [Организация студенческой молодёжи](/sehife/telebe-gencler-teskilati)\n- [Студенческий профсоюзный комитет](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
     },
     en: {
       title: 'Student Welfare and Support',
-      body: '**The Academy provides the conditions its teaching staff and students need to work effectively.**\n\n## Provision at no cost to students\n\nStudents at the Academy receive the following **free of charge**:\n\n- Fully refurbished hall of residence (on preferential terms)\n- Two meals a day\n- Summer and winter uniform\n\n## Campus facilities\n\n- An information resource centre stocked with extensive maritime literature in Azerbaijani, Russian and English\n- Canteen\n- Sports halls\n- Swimming pool\n\nMore: [Halls of residence](/sehife/yataqxana) · [Sport](/sehife/idman) · [Information Resource Centre](/struktur/informasiya-resurs-merkezi)\n\n## Student organisations\n\nIn line with the priorities of national youth policy, three student organisations operate at the Academy:\n\n- [Student Research Society](/sehife/telebe-elmi-cemiyyeti)\n- [Student Youth Organisation](/sehife/telebe-gencler-teskilati)\n- [Student Trade Union Committee](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
+      body: '**The Academy provides the conditions its teaching staff and students need to work effectively.**\n\n## Provision at no cost to students\n\nStudents at the Academy receive the following **free of charge**:\n\n- Fully refurbished hall of residence (on preferential terms)\n- Summer and winter uniform\n\n## Campus facilities\n\n- An information resource centre stocked with extensive maritime literature in Azerbaijani, Russian and English\n- Canteen\n- Sports halls\n- Swimming pool\n\nMore: [Halls of residence](/sehife/yataqxana) · [Sport](/sehife/idman) · [Information Resource Centre](/struktur/informasiya-resurs-merkezi)\n\n## Student organisations\n\nIn line with the priorities of national youth policy, three student organisations operate at the Academy:\n\n- [Student Research Society](/sehife/telebe-elmi-cemiyyeti)\n- [Student Youth Organisation](/sehife/telebe-gencler-teskilati)\n- [Student Trade Union Committee](/sehife/telebe-hemkarlar-ittifaqi-komitesi)',
     },
   },
 ];
@@ -2345,6 +2378,13 @@ export default {
       // boş sahələrə; doğum tarixi saytda görünməyən şəxsi qeydə — BİR DƏFƏ.
       .then(() => applyStaffProfilesV1(strapi))
       .catch((e: Error) => strapi.log.error('[heyet] F5.59: ' + e.message))
+      // F5.60 — «gündə iki dəfə yemək», «pulsuz yemək» ifadələri (səhifə, xəbər, elan) çıxır; kollec:
+      // 4 yeni səhifə, qəbul səhifəsinin mətni, bölmə, ixtisaslar, sənədlər, ştat cədvəli, üst menyu —
+      // hər biri BİR DƏFƏ (bax src/utils/meal-text.ts, src/utils/kollec.ts).
+      .then(() => applyMealTextV1(strapi))
+      .catch((e: Error) => strapi.log.error('[yemek] F5.60: ' + e.message))
+      .then(() => applyKollecF560(strapi))
+      .catch((e: Error) => strapi.log.error('[kollec] F5.60: ' + e.message))
       // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
       // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
       .then(() => startTranslateMissing(strapi))

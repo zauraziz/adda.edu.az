@@ -41,6 +41,7 @@ import {
   regCode,
   type RegulationSeed,
 } from './esasname-content';
+import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
@@ -73,7 +74,7 @@ const azLower = (s: string) => s.replace(/İ/g, 'i').replace(/I/g, 'ı').toLower
 /** Lokal provayderdə fayl ünvanı nisbidir («/uploads/…») — mətndə tam ünvan lazımdır. */
 export function absUrl(u: string): string {
   if (!u.startsWith('/')) return u;
-  return (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender.com').trim().replace(/\/+$/, '') + u;
+  return envUrl('ADMIN_PUBLIC_URL', 'https://adda-edu-az.onrender.com') + u;
 }
 
 // ── Media: əsasnamə faylları ─────────────────────────────────────────────────

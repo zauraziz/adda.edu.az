@@ -36,13 +36,21 @@ const KNOWN_FIXES: { slug: string; year: number; field: (typeof FIELDS)[number];
   { slug: 'deniz-naviqasiyasi-muhendisliyi', year: 2024, field: 'minScorePaid', from: [346, 3463], to: 346.3 },
 ];
 
-/** 700-dən böyük dəyəri vergüllü onluq kimi oxu. Rəqəm deyilsə olduğu kimi qaytarır. */
-export function normalizeScore(v: unknown): unknown {
+/**
+ * F5.60 — pillənin ən yüksək balı: kollecə (subbakalavr) qəbulda buraxılış imtahanı 300 ballıqdır
+ * (Azərbaycan (rus) dili, riyaziyyat, xarici dil — hər biri 100). Admində «68,3» → 683 yazılmışdı
+ * (Elektrik təchizatı, 2026) — 700-dən az olduğu üçün düzəlmirdi.
+ */
+export const SCORE_MAX_BY_DEGREE: Record<string, number> = { subbachelor: 300 };
+export const scoreMaxOf = (degree: unknown): number => SCORE_MAX_BY_DEGREE[String(degree ?? '')] ?? SCORE_MAX;
+
+/** Ən yüksək baldan (defolt 700) böyük dəyəri vergüllü onluq kimi oxu. Rəqəm deyilsə olduğu kimi qaytarır. */
+export function normalizeScore(v: unknown, max: number = SCORE_MAX): unknown {
   if (v === null || v === undefined || v === '') return v;
   let n = typeof v === 'number' ? v : Number(String(v).trim().replace(',', '.'));
   if (!Number.isFinite(n)) return v;
-  if (n <= SCORE_MAX) return typeof v === 'number' ? v : n; // «227,6» mətni (API) → 227.6
-  while (n > SCORE_MAX) n /= 10;
+  if (n <= max) return typeof v === 'number' ? v : n; // «227,6» mətni (API) → 227.6
+  while (n > max) n /= 10;
   return Math.round(n * 100) / 100; // decimal(10,2)
 }
 
@@ -54,10 +62,22 @@ export function registerScoreNormalizer(strapi: Core.Strapi): void {
       if (context.uid === PROGRAM_UID && (action === 'create' || action === 'update')) {
         const data = ((context.params as Row) || {}).data as Row | undefined;
         const scores = data && Array.isArray(data.admissionScores) ? (data.admissionScores as Row[]) : null;
+        // F5.60 — pillənin ən yüksək balı (subbakalavr — 300). Admin forması `degree`-ni də göndərir;
+        // yalnız ballar yazılıbsa (API) pillə mövcud qeyddən oxunur.
+        let degree = data?.degree;
+        const documentId = ((context.params as Row) || {}).documentId;
+        if (degree === undefined && scores?.length && action === 'update' && typeof documentId === 'string') {
+          const cur = await (strapi.db.query(PROGRAM_UID as never) as unknown as { findOne: (a: Row) => Promise<Row | null> }).findOne({
+            where: { documentId },
+            select: ['degree'],
+          });
+          degree = cur?.degree;
+        }
+        const max = scoreMaxOf(degree);
         for (const s of scores ?? []) {
           if (!s || typeof s !== 'object') continue;
           for (const f of FIELDS) {
-            const fixed = normalizeScore(s[f]);
+            const fixed = normalizeScore(s[f], max);
             if (fixed !== s[f]) {
               strapi.log.info(`[qebul-bali] ${String(s[f])} -> ${String(fixed)} (${String(s.year ?? '')}, vergüllü onluq)`);
               s[f] = fixed;

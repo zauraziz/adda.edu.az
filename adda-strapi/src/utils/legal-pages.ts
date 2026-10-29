@@ -20,6 +20,7 @@ import { applySectionPages } from './section-pages';
 import { CORP_FILES, CORP_PAGE_TEMPLATE, CORP_SLUG, LEGAL_PAGES, type CorpFile } from './legal-pages-content';
 import type { PageLocaleSeed, QebulPageSeed } from './qebul-pages-content';
 import { importLegacyFile, legacyBase, legacyUrl, LegacyUnreachable } from './legacy-files';
+import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
@@ -42,7 +43,7 @@ export async function applyLegalPagesV1(strapi: Core.Strapi): Promise<void> {
 /** Mətndəki fayl keçidi tam ünvan olmalıdır (lokal provayderdə «/uploads/…»). */
 function absUrl(u: string): string {
   if (!u.startsWith('/')) return u;
-  return (process.env.ADMIN_PUBLIC_URL || 'https://adda-edu-az.onrender.com').trim().replace(/\/+$/, '') + u;
+  return envUrl('ADMIN_PUBLIC_URL', 'https://adda-edu-az.onrender.com') + u;
 }
 
 /** Köhnə səhifənin mətnindəki fayllar: «img:N» (N-ci şəkil) və keçid mətni → ünvan. */

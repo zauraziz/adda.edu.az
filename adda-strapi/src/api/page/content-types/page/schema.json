@@ -46,7 +46,8 @@
         "telebe",
         "beynelxalq",
         "akademiya",
-        "faq"
+        "faq",
+        "kollec"
       ],
       "default": "standart",
       "pluginOptions": {
