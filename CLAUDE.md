@@ -228,7 +228,9 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `esasnameMenu:v1`, `cmAz:v13`, `cmAz:v14`, `poliklinika:v1`, `eAkademiya:v1`, `tercume:v1`
 (irəliləyiş `tercume:done`, `tercume:tries`), `qaydaDocs:v1`, `qaydaPages:v1`, `qaydaText:v1`,
 `qaydaLinks:v1`, `qaydaMenu:v1`, `cmAz:v15`, `personMerge:v1`, `personSlugs:v1` (məlumat: `personRedirects` —
-əməkdaşın köhnə ünvanı → yeni, `personMerge:backup` — silinmiş təkrar qeydlər), `staffProfiles:v1`, `cmAz:v16`;
+əməkdaşın köhnə ünvanı → yeni, `personMerge:backup` — silinmiş təkrar qeydlər), `staffProfiles:v1`, `cmAz:v16`,
+`mealText:v1`, `kollecPages:v1`, `kollecAdmission:v1`, `kollecUnit:v1`, `kollecPrograms:v1`, `kollecDocs:v1`,
+`kollecStaff:v1`, `kollecMenu:v1`, `cmAz:v17`;
 sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`;
 F5.56 son deploy-un commit-i `siteRevalidate:commit` — marker deyil, sayt yeniləməsi üçün) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
@@ -308,6 +310,12 @@ bilinmir.
 - **Menyunun vurğusu klientdədir (F5.58):** `HeaderIsland` + `MobileNav` cari ünvanı
   `lib/nav-active.ts` ilə menyu keçidlərinə tutuşdurur (bölmə, mega paneldə qrup və keçid).
   SSR-də heç bir bölmə vurğulanmır — server başlığı keşlidir və ünvanı bilmir.
+- **Vercel: köhnə deploy-un «Redeploy»-u production-u KÖHNƏ koda qaytarır (F5.60).** 28.10.2026-da
+  F5.55c deploy-u yenidən quruldu (`source: redeploy`) və F5.59-dan 3 dəqiqə sonra hazır olub
+  `demo.adda.edu.az`-ı götürdü — F5.56–F5.59 kodu saytda yox idi («Qaydalar və təlimatlar»
+  səhifəsində fayl siyahısı görünmürdü: `dataBlock=qaydalar` F5.57-dədir). Yoxlama: Vercel →
+  Deployments → «Current» deploy-un commit-i `main`-in son commit-i olmalıdır; deyilsə, son
+  deploy → «Promote to Production». Redeploy yalnız ən son deploy üçün.
 
 ### Render / Neon
 
@@ -327,6 +335,11 @@ bilinmir.
   dövri baza işi (setInterval, tez-tez cron) yazılmamalıdır. Yeni növ saytda
   görünürsə → `SITE_TYPES`-a əlavə et.
 - SMTP portları (25/465/587) **səssizcə bloklanır** — Resend işlədilir.
+- **Env-də ünvan markdown keçidi kimi yazıla bilir** («[https://demo.adda.edu.az](https://demo.adda.edu.az)» —
+  çatdan kopyalananda). F5.60: SITE_URL, ADMIN_PUBLIC_URL, LEGACY_SITE_URL, REVALIDATE_URL
+  `src/utils/env-url.ts` ilə təmizlənir (əvvəl yalnız kimlik servisi təmizləyirdi, sayt yeniləməsi
+  «Failed to parse URL» ilə düşürdü); yanlış yazılış açılışda logda (`[revalidate]`). Render-də dəyəri
+  düzəlt: yalnız ünvan, dırnaqsız.
 - «Clear build cache» **lazımsızdır** və pulsuz planda build-i 20+ dəqiqəyə çıxarır.
 
 ### Cloudinary
@@ -1131,6 +1144,51 @@ Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sən�
    - Lokal sınaq: F5.58 bazası + prod-a bənzər 9 qeyd (qısa ad, ziddiyyət, dərc olunmamış redaktə,
      şəxsi qeyd: eyni/fərqli/boş/əlaqəsiz), tapılmayan, çoxmənalı, e-poçtla tapılan — 58 yoxlama;
      Playwright (az/ru/en əməkdaş səhifəsi, kataloq filtri, mobil).
+31. **F5.60 — «pulsuz yemək» ifadələri, Azərbaycan Dənizçilik Kolleci, qaydalar səhifəsi**
+   (layihə sənədi `claude/f560-kollec-yemek.md`).
+   - **Yemək** (`mealText:v1`, `src/utils/meal-text.ts`, məzmun `meal-text-content.ts`; Zaur müəllim,
+     29.10.2026: «gündə iki dəfə yemək və pulsuz yemək ifadələrini yığışdır»): səhifələr (F5.48 «Təqaüd
+     və sosial dəstək», «Tələbə həyatı», F5.49 FAQ, köhnə F3 seed) və köhnə saytdan gələn xəbər/elanlar —
+     dəqiq cümlələr, hər dil, qaralama və dərc sətri, birbaşa bazada (`updatedAt` saxlanır); «Yemək —
+     Gündə 2 dəfə» faktı silinir. Qalıq (`MEAL_RE`) logda — admində əl ilə. Toxunulmayanlar: «isti yemək
+     xidmətinin satın alınması» elanı, açıq qapı günündə «yeməkxanada nahar», kollec Nizamnaməsində
+     «iaşə». Seed faylları, `lib/audiences.ts` («Forma və dərslik»), `Campus.tsx`, `T` eyni mətndədir.
+   - **Kollec** (`src/utils/kollec.ts`, məzmun `kollec-content.ts`, `kollec-nizamname-content.ts`; mənbə —
+     kollecin 12 faylı, 29.10.2026), addımlar ayrı-ayrı BİR DƏFƏ:
+     `kollecPages:v1` — 4 səhifə, layout `kollec` (SectionPage: üst sətir «Kollec», qırıntı kollecin
+     bölməsinə, «Sual ver» yoxdur, canlı cədvəl «İxtisaslar, plan yerləri və təhsil haqqı»):
+     `/sehife/kollecin-tarixi`, `kollecde-tehsil` (`dataBlock=subbakalavr`, `#tedris-bazasi`),
+     `kollecde-tecrube`, `kollecin-nizamnamesi` (PDF-dən köçürülmüş mətn, yan keçid — admindəki
+     «Azərbaycan Dənizçilik Kollecinin nizamnaməsi» sənədinin faylı); yalnız az.
+     `kollecAdmission:v1` — `/sehife/subbakalavr`: «Sayta düzəliş» faylının mətni (giriş, iki cümlə,
+     3 addım), «2026/2027-ci tədris ili: qəbulun nəticələri» cədvəli, əlaqədə kollecin ünvanı, yan
+     keçidlər. `kollecUnit:v1` — «Haqqında»-dakı ünvansız şəkil yazısı, «2016-cı ildə» → «1930-cu ildə
+     yaradılıb», boşdursa faydalı linklər, rəhbər (Əliyeva Arzu — direktor vəzifəsini müvəqqəti icra
+     edən), ru/en-də telefon, e-poçt, ünvan. `kollecPrograms:v1` — 120 AKTS, konvensiyalar, bal
+     683 → 68,3 (subbakalavr 300 ballıqdır: `admission-scores.ts` → `SCORE_MAX_BY_DEGREE`, yazılanda
+     da), səhv cavablı sual. `kollecDocs:v1` — Nizamnamə və 4 təhsil proqramı: «diger» → «normativ»,
+     il, təsvir, ad, bölməyə bağlanma. `kollecStaff:v1` — ştat cədvəli: 9 qeydin tam adı, vəzifənin
+     rəsmi adı (yalnız gözlənilən admin yazılışı), əlavə vəzifə, fənlər; 13 yeni əməkdaş (maaş və
+     xidmət heyəti yoxdur). `kollecMenu:v1` — üst menyu «Kollec» (yalnız F3 yer tutanları idisə):
+     3 qrup / 8 keçid, başlıq kollecin bölməsinə. Seed MENU, `menu-fallback.ts`, `MENU_T` eyni.
+   - **Bölmə səhifəsi** (`struktur/[slug]`): sahədə vergüllə bir neçə tam nömrə — hər biri ayrıca
+     keçid (`lib/phone.ts` → `phoneViews`, ölkə kodu ilə «(+994 12) 371-95-84» də); «Korpus» sahəsində
+     tam ünvan yazılıbsa etiket «Ünvan» (`ADDRESS_RE`). Admin: `cmAz:v17` (şablon «kollec»).
+   - **«Qaydalar və təlimatlar»da fayllar görünmürdü:** kod səbəbi yoxdur — production köhnə deploy
+     idi (bax «Next.js» tələləri, Vercel Redeploy). F5.60 push-u yeni production deploy-dur.
+   - **Mənbə uyğunsuzluqları** (fayllarda, saytda düzəldilməyib): 1930–1945 adı «Zaqafqaziya Dəniz Balıq
+     Sənayesi Texnikumu» / «Zaqafqaziya Balıq Sənayesi Texnikumu» (saytda ikincisi); saytda «İskəndərov
+     İlham», ştatda «İsgəndərov» (ad dəyişmədi, logda); Nəbiyeva Gülşən saytda «Tyutor», ştatda «Metodist»
+     (ştat götürüldü); Həsənov Faiq və Seyfullayeva Sevil saytda var, ştatda yoxdur (toxunulmadı); ADK
+     mətnində «trenajorlarda», auditoriya faylında trenajor otağı yoxdur (səhifəyə yazılmadı); bölmənin
+     «Fəaliyyət sahəsi»ndə trenajor iddiası qalır (admində yoxlanmalı). Təcrübə cədvəlindəki tələbə adları
+     və ştatdakı maaşlar saytda yoxdur.
+   - Lokal sınaq: F5.59 bazası → açılış zənciri; sonra prod-a bənzər vəziyyət (bölmə az/ru/en, 4 ixtisas
+     683 balı ilə, 5 sənəd faylla, 11 əməkdaş, dərc olunmamış redaktələr, köhnə menyu, git HEAD seed
+     mətni ilə 3 səhifə × 3 dil, 8 xəbər, elan) → miqrasiya → markerli və markersiz təkrar (cədvəl
+     snapshot-ları eyni) — 114 yoxlama; DB mətni yeni seed ilə EYNİDİR (27 səhifə-dil, saf yoxlama);
+     Playwright (4 səhifə, bölmə az/ru/en, subbakalavr, FAQ «Kollec» qrupu, menyu, mobil, 13 səhifədə
+     yemək ifadəsi yoxdur).
 
 ---
 
