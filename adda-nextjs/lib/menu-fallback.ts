@@ -10,7 +10,7 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'Hüquqi baza və etika', links: [{label:'Nizamnamə və təsis sənədləri',url:'/sehife/nizamname'},{label:'Normativ-hüquqi sənədlər',url:'#'},{label:'Struktur bölmələrin əsasnamələri',url:'/sehife/struktur-bolmelerin-esasnameleri'},{label:'Qaydalar və təlimatlar',url:'/sehife/qaydalar-ve-telimatlar'},{label:'Daxili intizam qaydaları',url:'/sehife/daxili-intizam-qaydalari'},{label:'Akademik dürüstlük və antiplagiat',url:'/sehife/akademik-durustluk'},{label:'ADDA etika kodeksi',url:'#'},{label:'Müraciətlərə baxılma qaydası',url:'/sehife/muracietlere-baxilma-qaydasi'}] },
       { title: 'Keyfiyyət və hesabatlılıq', links: [{label:'Keyfiyyət siyasəti',url:'/sertifikatlar#keyfiyyet-sahesinde-siyaset'},{label:'Akkreditasiya və sertifikatlar',url:'/sertifikatlar'},{label:'Keyfiyyəti idarəetmə sistemi',url:'/sehife/keyfiyyet-idareetme-sistemi'},{label:'İllik fəaliyyət hesabatları',url:'#'},{label:'Özünüqiymətləndirmə nəticələri',url:'#'},{label:'Tələbə və məzun sorğuları',url:'#'},{label:'Məzunların məşğulluq göstəriciləri',url:'#'},{label:'Dayanıqlı inkişaf',url:'#'}] },
       { title: 'Heyət', links: [{label:'Professor-müəllim heyəti',url:'#'},{label:'Təlimçi-texniki heyət',url:'#'},{label:'İnzibati heyət',url:'#'},{label:'İşə qəbul qaydaları',url:'/sehife/ise-qebul-qaydalari'}] },
-      { title: 'Təminat', links: [{label:'Satınalmalar',url:'#'},{label:'Binalar və infrastruktur',url:'#'},{label:'Yataqxana',url:'#'},{label:'Təlim-Tədris Mərkəzi',url:'#'},{label:'Tədris gəmisi',url:'#'},{label:'Kollec',url:'#'}] },
+      { title: 'Təminat', links: [{label:'Satınalmalar',url:'#'},{label:'Binalar və infrastruktur',url:'#'},{label:'Yataqxana',url:'#'},{label:'Təlim-Tədris Mərkəzi',url:'#'},{label:'Tədris gəmisi',url:'#'},{label:'Kollec',url:'/struktur/azerbaycan-denizcilik-kolleci-phs'}] },
       { title: 'Kommunikasiya', links: [{label:'Vətəndaşların müraciəti',url:'#'},{label:'Əlaqə',url:'#'}] },
     ]},
     // F5.45 — «Qəbul» v2 (adda-strapi/src/utils/menu-qebul.ts QEBUL_MENU_V2 ilə eyni).
@@ -59,7 +59,12 @@ export const FALLBACK_MENU: SiteMenu = {
       { title: 'İstehsalat ilə əlaqələr', links: [{label:'Korporativ tərəfdaşlar',url:'#'},{label:'Sərgilər və forumlar',url:'#'}] },
       { title: 'Bacarıqların inkişafı', links: [{label:'Soft Skills təlimləri',url:'#'},{label:'Sertifikatlaşdırma dəstəyi',url:'#'},{label:'Master-klaslar',url:'#'}] },
     ]},
-    { label: 'Kollec', order: 3, url: '#', groups: [ { title: 'Kollec', links: [{label:'Fakültələr',url:'#'},{label:'Əlavə təhsil',url:'#'},{label:'İnfrastruktur',url:'#'}] } ] },
+    // F5.60 — «Kollec» (adda-strapi/src/utils/kollec-content.ts KOLLEC_MENU ilə eyni).
+    { label: 'Kollec', order: 3, url: '/struktur/azerbaycan-denizcilik-kolleci-phs', groups: [
+      { title: 'Kollec haqqında', links: [{label:'Kollec haqqında',url:'/struktur/azerbaycan-denizcilik-kolleci-phs'},{label:'Kollecin tarixi',url:'/sehife/kollecin-tarixi'},{label:'Kollecin Nizamnaməsi',url:'/sehife/kollecin-nizamnamesi'}] },
+      { title: 'Təhsil', links: [{label:'Təhsil və ixtisaslar',url:'/sehife/kollecde-tehsil'},{label:'İstehsalat təcrübəsi',url:'/sehife/kollecde-tecrube'},{label:'Tədris bazası',url:'/sehife/kollecde-tehsil#tedris-bazasi'}] },
+      { title: 'Qəbul', links: [{label:'Kollecə qəbul',url:'/sehife/subbakalavr'},{label:'İxtisaslar, plan yerləri və təhsil haqqı',url:'/ixtisaslar?tab=subbakalavr'}] },
+    ]},
     // F5.49 — «Tez-tez verilən suallar» (adda-strapi/src/utils/menu-f549.ts ilə eyni).
     { label: 'FAQ', order: 4, url: '/sehife/faq', groups: [] },
     { label: 'Əlaqə', order: 5, url: '#', groups: [] },

@@ -72,6 +72,8 @@ interface SectionCfg {
   eyebrow: string;
   crumb?: { href: string; label: string; hubSlug?: string };
   cta?: { text: string; href: string };
+  /** Canlı ixtisas cədvəlinin başlığı (standart: «İxtisaslar, yer sayı və haqq»). */
+  blockTitle?: string;
 }
 const SECTION_CFG: Record<SectionLayout, SectionCfg> = {
   bolmeli: { eyebrow: 'Səhifə' },
@@ -110,6 +112,13 @@ const SECTION_CFG: Record<SectionLayout, SectionCfg> = {
     eyebrow: 'Akademiya',
     crumb: { href: '/sehife/adda-dunen-ve-bugun', label: 'Akademiya', hubSlug: 'adda-dunen-ve-bugun' },
     cta: { text: 'Akademiya barədə sualınızı onlayn göndərin — cavab e-poçtunuza gəlir.', href: '/vetendaslarin-muracieti' },
+  },
+  // F5.60 — kollecin səhifələri: qırıntı kollecin bölmə səhifəsinə. «Sual ver» yoxdur — müraciət
+  // forması Akademiyanındır, kollecin əlaqəsi səhifənin «Əlaqə» blokundadır.
+  kollec: {
+    eyebrow: 'Kollec',
+    crumb: { href: '/struktur/azerbaycan-denizcilik-kolleci-phs', label: 'Azərbaycan Dənizçilik Kolleci' },
+    blockTitle: 'İxtisaslar, plan yerləri və təhsil haqqı',
   },
   // F5.49 — FAQ öz komponentindədir (FaqPage); bura yalnız tip tamlığı üçün.
   faq: {
@@ -332,7 +341,7 @@ export default async function SectionPage({ locale, menu, doc, slug, isFallback,
     ? tr(feedCfg.title, locale)
     : block === 'qebul_cedveli'
       ? tr('İxtisaslar üzrə cədvəl', locale)
-      : tr('İxtisaslar, yer sayı və haqq', locale);
+      : tr(cfg.blockTitle ?? 'İxtisaslar, yer sayı və haqq', locale);
 
   const tracks = new Set(steps.map((s) => (s.track ?? '').trim()));
   const stepsTitle =

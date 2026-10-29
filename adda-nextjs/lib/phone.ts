@@ -11,6 +11,8 @@
  *   «(+99412) 493-36-44 (3078)», «(012) 493-36-44 (daxili: 103)») — eyni format;
  *   F5.59: başqa şəhər/mobil nömrəsi «(012) 371-03-24» də eyni qayda ilə — az
  *   «(012) 371 03 24», en/ru «+994 12 371 03 24», keçid `tel:+994123710324`;
+ *   F5.60: ölkə kodu ilə yazılış «(+994 12) 371-95-84» də; bir sahədə vergüllə bir neçə
+ *   tam nömrə — hər biri ayrıca keçid (`phoneViews`: kollecin iki nömrəsi);
  *   qalan yazılışlar olduğu kimi qalır.
  *
  * Strapi-də eyni nömrə: src/utils/phone-fix.ts (`ACADEMY_PHONE_*`).
@@ -41,6 +43,14 @@ export function isExtension(raw: string): boolean {
 const MAIN_DIGITS = '4933644';
 /** «(012) 371-03-24», «(050) 123 45 67» — şəhər kodu mötərizədə, 7 rəqəm. */
 const LOCAL_FULL = /^\(0(\d{2})\)\s*(\d{3})[\s-]?(\d{2})[\s-]?(\d{2})$/;
+/** F5.60 — «(+994 12) 371-95-84», «+994 50 123 45 67», «(99412) 3719584» — ölkə kodu ilə. */
+const INTL_FULL = /^\(?(?:\+|00)?994\)?[\s-]*\(?(\d{2})\)?[\s-]*(\d{3})[\s-]?(\d{2})[\s-]?(\d{2})$/;
+
+/** Tam nömrə (ümumi nömrədən başqa): şəhər/operator kodu və 7 rəqəm üç qrupda. */
+function fullNumber(v: string): [string, string, string, string] | null {
+  const m = LOCAL_FULL.exec(v) ?? INTL_FULL.exec(v);
+  return m ? [m[1], m[2], m[3], m[4]] : null;
+}
 const MAIN_CODES = ['', '12', '012', '99412', '0099412'];
 
 /**
@@ -75,16 +85,36 @@ export function phoneView(raw: string | null | undefined, locale: Locale): Phone
     if (!exts.length) return main;
     return { text: `${main.text}, ${EXT_WORD[locale]} ${exts.join(', ')}`, href: `tel:${ACADEMY_TEL},${exts[0]}` };
   }
-  const m = LOCAL_FULL.exec(v);
+  const m = fullNumber(v);
   if (m) {
-    const [, code, a, b, c] = m;
+    const [code, a, b, c] = m;
     return { text: locale === 'az' ? `(0${code}) ${a} ${b} ${c}` : `+994 ${code} ${a} ${b} ${c}`, href: `tel:+994${code}${a}${b}${c}` };
   }
-  const digits = v.replace(/[^\d+]/g, '');
+  // Tanınmayan yazılış olduğu kimi; keçid birinci nömrəyə (ayırıcıdan sonrakı rəqəmlər qoşulmur).
+  const digits = v.split(/[,;/]/)[0].replace(/[^\d+]/g, '');
   return { text: v, href: `tel:${digits}` };
 }
 
-/** Bölmənin telefonu: daxili nömrə varsa ümumi + daxili, yoxdursa ümumi nömrə. */
-export function unitPhone(ext: string | null | undefined, locale: Locale): PhoneView {
-  return phoneView(ext, locale) ?? academyPhone(locale);
+/**
+ * F5.60 — sahədə vergül və ya nöqtəli vergüllə bir neçə TAM nömrə: hər biri öz formatında və
+ * öz keçidi ilə. Sətir bütövlükdə tanınırsa (ümumi + daxili nömrə, tək nömrə) və ya
+ * hissələrdən biri tam nömrə deyilsə — bir nömrə (phoneView). Boş dəyər → [].
+ */
+export function phoneViews(raw: string | null | undefined, locale: Locale): PhoneView[] {
+  const v = (raw ?? '').trim();
+  const one = phoneView(v, locale);
+  if (!one) return [];
+  if (isExtension(v) || academyExtensions(v) || fullNumber(v)) return [one];
+  const parts = v.split(/\s*[,;]\s*/).filter(Boolean);
+  const whole = (p: string): boolean => Boolean(fullNumber(p)) || academyExtensions(p)?.length === 0;
+  if (parts.length > 1 && parts.every(whole)) {
+    return parts.map((p) => phoneView(p, locale)).filter((x): x is PhoneView => x !== null);
+  }
+  return [one];
+}
+
+/** Bölmənin telefonu: daxili nömrə varsa ümumi + daxili, tam nömrə(lər) öz formatında, boşdursa ümumi nömrə. */
+export function unitPhones(ext: string | null | undefined, locale: Locale): PhoneView[] {
+  const list = phoneViews(ext, locale);
+  return list.length ? list : [academyPhone(locale)];
 }

@@ -71,7 +71,7 @@ export const AUDIENCES: Audience[] = [
     facts: [
       { label: 'Diplom tanınır', value: '170-dən çox ölkədə', icon: 'ti-world' },
       { label: 'Yataqxana', value: '311 yer', icon: 'ti-building' },
-      { label: 'Forma, dərslik, yemək', value: 'Ödənişsiz', icon: 'ti-shield-check' },
+      { label: 'Forma və dərslik', value: 'Ödənişsiz', icon: 'ti-shield-check' },
       { label: 'Dəniz təcrübəsi', value: 'Tədris gəmisi və ASCO gəmiləri', icon: 'ti-ship' },
     ],
     stepsTitle: 'Abituriyentin yolu',
@@ -403,7 +403,7 @@ export const AUDIENCES: Audience[] = [
     icon: 'ti-users',
     lead: 'Akademiya nədir, övladınız hansı ixtisasa yiyələnir və hansı şəraitdə oxuyur.',
     facts: [
-      { label: 'Forma, dərslik, yemək', value: 'Ödənişsiz', icon: 'ti-shield-check' },
+      { label: 'Forma və dərslik', value: 'Ödənişsiz', icon: 'ti-shield-check' },
       { label: 'Yataqxana', value: '311 yer', icon: 'ti-building' },
       { label: 'Diplom tanınır', value: '170-dən çox ölkədə', icon: 'ti-world' },
       { label: 'Tabe olduğu qurum', value: 'ASCO', icon: 'ti-ship' },

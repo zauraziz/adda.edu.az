@@ -42,6 +42,7 @@ import '../../../_styles/35-leadership.css';
 import '../../../_styles/27-gallery.css';
 import '../../../_styles/36-unit.css';
 import '../../../_styles/37-program.css';
+import { Fragment } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -90,7 +91,7 @@ import {
 } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, LOCALES, type Locale } from '@/lib/i18n';
 import { positionRank, postInUnit } from '@/lib/positions';
-import { unitPhone } from '@/lib/phone';
+import { unitPhones, type PhoneView } from '@/lib/phone';
 import { fmtDate } from '@/lib/format';
 
 /** F5.46 — admin keçidi: daxili ünvana dil prefiksi (eyni vərəq), xarici — yeni vərəqdə. */
@@ -305,6 +306,28 @@ function FnCardGrid({ cards, locale }: { cards: FnCard[]; locale: Locale }) {
   );
 }
 
+/** F5.60 — bir neçə nömrə (kollecin iki nömrəsi): hər biri öz zəng keçidi ilə, vergüllə. */
+function PhoneLinks({ phones, className }: { phones: PhoneView[]; className?: string }) {
+  return (
+    <>
+      {phones.map((p, i) => (
+        <Fragment key={p.href}>
+          {i ? ', ' : null}
+          <a href={p.href} className={className}>
+            {p.text}
+          </a>
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+/**
+ * F5.60 — «Korpus» sahəsinə tam ünvan yazılıbsa («Bakı şəh., Xətai ray., … küç. 3») etiket
+ * «Ünvan» olur. Korpus adları («I tədris binası», «2-ci korpus») bu sözləri daşımır.
+ */
+const ADDRESS_RE = /küç|prospekt|şəh\.|şəhəri|qəs\.|qəsəbə|ray\.|rayonu|AZ\s?\d{4}|ул\.|улица|проспект|просп\.|пос\.|район|street|avenue|district/i;
+
 /** F4.9a — yan panelin kompakt heyət sətri: monoqram/foto (28px) + ad + vəzifə. */
 function StaffMiniRow({
   p,
@@ -411,7 +434,10 @@ export default async function UnitPage({
 
   // F5.53 — hər bölmənin əlaqəsində telefon var: daxili nömrə varsa
   // «(012) 493 36 44, daxili N», yoxdursa Akademiyanın ümumi nömrəsi (lib/phone.ts).
-  const phone = unitPhone(unit.phoneExt, locale);
+  // F5.60 — sahədə bir neçə tam nömrə (kollec) — hər biri ayrıca keçid.
+  const phones = unitPhones(unit.phoneExt, locale);
+  // F5.60 — «Korpus» sahəsində tam ünvan yazılıbsa (kollec) etiket «Ünvan».
+  const buildingIsAddress = ADDRESS_RE.test(unit.building ?? '');
   // F4.11c — `receptionSlots` doludursa köhnə `receptionHours` sətrinin ƏVƏZİNƏ göstərilir.
   const receptionRows = buildReceptionRows(unit.receptionSlots, locale);
   const subunits = [...unit.children].sort(
@@ -682,7 +708,13 @@ export default async function UnitPage({
                   <li className="un-fact">
                     <i className="ti ti-phone" aria-hidden="true" />
                     <span className="un-fact-k">{tr('Telefon', locale)}</span>
-                    <a href={phone.href} className="un-fact-v">{phone.text}</a>
+                    {phones.length > 1 ? (
+                      <span className="un-fact-v">
+                        <PhoneLinks phones={phones} className="un-fact-v" />
+                      </span>
+                    ) : (
+                      <a href={phones[0].href} className="un-fact-v">{phones[0].text}</a>
+                    )}
                   </li>
                 ) : null}
                 {unit.receptionHours ? (
@@ -984,9 +1016,9 @@ export default async function UnitPage({
                   <div className="na-event-info" style={{ maxWidth: 'none', margin: 0 }}>
                     {unit.building ? (
                       <div className="na-ei-row">
-                        <i className="ti ti-building na-ei-ic" aria-hidden="true" />
+                        <i className={`ti ${buildingIsAddress ? 'ti-map-pin' : 'ti-building'} na-ei-ic`} aria-hidden="true" />
                         <div>
-                          <div className="na-ei-k">{tr('Korpus', locale)}</div>
+                          <div className="na-ei-k">{tr(buildingIsAddress ? 'Ünvan' : 'Korpus', locale)}</div>
                           <div className="na-ei-v">{unit.building}</div>
                         </div>
                       </div>
@@ -1013,7 +1045,7 @@ export default async function UnitPage({
                       <i className="ti ti-phone na-ei-ic" aria-hidden="true" />
                       <div>
                         <div className="na-ei-k">{tr('Telefon', locale)}</div>
-                        <div className="na-ei-v"><a href={phone.href}>{phone.text}</a></div>
+                        <div className="na-ei-v"><PhoneLinks phones={phones} /></div>
                       </div>
                     </div>
                     {unit.email ? (

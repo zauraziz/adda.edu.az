@@ -1017,7 +1017,8 @@ const T: Array<[string, string, string]> = [
   ['Diplom tanınır', 'Диплом признаётся', 'Diploma recognised'],
   ['170-dən çox ölkədə', 'более чем в 170 странах', 'in over 170 countries'],
   ['311 yer', '311 мест', '311 places'],
-  ['Forma, dərslik, yemək', 'Форма, учебники, питание', 'Uniform, textbooks, meals'],
+  // F5.60 — «yemək» çıxdı (Zaur müəllim, 29.10.2026: pulsuz yemək ifadələri saytdan yığışdırılır).
+  ['Forma və dərslik', 'Форма и учебники', 'Uniform and textbooks'],
   ['Ödənişsiz', 'Бесплатно', 'Free of charge'],
   ['Dəniz təcrübəsi', 'Морская практика', 'Sea training'],
   ['Tədris gəmisi və ASCO gəmiləri', 'Учебное судно и суда ASCO', 'Training ship and ASCO vessels'],
@@ -1142,7 +1143,7 @@ const T: Array<[string, string, string]> = [
   ['Elmi seminarlar', 'Научные семинары', 'Research seminars'],
   ['Olimpiadalar və debatlar', 'Олимпиады и дебаты', 'Olympiads and debates'],
   ['Hər yaz tələbə konfransı', 'Студенческая конференция каждую весну', 'A student conference every spring'],
-  ['Forma, dərslik və yemək ödənişsizdir; fərqlənənlərə ASCO təqaüdü.', 'Форма, учебники и питание бесплатны; лучшим студентам стипендия ASCO.', 'Free uniforms, textbooks and meals; ASCO scholarships for top students.'],
+  ['Forma və dərslik ödənişsizdir; fərqlənənlərə ASCO təqaüdü.', 'Форма и учебники бесплатны; лучшим студентам стипендия ASCO.', 'Free uniforms and textbooks; ASCO scholarships for top students.'],
   ['Konsertlər, yarışlar və seminarlar: hamısı bir təqvimdə.', 'Концерты, соревнования и семинары: всё в одном календаре.', 'Concerts, competitions and seminars, all in one calendar.'],
   ['İngilis dilində tədris, qəbul qaydaları və gəliş bələdçisi.', 'Обучение на английском, правила приёма и путеводитель.', 'English-taught programmes, admission rules and an arrival guide.'],
   ['Akademiyanın diplomu 170-dən çox ölkədə tanınır. ADDA 2016-cı ildən Beynəlxalq Dəniz Universitetləri Assosiasiyasının (IAMU) üzvüdür, 11 ölkənin dənizçilik və texniki universitetləri ilə tələbə və müəllim mübadiləsi, ikili diplom və birgə tədqiqat aparır.',
@@ -1697,6 +1698,7 @@ const MENU_T: Array<[string, string, string]> = [
   ['Qəbul saatları', 'Часы приёма', 'Reception hours'],
   ['Rəhbər', 'Руководитель', 'Head'],
   ['Korpus', 'Корпус', 'Building'],
+  ['Ünvan', 'Адрес', 'Address'], // F5.60: «Korpus» sahəsində tam ünvan (kollec)
   ['Mərtəbə', 'Этаж', 'Floor'],
   ['Otaq', 'Кабинет', 'Room'],
   ['Daxili telefon', 'Внутренний телефон', 'Extension'],
@@ -1787,6 +1789,16 @@ const MENU_T: Array<[string, string, string]> = [
   ['Dəniz elmləri və mühəndislik', 'Морские науки и инженерия', 'Maritime science and engineering'],
   ['Kurslara qeydiyyat', 'Запись на курсы', 'Course registration'],
   ['STCW və təlim kursları', 'Курсы STCW и подготовки', 'STCW and training courses'],
+  // F5.60 — üst menyunun «Kollec» bölməsi (adda-strapi/src/utils/kollec-content.ts KOLLEC_MENU) və
+  // kollecin səhifələri (SectionPage, layout=kollec).
+  ['Kollec haqqında', 'О колледже', 'About the College'],
+  ['Kollecin tarixi', 'История колледжа', 'History of the College'],
+  ['Kollecin Nizamnaməsi', 'Устав колледжа', 'College Charter'],
+  ['Təhsil və ixtisaslar', 'Обучение и специальности', 'Study and Programmes'],
+  ['Tədris bazası', 'Учебная база', 'Teaching Facilities'],
+  ['Kollecə qəbul', 'Приём в колледж', 'College Admission'],
+  ['İxtisaslar, plan yerləri və təhsil haqqı', 'Специальности, план приёма и стоимость обучения', 'Programmes, Places and Tuition Fees'],
+  ['Azərbaycan Dənizçilik Kolleci', 'Азербайджанский морской колледж', 'Azerbaijan Maritime College'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

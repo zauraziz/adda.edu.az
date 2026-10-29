@@ -114,9 +114,20 @@ export interface Program {
 /**
  * F5.45 — səhifə şablonu: standart (başlıq + mətn) və ya sağ panelli; F5.46 — `tehsil`;
  * F5.47 — `elm`; F5.48 — `telebe`, `beynelxalq`; F5.49 — `akademiya`, `faq`
- * (tez-tez verilən suallar: app/_components/FaqPage.tsx).
+ * (tez-tez verilən suallar: app/_components/FaqPage.tsx); F5.60 — `kollec`
+ * (Azərbaycan Dənizçilik Kollecinin səhifələri).
  */
-export type PageLayout = 'standart' | 'bolmeli' | 'qebul' | 'tehsil' | 'elm' | 'telebe' | 'beynelxalq' | 'akademiya' | 'faq';
+export type PageLayout =
+  | 'standart'
+  | 'bolmeli'
+  | 'qebul'
+  | 'tehsil'
+  | 'elm'
+  | 'telebe'
+  | 'beynelxalq'
+  | 'akademiya'
+  | 'faq'
+  | 'kollec';
 /** F5.45 — kataloqdan canlı blok (bax app/_components/AdmissionData.tsx). */
 export type PageDataBlock =
   | 'yox'

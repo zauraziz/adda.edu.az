@@ -1,7 +1,7 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 381, əhatəli: 3, dəyişməz: 522,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 381, əhatəli: 4, dəyişməz: 522,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
@@ -366,6 +366,7 @@ html[data-contrast="high"] .na-ei-k{color:#4d525c}
 html[data-contrast="high"] .na-ei-v{color:var(--navy-900)}
 html[data-contrast="high"] .na-ei-v a{color:#105781}
 html[data-contrast="high"] .na-ei-v a:hover{color:#615026}
+html[data-contrast="high"] .un-fact .na-ei-v a:hover{color:#ebe3ce}
 html[data-contrast="high"] .na-sp-name{color:var(--navy-900)}
 html[data-contrast="high"] .na-sp-role{color:var(--gray-700)}
 html[data-contrast="high"] .na-sp-org{color:#4d525c}

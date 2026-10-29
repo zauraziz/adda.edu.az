@@ -33,6 +33,8 @@ const GROUPS: { id: string; label: string; icon: string; layouts: Array<PageLayo
   { id: 'beynelxalq', label: 'Beynəlxalq əlaqələr', icon: 'ti-world', layouts: ['beynelxalq'] },
   { id: 'elm', label: 'Elm və innovasiya', icon: 'ti-flask', layouts: ['elm'] },
   { id: 'akademiya', label: 'Akademiya', icon: 'ti-building-bank', layouts: ['akademiya'] },
+  // F5.60 — kollecin səhifələri (layout=kollec).
+  { id: 'kollec', label: 'Kollec', icon: 'ti-anchor', layouts: ['kollec'] },
   { id: 'diger', label: 'Digər suallar', icon: 'ti-help-circle', layouts: ['bolmeli', 'standart', null] },
 ];
 

@@ -163,7 +163,7 @@ export default function Campus({ photos, locale }: { photos: CampusPhoto[]; loca
           </a>
 
           <Mini cls="cl-well" icon={IC.well} name="Təqaüd və sosial dəstək" href="/sehife/sosial-teminat-ve-maddi-yardim" locale={locale}>
-            {tr('Forma, dərslik və yemək ödənişsizdir; fərqlənənlərə ASCO təqaüdü.', locale)}
+            {tr('Forma və dərslik ödənişsizdir; fərqlənənlərə ASCO təqaüdü.', locale)}
           </Mini>
 
           <Mini cls="cl-events" icon={IC.events} name="Tədbirlər təqvimi" href="/tedbirler" locale={locale}>
