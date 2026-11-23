@@ -889,7 +889,7 @@ const T: Array<[string, string, string]> = [
   ['Akademiya indi necə görünür', 'Как академия выглядит сегодня', 'What the Academy looks like now'],
   ['Rəhbərlik ənənəsi 1997-ci ildən', 'Традиция руководства с 1997 года', 'Leadership tradition since 1997'],
   ['Qəhrəmanlarımız', 'Наши герои', 'Our Heroes'],
-  ['Vətən uğrunda şəhid olan məzunlar', 'Выпускники, павшие за Родину', 'Graduates who fell for their country'],
+  ['Şəhid və qazi məzunlarımız', 'Наши выпускники — шехиды и ветераны', 'Our martyr and veteran graduates'],
   ['Elm və nəşrlər', 'Наука и публикации', 'Research and publications'],
   ['Elmi jurnalımız onlayn versiyada', 'Наш научный журнал онлайн', 'Our Academic Journal Online'],
   ['Xatirə və kimlik', 'Память и идентичность', 'Memory and identity'],
@@ -1799,6 +1799,22 @@ const MENU_T: Array<[string, string, string]> = [
   ['Kollecə qəbul', 'Приём в колледж', 'College Admission'],
   ['İxtisaslar, plan yerləri və təhsil haqqı', 'Специальности, план приёма и стоимость обучения', 'Programmes, Places and Tuition Fees'],
   ['Azərbaycan Dənizçilik Kolleci', 'Азербайджанский морской колледж', 'Azerbaijan Maritime College'],
+  // --- F5.61 qəhrəmanlar: şəhidlər və qazilər (az, ru, en) ---
+  ['Qürur və ehtiram', 'Гордость и уважение', 'Pride and respect'],
+  ['Vətən uğrunda döyüşmüş şəhid və qazi məzunlarımız', 'Наши выпускники — шехиды и ветераны, сражавшиеся за Родину', 'Our graduates who fought for the homeland: martyrs and veterans'],
+  ['Şəhidlərimiz', 'Наши шехиды', 'Our martyrs'],
+  ['Qazilərimiz', 'Наши ветераны', 'Our veterans'],
+  ['Vətən uğrunda canlarından keçən məzunlarımızın əziz xatirəsinə', 'Светлой памяти наших выпускников, отдавших жизнь за Родину', 'In loving memory of our graduates who gave their lives for the homeland'],
+  ['Döyüş yolu keçmiş qazi məzunlarımıza ehtiramla', 'С уважением к нашим выпускникам — ветеранам, прошедшим боевой путь', 'With respect to our graduates, veterans of combat'],
+  ['Şəhid', 'Шехид', 'Martyr'],
+  ['Qazi', 'Ветеран', 'Veteran'],
+  ['Tam bioqrafiya', 'Полная биография', 'Full biography'],
+  ['Doğum tarixi', 'Дата рождения', 'Date of birth'],
+  ['Doğum yeri', 'Место рождения', 'Place of birth'],
+  ['ADDA-da ixtisas', 'Специальность в ADDA', 'Programme at ADDA'],
+  ['Şəhid olduğu tarix', 'Дата гибели', 'Date of death'],
+  ['Şəhid olduğu yer', 'Место гибели', 'Place of death'],
+  ['Təltifləri', 'Награды', 'Awards'],
 ];
 
 // tr — komponentlərdə tək sətrin dəqiq (exact-match) tərcüməsi.

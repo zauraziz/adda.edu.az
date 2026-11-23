@@ -11,6 +11,8 @@ export type SearchUi = {
   error: string;
   /** F5.58 — modalın altında tam nəticələr səhifəsinə keçid («Bütün nəticələr (N)»). */
   all: string;
+  /** F5.61 — sualı AI köməkçiyə ver (/kopilot?q=). */
+  ask: string;
   /** ru/en-də az dilində olan nəticənin nişanı. */
   azOnly: string;
 };
@@ -70,6 +72,10 @@ export function hitHref(locale: string, h: SearchHit): { href: string; external:
   return href ? { href, external: false } : null;
 }
 
+/** F5.61 — AI köməkçi, sual ilə (səhifə açılan kimi soruşur). */
+export const copilotHref = (locale: string, q: string): string =>
+  `/${locale}/kopilot${q ? `?q=${encodeURIComponent(q)}` : ''}`;
+
 /** Tam nəticələr səhifəsi. */
 export const searchPageHref = (locale: string, q: string, type?: string): string =>
   `/${locale}/axtaris?q=${encodeURIComponent(q)}${type ? `&tip=${encodeURIComponent(type)}` : ''}`;
@@ -98,6 +104,7 @@ export const SEARCH_UI: Record<Locale, SearchUi> = {
     loading: 'Axtarılır…',
     error: 'Xəta baş verdi',
     all: 'Bütün nəticələr',
+    ask: 'AI köməkçidən soruş',
     azOnly: 'az',
   },
   ru: {
@@ -123,6 +130,7 @@ export const SEARCH_UI: Record<Locale, SearchUi> = {
     loading: 'Идёт поиск…',
     error: 'Произошла ошибка',
     all: 'Все результаты',
+    ask: 'Спросить AI-помощника',
     azOnly: 'az',
   },
   en: {
@@ -148,6 +156,7 @@ export const SEARCH_UI: Record<Locale, SearchUi> = {
     loading: 'Searching…',
     error: 'Something went wrong',
     all: 'All results',
+    ask: 'Ask the AI assistant',
     azOnly: 'az',
   },
 };

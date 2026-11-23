@@ -21,6 +21,8 @@ import { STRAPI_URL } from '@/lib/strapi';
  */
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// F5.61 — cavab (axtarış + generasiya + lazım olsa sitat təmiri) 10 s-dən uzun çəkə bilir.
+export const maxDuration = 60;
 
 const LOCALES = ['az', 'ru', 'en'];
 

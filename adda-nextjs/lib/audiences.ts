@@ -229,7 +229,7 @@ export const AUDIENCES: Audience[] = [
       { label: 'İxtisasartırma və xaricdə təhsil', href: '/sehife/xaricde-tehsil-ve-ixtisasartirma', note: 'ASCO-nun Gəmiçilikdə Təqaüd Proqramı' },
       { label: 'Məzunların işlə təminatı', href: '/sehife/mezunlarin-isle-teminati', note: 'Harada işləyirlər, karyera dəstəyi' },
       { label: 'Doktorantura', href: '/sehife/doktorantura', note: 'Elmi karyeraya davam' },
-      { label: 'Qəhrəmanlarımız', href: '/qehremanlarimiz', note: 'Vətən uğrunda şəhid olan məzunlar' },
+      { label: 'Qəhrəmanlarımız', href: '/qehremanlarimiz', note: 'Şəhid və qazi məzunlarımız' },
     ],
     groups: [
       {

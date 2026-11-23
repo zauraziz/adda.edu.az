@@ -9,6 +9,9 @@
 .srp-btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 20px;border:0;border-radius:12px;background:var(--navy-800);color:#fff;font-family:var(--nav-font,'Manrope',sans-serif);font-size:calc(14px * var(--fs-scale));font-weight:700;cursor:pointer}
 .srp-btn:hover{background:var(--navy-700)}
 .srp-btn i{color:var(--gold-400)}
+.srp-ask{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 16px;border:1px solid var(--gold-400);border-radius:999px;font-family:var(--nav-font,'Manrope',sans-serif);font-size:calc(14px * var(--fs-scale));font-weight:700;color:var(--navy-800);background:#fff;text-decoration:none}
+.srp-ask:hover{background:var(--gold-100)}
+.srp-ask i{color:var(--gold-600);font-size:calc(17px * var(--fs-scale))}
 .srp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
 .srp-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:calc(13px * var(--fs-scale));font-weight:600;color:var(--navy-800);text-decoration:none;background:#fff}
 .srp-chip span{font-weight:700;color:var(--gold-600)}

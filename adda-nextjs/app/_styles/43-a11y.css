@@ -1,7 +1,7 @@
 /* F5.49 — YÜKSƏK KONTRAST (html[data-contrast="high"]): AVTOMATİK YARADILIB.
    Əl ilə redaktə etmə: tools/gen-contrast-css.mjs (cd adda-nextjs && npm run gen:contrast).
    Bütün «color» qaydaları eyni sıra ilə təkrarlanır (kaskad dəyişmir); zəif olanlar
-   fona görə düzəldilir — ≥ 7:1. Düzəliş: 381, əhatəli: 4, dəyişməz: 522,
+   fona görə düzəldilir — ≥ 7:1. Düzəliş: 384, əhatəli: 4, dəyişməz: 528,
    solğunlaşdıran opacity → 1: 6. */
 
 /* ── Ümumi ── */
@@ -327,6 +327,9 @@ html[data-contrast="high"] .search-hit .sh-main b .sh-lang{color:#105781}
 html[data-contrast="high"] .search-all{color:var(--navy-800)}
 html[data-contrast="high"] .search-all:hover{color:var(--navy-900)}
 html[data-contrast="high"] .search-all i{color:#615026}
+html[data-contrast="high"] .search-ask{color:var(--navy-800)}
+html[data-contrast="high"] .search-ask:hover{color:var(--navy-900)}
+html[data-contrast="high"] .search-ask i{color:#615026}
 html[data-contrast="high"] .search-empty,html[data-contrast="high"] .search-loading{color:#425663}
 html[data-contrast="high"] .np-hero{color:var(--white)}
 html[data-contrast="high"] .np-eyebrow{color:#ddc997}
@@ -759,6 +762,9 @@ html[data-contrast="high"] .prg-cell--duration::before,html[data-contrast="high"
 }
 html[data-contrast="high"] .hr-dedication{opacity:1}
 html[data-contrast="high"] .hr-dedication{color:var(--navy-100)}
+html[data-contrast="high"] .hr-group-title{color:var(--navy-800)}
+html[data-contrast="high"] .hr-group-icon{color:var(--hr-carnation, #8f2438)}
+html[data-contrast="high"] .hr-group-lead{color:var(--ink-soft)}
 html[data-contrast="high"] .hr-card{color:inherit}
 html[data-contrast="high"] .hr-name{color:var(--navy-800)}
 html[data-contrast="high"] .hr-meta{color:var(--ink-soft)}
@@ -767,6 +773,7 @@ html[data-contrast="high"] .hr-silhouette{color:var(--navy-700)}
 html[data-contrast="high"] .hr-carnation{color:var(--hr-carnation, #8f2438)}
 html[data-contrast="high"] .hr-back{color:#ede3c9}
 html[data-contrast="high"] .hr-back:hover{color:var(--white)}
+html[data-contrast="high"] .hr-kind{color:#ddc997}
 html[data-contrast="high"] .hr-fact-k{color:#105781}
 html[data-contrast="high"] .hr-fact-v{color:var(--ink)}
 html[data-contrast="high"] .hr-honor-item{color:var(--ink)}
@@ -894,6 +901,8 @@ html[data-contrast="high"] .rg-file i{color:#615026}
 html[data-contrast="high"] .srp-input{color:var(--navy-900)}
 html[data-contrast="high"] .srp-btn{color:#fff}
 html[data-contrast="high"] .srp-btn i{color:#ddc997}
+html[data-contrast="high"] .srp-ask{color:var(--navy-800)}
+html[data-contrast="high"] .srp-ask i{color:#615026}
 html[data-contrast="high"] .srp-chip{color:var(--navy-800)}
 html[data-contrast="high"] .srp-chip span{color:#615026}
 html[data-contrast="high"] .srp-chip[aria-current="page"]{color:#fff}

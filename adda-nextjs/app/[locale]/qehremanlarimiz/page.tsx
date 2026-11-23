@@ -7,6 +7,9 @@
 // və parlaq hover effekti YOXDUR.
 //
 // MƏNBƏ: Strapi `api::hero.hero` (F5.21a sxemi, F5.21c seed).
+//
+// F5.61 — iki bölmə: əvvəl «Şəhidlərimiz» (qərənfil, həsr sətri), sonra
+// «Qazilərimiz» (yas rəmzi YOX). Kateqoriya `heroKind` (lib/strapi.ts) ilə.
 import '../../_styles/01-base.css';
 import '../../_styles/02-header.css';
 import '../../_styles/03-hero.css';
@@ -31,7 +34,17 @@ import Link from 'next/link';
 import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import { CarnationIcon, SilhouetteIcon } from '../../_components/HeroIcons';
-import { getMenu, getHeroes, mediaUrl, HEROES_DEDICATION, type HeroPerson, type SiteMenu } from '@/lib/strapi';
+import {
+  getMenu,
+  getHeroes,
+  mediaUrl,
+  splitHeroes,
+  HEROES_DEDICATION,
+  HEROES_LEAD,
+  VETERANS_DEDICATION,
+  type HeroPerson,
+  type SiteMenu,
+} from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
 export const revalidate = 86400;
@@ -55,8 +68,35 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   return {
     title: tr('Qəhrəmanlarımız', locale),
-    description: tr(HEROES_DEDICATION, locale),
+    description: tr(HEROES_LEAD, locale),
   };
+}
+
+/** Kart: şəhiddə foto lövhəsinin küncündə qərənfil, qazidə yoxdur. */
+function HeroCard({ h, locale, mourning }: { h: HeroPerson; locale: Locale; mourning: boolean }) {
+  const photo = mediaUrl(h.photo);
+  const meta = programMeta(h);
+  return (
+    <li>
+      <Link href={`/${locale}/qehremanlarimiz/${h.slug}`} className="hr-card">
+        <span className="hr-plate">
+          {mourning ? <CarnationIcon className="hr-carnation" /> : null}
+          {photo ? (
+            <img className="hr-photo" src={photo} alt="" loading="lazy" />
+          ) : (
+            <span className="hr-silhouette">
+              <SilhouetteIcon />
+            </span>
+          )}
+        </span>
+        <span className="hr-card-body">
+          <span className="hr-name">{h.name.trim()}</span>
+          {meta ? <span className="hr-meta">{meta}</span> : null}
+          <span className="hr-more">{tr('Tam bioqrafiya', locale)}</span>
+        </span>
+      </Link>
+    </li>
+  );
 }
 
 export default async function HeroesPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -67,6 +107,7 @@ export default async function HeroesPage({ params }: { params: Promise<{ locale:
     getMenu(locale).catch(() => null as SiteMenu | null),
     getHeroes(locale),
   ]);
+  const groups = splitHeroes(heroes);
 
   return (
     <>
@@ -74,42 +115,44 @@ export default async function HeroesPage({ params }: { params: Promise<{ locale:
       <main>
         <section className="np-hero">
           <div className="container np-hero-inner">
-            <div className="np-eyebrow">{tr('Əbədi xatirə', locale)}</div>
+            <div className="np-eyebrow">{tr('Qürur və ehtiram', locale)}</div>
             <h1 className="np-h1">{tr('Qəhrəmanlarımız', locale)}</h1>
-            <p className="hr-dedication">{tr(HEROES_DEDICATION, locale)}</p>
+            <p className="hr-dedication">{tr(HEROES_LEAD, locale)}</p>
           </div>
         </section>
 
         <section className="hr-wrap">
           <div className="container">
             {heroes.length ? (
-              <ul className="hr-grid">
-                {heroes.map((h) => {
-                  const photo = mediaUrl(h.photo);
-                  const meta = programMeta(h);
-                  return (
-                    <li key={h.slug}>
-                      <Link href={`/${locale}/qehremanlarimiz/${h.slug}`} className="hr-card">
-                        <span className="hr-plate">
-                          <CarnationIcon className="hr-carnation" />
-                          {photo ? (
-                            <img className="hr-photo" src={photo} alt="" loading="lazy" />
-                          ) : (
-                            <span className="hr-silhouette">
-                              <SilhouetteIcon />
-                            </span>
-                          )}
-                        </span>
-                        <span className="hr-card-body">
-                          <span className="hr-name">{h.name}</span>
-                          {meta ? <span className="hr-meta">{meta}</span> : null}
-                          <span className="hr-more">{tr('Tam bioqrafiya', locale)}</span>
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+              <>
+                {groups.sehid.length ? (
+                  <section className="hr-group" aria-labelledby="sehidlerimiz">
+                    <h2 id="sehidlerimiz" className="hr-group-title">
+                      <CarnationIcon className="hr-group-icon" />
+                      {tr('Şəhidlərimiz', locale)}
+                    </h2>
+                    <p className="hr-group-lead">{tr(HEROES_DEDICATION, locale)}</p>
+                    <ul className="hr-grid">
+                      {groups.sehid.map((h) => (
+                        <HeroCard key={h.slug} h={h} locale={locale} mourning />
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+                {groups.qazi.length ? (
+                  <section className="hr-group" aria-labelledby="qazilerimiz">
+                    <h2 id="qazilerimiz" className="hr-group-title">
+                      {tr('Qazilərimiz', locale)}
+                    </h2>
+                    <p className="hr-group-lead">{tr(VETERANS_DEDICATION, locale)}</p>
+                    <ul className="hr-grid">
+                      {groups.qazi.map((h) => (
+                        <HeroCard key={h.slug} h={h} locale={locale} mourning={false} />
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+              </>
             ) : (
               <p className="np-empty">{tr('Məlumat hazırda əlçatan deyil.', locale)}</p>
             )}

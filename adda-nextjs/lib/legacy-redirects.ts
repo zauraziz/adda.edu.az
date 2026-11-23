@@ -2,7 +2,7 @@
 // Mənbə: tools/migration/data/redirects.json
 // Yeniləmək: cd tools/migration && node gen-redirects.mjs
 //
-// Köhnə saytın URL-ləri (1316 sətir, 1217 sənəd) Google
+// Köhnə saytın URL-ləri (1316 sətir, 1231 sənəd) Google
 // indeksindədir. Yönləndirmə olmasa hamısı 404 verər.
 //
 // Açar dilsizdir: ru/en eyni slug-ı paylaşır (K2 qərarı), ona görə dil
@@ -1225,6 +1225,20 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   'news/1988': 'xeberler/20-sentyabr-dovlet-suverenliyi-gunu',
   'news/1989': 'xeberler/azerbaycan-dovlet-deniz-akademiyasinda-27-sentyabr-anim-gunu-qeyd-olunub',
   'news/1990': 'xeberler/5-oktyabr-beynelxalq-muellimler-gunudur',
+  'news/1991': 'xeberler/18-oktyabr-musteqilliyin-berpasi-gunudur',
+  'news/1992': 'xeberler/adda-ya-yuksek-balla-qebul-olmus-telebelerle-asco-da-gorus-kecirilib',
+  'news/1993': 'xeberler/adda-telebeleri-ginius-telebe-kuboku-2026-intellektual-yarisinda-istirak-edibler',
+  'news/1994': 'xeberler/yeni-tedris-ilinde-elmi-suranin-ilk-iclasi',
+  'news/1995': 'xeberler/adda-emekdaslari-vii-umumdunya-medeniyyetlerarasi-dialoq-forumunda',
+  'news/1996': 'xeberler/nasco29-konfransinda-denizcilik-uzre-uc-elmi-tedqiqat-teqdim-edilib',
+  'news/1997': 'xeberler/adda-nin-telebeleri-startup-school-4-beynelxalq-innovasiya-proqraminda',
+  'news/1998': 'xeberler/8-noyabr-zefer-gunune-hesr-olunmus-zefer-tariximiz-qurur-menbeyimiz-adli-tedbir',
+  'news/1999': 'xeberler/usaq-huquqlari-ayligi-diqqet-merkezinde',
+  'news/2000': 'xeberler/bgz-de-tecrube-kecmis-adda-telebelerine-sertifikatlar-teqdim-olunub',
+  'news/2001': 'xeberler/adda-da-zefer-gunune-hesr-olunmus-sahmat-yarisi-kecirilib',
+  'news/2002': 'xeberler/8-noyabr-zefer-gunu',
+  'news/2003': 'xeberler/adda-da-zefer-gunune-hesr-olunmus-tedbir-kecirilib',
+  'news/2004': 'xeberler/adda-da-kibertehlukesizlik-movzusunda-infosessiya-kecirilib',
 };
 
 /** Köhnə saytın bölmə adları — middleware naxışı bunlarla məhdudlaşır. */

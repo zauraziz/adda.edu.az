@@ -8,6 +8,9 @@
 //
 // Düzəliş təklifi vidceti (CorrectionIsland) ƏLAVƏ OLUNMUR — bu səhifə
 // üçün münasib deyil (tapşırıqda açıq qeyd olunub).
+//
+// F5.61 — başlıq üstündə «Şəhid» / «Qazi». Qazinin (sağ insan) doğum tarixi
+// göstərilmir; şəhidlik sahələri yalnız şəhiddə.
 import '../../../_styles/01-base.css';
 import '../../../_styles/02-header.css';
 import '../../../_styles/03-hero.css';
@@ -33,8 +36,8 @@ import { notFound } from 'next/navigation';
 import { marked } from 'marked';
 import SiteHeaderStack from '../../../_components/SiteHeaderStack';
 import Footer from '../../../_components/Footer';
-import { SilhouetteIcon } from '../../../_components/HeroIcons';
-import { getMenu, getHeroes, getHeroBySlug, mediaUrl, type SiteMenu } from '@/lib/strapi';
+import { CarnationIcon, SilhouetteIcon } from '../../../_components/HeroIcons';
+import { getMenu, getHeroes, getHeroBySlug, heroKind, mediaUrl, type SiteMenu } from '@/lib/strapi';
 import { fmtDate } from '@/lib/format';
 import { tr, LOCALES, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
 
@@ -67,7 +70,7 @@ export async function generateMetadata({
   const h = await getHeroBySlug(slug, locale);
   if (!h) return { title: tr('Qəhrəmanlarımız', locale) };
   return {
-    title: `${h.name} — ${tr('Qəhrəmanlarımız', locale)}`,
+    title: `${h.name.trim()} — ${tr('Qəhrəmanlarımız', locale)}`,
     description: h.biography ? plainExcerpt(h.biography) : undefined,
   };
 }
@@ -90,6 +93,7 @@ export default async function HeroDetailPage({
   const photo = mediaUrl(h.photo);
   const bioHtml = h.biography ? await marked.parse(h.biography) : '';
   const programMeta = [h.addaProgram, h.studyYears].filter(Boolean).join(' · ');
+  const sehid = heroKind(h) === 'sehid';
 
   return (
     <>
@@ -101,7 +105,11 @@ export default async function HeroDetailPage({
               <i className="ti ti-arrow-left" aria-hidden="true" />
               {' ' + tr('Qəhrəmanlarımız', locale)}
             </Link>
-            <h1 className="np-h1">{h.name}</h1>
+            <div className="hr-kind">
+              {sehid ? <CarnationIcon className="hr-kind-icon" /> : null}
+              {tr(sehid ? 'Şəhid' : 'Qazi', locale)}
+            </div>
+            <h1 className="np-h1">{h.name.trim()}</h1>
           </div>
         </section>
 
@@ -110,7 +118,7 @@ export default async function HeroDetailPage({
             <aside className="hr-side">
               <div className="hr-plate hr-plate--lg">
                 {photo ? (
-                  <img className="hr-photo" src={photo} alt={h.name} />
+                  <img className="hr-photo" src={photo} alt={h.name.trim()} />
                 ) : (
                   <span className="hr-silhouette">
                     <SilhouetteIcon />
@@ -119,7 +127,7 @@ export default async function HeroDetailPage({
               </div>
 
               <dl className="hr-facts">
-                {h.birthDate ? (
+                {sehid && h.birthDate ? (
                   <>
                     <dt className="hr-fact-k">{tr('Doğum tarixi', locale)}</dt>
                     <dd className="hr-fact-v">{fmtDate(h.birthDate, locale)}</dd>
@@ -137,13 +145,13 @@ export default async function HeroDetailPage({
                     <dd className="hr-fact-v">{programMeta}</dd>
                   </>
                 ) : null}
-                {h.martyrdomDate ? (
+                {sehid && h.martyrdomDate ? (
                   <>
                     <dt className="hr-fact-k">{tr('Şəhid olduğu tarix', locale)}</dt>
                     <dd className="hr-fact-v">{fmtDate(h.martyrdomDate, locale)}</dd>
                   </>
                 ) : null}
-                {h.martyrdomPlace ? (
+                {sehid && h.martyrdomPlace ? (
                   <>
                     <dt className="hr-fact-k">{tr('Şəhid olduğu yer', locale)}</dt>
                     <dd className="hr-fact-v">{h.martyrdomPlace}</dd>

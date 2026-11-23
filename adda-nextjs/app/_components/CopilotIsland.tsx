@@ -7,7 +7,7 @@
 //
 // Axın SSE-dir, amma `EventSource` işlədilə BİLMİR: o yalnız GET edir, sual
 // isə POST gövdəsindədir. Ona görə `fetch` + `ReadableStream` oxucusu.
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface SourceRef {
   n?: number;
@@ -140,6 +140,18 @@ export default function CopilotIsland({ locale, labels, samples }: CopilotIsland
     },
     [locale, phase],
   );
+
+  // F5.61 — axtarışdan gələn sual (/kopilot?q=…): səhifə açılan kimi bir dəfə soruşulur.
+  const fromUrl = useRef(false);
+  useEffect(() => {
+    if (fromUrl.current) return;
+    fromUrl.current = true;
+    const v = new URLSearchParams(window.location.search).get('q')?.trim().slice(0, 300) ?? '';
+    if (v.length >= 3) {
+      setQ(v);
+      void ask(v);
+    }
+  }, [ask]);
 
   const busy = phase === 'searching' || phase === 'generating';
 

@@ -11,7 +11,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { navMatch } from '@/lib/nav-active';
-import { SEARCH_UI, hitHref, searchPageHref, type SearchHit } from '@/lib/search-ui';
+import { SEARCH_UI, copilotHref, hitHref, searchPageHref, type SearchHit } from '@/lib/search-ui';
 import type { Locale } from '@/lib/i18n';
 import { A11Y_KEY, FS_STEPS, readA11y, type A11yState } from '@/lib/a11y';
 
@@ -217,8 +217,13 @@ export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A
 
     // F5.58 — bütün məzmun: nəticənin `url`-i (əməkdaş, sənəd, auditoriya…), ru/en-də
     // az məzmununa «az» nişanı, altda tam nəticələr səhifəsi («Bütün nəticələr (N)»).
+    // F5.61 — sualı AI köməkçiyə vermək (nəticə olmayanda xüsusilə lazımdır).
+    const ask = (q: string) =>
+      q.length >= 3
+        ? `<a class="search-ask" href="${esc(copilotHref(locale, q))}"><i class="ti ti-message-chatbot" aria-hidden="true"></i> ${esc(ui.ask)}</a>`
+        : '';
     const render = (hits: SearchHit[], total: number, q: string) => {
-      if (!hits.length) { results.innerHTML = `<div class="search-empty">${esc(ui.empty)}</div>`; return; }
+      if (!hits.length) { results.innerHTML = `<div class="search-empty">${esc(ui.empty)}</div>` + ask(q); return; }
       const rows = hits
         // K20: netice artiq kliklenir. Marsrut yoxdursa (bilinmeyen tip)
         // element <a> deyil <span> kimi render olunur — sinmis link olmasin.
@@ -234,7 +239,7 @@ export default function HeaderIsland({ locale, a11y }: { locale: Locale; a11y: A
       const more = total > hits.length
         ? `<a class="search-all" href="${esc(searchPageHref(locale, q))}">${esc(ui.all)} (${total}) <i class="ti ti-arrow-right" aria-hidden="true"></i></a>`
         : '';
-      results.innerHTML = rows + more;
+      results.innerHTML = rows + more + ask(q);
     };
 
     let timer: ReturnType<typeof setTimeout>;

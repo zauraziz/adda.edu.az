@@ -30,7 +30,7 @@ import SiteHeaderStack from '../../_components/SiteHeaderStack';
 import Footer from '../../_components/Footer';
 import { getMenu, STRAPI_URL, type SiteMenu } from '@/lib/strapi';
 import { tr, isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n';
-import { SEARCH_UI, hitHref, searchPageHref, type SearchHit } from '@/lib/search-ui';
+import { SEARCH_UI, copilotHref, hitHref, searchPageHref, type SearchHit } from '@/lib/search-ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -126,6 +126,13 @@ export default async function SearchPage({ params, searchParams }: { params: Par
                 <span>{tr('Axtar', locale)}</span>
               </button>
             </form>
+
+            {q.length >= 3 ? (
+              <a className="srp-ask" href={copilotHref(locale, q)}>
+                <i className="ti ti-message-chatbot" aria-hidden="true" />
+                <span>{ui.ask}</span>
+              </a>
+            ) : null}
 
             {chips.length > 1 ? (
               <nav className="srp-chips" aria-label={tr('Axtarış', locale)}>

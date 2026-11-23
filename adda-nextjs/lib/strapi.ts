@@ -937,6 +937,8 @@ export interface HeroPerson {
   documentId?: string;
   slug: string;
   name: string;
+  /** F5.61 — `sehid` | `qazi`; boşdursa şəhidlik sahələrindən (bax `heroKind`). */
+  category?: HeroCategory | null;
   photo?: StrapiMedia | null;
   birthDate: string | null;
   birthPlace: string | null;
@@ -953,9 +955,38 @@ export interface HeroPerson {
   locale: Locale;
 }
 
-/** Səhifə başlığının altındakı həsr sətri — siyahı və metadata description-da eyni. */
+/** «Şəhidlərimiz» bölməsinin həsr sətri. */
 export const HEROES_DEDICATION =
   'Vətən uğrunda canlarından keçən məzunlarımızın əziz xatirəsinə';
+
+/** F5.61 — səhifə başlığının altındakı sətir (həm də metadata description). */
+export const HEROES_LEAD = 'Vətən uğrunda döyüşmüş şəhid və qazi məzunlarımız';
+
+/** F5.61 — «Qazilərimiz» bölməsinin sətri. */
+export const VETERANS_DEDICATION = 'Döyüş yolu keçmiş qazi məzunlarımıza ehtiramla';
+
+export type HeroCategory = 'sehid' | 'qazi';
+
+/**
+ * F5.61 — şəhid və ya qazi. Admində seçilən kateqoriya əsasdır; boşdursa (miqrasiyadan
+ * əvvəl) şəhid olduğu tarix və ya yer doludursa şəhid. Strapi `search-index.ts` → `heroKind`
+ * ilə EYNİ qayda.
+ */
+export function heroKind(h: Pick<HeroPerson, 'category' | 'martyrdomDate' | 'martyrdomPlace'>): HeroCategory {
+  if (h.category === 'sehid' || h.category === 'qazi') return h.category;
+  return h.martyrdomDate || (h.martyrdomPlace ?? '').trim() ? 'sehid' : 'qazi';
+}
+
+/** F5.61 — iki bölmə: hər birində `sortOrder`, sonra ad (Azərbaycan əlifbası). */
+export function splitHeroes(list: HeroPerson[]): Record<HeroCategory, HeroPerson[]> {
+  const out: Record<HeroCategory, HeroPerson[]> = { sehid: [], qazi: [] };
+  for (const h of list) out[heroKind(h)].push(h);
+  const cmp = (a: HeroPerson, b: HeroPerson): number =>
+    (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.name.trim().localeCompare(b.name.trim(), 'az');
+  out.sehid.sort(cmp);
+  out.qazi.sort(cmp);
+  return out;
+}
 
 /**
  * Bütün qəhrəmanlar, `sortOrder` sırası ilə (`getLeadership`-dəki eyni
