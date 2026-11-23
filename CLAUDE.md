@@ -230,8 +230,9 @@ plugin store marker-i (`adda-inbox` → `cmLayout:v1`; `adda-admin` → `cmAz:v5
 `qaydaLinks:v1`, `qaydaMenu:v1`, `cmAz:v15`, `personMerge:v1`, `personSlugs:v1` (məlumat: `personRedirects` —
 əməkdaşın köhnə ünvanı → yeni, `personMerge:backup` — silinmiş təkrar qeydlər), `staffProfiles:v1`, `cmAz:v16`,
 `mealText:v1`, `kollecPages:v1`, `kollecAdmission:v1`, `kollecUnit:v1`, `kollecPrograms:v1`, `kollecDocs:v1`,
-`kollecStaff:v1`, `kollecMenu:v1`, `cmAz:v17`;
-sayğaclar `legacyImport:tries`, `corpPage:tries`, fayl xəritəsi `legacyFiles:v1`;
+`kollecStaff:v1`, `kollecMenu:v1`, `cmAz:v17`, `newsImport:v2`, `heroCategory:v1`, `heroLayout:v1`, `cmAz:v18`;
+sayğaclar `legacyImport:tries`, `corpPage:tries`, `newsImport:v2:tries`, fayl xəritəsi `legacyFiles:v1`;
+F5.61 RAG indeksinin vəziyyəti `ragIndex:state` (commit, mövqe, sayğaclar — marker deyil);
 F5.56 son deploy-un commit-i `siteRevalidate:commit` — marker deyil, sayt yeniləməsi üçün) + mövcud
 vəziyyətin yoxlanması. Marker silinmədən təkrar işləmir.
 
@@ -568,7 +569,9 @@ Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sən�
    (məzmun gözləyir), 21 həqiqi PLASEHOLDER (`#`), **1 QIRIQ**
    (`/sehife/umumi-isler-uzre-prorektor`, `check:menu` bax)
 7. Meilisearch plugini `package.json`-dan çıxarılmalıdır (boot-da xəta yazır)
-8. F2.7 RAG co-pilot — məzmun boşluqları dolandan sonra
+8. F2.7 RAG co-pilot — F5.61-də aktivləşdirildi (bax 32): indeks özü yenilənir, axtarışdan keçid var.
+   Gemini pulsuz kvotası (embedding ~1000/gün) dar ola bilər — ödənişli plan tövsiyə olunur (sonra
+   Render-də `RAG_AUTO_INDEX_DAILY_ITEMS=0`, `RAG_EMBED_RPM=1000`).
 9. **F5.20a — qəbul balı (F5.42-də HƏLL OLUNUB, aşağıdakı tarixçədir).**
    F5.42: 700-dən böyük bal vergüllü onluq sayılır və 10-a bölünür — həm
    yazılanda (`registerScoreNormalizer`, document middleware), həm bazada
@@ -616,12 +619,12 @@ Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sən�
    `/fakulteler` SİYAHISI qalır, kafedralar nümunəsi ilə bölmələrdən qurulur
    (`getFacultyUnits`: unit, slug `…-fakultesi`). Proqram səhifəsində fakültə
    adı/keçidi də bölmədəndir. «2. Akademiya — Fakültə» **arxivdir, silinmir**
-   (proqram/xəbər/heyət əlaqələri, kopilot mətni): admin menyusunda «(arxiv)»,
+   (proqram/xəbər/heyət əlaqələri): admin menyusunda «(arxiv)»,
    «Məsul redaktor» sistemində yoxdur, sayt axtarışı fakültəni bölmədən tapır.
    Birdəfəlik (`facultyUnits:v1`, `src/utils/faculty-units.ts`): boş bölməyə
    fakültə mətni (təmizlənmiş), `faculty:<slug>` təyinatları → `unit:<slug>`,
-   kopilot parçalarının ünvanı. Açıq qalan: kopilot fakültəni hələ arxiv
-   qeydindən oxuyur (`rag/lib/chunk.ts`) — bölmələr kopilot mənbəyi deyil.
+   kopilot parçalarının ünvanı. F5.61-dən kopilot bölmədən (`unit`) oxuyur; arxiv
+   fakültə və kafedra parçaları indeksdən silinir (bax 32).
 13. **F5.42 — bölmə səhifəsi ixtisas səhifəsi quruluşundadır**
    (`struktur/[slug]`): fakt zolağı (kafedrada «Fakültə» keçidi, «İxtisas»
    sayı), əsas foto, hər sahə öz açıq `<section id>`-i + mündəricat
@@ -1189,6 +1192,65 @@ Eyni adlı «Praktiki məşğələ və trenajor hazırlığı təlimatı» sən�
      snapshot-ları eyni) — 114 yoxlama; DB mətni yeni seed ilə EYNİDİR (27 səhifə-dil, saf yoxlama);
      Playwright (4 səhifə, bölmə az/ru/en, subbakalavr, FAQ «Kollec» qrupu, menyu, mobil, 13 səhifədə
      yemək ifadəsi yoxdur).
+
+32. **F5.61 — köhnə saytın yeni xəbərləri, şəhidlər və qazilər, RAG aktivləşdirildi**
+   (layihə sənədi `claude/f561-xeber-qehreman-rag.md`).
+   - **Xəbərlər** (`newsImport:v2`, `src/utils/news-import.ts`; məzmun `news-import-f561-content.ts`
+     AVTOMATİKDİR: `tools/migration/f561-news.mjs` ← `data/f561-oldsite.json` — brauzerdən xam HTML,
+     başlıq/mətn/qapaq/qalereya sha256 ilə yoxlanıb; Markdown-a `lib/legacy-html.mjs`, turndown
+     `extract.mjs` ilə EYNİ): 15.10–23.11.2026 — 14 xəbər (news/1991–2004), az, köhnə tarixlə, Web Push
+     GETMİR. Köhnə saytın şəkilləri artıq `https://adda-media.pages.dev/uploads/…`-dadır — `legacy-files.ts`
+     tam ünvanı olduğu kimi endirir (xəritə açarı tam ünvan); qalereyadakı şablon «poster ADDA.jpg» atılır;
+     news/2004-ün qapağı yoxdur. Ayrıca sayğac `newsImport:v2:tries` (F5.51-inki sayılmır). Yeni elan
+     yoxdur; announce/199 (2017) köhnə saytda da boşdur — köçürülmür. 301: `gen-redirects.mjs` → `IMPORTED`.
+     Redaktə: news/1999 «mövzsunda», «fakultəsinin»; news/1996 iç-içə dırnaq. Mənbədə saxlanılıb: news/2001
+     «1-ci və 2-ci yerləri» (qalibdən sonra — ehtimal 2-ci və 3-cü).
+   - **Qəhrəmanlar:** sxem `hero.category` (`sehid` | `qazi`, dilsiz, məcburi, defoltsuz — qazini səhvən
+     şəhidlər arasına salmamaq üçün). `heroCategory:v1` (`src/utils/hero-category.ts`): kateqoriyası boş
+     sənəd — şəhid olduğu tarix və ya yer doludursa şəhid, deyilsə qazi (prod: 5 şəhid, 10 qazi, 2-si
+     qaralama); bütün sətirlər birbaşa bazada, `updatedAt` saxlanılır, admin seçimi üstündən yazılmır.
+     `heroLayout:v1`: «Kateqoriya» admin formasında addan sonra (yalnız Strapi onu sona qoyubsa). Admin:
+     `cmAz:v18`. HERO_SEED `category: 'sehid'`; `api::hero.hero` ictimai oxu siyahısında (prod-da icazə əl
+     ilə verilmişdi). Next `/qehremanlarimiz`: başlıq «Qürur və ehtiram», əvvəl «Şəhidlərimiz» (qərənfil,
+     həsr sətri), sonra «Qazilərimiz» (yas rəmzi yox); bölmədə sıra, sonra Azərbaycan əlifbası
+     (`splitHeroes`). Detal: başlıq üstündə nişan «Şəhid» (qərənfillə) / «Qazi»; qazinin doğum tarixi
+     göstərilmir (sağ insandır; prod-da 10 qazinin hamısında sahə tərcümeyi-haldakı tarixdən fərqli idi —
+     admin təqvimində gün/ay qarışıb). Kateqoriya boşdursa şəhidlik sahələrindən (`heroKind`; Strapi
+     `search-index.ts`-də EYNİ). Sayt axtarışında nəticə «Şəhid»/«Qazi» ilə. Qazilərin ünvanı hələ
+     «hero», «hero-1…9»-dur (F5.58-dən əvvəl yaradılıb) — dəyişmək üçün yönləndirmə lazımdır.
+   - **RAG — mənbələr** (`rag/lib/chunk.ts`): arxiv `department`, `faculty` çıxdı → `unit` (haqqında,
+     missiya, fəaliyyət, xidmətlər, nəticələr, strategiya, əlavə bloklar, qəbul saatları, az-da suallar);
+     `page` — giriş (`lead`), gövdə, faktlar, addımlar, suallar, əlaqə; `program` — pillə, forma, müddət,
+     dil, kod, kredit, haqq, son 2 ilin keçid balı, plan yerləri və bütün mətn sahələri (əvvəl yalnız
+     `description`). Varlıq qolunda `unit` (`pipeline.ts`); sübutu olmayan leksik/varlıq nəticəsinə
+     anbardan parça (`chunksFor`).
+   - **RAG — avtomatik indeks** (`rag/lib/auto-index.ts`; paket məntiqi `indexer.ts` — admin endpoint ilə
+     EYNİ kod): yeni deploy-da (`RENDER_GIT_COMMIT` ≠ `ragIndex:state.commit`) və ya yarımçıqdırsa tam
+     keçid ARXA PLANDA (90 s sonra): dəyişməyən parça (hash) embed OLUNMUR, köhnə mənbələrin və dərcdə
+     olmayan sənədlərin parçaları silinir, mövqe hər paketdən sonra yadda. Sonra yalnız dərc / dərcdən
+     çıxarma / silmə olan sənəd (Document Service middleware, 30 s birləşdirmə). Kvota: dəqiqəlik 429
+     `embed.ts`-də gözlənilir; GÜNDƏLİK (QuotaFailure `…PerDay…`) → bir dəfə 08:10 UTC-də (Gemini
+     kvotası gecə yarısı PT yenilənir), digər uzun hədd → 30 dəq–12 saat sonra; ən çox 24 davam — dövri
+     iş DEYİL. Pulsuz tarifdə sualların embedding-i də eyni kvotadan yeyir: tam keçid kvota günündə
+     (08:10 UTC-dən) ən çox `RAG_AUTO_INDEX_DAILY_ITEMS` (900) element embed edir, sayğac deploy-dan
+     asılı deyil; ödənişli tarifdə 0 (həddsiz). `RAG_AUTO_INDEX=false` söndürür; CLI (`rag-index.mjs`)
+     əvvəlki kimi. Diaqnostika: `POST /api/rag/admin/status` → `auto`, `chat`.
+   - **RAG — cavab:** Gemini 3.x «düşüncə» tokenləri `maxOutputTokens`-ə daxildir — 800-lük həddi
+     yeyirdi, cavab kəsilib sitatsız atılırdı (prod 23.11.2026: «Hansı ixtisaslar var?» iki dəfə, 15 və
+     46 s). İndi `thinkingConfig.thinkingLevel` = `RAG_CHAT_THINKING` (defolt `low`), `maxOutputTokens`
+     = `RAG_CHAT_MAX_TOKENS` + `RAG_CHAT_THINKING_TOKENS` (1024); model parametri 400 ilə rədd etsə
+     əvvəl «LOW», sonra onsuz. Qrup sitatları «[1, 2]», «[1; 3]», «[2–4]» ayrılır, təkrar «[1][1]» bir
+     dəfə (əvvəl qrup sitatlı cavab sitatsız sayılırdı). Embedding 429-da «retry in 50000s» olanda yatmır
+     (`RAG_EMBED_MAX_RETRY_SLEEP_MS`). Lokal sınaq: `RAG_EMBED_PROVIDER=mock`, `RAG_CHAT_PROVIDER=mock`.
+   - **Sayt:** axtarış pəncərəsində (nəticə olmayanda da) və `/axtaris`-də «AI köməkçidən soruş» →
+     `/kopilot?q=` (`copilotHref`, `lib/search-ui.ts`; səhifə sualı özü verir); `/api/copilot`
+     `maxDuration = 60`. Strapi endpoint-ləri əvvəlki kimi bağlıdır — giriş yalnız Next proxy-si ilə.
+   - Lokal sınaq: təmiz SQLite → bütün açılış zənciri (UNIT_RESEED, HERO_SEED), saxta köhnə sayt və
+     Gemini, Cloudinary əvəzinə lokal yükləmə: xəbərlər (14/14, 101 şəkil, əlçatmazlıq sayğacı, bərpa,
+     təkrarsızlıq), qəhrəmanlar (təsnif, admin seçimi, `updatedAt`, düzüm prod və əl ilə), RAG (tam keçid,
+     köhnə mənbə və «ruh» sənəd silinir, ikinci keçiddə embed 0, dərc/dərcdən çıxarma, cavab, Gemini
+     «low → LOW», gündəlik kvota və gündəlik hədd) — 47 yoxlama; Playwright 17 (iki bölmə, kartlar, detal, ru, mobil,
+     xəbərlər, ana səhifə, axtarış → kopilot, köhnə URL 301).
 
 ---
 
