@@ -66,6 +66,9 @@ import { applyStaffProfilesV1 } from './utils/staff-profiles';
 import { applyMealTextV1 } from './utils/meal-text';
 import { applyKollecF560 } from './utils/kollec';
 import { registerSearchIndex } from './utils/search-index';
+// F5.61 — qəhrəmanlar: şəhidlər və qazilər; RAG indeksi özü yenilənir (bax src/api/rag/lib/auto-index.ts).
+import { applyHeroF561 } from './utils/hero-category';
+import { registerRagIncremental, startRagAutoIndex } from './api/rag/lib/auto-index';
 
 /**
  * ADDA — "Menyu" single-type seed.
@@ -103,6 +106,9 @@ const PUBLIC_READ_UIDS = [
   'api::reaction.reaction',
   'api::tag.tag',
   'api::unit.unit',
+  // F5.61 — qəhrəmanlar (/qehremanlarimiz): prod-da icazə admində əl ilə verilmişdi,
+  // təmiz bazada səhifə boş qalırdı (403). Yalnız çatışmayan icazə əlavə olunur.
+  'api::hero.hero',
 ];
 
 // Public rol — YAZ (create) icazələri: crowdsourced submission tipləri.
@@ -1904,6 +1910,8 @@ export default {
     registerPersonGuard(strapi);
     // F5.58 — axtarılan növdə yazı → sayt axtarışının yaddaş indeksi köhnəlir.
     registerSearchIndex(strapi);
+    // F5.61 — RAG mənbə növündə dərc / dərcdən çıxarma / silmə → həmin sənəd 30 s sonra yenidən indekslənir.
+    registerRagIncremental(strapi as never);
     const inFlight = new Set<string>();
     (strapi.documents as unknown as { use: (m: unknown) => void }).use(
       async (context: Record<string, unknown>, next: () => Promise<unknown>) => {
@@ -2385,6 +2393,10 @@ export default {
       .catch((e: Error) => strapi.log.error('[yemek] F5.60: ' + e.message))
       .then(() => applyKollecF560(strapi))
       .catch((e: Error) => strapi.log.error('[kollec] F5.60: ' + e.message))
+      // F5.61 — qəhrəmanlar: «Kateqoriya» (şəhid / qazi) boş sənədlərdə şəhidlik sahələrinə görə,
+      // admin formasında addan sonra — BİR DƏFƏ (bax src/utils/hero-category.ts).
+      .then(() => applyHeroF561(strapi))
+      .catch((e: Error) => strapi.log.error('[qehreman] F5.61: ' + e.message))
       // F5.55 — çatışmayan ru/en məzmun (səhifə, bölmə, sənəd adı) Gemini ilə, ARXA PLANDA;
       // mövcud tərcüməyə toxunulmur. Yenidən axtarmaq: TRANSLATE_MISSING=true.
       .then(() => startTranslateMissing(strapi))
@@ -2392,7 +2404,11 @@ export default {
       // F5.56 — yeni deploy-da (RENDER_GIT_COMMIT dəyişib) sayt bir dəfə yenilənir:
       // birbaşa bazaya yazan bir dəfəlik düzəlişlər də sayta çıxsın.
       .then(() => revalidateAfterDeploy(strapi))
-      .catch((e: Error) => strapi.log.error('[revalidate] F5.56: ' + e.message));
+      .catch((e: Error) => strapi.log.error('[revalidate] F5.56: ' + e.message))
+      // F5.61 — RAG indeksi: yeni deploy-da və ya yarımçıqdırsa tam keçid ARXA PLANDA (90 s sonra,
+      // dəyişməyən parça embed olunmur); sonra yalnız dərc olunan sənədlər.
+      .then(() => startRagAutoIndex(strapi as never))
+      .catch((e: Error) => strapi.log.error('[rag/auto] F5.61: ' + e.message));
 
     // Tarix marşrutu — 1867–2026
     //
@@ -2553,6 +2569,8 @@ export default {
             locale: 'az',
             data: {
               name: h.name,
+              // F5.61 — seed faylının 5 qəhrəmanı şəhiddir (sahə məcburidir).
+              category: 'sehid',
               slug,
               birthDate: h.birthDate,
               birthPlace: h.birthPlace,

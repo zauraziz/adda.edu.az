@@ -41,6 +41,12 @@ export interface EmbedConfig {
    * tərəf eyni kursordan davam edir.
    */
   maxWaitMs: number;
+  /**
+   * F5.61 — 429-da provayder bundan uzun gözləməyi deyirsə (gündəlik kvota) yatmırıq:
+   * dərhal `rateLimited` qayıdır, çağıran tərəf işi saxlayıb sonra davam edir. Əvvəl
+   * «retry in 50000s» olanda sorğu saatlarla yatırdı.
+   */
+  maxRetrySleepMs: number;
 }
 
 export interface EmbedCallResult {
@@ -50,6 +56,8 @@ export interface EmbedCallResult {
   rateLimited?: boolean;
   /** Provayderin tövsiyə etdiyi gözləmə. */
   retryAfterMs?: number;
+  /** F5.61 — GÜNDƏLİK kvota (təkrar cəhd mənasızdır — kvota gecə yarısı, Sakit okean vaxtı ilə yenilənir). */
+  daily?: boolean;
 }
 
 export interface EmbedOutcome {
@@ -62,6 +70,7 @@ export interface EmbedOutcome {
   items: number;
   rateLimited?: boolean;
   retryAfterMs?: number;
+  daily?: boolean;
   /** Tənzimləyicidə gözlənilən ümumi vaxt. */
   pacedMs?: number;
   /**
@@ -105,6 +114,7 @@ export function embedConfig(): EmbedConfig {
     rpm: intEnv('RAG_EMBED_RPM', 90),
     retries: Math.min(10, intEnv('RAG_EMBED_RETRIES', 6)),
     maxWaitMs: intEnv('RAG_EMBED_MAX_WAIT_MS', 20_000),
+    maxRetrySleepMs: intEnv('RAG_EMBED_MAX_RETRY_SLEEP_MS', 90_000),
   };
 }
 
@@ -207,7 +217,21 @@ interface GeminiEmbedding {
 }
 interface GeminiResponse {
   embeddings?: GeminiEmbedding[];
-  error?: { message?: string; status?: string; details?: Array<{ retryDelay?: string }> };
+  error?: {
+    message?: string;
+    status?: string;
+    details?: Array<{ retryDelay?: string; violations?: Array<{ quotaId?: string; quotaMetric?: string }> }>;
+  };
+}
+
+/** F5.61 — 429 gündəlik kvotadandırmı (QuotaFailure → quotaId «…PerDay…»). */
+function isDailyQuota(json: GeminiResponse, raw: string): boolean {
+  for (const d of (json.error && json.error.details) || []) {
+    for (const v of (d && d.violations) || []) {
+      if (/per\s*day/i.test(String(v.quotaId || '') + ' ' + String(v.quotaMetric || ''))) return true;
+    }
+  }
+  return /PerDay|per day/i.test(raw);
 }
 
 async function geminiBatch(
@@ -258,6 +282,9 @@ async function geminiBatch(
         lastError = 'HTTP ' + res.status + ': ' + ((json.error && json.error.message) || text.slice(0, 200));
         const advised = retryAfterMs(json, text);
         if (res.status === 429) lastRetryMs = advised || 30_000;
+        if (res.status === 429 && (advised > cfg.maxRetrySleepMs || isDailyQuota(json, text))) {
+          return { vectors: [], error: lastError, rateLimited: true, retryAfterMs: advised || undefined, daily: isDailyQuota(json, text) };
+        }
         if ((res.status === 429 || res.status >= 500) && attempt < maxAttempt) {
           // Provayderin dediyi qədər + kiçik ehtiyat; yoxdursa eksponensial.
           await sleep(advised ? advised + 500 : 1000 * attempt * attempt);
@@ -301,10 +328,35 @@ async function geminiBatch(
   return { vectors: [], error: lastError, rateLimited: lastRetryMs > 0, retryAfterMs: lastRetryMs || undefined };
 }
 
+/**
+ * F5.61 — lokal sınaq üçün (`RAG_EMBED_PROVIDER=mock`): şəbəkəsiz, deterministik,
+ * açarsız — sözlərin hash-larından «söz torbası» vektoru. Keyfiyyəti yoxdur, yalnız
+ * axının (parçalama, saxlama, axtarış, avtomatik indeks) sınağı üçündür.
+ */
+async function mockBatch(texts: string[], _kind: EmbedKind, cfg: EmbedConfig): Promise<EmbedCallResult> {
+  return {
+    vectors: texts.map((t) => {
+      const v = new Array<number>(cfg.dims).fill(0);
+      for (const w of t.toLowerCase().split(/[^\p{L}\p{N}]+/u)) {
+        if (!w) continue;
+        let h = 2166136261;
+        for (let i = 0; i < w.length; i++) {
+          h ^= w.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        v[Math.abs(h) % cfg.dims] += 1;
+      }
+      v[0] += 1e-6;
+      return normalize(v);
+    }),
+  };
+}
+
 type Embedder = (texts: string[], kind: EmbedKind, cfg: EmbedConfig) => Promise<EmbedCallResult>;
 
 const EMBEDDERS: Record<string, Embedder> = {
   gemini: geminiBatch,
+  mock: mockBatch,
 };
 
 /** Provayderin niyə hazır olmadığını izah edir — boş `{}` cavabı qalmasın. */
@@ -317,7 +369,8 @@ export function embedReadiness(cfg: EmbedConfig): string | null {
   return null;
 }
 
-export async function embedTexts(texts: string[], kind: EmbedKind): Promise<EmbedOutcome> {
+/** `opts.maxWaitMs` — F5.61 arxa plan indeksi: HTTP sorğusu yoxdur, tənzimləyici gözləyə bilər. */
+export async function embedTexts(texts: string[], kind: EmbedKind, opts: { maxWaitMs?: number } = {}): Promise<EmbedOutcome> {
   const cfg = embedConfig();
   const notReady = embedReadiness(cfg);
   if (notReady) return { ok: false, vectors: [], error: notReady, calls: 0, items: 0 };
@@ -337,7 +390,7 @@ export async function embedTexts(texts: string[], kind: EmbedKind): Promise<Embe
     // və bağlantı qırılardı — məhz bu `HTTP 0` verirdi. Ən azı bir paket
     // emal olunubsa yarımçıq qayıdırıq; heç nə emal olunmayıbsa dayanmaq
     // mənasızdır (irəliləyiş sıfır olar), ona görə ilk paket həmişə gedir.
-    if (i > 0 && projectedWait(slice.length, cfg.rpm) + (Date.now() - t0) > cfg.maxWaitMs) {
+    if (i > 0 && projectedWait(slice.length, cfg.rpm) + (Date.now() - t0) > (opts.maxWaitMs ?? cfg.maxWaitMs)) {
       return { ok: true, vectors: out, calls, items: out.length, pacedMs: Date.now() - t0, partial: true };
     }
 
@@ -346,7 +399,7 @@ export async function embedTexts(texts: string[], kind: EmbedKind): Promise<Embe
     if (res.error) {
       return {
         ok: false, vectors: [], error: res.error, calls, items: i,
-        rateLimited: res.rateLimited, retryAfterMs: res.retryAfterMs,
+        rateLimited: res.rateLimited, retryAfterMs: res.retryAfterMs, daily: res.daily,
       };
     }
     out.push(...res.vectors);

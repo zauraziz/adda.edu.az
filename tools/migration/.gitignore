@@ -71,6 +71,10 @@ data/*
 # sha256 ilə yoxlanıb). f551-news.mjs → adda-strapi/src/utils/news-import-content.ts.
 !data/f551-oldsite.json
 
+# F5.61 — köhnə saytın 15.10–23.11.2026 xəbərləri (brauzerdən, xam HTML; mətn, qapaq və
+# qalereya sha256 ilə yoxlanıb). f561-news.mjs → adda-strapi/src/utils/news-import-f561-content.ts.
+!data/f561-oldsite.json
+
 # ── Repoya GİRMƏYƏN (yuxarıdakı `data/*` tutur) ──
 #   data/raw/                  — 1373 xam HTML
 #   data/manifest.json         — crawl checkpoint-i

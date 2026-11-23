@@ -39,7 +39,119 @@ export interface SourceDef {
   metaOnly?: boolean;
   /** `documents().findMany` üçün sahə siyahısı. */
   fields: string[];
-  populate?: Record<string, { fields: string[] }>;
+  populate?: Record<string, unknown>;
+  /**
+   * F5.61 — gövdədən sonra əlavə mətn (komponentlər, digər mətn sahələri). Gövdə ilə
+   * birlikdə təmizlənir, PII-dən keçir və parçalanır. Sitat linki eyni səhifəyədir.
+   */
+  extra?: (entry: Record<string, unknown>, locale: string) => string;
+}
+
+type Entry = Record<string, unknown>;
+
+const s0 = (v: unknown): string => (typeof v === 'string' ? v.trim() : v == null ? '' : String(v));
+const list = (v: unknown): Entry[] => (Array.isArray(v) ? (v as Entry[]) : []);
+const paras = (...parts: unknown[]): string => parts.map(s0).filter(Boolean).join('\n\n');
+
+/** Suallar — «Sual: … Cavab: …» (unit.faq, page.faq, program.faq). */
+function faqText(v: unknown): string {
+  return list(v)
+    .map((f) => (s0(f.question) && s0(f.answer) ? `${s0(f.question)}\n${s0(f.answer)}` : ''))
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+/** F5.45+ səhifələri: fakt zolağı, addımlar, suallar, əlaqə — mətnin yarısı gövdədə deyil. */
+function pageExtra(e: Entry): string {
+  const facts = list(e.facts)
+    .map((f) => (s0(f.label) && s0(f.value) ? `${s0(f.label)}: ${s0(f.value)}` : ''))
+    .filter(Boolean)
+    .join('\n');
+  const steps = list(e.steps)
+    .map((st) => {
+      const head = [s0(st.title), s0(st.period), s0(st.who)].filter(Boolean).join(' · ');
+      return paras(head, st.body);
+    })
+    .filter(Boolean)
+    .join('\n\n');
+  return paras(facts, s0(e.stepsTitle) && steps ? s0(e.stepsTitle) : '', steps, faqText(e.faq), e.contact);
+}
+
+/** Bölmə: missiya, fəaliyyət, xidmətlər, nəticələr, strategiya, əlavə bloklar, qəbul saatları. */
+function unitExtra(e: Entry, locale: string): string {
+  const blocks = list(e.extraBlocks)
+    .map((b) => paras(b.title, b.body))
+    .filter(Boolean)
+    .join('\n\n');
+  // `unit.faq` dilsizdir (az mətni) — yalnız az indeksinə.
+  return paras(e.mission, e.functions, e.services, e.results, e.strategy, blocks, e.receptionHours, locale === 'az' ? faqText(e.faq) : '');
+}
+
+const DEGREE_LABEL: Record<string, Record<string, string>> = {
+  az: { subbachelor: 'subbakalavr', bachelor: 'bakalavr', master: 'magistr', phd: 'doktorantura (fəlsəfə doktoru)' },
+  ru: { subbachelor: 'младший бакалавр', bachelor: 'бакалавриат', master: 'магистратура', phd: 'докторантура' },
+  en: { subbachelor: 'sub-bachelor (associate)', bachelor: 'bachelor', master: 'master', phd: 'doctorate (PhD)' },
+};
+const FORM_LABEL: Record<string, Record<string, string>> = {
+  az: { eyani: 'əyani', qiyabi: 'qiyabi' },
+  ru: { eyani: 'очная', qiyabi: 'заочная' },
+  en: { eyani: 'full-time', qiyabi: 'part-time' },
+};
+const LANG_LABEL: Record<string, Record<string, string>> = {
+  az: { az: 'Azərbaycan', ru: 'rus', en: 'ingilis' },
+  ru: { az: 'азербайджанский', ru: 'русский', en: 'английский' },
+  en: { az: 'Azerbaijani', ru: 'Russian', en: 'English' },
+};
+const PROGRAM_WORDS: Record<string, Record<string, string>> = {
+  az: { degree: 'Təhsil pilləsi', form: 'Təhsil forması', years: 'Təhsil müddəti', yearsUnit: 'il', lang: 'Tədris dili', code: 'İxtisas kodu', credits: 'Kredit', fee: 'Təhsil haqqı', score: 'Keçid balı', paid: 'ödənişli', free: 'dövlət sifarişli', seats: 'Plan yerləri' },
+  ru: { degree: 'Ступень', form: 'Форма обучения', years: 'Срок обучения', yearsUnit: 'лет', lang: 'Язык обучения', code: 'Код специальности', credits: 'Кредиты', fee: 'Стоимость обучения', score: 'Проходной балл', paid: 'платно', free: 'гос. заказ', seats: 'План приёма' },
+  en: { degree: 'Degree', form: 'Study mode', years: 'Duration', yearsUnit: 'years', lang: 'Language of instruction', code: 'Programme code', credits: 'Credits', fee: 'Tuition fee', score: 'Admission score', paid: 'fee-paying', free: 'state-funded', seats: 'Places' },
+};
+
+/** İxtisas: kataloq faktları + mətn sahələri (əvvəl yalnız `description` indekslənirdi). */
+function programExtra(e: Entry, locale: string): string {
+  const L = locale === 'ru' || locale === 'en' ? locale : 'az';
+  const W = PROGRAM_WORDS[L];
+  const facts: string[] = [];
+  const degree = DEGREE_LABEL[L][s0(e.degree)];
+  if (degree) facts.push(`${W.degree}: ${degree}`);
+  const form = FORM_LABEL[L][s0(e.studyForm)];
+  if (form) facts.push(`${W.form}: ${form}`);
+  if (s0(e.durationNote)) facts.push(`${W.years}: ${s0(e.durationNote)}`);
+  else if (Number(e.durationYears) > 0) facts.push(`${W.years}: ${Number(e.durationYears)} ${W.yearsUnit}`);
+  const langs = list(e.languages).map((x) => LANG_LABEL[L][s0(x.code)]).filter(Boolean);
+  if (langs.length) facts.push(`${W.lang}: ${langs.join(', ')}`);
+  if (s0(e.code)) facts.push(`${W.code}: ${s0(e.code)}`);
+  if (Number(e.totalCredits) > 0) facts.push(`${W.credits}: ${Number(e.totalCredits)}`);
+  if (s0(e.tuitionFee)) facts.push(`${W.fee}: ${s0(e.tuitionFee)}`);
+  const scores = list(e.admissionScores)
+    .filter((x) => Number(x.year) > 0)
+    .sort((a, b) => Number(b.year) - Number(a.year))
+    .slice(0, 2)
+    .map((x) => {
+      const parts = [
+        x.minScoreFree != null && x.minScoreFree !== '' ? `${W.free} ${String(x.minScoreFree)}` : '',
+        x.minScorePaid != null && x.minScorePaid !== '' ? `${W.paid} ${String(x.minScorePaid)}` : '',
+      ].filter(Boolean);
+      return parts.length ? `${W.score} (${Number(x.year)}): ${parts.join(', ')}` : '';
+    })
+    .filter(Boolean);
+  facts.push(...scores);
+  const seats = list(e.admissionSeats)
+    .filter((x) => Number(x.year) > 0 && Number(x.total) > 0)
+    .sort((a, b) => Number(b.year) - Number(a.year))[0];
+  if (seats) facts.push(`${W.seats} (${Number(seats.year)}): ${Number(seats.total)}`);
+  return paras(
+    facts.join('\n'),
+    e.tagline,
+    e.overview,
+    e.outcomes,
+    e.competencies,
+    e.careerPaths,
+    e.conventions,
+    e.practiceNote,
+    L === 'az' ? faqText(e.faq) : '',
+  );
 }
 
 export const SOURCES: SourceDef[] = [
@@ -75,17 +187,25 @@ export const SOURCES: SourceDef[] = [
     uid: 'api::page.page',
     title: 'title',
     body: 'body',
-    excerpt: 'seoDescription',
+    // F5.61: `lead` (səhifədə görünən giriş) — əvvəl `seoDescription` idi.
+    excerpt: 'lead',
     route: '/sehife/',
-    fields: ['documentId', 'slug', 'title', 'body', 'seoDescription', 'publishedAt'],
+    fields: ['documentId', 'slug', 'title', 'lead', 'body', 'stepsTitle', 'contact', 'publishedAt'],
+    populate: { facts: true, steps: true, faq: true },
+    extra: (e) => pageExtra(e),
   },
   {
-    key: 'department',
-    uid: 'api::department.department',
+    // F5.61 — struktur bölmə (fakültə, kafedra, şöbə, mərkəz): saytda yeganə səhifəsi
+    // /struktur/<slug>-dir. Köhnə «department» (F5.43) və «faculty» (F5.41) arxivdir —
+    // indeksdən çıxarılıb (avtomatik indeks onların parçalarını silir).
+    key: 'unit',
+    uid: 'api::unit.unit',
     title: 'name',
     body: 'about',
     route: '/struktur/',
-    fields: ['documentId', 'slug', 'name', 'about', 'publishedAt'],
+    fields: ['documentId', 'slug', 'name', 'about', 'mission', 'functions', 'services', 'results', 'strategy', 'receptionHours', 'publishedAt'],
+    populate: { extraBlocks: true, faq: true },
+    extra: (e, locale) => unitExtra(e, locale),
   },
   {
     key: 'program',
@@ -93,17 +213,13 @@ export const SOURCES: SourceDef[] = [
     title: 'title',
     body: 'description',
     route: '/ixtisaslar/',
-    fields: ['documentId', 'slug', 'title', 'description', 'publishedAt'],
-  },
-  {
-    key: 'faculty',
-    uid: 'api::faculty.faculty',
-    title: 'name',
-    body: 'about',
-    // F5.41 — /fakulteler/<slug> səhifəsi yoxdur: fakültənin səhifəsi struktur
-    // bölmədir, slug eynidir. Mətn hələ arxiv qeydindən oxunur.
-    route: '/struktur/',
-    fields: ['documentId', 'slug', 'name', 'about', 'publishedAt'],
+    fields: [
+      'documentId', 'slug', 'title', 'description', 'degree', 'studyForm', 'durationYears', 'durationNote', 'code',
+      'totalCredits', 'tuitionFee', 'tagline', 'overview', 'outcomes', 'competencies', 'careerPaths', 'conventions',
+      'practiceNote', 'publishedAt',
+    ],
+    populate: { languages: true, admissionScores: true, admissionSeats: true, faq: true },
+    extra: (e, locale) => programExtra(e, locale),
   },
   {
     key: 'person',
@@ -304,9 +420,8 @@ const TYPE_LABEL: Record<string, string> = {
   announcement: 'Elan',
   event: 'Tədbir',
   page: 'Səhifə',
-  department: 'Şöbə',
+  unit: 'Bölmə',
   program: 'İxtisas',
-  faculty: 'Fakültə',
   person: 'Əməkdaş',
 };
 
@@ -357,7 +472,9 @@ export function buildChunks(
   } else {
     const body = toPlain(src.body ? entry[src.body] : '');
     const lead = src.excerpt ? toPlain(entry[src.excerpt]) : '';
-    const full = lead && !body.startsWith(lead) ? lead + '\n\n' + body : body;
+    const more = src.extra ? toPlain(src.extra(entry, locale)) : '';
+    const main = lead && !body.startsWith(lead) ? lead + '\n\n' + body : body;
+    const full = more ? (main ? main + '\n\n' + more : more) : main;
     // PII BÖLMƏDƏN ƏVVƏL silinir: naxış iki parçanın tikişinə düşsə
     // yarısı indeksdə qalardı.
     const g = guard(full, o);

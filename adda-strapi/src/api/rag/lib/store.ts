@@ -333,6 +333,92 @@ export async function trimChunks(
   return r && typeof r.rowCount === 'number' ? r.rowCount : 0;
 }
 
+/** F5.61 — mənbə + dil üzrə bütün hash-lar BİR sorğuda (avtomatik indeks sənəd başına sorğu etməsin). */
+export async function hashesForSource(
+  strapi: StrapiDbLike,
+  source: string,
+  locale: string,
+): Promise<Map<string, Map<number, string>>> {
+  const rows = rowsOf(
+    await strapi.db.connection.raw(`SELECT doc_id, chunk_ix, hash FROM ${TABLE} WHERE source = ? AND locale = ?`, [source, locale]),
+  );
+  const out = new Map<string, Map<number, string>>();
+  for (const r of rows) {
+    const d = String(r.doc_id ?? '');
+    const m = out.get(d) ?? new Map<number, string>();
+    m.set(Number(r.chunk_ix), String(r.hash ?? ''));
+    out.set(d, m);
+  }
+  return out;
+}
+
+async function countOf(strapi: StrapiDbLike, where: string, args: unknown[]): Promise<number> {
+  const rows = rowsOf(await strapi.db.connection.raw(`SELECT COUNT(*) AS n FROM ${TABLE} WHERE ${where}`, args));
+  return Number(rows[0]?.n ?? 0) || 0;
+}
+
+/** F5.61 — sənədin parçaları (dərcdən çıxıb, silinib). `locale` verilməsə bütün dillər. Silinən say. */
+export async function deleteDoc(strapi: StrapiDbLike, source: string, docId: string, locale?: string): Promise<number> {
+  const where = 'source = ? AND doc_id = ?' + (locale ? ' AND locale = ?' : '');
+  const args = locale ? [source, docId, locale] : [source, docId];
+  const n = await countOf(strapi, where, args);
+  if (n) await strapi.db.connection.raw(`DELETE FROM ${TABLE} WHERE ${where}`, args);
+  return n;
+}
+
+/** F5.61 — mənbə + dildə `keep`-də olmayan sənədlərin parçaları (keçid zamanı dərcdə yoxdur). */
+export async function pruneDocs(strapi: StrapiDbLike, source: string, locale: string, keep: Set<string>): Promise<number> {
+  const rows = rowsOf(
+    await strapi.db.connection.raw(`SELECT DISTINCT doc_id FROM ${TABLE} WHERE source = ? AND locale = ?`, [source, locale]),
+  );
+  let n = 0;
+  for (const r of rows) {
+    const d = String(r.doc_id ?? '');
+    if (d && !keep.has(d)) n += await deleteDoc(strapi, source, d, locale);
+  }
+  return n;
+}
+
+/** F5.61 — artıq mənbə olmayan növlərin parçaları (məs. arxiv «department», «faculty»). Silinən say. */
+export async function purgeOtherSources(strapi: StrapiDbLike, keep: string[]): Promise<number> {
+  if (!keep.length) return 0;
+  const where = `source NOT IN (${keep.map(() => '?').join(',')})`;
+  const n = await countOf(strapi, where, keep);
+  if (n) await strapi.db.connection.raw(`DELETE FROM ${TABLE} WHERE ${where}`, keep);
+  return n;
+}
+
+export interface EvidenceRow {
+  chunkIx: number;
+  text: string;
+  url: string;
+  title: string;
+}
+
+/** F5.61 — sənədin parçaları sıra ilə (sübutu olmayan leksik/varlıq nəticəsi üçün). */
+export async function chunksFor(
+  strapi: StrapiDbLike,
+  source: string,
+  docId: string,
+  locale: string,
+  limit = 6,
+): Promise<EvidenceRow[]> {
+  const rows = rowsOf(
+    await strapi.db.connection.raw(
+      `SELECT chunk_ix, text, url, title FROM ${TABLE}
+       WHERE source = ? AND doc_id = ? AND locale = ? AND (signals IS NULL OR signals = '')
+       ORDER BY chunk_ix LIMIT ?`,
+      [source, docId, locale, Math.min(40, Math.max(1, limit))],
+    ),
+  );
+  return rows.map((r) => ({
+    chunkIx: Number(r.chunk_ix) || 0,
+    text: String(r.text ?? ''),
+    url: String(r.url ?? ''),
+    title: String(r.title ?? ''),
+  }));
+}
+
 export async function purge(
   strapi: StrapiDbLike,
   filter: { source?: string; locale?: string },

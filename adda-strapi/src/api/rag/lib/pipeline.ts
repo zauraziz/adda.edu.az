@@ -20,7 +20,7 @@ import {
   type SimStats,
   type VectorHit,
 } from './retrieve';
-import { ensureSchema, type StoreMode, type StrapiDbLike } from './store';
+import { chunksFor, ensureSchema, type StoreMode, type StrapiDbLike } from './store';
 import { getGazetteer, findEntities, uniqueEntities, type EntityMatch } from './entities';
 
 export type StrapiRagLike = StrapiDbLike & StrapiDocsLike;
@@ -136,8 +136,7 @@ export async function retrieve(
   // vektor qolu bənzər adları qarışdıra bilər, leksik qol isə ştatdakı sıra
   // ilə yazılmış adı tapmaya bilər. Qazettir ikisini də keçir.
   //
-  // `unit` RAG mənbəsi DEYİL (parçalanmır), ona görə RRF qoluna düşmür —
-  // amma linkləmə üçün siyahıda qalır.
+  // F5.61: `unit` də RAG mənbəyidir; arxiv faculty/department yalnız linkləmə üçündür.
   let ents: EntityMatch[] = [];
   try {
     const gaz = await getGazetteer(strapi, locale);
@@ -190,8 +189,9 @@ export async function retrieve(
 
   // Varlıq uyğunluqları sənəd siyahısına əlavə olunur — retrieval onları
   // qaçırsa belə, dəqiq ad uyğunluğu nəticəyə düşməlidir.
+  // F5.61: «unit» RAG mənbəyidir (köhnə faculty/department arxivdir, indeksdə yoxdur).
   const RAG_SOURCE_OF: Record<string, string> = {
-    person: 'person', program: 'program', faculty: 'faculty', department: 'department',
+    person: 'person', program: 'program', unit: 'unit',
   };
   const entKeys: string[] = [];
   for (const e of ents) {
@@ -225,6 +225,23 @@ export async function retrieve(
       d.rrf = Math.round(rrf * 1e6) / 1e6;
       return d;
     });
+
+  // F5.61 — SÜBUTSUZ nəticə (yalnız leksik və ya varlıq qolundan): cavaba 200 simvolluq
+  // parça və ya heç nə düşürdü. Anbardan sənədin parçaları götürülür — sorğu mətni
+  // keçənlər əvvəl, yoxdursa ilk ikisi.
+  for (const d of hits) {
+    if (d.evidence.length) continue;
+    try {
+      const rows = await chunksFor(strapi, d.source, d.docId, locale, 12);
+      const needle = q.trim().toLocaleLowerCase();
+      const hit = rows.filter((r) => needle.length >= 3 && r.text.toLocaleLowerCase().includes(needle));
+      for (const r of (hit.length ? hit : rows).slice(0, 2)) d.evidence.push({ chunkIx: r.chunkIx, text: r.text, similarity: 0 });
+      if (!d.snippet && rows[0]) d.snippet = rows[0].text.slice(0, 200);
+      if (!d.url && rows[0]) d.url = rows[0].url;
+    } catch {
+      /* sübut tapılmadı — əvvəlki kimi parça ilə */
+    }
+  }
 
   // Statistika KƏSİMDƏN ƏVVƏLKİ namizədlər üzərindədir — küy səviyyəsini
   // məhz onlar müəyyən edir.

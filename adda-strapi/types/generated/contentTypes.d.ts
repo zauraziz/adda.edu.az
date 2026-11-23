@@ -1330,7 +1330,7 @@ export interface ApiFacultyFaculty extends Struct.CollectionTypeSchema {
 export interface ApiHeroHero extends Struct.CollectionTypeSchema {
   collectionName: 'heroes';
   info: {
-    description: 'V\u0259t\u0259n u\u011Frunda \u015F\u0259hid olan ADDA m\u0259zunlar\u0131.';
+    description: 'V\u0259t\u0259n u\u011Frunda \u015F\u0259hid olan v\u0259 d\u00F6y\u00FC\u015Fl\u0259rd\u0259 i\u015Ftirak etmi\u015F (qazi) ADDA m\u0259zunlar\u0131.';
     displayName: '2. Akademiya \u2014 Q\u0259hr\u0259man';
     pluralName: 'heroes';
     singularName: 'hero';
@@ -1366,6 +1366,13 @@ export interface ApiHeroHero extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+      }>;
+    category: Schema.Attribute.Enumeration<['sehid', 'qazi']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }>;
     createdAt: Schema.Attribute.DateTime;

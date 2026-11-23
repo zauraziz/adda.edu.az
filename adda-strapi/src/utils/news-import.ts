@@ -7,7 +7,11 @@
  *      qapaq, qalereya və PDF-lər köhnə saytdan endirilib media kitabxanasına
  *      yüklənir, mətndəki {{file:N}} yüklənən PDF-in ünvanı olur;
  *   3. `eventsF551:v1` — ana səhifənin tədbir zolağı üçün 3 aidiyyəti tədbir
- *      (EVENTS_F551; tarix və yer admində dəqiqləşdirilir).
+ *      (EVENTS_F551; tarix və yer admində dəqiqləşdirilir);
+ *   4. F5.61 `newsImport:v2` — köhnə saytın 15.10–23.11.2026 arası 14 xəbəri
+ *      (news-import-f561-content.ts, news/1991–2004), eyni qayda ilə. Şəkillər köhnə
+ *      saytın media ünvanından (tam ünvan, legacy-files.ts); ayrıca sayğac
+ *      `newsImport:v2:tries` — F5.51-in uğursuz başlanğıcları bu idxala sayılmır.
  *
  * Təkrar yaranmır: slug (və ya eyni başlıq + tarix) varsa qeyd ötürülür.
  * Web Push GETMİR: qeyd `create({ status: 'published' })` ilə yaranır — Document
@@ -21,15 +25,18 @@
 import type { Core } from '@strapi/strapi';
 import { attachCertImages } from './cert-block';
 import { importLegacyFile, legacyUrl, LegacyUnreachable } from './legacy-files';
-import { IMPORT_ANNOUNCEMENTS, IMPORT_ARTICLES } from './news-import-content';
+import { IMPORT_ANNOUNCEMENTS, IMPORT_ARTICLES, type ImportArticle } from './news-import-content';
+import { IMPORT_ARTICLES_F561 } from './news-import-f561-content';
 import { envUrl } from './env-url';
 
 type Row = Record<string, unknown>;
 
 const NEWS_MARKER = 'newsImport:v1';
+const NEWS_V2_MARKER = 'newsImport:v2';
 const EVENTS_MARKER = 'eventsF551:v1';
 const CERT_IMAGES_MARKER = 'certImages:v1';
 const TRIES_KEY = 'legacyImport:tries';
+const TRIES_V2_KEY = 'newsImport:v2:tries';
 const MAX_TRIES = 3;
 
 export interface EventSeed {
@@ -140,33 +147,46 @@ async function fileOrNull(strapi: Core.Strapi, path: string, name: string, alt: 
   }
 }
 
-async function importNews(strapi: Core.Strapi, offline: boolean): Promise<string> {
-  const misses: string[] = [];
-  let made = 0;
-  let skipped = 0;
-  let files = 0;
+interface Tally {
+  made: number;
+  skipped: number;
+  files: number;
+}
 
-  for (const a of IMPORT_ARTICLES) {
-    const uid = 'api::article.article';
+/** Xəbərlər: qapaq + qalereya köhnə saytdan, köhnə tarixlə dərc olunur. `tag` — logda mərhələ (F5.51, F5.61). */
+async function importArticles(
+  strapi: Core.Strapi,
+  list: ImportArticle[],
+  offline: boolean,
+  tag: string,
+  misses: string[],
+  t: Tally,
+): Promise<void> {
+  const uid = 'api::article.article';
+  for (const a of list) {
     const day = a.date.slice(0, 10);
     if (await exists(strapi, uid, a.slug, a.title, 'newsDate', day)) {
-      skipped++;
+      t.skipped++;
       continue;
     }
     const id = a.legacy.split('/')[1];
     let cover: number | null = null;
     const gallery: number[] = [];
     if (!offline) {
-      const c = await fileOrNull(strapi, a.hero, `xeber-${id}-qapaq`, a.title, misses);
-      if (c) {
-        cover = c.id;
-        files++;
+      // F5.61: qapağı olmayan xəbər (köhnə saytda yalnız şablon şəkli var idi).
+      if (a.hero) {
+        const c = await fileOrNull(strapi, a.hero, `xeber-${id}-qapaq`, a.title, misses);
+        if (c) {
+          cover = c.id;
+          t.files++;
+        }
       }
       for (let i = 0; i < a.gallery.length; i++) {
         const g = await fileOrNull(strapi, a.gallery[i], `xeber-${id}-foto-${String(i + 1).padStart(2, '0')}`, a.title, misses);
         if (g) {
           gallery.push(g.id);
-          files++;
+          t.files++;
+          if (t.files % 25 === 0) strapi.log.info(`[news] ${tag}: ${t.files} fayl yükləndi (${a.legacy}) …`);
         }
       }
     }
@@ -187,9 +207,22 @@ async function importNews(strapi: Core.Strapi, offline: boolean): Promise<string
       },
     });
     await keepPublishedAt(strapi, uid, String(doc.documentId), a.date);
-    made++;
-    strapi.log.info(`[news] F5.51: xəbər yazıldı — ${a.legacy} → ${a.slug} (foto: ${(cover ? 1 : 0) + gallery.length}/${1 + a.gallery.length}).`);
+    t.made++;
+    const want = (a.hero ? 1 : 0) + a.gallery.length;
+    strapi.log.info(`[news] ${tag}: xəbər yazıldı — ${a.legacy} → ${a.slug} (foto: ${(cover ? 1 : 0) + gallery.length}/${want}).`);
   }
+}
+
+function reportMisses(strapi: Core.Strapi, tag: string, misses: string[]): void {
+  if (!misses.length) return;
+  strapi.log.warn(`[news] ${tag}: köhnə saytdan alınmayan fayllar (${misses.length}): ${misses.slice(0, 8).join('; ')}${misses.length > 8 ? ' …' : ''}`);
+}
+
+async function importNews(strapi: Core.Strapi, offline: boolean): Promise<string> {
+  const misses: string[] = [];
+  const t: Tally = { made: 0, skipped: 0, files: 0 };
+  await importArticles(strapi, IMPORT_ARTICLES, offline, 'F5.51', misses, t);
+  let { made, skipped, files } = t;
 
   for (const n of IMPORT_ANNOUNCEMENTS) {
     const uid = 'api::announcement.announcement';
@@ -229,10 +262,17 @@ async function importNews(strapi: Core.Strapi, offline: boolean): Promise<string
     strapi.log.info(`[news] F5.51: elan yazıldı — ${n.legacy} → ${n.slug} (fayl: ${attachments.length}/${n.files.length}).`);
   }
 
-  if (misses.length) {
-    strapi.log.warn(`[news] F5.51: köhnə saytdan alınmayan fayllar (${misses.length}): ${misses.slice(0, 8).join('; ')}${misses.length > 8 ? ' …' : ''}`);
-  }
+  reportMisses(strapi, 'F5.51', misses);
   return `xəbər/elan yazıldı: ${made}, artıq vardı: ${skipped}, fayl: ${files}` + (offline ? ' (köhnə sayt əlçatmaz — şəkilsiz)' : '');
+}
+
+/** F5.61 — 15.10–23.11.2026 xəbərləri (newsImport:v2). */
+async function importNewsF561(strapi: Core.Strapi, offline: boolean): Promise<string> {
+  const misses: string[] = [];
+  const t: Tally = { made: 0, skipped: 0, files: 0 };
+  await importArticles(strapi, IMPORT_ARTICLES_F561, offline, 'F5.61', misses, t);
+  reportMisses(strapi, 'F5.61', misses);
+  return `F5.61 xəbər yazıldı: ${t.made}, artıq vardı: ${t.skipped}, fayl: ${t.files}` + (offline ? ' (köhnə sayt əlçatmaz — şəkilsiz)' : '');
 }
 
 async function createEvents(strapi: Core.Strapi): Promise<string> {
@@ -291,24 +331,39 @@ async function run(strapi: Core.Strapi): Promise<void> {
         (tries + 1 >= MAX_TRIES ? ' (sonra şəkilsiz yaradılacaq).' : '.'),
     );
   }
+  // F5.61 — ayrıca sayğacla: F5.51-in uğursuz başlanğıcları yeni xəbərləri şəkilsiz etməsin.
+  if (!(await done(NEWS_V2_MARKER))) {
+    const triesV2 = Number((await store.get({ key: TRIES_V2_KEY })) ?? 0);
+    try {
+      notes.push(await importNewsF561(strapi, triesV2 >= MAX_TRIES));
+      await store.set({ key: NEWS_V2_MARKER, value: true });
+    } catch (e) {
+      if (!(e instanceof LegacyUnreachable)) throw e;
+      await store.set({ key: TRIES_V2_KEY, value: triesV2 + 1 });
+      strapi.log.warn(
+        `[news] F5.61: köhnə saytın media ünvanı əlçatmazdır (${triesV2 + 1}/${MAX_TRIES}): ${e.message} — növbəti başlanğıcda yenidən` +
+          (triesV2 + 1 >= MAX_TRIES ? ' (sonra şəkilsiz yaradılacaq).' : '.'),
+      );
+    }
+  }
   // Tədbirlər köhnə saytdan asılı deyil.
   if (!(await done(EVENTS_MARKER))) {
     notes.push(await createEvents(strapi));
     await store.set({ key: EVENTS_MARKER, value: true });
   }
-  if (notes.length) strapi.log.info(`[news] F5.51: ${notes.join('; ')}.`);
+  if (notes.length) strapi.log.info(`[news] ${notes.join('; ')}.`);
 }
 
-/** Bootstrap-dan çağırılır; işi 8 saniyə sonra arxa planda başladır (port bloklanmır). */
+/** Bootstrap-dan çağırılır; işi 8 saniyə sonra arxa planda başladır (port bloklanmır). F5.61 xəbərləri də buradadır. */
 export async function startLegacyImportF551(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });
   const pending: string[] = [];
-  for (const k of [CERT_IMAGES_MARKER, NEWS_MARKER, EVENTS_MARKER]) {
+  for (const k of [CERT_IMAGES_MARKER, NEWS_MARKER, NEWS_V2_MARKER, EVENTS_MARKER]) {
     if ((await store.get({ key: k })) !== true) pending.push(k);
   }
   if (!pending.length) return;
-  strapi.log.info(`[news] F5.51: köhnə saytdan idxal və tədbirlər (${pending.join(', ')}) ARXA PLANDA başlayır — port bloklanmır.`);
+  strapi.log.info(`[news] köhnə saytdan idxal və tədbirlər (${pending.join(', ')}) ARXA PLANDA başlayır — port bloklanmır.`);
   setTimeout(() => {
-    void run(strapi).catch((e: Error) => strapi.log.error('[news] F5.51: ' + e.message));
+    void run(strapi).catch((e: Error) => strapi.log.error('[news] idxal: ' + e.message));
   }, 8000);
 }

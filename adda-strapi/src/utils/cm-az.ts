@@ -418,13 +418,17 @@ const CT: Record<string, Dict> = {
   },
   'api::hero.hero': {
     name: ['Ad, soyad, ata adı'],
+    category: [
+      'Kateqoriya',
+      'Şəhid — saytda «Şəhidlərimiz» bölməsində (qərənfillə); qazi — ondan sonra, «Qazilərimiz» bölməsində.',
+    ],
     photo: ['Şəkil', PHOTO_PORTRAIT],
-    birthDate: ['Doğum tarixi'],
+    birthDate: ['Doğum tarixi', 'Saytda yalnız şəhidin səhifəsində göstərilir.'],
     birthPlace: ['Doğum yeri'],
     addaProgram: ['ADDA-da ixtisası'],
     studyYears: ['Təhsil illəri', 'Məs.: «2015–2019».'],
-    martyrdomDate: ['Şəhid olduğu tarix'],
-    martyrdomPlace: ['Şəhid olduğu yer'],
+    martyrdomDate: ['Şəhid olduğu tarix', 'Yalnız şəhid üçün.'],
+    martyrdomPlace: ['Şəhid olduğu yer', 'Yalnız şəhid üçün.'],
     honors: ['Təltiflər', 'Hər təltif ayrıca sətir.'],
     biography: ['Tərcümeyi-hal', MD],
     slug: ['Ünvan (slug)', SLUG],
@@ -859,7 +863,8 @@ function merge(conf: Conf, dict: Dict): number {
 //   «Sertifikatlar» (api::cert-block.cert-block, cert.item); home.video silindi.
 // (v9 qaydaların yenilənməsinin markeridir — aşağıda UPGRADE_SETS.)
 // v13 (F5.54): sənədin «Səhifə» sahəsi (api::document.document → url).
-const MARKER = 'cmAz:v13';
+// v18 (F5.61): qəhrəmanın «Kateqoriya» sahəsi (şəhid / qazi) və şəhidlik sahələrinin qaydası.
+const MARKER = 'cmAz:v18';
 
 export async function applyAzFieldLabels(strapi: Core.Strapi): Promise<void> {
   const store = strapi.store({ type: 'plugin', name: 'adda-admin' });

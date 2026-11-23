@@ -5,7 +5,7 @@
     "singularName": "hero",
     "pluralName": "heroes",
     "displayName": "2. Akademiya — Qəhrəman",
-    "description": "Vətən uğrunda şəhid olan ADDA məzunları."
+    "description": "Vətən uğrunda şəhid olan və döyüşlərdə iştirak etmiş (qazi) ADDA məzunları."
   },
   "options": {
     "draftAndPublish": true
@@ -22,6 +22,19 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "sehid",
+        "qazi"
+      ],
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
         }
       }
     },

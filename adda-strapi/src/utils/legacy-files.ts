@@ -4,6 +4,9 @@
  *
  *   - Ünvan: `LEGACY_SITE_URL` (defolt https://adda.edu.az) + köhnə yol
  *     («/uploads/news/…»). Lokal sınaqda saxta server göstərilir.
+ *     F5.61: yol tam ünvan da ola bilər (köhnə sayt şəkilləri artıq
+ *     https://adda-media.pages.dev/uploads/… ünvanından verir) — olduğu kimi
+ *     endirilir, `LEGACY_SITE_URL` ona təsir etmir.
  *   - Eyni yol İKİNCİ DƏFƏ endirilmir: store `adda-admin` → `legacyFiles:v1`
  *     { yol: fayl id }. Yarımçıq qalan idxal növbəti başlanğıcda davam edəndə
  *     media kitabxanasında təkrar yaranmır.
@@ -40,9 +43,25 @@ export function legacyBase(): string {
   return envUrl('LEGACY_SITE_URL', 'https://adda.edu.az');
 }
 
-/** «/uploads/dok.sual (1).pdf» → «/uploads/dok.sual%20%281%29.pdf» (mötərizə də — Markdown keçidində təhlükəsiz). */
+const encodePath = (p: string): string =>
+  p.split('/').map((s) => encodeURIComponent(s).replace(/\(/g, '%28').replace(/\)/g, '%29')).join('/');
+
+/**
+ * «/uploads/dok.sual (1).pdf» → «/uploads/dok.sual%20%281%29.pdf» (mötərizə də — Markdown keçidində təhlükəsiz).
+ * Tam ünvan (F5.61) öz host-u ilə qalır, yolu eyni qaydada kodlanır (artıq kodlanmış «%20» ikiqat kodlanmır).
+ */
 export function legacyUrl(path: string): string {
-  return legacyBase() + path.split('/').map((s) => encodeURIComponent(s).replace(/\(/g, '%28').replace(/\)/g, '%29')).join('/');
+  if (/^https?:\/\//i.test(path)) {
+    const u = new URL(path);
+    let raw = u.pathname;
+    try {
+      raw = decodeURIComponent(raw);
+    } catch {
+      /* yarımçıq «%» — olduğu kimi */
+    }
+    return u.origin + encodePath(raw) + u.search;
+  }
+  return legacyBase() + encodePath(path);
 }
 
 function sniff(buf: Buffer): { mime: string; ext: string } | null {

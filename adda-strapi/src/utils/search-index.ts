@@ -347,6 +347,16 @@ const faqText = (faq: unknown): string =>
 
 type Loader = (strapi: Core.Strapi, locale: Locale) => Promise<EntryInput[]>;
 
+/** F5.61 — qəhrəmanın kateqoriyası (Next `lib/strapi.ts` → `heroKind` ilə EYNİ qayda). */
+function heroKind(r: Row): 'sehid' | 'qazi' {
+  if (r.category === 'sehid' || r.category === 'qazi') return r.category;
+  return str(r.martyrdomDate) || str(r.martyrdomPlace) ? 'sehid' : 'qazi';
+}
+const HERO_LABEL: Record<'sehid' | 'qazi', Record<Locale, string>> = {
+  sehid: { az: 'Şəhid', ru: 'Шехид', en: 'Martyr' },
+  qazi: { az: 'Qazi', ru: 'Ветеран', en: 'Veteran' },
+};
+
 export const SEARCH_SOURCES: { uid: string; name: string; load: Loader }[] = [
   {
     uid: 'api::article.article',
@@ -597,7 +607,7 @@ export const SEARCH_SOURCES: { uid: string; name: string; load: Loader }[] = [
         await all(s, 'api::hero.hero', {
           locale,
           status: 'published',
-          fields: ['name', 'slug', 'birthPlace', 'addaProgram', 'studyYears', 'martyrdomPlace', 'biography'],
+          fields: ['name', 'slug', 'category', 'birthPlace', 'addaProgram', 'studyYears', 'martyrdomDate', 'martyrdomPlace', 'biography'],
           populate: { honors: true },
         })
       ).map((r) => ({
@@ -606,7 +616,8 @@ export const SEARCH_SOURCES: { uid: string; name: string; load: Loader }[] = [
         slug: str(r.slug),
         url: r.slug ? `/qehremanlarimiz/${str(r.slug)}` : '',
         title: str(r.name),
-        sub: [str(r.addaProgram), str(r.studyYears)].filter(Boolean).join(', '),
+        // F5.61: şəhid / qazi (kateqoriya boşdursa şəhidlik sahələrindən — saytdakı qayda).
+        sub: [HERO_LABEL[heroKind(r)][locale], str(r.addaProgram), str(r.studyYears)].filter(Boolean).join(', '),
         body: join(
           r.addaProgram,
           r.birthPlace,

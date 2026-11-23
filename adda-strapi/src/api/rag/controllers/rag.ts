@@ -17,8 +17,10 @@
  * Standalone kompilyasiya olunur — @strapi/strapi tipləri import EDİLMİR.
  */
 import { createHash } from 'node:crypto';
-import { SOURCES, sourceByKey, buildChunks, type ChunkRecord } from '../lib/chunk';
-import { embedConfig, embedReadiness, embedTexts, pacerLoad } from '../lib/embed';
+import { SOURCES, sourceByKey } from '../lib/chunk';
+import { embedConfig, embedReadiness, pacerLoad } from '../lib/embed';
+import { guardOptionsFromEnv, indexBatch } from '../lib/indexer';
+import { autoIndexState } from '../lib/auto-index';
 import { resetVectorCache } from '../lib/retrieve';
 import { retrieve, normalizeSources, type StrapiRagLike } from '../lib/pipeline';
 import { getGazetteer, findEntities, uniqueEntities, resetGazetteer } from '../lib/entities';
@@ -26,6 +28,7 @@ import {
   chat,
   chatConfig,
   chatReadiness,
+  chatThinkingState,
   checkCitations,
   refusalText,
   repairPrompt,
@@ -38,13 +41,9 @@ import {
   ensureSchema,
   counts,
   flaggedChunks,
-  hashesFor,
-  trimChunks,
-  upsertChunks,
   purge,
   dropAll,
   resetCache,
-  type StoredChunk,
   type StoreInfo,
   type StrapiDbLike,
 } from '../lib/store';
@@ -89,13 +88,10 @@ function boolEnv(name: string, dflt: boolean): boolean {
   return v !== 'false' && v !== '0' && v !== 'no';
 }
 
-/** F2.7-3 guardrail konfiqurasiyası — hamısı defolt AÇIQDIR. */
+/** F2.7-3 guardrail konfiqurasiyası — hamısı defolt AÇIQDIR (F5.61: indexer.ts-dən, avtomatik indekslə eyni). */
 function guardOptions(): { contacts: boolean; identifiers: boolean; injection: boolean } {
-  return {
-    contacts: boolEnv('RAG_SCRUB_CONTACTS', true),
-    identifiers: boolEnv('RAG_SCRUB_IDENTIFIERS', true),
-    injection: boolEnv('RAG_GUARD_INJECTION', true),
-  };
+  const g = guardOptionsFromEnv();
+  return { contacts: g.contacts !== false, identifiers: g.identifiers !== false, injection: g.injection !== false };
 }
 
 /* ── Sirr yoxlaması ───────────────────────────────────────────────────── */
@@ -239,6 +235,9 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       sources: SOURCES.map((s) => ({ key: s.key, uid: s.uid, metaOnly: Boolean(s.metaOnly), route: s.route })),
       totals,
       indexed: await counts(strapi),
+      // F5.61 — avtomatik indeksin vəziyyəti və cavab modelinin düşüncə rejimi.
+      auto: await autoIndexState(strapi as never),
+      chat: { model: chatConfig().model, ...chatThinkingState() },
     };
   },
 
@@ -298,25 +297,8 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
       return;
     }
 
-    const stats = { docs: entries.length, chunks: 0, embedded: 0, skipped: 0, trimmed: 0, calls: 0, items: 0, flagged: 0, scrubbed: 0 };
-    let partial = false;
-    const pending: ChunkRecord[] = [];
-    const perDoc: Array<{ docId: string; count: number }> = [];
-
-    for (const entry of entries) {
-      const chunks = buildChunks(src, entry, locale, gopts);
-      if (!chunks.length) continue;
-      stats.chunks += chunks.length;
-      perDoc.push({ docId: chunks[0].docId, count: chunks.length });
-
-      const known = force ? new Map<number, string>() : await hashesFor(strapi, src.key, chunks[0].docId, locale);
-      if (chunks[0].removed.length) stats.scrubbed++;
-      for (const c of chunks) {
-        if (c.signals.length) stats.flagged++;
-        if (known.get(c.chunkIx) === c.hash) stats.skipped++;
-        else pending.push(c);
-      }
-    }
+    const out = await indexBatch(strapi, info, src, entries, locale, { force, dryRun, guard: gopts });
+    const stats = out.stats;
 
     if (dryRun) {
       ctx.body = {
@@ -327,68 +309,35 @@ export default ({ strapi }: { strapi: StrapiLike }) => ({
         cursor,
         next: entries.length < limit ? null : cursor + limit,
         done: entries.length < limit,
-        wouldEmbed: pending.length,
+        wouldEmbed: out.wouldEmbed ?? 0,
         stats,
       };
       return;
     }
 
-    if (pending.length) {
-      const res = await embedTexts(pending.map((c) => c.embedText), 'document');
-      stats.calls = res.calls;
-      stats.items = res.items;
-      if (!res.ok) {
-        // KVOTA XƏTASI KEÇİCİDİR — sənəd/sxem xətası ilə eyni sinifdə deyil.
-        // 429 qaytarılır ki, CLI gözləyib EYNİ KURSORDAN davam etsin; 502-də
-        // isə o, mənbəni tərk edirdi (`article/az` 75-də dayanmışdı).
-        ctx.status = res.rateLimited ? 429 : 502;
-        ctx.body = {
-          ok: false,
-          error: res.rateLimited ? 'embed_rate_limited' : 'embed_failed',
-          detail: res.error,
-          retryAfterMs: res.retryAfterMs || null,
-          cursor,
-          source: src.key,
-          locale,
-        };
-        return;
-      }
-      // Yarımçıq nəticə: yalnız embed olunmuş parçalar saxlanılır. Qalanı
-      // növbəti çağırışda tamamlanır — hash mexanizmi təkrar işi atlayır.
-      const embeddedCount = res.vectors.length;
-      const done0 = pending.slice(0, embeddedCount);
-      const rows: StoredChunk[] = done0.map((c, i) => ({
-        source: c.source,
-        docId: c.docId,
-        locale: c.locale,
-        slug: c.slug,
-        title: c.title,
-        url: c.url,
-        chunkIx: c.chunkIx,
-        text: c.text,
-        hash: c.hash,
-        vector: res.vectors[i],
-        signals: c.signals,
-      }));
-      partial = res.partial === true && embeddedCount < pending.length;
-      try {
-        stats.embedded = await upsertChunks(strapi, info, rows);
-      } catch (err) {
+    if (!out.ok) {
+      if (out.errorCode === 'store_failed') {
         ctx.status = 500;
-        ctx.body = { ok: false, error: 'store_failed', detail: String((err as Error).message).slice(0, 300) };
+        ctx.body = { ok: false, error: 'store_failed', detail: out.error };
         return;
       }
+      // KVOTA XƏTASI KEÇİCİDİR — sənəd/sxem xətası ilə eyni sinifdə deyil.
+      // 429 qaytarılır ki, CLI gözləyib EYNİ KURSORDAN davam etsin; 502-də
+      // isə o, mənbəni tərk edirdi (`article/az` 75-də dayanmışdı).
+      ctx.status = out.rateLimited ? 429 : 502;
+      ctx.body = {
+        ok: false,
+        error: out.rateLimited ? 'embed_rate_limited' : 'embed_failed',
+        detail: out.error,
+        retryAfterMs: out.retryAfterMs || null,
+        cursor,
+        source: src.key,
+        locale,
+      };
+      return;
     }
 
-    // Sənəd qısalıbsa köhnə quyruq parçaları silinməlidir.
-    // YARIMÇIQ gedişdə BU EDİLMİR: hələ embed olunmamış parçalar «artıq»
-    // sayılıb silinərdi və sənəd yarımçıq indekslənmiş qalardı.
-    if (!partial) {
-      for (const d of perDoc) {
-        stats.trimmed += await trimChunks(strapi, src.key, d.docId, locale, d.count);
-      }
-    }
-
+    const partial = out.partial;
     const done = !partial && entries.length < limit;
     ctx.body = {
       ok: true,
